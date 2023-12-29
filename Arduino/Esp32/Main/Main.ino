@@ -761,7 +761,7 @@ void serialCommunicationTask( void * pvParameters )
     // read serial input 
     byte n = Serial.available();
 
-  
+    bool structChecker = true;
     
     if (n > 0)
     {
@@ -781,7 +781,7 @@ void serialCommunicationTask( void * pvParameters )
                 
 
                 // check if data is plausible
-                bool structChecker = true;
+                
                 if ( dap_config_st_local.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_CONFIG ){ 
                   structChecker = false;
                   Serial.print("Payload type expected: ");
@@ -824,14 +824,32 @@ void serialCommunicationTask( void * pvParameters )
           DAP_actions_st dap_actions_st;
           Serial.readBytes((char*)&dap_actions_st, sizeof(DAP_actions_st));
 
+          if ( dap_actions_st.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_ACTION ){ 
+            structChecker = false;
+            Serial.print("Payload type expected: ");
+            Serial.print(DAP_PAYLOAD_TYPE_ACTION);
+            Serial.print(",   Payload type received: ");
+            Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
+          }
+          if ( dap_actions_st.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
+            structChecker = false;
+            Serial.print("Config version expected: ");
+            Serial.print(DAP_VERSION_CONFIG);
+            Serial.print(",   Config version received: ");
+            Serial.println(dap_config_st_local.payLoadHeader_.version);
+          }
           crc = checksumCalculator((uint8_t*)(&(dap_actions_st.payLoadHeader_)), sizeof(dap_actions_st.payLoadHeader_) + sizeof(dap_actions_st.payloadPedalAction_));
           if (crc != dap_actions_st.payloadFooter_.checkSum){ 
+            structChecker = false;
             Serial.print("CRC expected: ");
             Serial.print(crc);
             Serial.print(",   CRC received: ");
             Serial.println(dap_actions_st.payloadFooter_.checkSum);
           }
-          else
+
+
+
+          if (structChecker == true)
           {
 
             // trigger reset pedal position

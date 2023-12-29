@@ -4,7 +4,10 @@
 
 
 #define DAP_VERSION_CONFIG 110
+
+
 #define DAP_PAYLOAD_TYPE_CONFIG 100
+#define DAP_PAYLOAD_TYPE_ACTION 110
 
 struct payloadHeader {
   

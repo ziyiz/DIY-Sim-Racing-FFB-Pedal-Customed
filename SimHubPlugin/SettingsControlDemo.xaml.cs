@@ -41,12 +41,7 @@ namespace User.PluginSdkDemo
     public partial class SettingsControlDemo : System.Windows.Controls.UserControl
     {
 
-        // payload revisiom
-        public uint pedalConfigPayload_version = 110;
 
-        // pyload types
-        public uint pedalConfigPayload_type = 100;
-        public uint pedalActionPayload_type = 110;
 
         public uint indexOfSelectedPedal_u = 1;
 
@@ -236,8 +231,8 @@ namespace User.PluginSdkDemo
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)pedalConfigPayload_type;
-                dap_config_st[pedalIdx].payloadHeader_.version = (byte)pedalConfigPayload_version;
+                dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+                dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
 
                 dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
                 dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
@@ -994,6 +989,8 @@ namespace User.PluginSdkDemo
                 {
                     // compute checksum
                     DAP_action_st tmp;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.resetPedalPos_u8 = 1;
 
 
@@ -1147,8 +1144,8 @@ namespace User.PluginSdkDemo
 
                 // compute checksum
                 //getBytes(this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_)
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)pedalConfigPayload_version;
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.payloadType = (byte)pedalConfigPayload_type;
+                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
                 this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.storeToEeprom = 1;
                 DAP_config_st tmp = this.dap_config_st[indexOfSelectedPedal_u];
 
@@ -1221,6 +1218,8 @@ namespace User.PluginSdkDemo
 
                 // compute checksum
                 DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                 tmp.payloadPedalAction_.returnPedalConfig_u8 = 1;
 
 
@@ -1556,15 +1555,25 @@ namespace User.PluginSdkDemo
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                      string fileName = saveFileDialog.FileName;
-                
 
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)pedalConfigPayload_version;
+                    
+                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
 
                 // https://stackoverflow.com/questions/3275863/does-net-4-have-a-built-in-json-serializer-deserializer
                 // https://learn.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-serialize-and-deserialize-json-data?redirectedfrom=MSDN
                 var stream1 = new MemoryStream();
-                var ser = new DataContractJsonSerializer(typeof(DAP_config_st));
-                ser.WriteObject(stream1, dap_config_st[indexOfSelectedPedal_u]);
+                    //var ser = new DataContractJsonSerializer(typeof(DAP_config_st));
+                    //ser.WriteObject(stream1, dap_config_st[indexOfSelectedPedal_u]);
+
+
+                // formatted JSON see https://stackoverflow.com/a/38538454
+                var writer = JsonReaderWriterFactory.CreateJsonWriter(stream1, Encoding.UTF8, true, true, "  ");
+                var serializer = new DataContractJsonSerializer(typeof(DAP_config_st));
+                serializer.WriteObject(writer, dap_config_st[indexOfSelectedPedal_u]);
+                writer.Flush();
+                
+
+
 
                 stream1.Position = 0;
                 StreamReader sr = new StreamReader(stream1);
