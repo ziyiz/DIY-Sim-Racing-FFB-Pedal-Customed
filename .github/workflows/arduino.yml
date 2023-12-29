@@ -6,8 +6,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  #pull_request:
+  #  branches: [ main ]
 
 # This is the list of jobs that will be run concurrently.
 # Since we use a build matrix, the actual number of jobs
