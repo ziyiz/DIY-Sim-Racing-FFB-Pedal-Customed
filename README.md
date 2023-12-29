@@ -180,3 +180,6 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 - [ ] Create a video describing the build progress and the features
 - [ ] GUI design improvements for the SimHub plugin
 - [ ] Send SimHub data via wifi to ESP 
+- [ ] SimHub plugin: 
+    - [ ] JSON deserialization make compatible with older revisions
+    - [ ] JSON deserialization add nicer formating 
