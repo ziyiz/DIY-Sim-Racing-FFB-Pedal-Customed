@@ -187,6 +187,7 @@ SimHub plugin:
 - [ ] JSON deserialization make compatible with older revisions
 - [ ] JSON deserialization add nicer formating
 - [ ] add button to reset the ESP https://stackoverflow.com/questions/51084038/c-sharp-dtrenable-and-rtsenable-in-the-serialport
+- [ ] include the types header file and use it
 
 Misc:
 - [ ] Create a video describing the build progress and the features
