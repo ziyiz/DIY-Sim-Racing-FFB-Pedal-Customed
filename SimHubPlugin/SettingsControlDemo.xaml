@@ -515,7 +515,7 @@
             <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="7"
                 Width="120"
                 Height="34" VerticalAlignment="Top" Content="Debug Mode" Foreground="White" Margin="4,1,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10"/>
-            <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="4,104,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" IsChecked="False" FontSize="10" Width="225" Grid.RowSpan="2"/>
+            <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="4,104,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Grid.RowSpan="2"/>
             <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="384,70,0,0" Grid.ColumnSpan="2" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
