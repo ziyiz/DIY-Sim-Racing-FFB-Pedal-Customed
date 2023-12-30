@@ -18,7 +18,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 110;
+    public const uint pedalConfigPayload_version = 111;
 
 
     // pyload types
@@ -117,6 +117,9 @@ public struct payloadPedalConfig
 
     // loadcell rating in kg / 2 --> to get value in kg, muiltiply by 2
     public byte loadcell_rating;
+
+    // use loadcell or travel as joystick output
+    public byte travelAsJoystickOutput_u8;
 
 
 }
@@ -620,6 +623,8 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 0;
 
             dap_config_initial_st.payloadPedalConfig_.loadcell_rating = 150;
+
+            dap_config_initial_st.payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
 
         }

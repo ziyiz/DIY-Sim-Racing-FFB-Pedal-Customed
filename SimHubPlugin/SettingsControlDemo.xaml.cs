@@ -279,6 +279,8 @@ namespace User.PluginSdkDemo
 
                 dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
 
+                dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+
                 InitializeComponent();
 
                 // debug mode invisiable
@@ -736,6 +738,8 @@ namespace User.PluginSdkDemo
             {
                 ConnectToPedal.IsChecked = false;
             }
+
+            JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
 
             //try
             //{
@@ -2155,8 +2159,6 @@ namespace User.PluginSdkDemo
             debugFlagSlider_0.Opacity = 1;
             btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
-
-
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -2173,10 +2175,21 @@ namespace User.PluginSdkDemo
             debugFlagSlider_0.Opacity = 0;
             btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
+        }
 
 
+        private void JoystickOutput_checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 = 1;
 
         }
+        private void JoystickOutput_unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+        }
+
+
+
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.reading_config = 1;

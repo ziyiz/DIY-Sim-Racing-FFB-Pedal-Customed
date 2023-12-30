@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 110
+#define DAP_VERSION_CONFIG 111
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -87,6 +87,9 @@ struct payloadPedalConfig {
 
   // loadcell rating in kg / 2 --> to get value in kg, muiltiply by 2
   uint8_t loadcell_rating;
+
+  // use loadcell or travel as joystick output
+  uint8_t travelAsJoystickOutput_u8;
 };
 
 struct payloadFooter {
