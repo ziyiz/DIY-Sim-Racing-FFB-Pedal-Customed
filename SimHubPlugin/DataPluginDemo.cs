@@ -177,8 +177,9 @@ namespace User.PluginSdkDemo
         public SerialPort[] _serialPort = new SerialPort[3] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+
         
-    
+        
 
         public bool serialPortConnected = false;
 
@@ -294,6 +295,7 @@ namespace User.PluginSdkDemo
 
 
 
+            
 
             // Send ABS trigger signal via serial
             if (sendAbsSignal_local_b)
@@ -488,6 +490,8 @@ namespace User.PluginSdkDemo
 
                 _serialPort[pedalIdx].ReadTimeout = 2000;
 				_serialPort[pedalIdx].WriteTimeout = 500;
+
+                _serialPort[pedalIdx].DtrEnable = false;
 
                 try
                 {

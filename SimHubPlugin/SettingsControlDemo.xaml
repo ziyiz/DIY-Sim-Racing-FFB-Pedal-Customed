@@ -725,6 +725,7 @@
             <CheckBox x:Name="JoystickOutput_check" HorizontalAlignment="Left" Grid.Row="7"
                 Width="155"
                 Height="34" VerticalAlignment="Top" Content="Joystick output from travel" Foreground="White" Margin="4,2,0,0" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10"/>
+            <styles:SHButtonPrimary Click="RestartPedal_click" HorizontalAlignment="Left" Grid.Row="6" Width="105" Margin="228,5,0,77" Content="Restart pedal" />
 
 
 

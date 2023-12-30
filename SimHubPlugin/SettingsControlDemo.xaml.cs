@@ -1665,6 +1665,17 @@ namespace User.PluginSdkDemo
 
 
         }
+
+
+        private void RestartPedal_click(object sender, RoutedEventArgs e)
+        {
+            Plugin._serialPort[indexOfSelectedPedal_u].DtrEnable = true;
+            Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = true;
+            System.Threading.Thread.Sleep(100);
+            Plugin._serialPort[indexOfSelectedPedal_u].DtrEnable = false;
+            Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = false;
+        }
+        
         private void OpenButton_Click(object sender, EventArgs e)
         {
             using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
