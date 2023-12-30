@@ -178,12 +178,15 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
+- [ ] Add field to select joystick output to be conputed from force or travel
+
 
 SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
 - [ ] GUI design improvements for the SimHub plugin 
 - [ ] JSON deserialization make compatible with older revisions
-- [ ] JSON deserialization add nicer formating 
+- [ ] JSON deserialization add nicer formating
+- [ ] add button to reset the ESP https://stackoverflow.com/questions/51084038/c-sharp-dtrenable-and-rtsenable-in-the-serialport
 
 Misc:
 - [ ] Create a video describing the build progress and the features
