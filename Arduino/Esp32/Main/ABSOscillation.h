@@ -21,7 +21,7 @@ public:
     _timeLastTriggerMillis = millis();
   }
   
-  int32_t forceOffset(DAP_calculationVariables_st* calcVars_st) {
+  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
 
 
     long timeNowMillis = millis();
