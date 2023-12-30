@@ -20,10 +20,12 @@ static class Constants
     // payload revisiom
     public const uint pedalConfigPayload_version = 110;
 
+
     // pyload types
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
 }
+
 
 
 public struct payloadHeader
@@ -158,15 +160,13 @@ namespace User.PluginSdkDemo
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
         DateTime absTrigger_lastTime = DateTime.Now;
-
-
-
         //// payload revisiom
         //public uint pedalConfigPayload_version = 110;
 
         //// pyload types
         //public uint pedalConfigPayload_type = 100;
         //public uint pedalActionPayload_type = 110;
+
 
 
 
@@ -248,7 +248,7 @@ namespace User.PluginSdkDemo
 			
 			bool sendAbsSignal_local_b = false;
             bool sendTcSignal_local_b = false;
-
+            
 
             // Send ABS signal when triggered by the game
             if (data.GameRunning)
@@ -301,7 +301,7 @@ namespace User.PluginSdkDemo
 
                     // compute checksum
                     DAP_action_st tmp;
-                    
+
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 1;
@@ -333,12 +333,11 @@ namespace User.PluginSdkDemo
                 {
                     // compute checksum
                     DAP_action_st tmp;
-       
+
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 1;
 
- 
 
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
@@ -382,6 +381,33 @@ namespace User.PluginSdkDemo
             
             // Save settings
             this.SaveCommonSettings("GeneralSettings", Settings);
+            // close all serial port interfaces
+            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            {
+                if (_serialPort[pedalIdx].IsOpen)
+                {
+                    _serialPort[pedalIdx].Close();
+                }
+                /*
+                _serialPort[pedalIdx].Handshake = Handshake.None;
+                _serialPort[pedalIdx].Parity = Parity.None;
+                //_serialPort[pedalIdx].StopBits = StopBits.None;
+
+
+                _serialPort[pedalIdx].ReadTimeout = 2000;
+                _serialPort[pedalIdx].WriteTimeout = 500;
+
+                try
+                {
+                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                }
+                catch (Exception caughtEx)
+                {
+                }
+                */
+
+
+            }
         }
 
         /// <summary>
@@ -393,6 +419,13 @@ namespace User.PluginSdkDemo
         {
             return new SettingsControlDemo(this);
         }
+
+        public bool PortExists(string portName)
+        {
+            string[] portNames = SerialPort.GetPortNames();
+            return Array.Exists(portNames, name => name.Equals(portName, StringComparison.OrdinalIgnoreCase));
+        }
+
 
         /// <summary>
         /// Called once after plugins startup
@@ -460,9 +493,57 @@ namespace User.PluginSdkDemo
                 catch (Exception caughtEx)
                 {
                 }
+                //try connect back to com port
+                if (Settings.connect_status[pedalIdx] == 1)
+                {
+                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                    //SerialPort.GetPortNames
+                    if (PortExists(_serialPort[pedalIdx].PortName))
+                    {
+                        if (_serialPort[pedalIdx].IsOpen == false)
+                        {
+                            try
+                            {
+                                _serialPort[pedalIdx].Open();
 
+                                //TextBox_debugOutput.Text = "Serialport open";
+                                //ConnectToPedal.IsChecked = true;
+
+                                try
+                                {
+                                    while (_serialPort[pedalIdx].BytesToRead > 0)
+                                    {
+                                        string message = _serialPort[pedalIdx].ReadLine();
+                                    }
+                                }
+                                catch (TimeoutException) { }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //TextBox_debugOutput.Text = ex.Message;
+                                //ConnectToPedal.IsChecked = false;
+                            }
+
+                        }
+                        else
+                        {
+                            _serialPort[pedalIdx].Close();
+                            //ConnectToPedal.IsChecked = false;
+                            //TextBox_debugOutput.Text = "Serialport already open, close it";
+                        }
+                    }
+                }
+                else
+                {
+                    Settings.connect_status[pedalIdx] = 0;
+                }
 
             }
+
+
+
+
 
             //// check if Json config files are present, otherwise create new ones
             //for (uint jsonIndex = 0; jsonIndex < ComboBox_JsonFileSelected.Items.Count; jsonIndex++)
