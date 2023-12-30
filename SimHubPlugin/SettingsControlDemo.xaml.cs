@@ -626,14 +626,14 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(rect5, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 - rect0.Height / 2);
             Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2);
             //set for ABS slider
-            Canvas.SetLeft(rect_SABS_Control, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * canvas.Width / 100-rect_SABS_Control.Width/2);
-            Canvas.SetTop(rect_SABS_Control , 0);
-            Canvas.SetLeft(rect_SABS, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * canvas.Width / 100);
+            Canvas.SetTop(rect_SABS_Control, (control_rect_value_max- dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value ) *dyy-rect_SABS_Control.Height/2);
+            Canvas.SetLeft(rect_SABS_Control , 0);
             Canvas.SetTop(rect_SABS, 0);
-            rect_SABS.Width = canvas.Width - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * canvas.Width / 100;
-            Canvas.SetLeft(text_SABS, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * canvas.Width / 100 + rect_SABS_Control.Width );
-            Canvas.SetTop(text_SABS, canvas.Height-text_SABS.Height);
-            text_SABS.Text = "ABS trigger"+"\nvalue: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
+            Canvas.SetLeft(rect_SABS, 0);
+            rect_SABS.Height = canvas.Height - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * dyy;
+            Canvas.SetTop(text_SABS, Canvas.GetTop(rect_SABS_Control) -text_SABS.Height -rect_SABS_Control.Height);
+            Canvas.SetLeft(text_SABS, canvas.Width-text_SABS.Width);
+            text_SABS.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger == 1)
             {
                 rect_SABS.Opacity = 1;
@@ -1976,23 +1976,24 @@ namespace User.PluginSdkDemo
             if (isDragging)
             {
                 var rectangle = sender as Rectangle;
-                double x = e.GetPosition(canvas).X - offset.X;
-                //double y = e.GetPosition(canvas).Y - offset.Y;
+                //double x = e.GetPosition(canvas).X - offset.X;
+                double y = e.GetPosition(canvas).Y - offset.Y;
 
                 // Ensure the rectangle stays within the canvas
-                double dx = canvas.Width / 100;
-                double min_posiiton = 50 * dx;
-                double max_position = 95 * dx;
+                double dy = canvas.Height / 100;
+                double min_posiiton = 5 * dy;
+                double max_position = 50 * dy;
+                //min position: 50%, max 95%
                 //double dx = 100 / (canvas_horz_slider.Width - 10);
-                x = Math.Max(min_posiiton, Math.Min(x, max_position));
-                Canvas.SetLeft(rect_SABS, x);
-                rect_SABS.Width = canvas.Width - x;
-                double actual_x = x / dx;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value = Convert.ToByte(actual_x);
+                y = Math.Max(min_posiiton, Math.Min(y, max_position));
+                //Canvas.SetTop(rect_SABS, y);
+                rect_SABS.Height = y;
+                double actual_y = (canvas.Height -y)/dy;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value = Convert.ToByte(actual_y);
                 TextBox_debugOutput.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value+"%";
-                text_SABS.Text = "ABS trigger"+"\nvalue: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
-                Canvas.SetLeft(text_SABS, x + rect_SABS_Control.Width);
-                Canvas.SetLeft(rectangle, x-rect_SABS_Control.Width/2);
+                text_SABS.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
+                Canvas.SetTop(text_SABS, y - rect_SABS_Control.Height-text_SABS.Height);
+                Canvas.SetTop(rectangle, y-rect_SABS_Control.Height/2);
 
             }
         }
