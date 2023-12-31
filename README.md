@@ -174,9 +174,21 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 
 
 # Todo
-- [ ] Add Doxygen + Graphviz to the project to automatically generate documentation, architectural design overview, etc.
+
+ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
-- [ ] Create a video describing the build progress and the features
-- [ ] GUI design improvements for the SimHub plugin
+- [ ] Add field to select joystick output to be conputed from force or travel
+
+
+SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
+- [ ] GUI design improvements for the SimHub plugin 
+- [ ] JSON deserialization make compatible with older revisions
+- [ ] JSON deserialization add nicer formating
+- [ ] add button to reset the ESP https://stackoverflow.com/questions/51084038/c-sharp-dtrenable-and-rtsenable-in-the-serialport
+- [ ] include the types header file and use it
+
+Misc:
+- [ ] Create a video describing the build progress and the features
+- [ ] Add Doxygen + Graphviz to the project to automatically generate documentation, architectural design overview, etc.

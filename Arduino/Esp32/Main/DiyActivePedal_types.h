@@ -3,8 +3,11 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 110
+#define DAP_VERSION_CONFIG 112
+
+
 #define DAP_PAYLOAD_TYPE_CONFIG 100
+#define DAP_PAYLOAD_TYPE_ACTION 110
 
 struct payloadHeader {
   
@@ -24,6 +27,7 @@ struct payloadPedalAction {
   uint8_t resetPedalPos_u8;
   uint8_t startSystemIdentification_u8;
   uint8_t returnPedalConfig_u8;
+  uint8_t RPM_u8;
 };
 
 struct payloadPedalConfig {
@@ -53,6 +57,7 @@ struct payloadPedalConfig {
   uint8_t absFrequency; // In Hz
   uint8_t absAmplitude; // In kg/20
 
+
   // geometric properties of the pedal
   // in mm
   uint8_t lengthPedal_AC;
@@ -62,6 +67,11 @@ struct payloadPedalConfig {
   //Simulate ABS trigger
   uint8_t Simulate_ABS_trigger;
   uint8_t Simulate_ABS_value;
+  // configure for RPM effect
+  uint8_t RPM_max_freq; //In HZ
+  uint8_t RPM_min_freq; //In HZ
+  uint8_t RPM_AMP; //In Kg
+  
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
@@ -84,6 +94,9 @@ struct payloadPedalConfig {
 
   // loadcell rating in kg / 2 --> to get value in kg, muiltiply by 2
   uint8_t loadcell_rating;
+
+  // use loadcell or travel as joystick output
+  uint8_t travelAsJoystickOutput_u8;
 };
 
 struct payloadFooter {
@@ -123,7 +136,9 @@ struct DAP_calculationVariables_st
   long stepperPosMinEndstop;
   long stepperPosMaxEndstop;
   long stepperPosEndstopRange;
-  
+  float RPM_max_freq;
+  float RPM_min_freq;
+  float RPM_AMP;
   long stepperPosMin;
   long stepperPosMax;
   float stepperPosRange;
@@ -131,7 +146,7 @@ struct DAP_calculationVariables_st
   float endPosRel;
   float absFrequency;
   float absAmplitude;
-  
+  float rpm_value;
 
   float dampingPress;
 

@@ -32,12 +32,16 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.absFrequency = 15;
   payLoadPedalConfig_.absAmplitude = 0;
 
+
   payLoadPedalConfig_.lengthPedal_AC = 150;
   payLoadPedalConfig_.horPos_AB = 215;
   payLoadPedalConfig_.verPos_AB = 80;
   payLoadPedalConfig_.lengthPedal_CB = 200;
   payLoadPedalConfig_.Simulate_ABS_trigger = 0;// add for abs trigger
   payLoadPedalConfig_.Simulate_ABS_value = 80;// add for abs trigger
+  payLoadPedalConfig_.RPM_max_freq = 40;
+  payLoadPedalConfig_.RPM_min_freq = 10;
+  payLoadPedalConfig_.RPM_AMP = 5;
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;
@@ -63,6 +67,8 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.debug_flags_0 = 0;
 
   payLoadPedalConfig_.loadcell_rating = 150;
+
+  payLoadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 }
 
 
@@ -116,11 +122,19 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg
 
   dampingPress = ((float)config_st.payLoadPedalConfig_.dampingPress) / 400.0f;
-
+  RPM_max_freq = ((float)config_st.payLoadPedalConfig_.RPM_max_freq);
+  RPM_min_freq = ((float)config_st.payLoadPedalConfig_.RPM_min_freq);
+  RPM_AMP = ((float)config_st.payLoadPedalConfig_.RPM_AMP) / 100.0f;
+  /*
+  RPM_max_freq = 40;
+  RPM_min_freq = 10;*/
+  //RPM_AMP = 0.05;
+  
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
   Force_Range = Force_Max - Force_Min;
+  
 }
 
 void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop) {

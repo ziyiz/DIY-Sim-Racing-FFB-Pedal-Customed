@@ -15,7 +15,16 @@ using System.Windows.Media;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 [Serializable]
 
+static class Constants
+{
+    // payload revisiom
+    public const uint pedalConfigPayload_version = 112;
 
+
+    // pyload types
+    public const uint pedalConfigPayload_type = 100;
+    public const uint pedalActionPayload_type = 110;
+}
 
 
 
@@ -37,6 +46,7 @@ public struct payloadPedalAction
     public byte resetPedalPos_u8;
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
+    public byte RPM_u8;
 };
 
 public struct payloadPedalConfig
@@ -77,6 +87,9 @@ public struct payloadPedalConfig
     public byte lengthPedal_CB;
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value
+    public byte RPM_max_freq;
+    public byte RPM_min_freq;
+    public byte RPM_AMP;
 
     // cubic spline params
     public float cubic_spline_param_a_0;
@@ -108,6 +121,9 @@ public struct payloadPedalConfig
 
     // loadcell rating in kg / 2 --> to get value in kg, muiltiply by 2
     public byte loadcell_rating;
+
+    // use loadcell or travel as joystick output
+    public byte travelAsJoystickOutput_u8;
 
 
 }
@@ -147,11 +163,18 @@ namespace User.PluginSdkDemo
 
         public bool sendAbsSignal = false;
 		public DAP_config_st dap_config_initial_st;
+        public byte rpm_last_value = 0 ;
+        public byte game_running_index = 0 ;
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
         DateTime absTrigger_lastTime = DateTime.Now;
+        //// payload revisiom
+        //public uint pedalConfigPayload_version = 110;
 
+        //// pyload types
+        //public uint pedalConfigPayload_type = 100;
+        //public uint pedalActionPayload_type = 110;
 
 
 
@@ -160,8 +183,9 @@ namespace User.PluginSdkDemo
         public SerialPort[] _serialPort = new SerialPort[3] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+
         
-    
+        
 
         public bool serialPortConnected = false;
 
@@ -234,6 +258,8 @@ namespace User.PluginSdkDemo
 			
 			bool sendAbsSignal_local_b = false;
             bool sendTcSignal_local_b = false;
+            double RPM_value =0;
+            double RPM_MAX = 0;
 
 
             // Send ABS signal when triggered by the game
@@ -243,23 +269,37 @@ namespace User.PluginSdkDemo
                 {
                     if (data.NewData.ABSActive > 0)
                     {
-						sendAbsSignal_local_b = true;
+                        sendAbsSignal_local_b = true;
                     }
 
                     if (data.NewData.TCActive > 0)
                     {
                         sendTcSignal_local_b = true;
                     }
+                    if (data.NewData.CarSettings_MaxRPM == 0)
+                    {
+                        RPM_MAX = 10000;
+                    }
+                    else
+                    {
+                        RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                    }
+                    RPM_value = (data.NewData.Rpms / RPM_MAX*100);
+                    game_running_index = 1;
 
                 }
+                else
+                {
+                    RPM_value = 0;                
+                }
+            }
+            else
+            {
+                RPM_value = 0;
             }
 			
-			// Send ABS test signal if requested
-            if (sendAbsSignal)
-            {
-                sendAbsSignal_local_b = true;
-                sendTcSignal_local_b = true;
-            }
+
+
 
 
             absTrigger_currentTime = DateTime.Now;
@@ -277,66 +317,180 @@ namespace User.PluginSdkDemo
 
 
 
+            bool update_flag = false;
 
-            // Send ABS trigger signal via serial
-            if (sendAbsSignal_local_b)
-			{
-				if (_serialPort[1].IsOpen)
+            if (data.GameRunning)
+            {
+                // Send ABS trigger signal via serial
+                if (_serialPort[1].IsOpen)
                 {
-                    //_serialPort[1].Write("2");
 
-                    // compute checksum
                     DAP_action_st tmp;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                    if ((RPM_value - rpm_last_value>10) || (RPM_value-rpm_last_value<-10))
+                    {
+                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                        update_flag = true;
+                        rpm_last_value = (Byte)RPM_value;
+                    }
 
 
-                    DAP_action_st* v = &tmp;
-                    byte* p = (byte*)v;
-                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    if (sendAbsSignal_local_b)
+                    {
+                        //_serialPort[1].Write("2");
+
+                        // compute checksum
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        update_flag = true;
+
+                    }
+
+                    if (update_flag)
+                    {
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
 
-                    int length = sizeof(DAP_action_st);
-                    byte[] newBuffer = new byte[length];
-                    newBuffer = getBytes_Action(tmp);
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
 
 
-                    // clear inbuffer 
-                    _serialPort[1].DiscardInBuffer();
+                        // clear inbuffer 
+                        _serialPort[1].DiscardInBuffer();
 
-                    // send query command
-                    _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                        // send query command
+                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+
+                        
+                    }
+
+
+
 
                 }
-			}
-
-            // Send TC trigger signal via serial
-            if (sendTcSignal_local_b)
-            {
+                
+                // Send TC trigger signal via serial
                 if (_serialPort[2].IsOpen)
                 {
-                    // compute checksum
                     DAP_action_st tmp;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
+
+                    if ((RPM_value - rpm_last_value > 10) || (RPM_value - rpm_last_value < -10))
+                    {
+                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                        update_flag = true;
+                        rpm_last_value = (Byte)RPM_value;
+                    }
+                    if (sendTcSignal_local_b)
+                    {
+                        // compute checksum
+
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        update_flag = true;
+
+                    }
+                    if (update_flag)
+                    {
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
 
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
+
+
+                        // clear inbuffer 
+                        _serialPort[2].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                        rpm_last_value = (Byte)RPM_value;
+                    }
+
+
+
+                }
+
+            }
+            else
+            {
+                if (game_running_index == 1)
+                {
+                    game_running_index = 0;
+                    DAP_action_st tmp;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
+                    if (_serialPort[2].IsOpen)
+                    {
+                        // clear inbuffer 
+                        _serialPort[2].DiscardInBuffer();
 
+                        // send query command
+                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    if (_serialPort[1].IsOpen)
+                    {
+                        // clear inbuffer 
+                        _serialPort[1].DiscardInBuffer();
 
+                        // send query command
+                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    
+                }
+            }
+            // Send ABS test signal if requested
+            if (sendAbsSignal)
+            {
+                sendAbsSignal_local_b = true;
+                sendTcSignal_local_b = true;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                DAP_action_st* v = &tmp;
+                byte* p = (byte*)v;
+                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                int length = sizeof(DAP_action_st);
+                byte[] newBuffer = new byte[length];
+                newBuffer = getBytes_Action(tmp);
+                if (_serialPort[2].IsOpen)
+                {
                     // clear inbuffer 
                     _serialPort[2].DiscardInBuffer();
 
                     // send query command
                     _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
                 }
-            }
+                if (_serialPort[1].IsOpen)
+                {
+                    // clear inbuffer 
+                    _serialPort[1].DiscardInBuffer();
 
+                    // send query command
+                    _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                }
+            }
 
         }
 		
@@ -361,6 +515,33 @@ namespace User.PluginSdkDemo
             
             // Save settings
             this.SaveCommonSettings("GeneralSettings", Settings);
+            // close all serial port interfaces
+            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            {
+                if (_serialPort[pedalIdx].IsOpen)
+                {
+                    _serialPort[pedalIdx].Close();
+                }
+                /*
+                _serialPort[pedalIdx].Handshake = Handshake.None;
+                _serialPort[pedalIdx].Parity = Parity.None;
+                //_serialPort[pedalIdx].StopBits = StopBits.None;
+
+
+                _serialPort[pedalIdx].ReadTimeout = 2000;
+                _serialPort[pedalIdx].WriteTimeout = 500;
+
+                try
+                {
+                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                }
+                catch (Exception caughtEx)
+                {
+                }
+                */
+
+
+            }
         }
 
         /// <summary>
@@ -372,6 +553,13 @@ namespace User.PluginSdkDemo
         {
             return new SettingsControlDemo(this);
         }
+
+        public bool PortExists(string portName)
+        {
+            string[] portNames = SerialPort.GetPortNames();
+            return Array.Exists(portNames, name => name.Equals(portName, StringComparison.OrdinalIgnoreCase));
+        }
+
 
         /// <summary>
         /// Called once after plugins startup
@@ -432,6 +620,8 @@ namespace User.PluginSdkDemo
                 _serialPort[pedalIdx].ReadTimeout = 2000;
 				_serialPort[pedalIdx].WriteTimeout = 500;
 
+                _serialPort[pedalIdx].DtrEnable = false;
+
                 try
                 {
                     _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
@@ -439,9 +629,57 @@ namespace User.PluginSdkDemo
                 catch (Exception caughtEx)
                 {
                 }
+                //try connect back to com port
+                if (Settings.connect_status[pedalIdx] == 1)
+                {
+                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                    //SerialPort.GetPortNames
+                    if (PortExists(_serialPort[pedalIdx].PortName))
+                    {
+                        if (_serialPort[pedalIdx].IsOpen == false)
+                        {
+                            try
+                            {
+                                _serialPort[pedalIdx].Open();
 
+                                //TextBox_debugOutput.Text = "Serialport open";
+                                //ConnectToPedal.IsChecked = true;
+
+                                try
+                                {
+                                    while (_serialPort[pedalIdx].BytesToRead > 0)
+                                    {
+                                        string message = _serialPort[pedalIdx].ReadLine();
+                                    }
+                                }
+                                catch (TimeoutException) { }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //TextBox_debugOutput.Text = ex.Message;
+                                //ConnectToPedal.IsChecked = false;
+                            }
+
+                        }
+                        else
+                        {
+                            _serialPort[pedalIdx].Close();
+                            //ConnectToPedal.IsChecked = false;
+                            //TextBox_debugOutput.Text = "Serialport already open, close it";
+                        }
+                    }
+                }
+                else
+                {
+                    Settings.connect_status[pedalIdx] = 0;
+                }
 
             }
+
+
+
+
 
             //// check if Json config files are present, otherwise create new ones
             //for (uint jsonIndex = 0; jsonIndex < ComboBox_JsonFileSelected.Items.Count; jsonIndex++)
@@ -473,8 +711,8 @@ namespace User.PluginSdkDemo
 
 
 
-            dap_config_initial_st.payloadHeader_.payloadType = 100;
-            dap_config_initial_st.payloadHeader_.version = 110;
+            dap_config_initial_st.payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+            dap_config_initial_st.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
             dap_config_initial_st.payloadHeader_.storeToEeprom = 0;
             dap_config_initial_st.payloadPedalConfig_.pedalStartPosition = 35;
             dap_config_initial_st.payloadPedalConfig_.pedalEndPosition = 80;
@@ -494,6 +732,10 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;
             dap_config_initial_st.payloadPedalConfig_.lengthPedal_CB = 200;
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_trigger = 0;
+            dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_value = 50;
+            dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;
+            dap_config_initial_st.payloadPedalConfig_.RPM_min_freq = 10;
+            dap_config_initial_st.payloadPedalConfig_.RPM_AMP = 5;
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
@@ -518,6 +760,8 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 0;
 
             dap_config_initial_st.payloadPedalConfig_.loadcell_rating = 150;
+
+            dap_config_initial_st.payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
 
         }
