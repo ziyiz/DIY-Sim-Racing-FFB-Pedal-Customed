@@ -143,7 +143,7 @@ The SimHub plugin was designed to communicate with the ESP to (a) modify the ped
 
 ![image](SimHubPlugin/Images/Plugin-UI.png)
 
-To install the plugin, the plugin [binaries](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases), hidden inside the SimHub_plugin.zip, have to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
+To install the plugin, the plugin [dll](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases) has to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
 
 # Steps after flashing the firmware
 The pedal will not move initially after flashing. One has to open the SimHub plugin, connect to the pedal, and send a config with non-zero PID values.
@@ -178,16 +178,16 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
-- [ ] Add field to select joystick output to be conputed from force or travel
+- [ ] Add field to invert motor and losdcell direction
+- [ ] send joystick data to simhub plugin and provide data as vJoy gamecontroller
 
 
 SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
 - [ ] GUI design improvements for the SimHub plugin 
 - [ ] JSON deserialization make compatible with older revisions
-- [ ] JSON deserialization add nicer formating
-- [ ] add button to reset the ESP https://stackoverflow.com/questions/51084038/c-sharp-dtrenable-and-rtsenable-in-the-serialport
 - [ ] include the types header file and use it
+- [ ] Make use of effects from the ShakeIt plugin
 
 Misc:
 - [ ] Create a video describing the build progress and the features
