@@ -258,7 +258,8 @@ namespace User.PluginSdkDemo
 			
 			bool sendAbsSignal_local_b = false;
             bool sendTcSignal_local_b = false;
-            Byte RPM_value =0;
+            double RPM_value =0;
+            double RPM_MAX = 0;
 
 
             // Send ABS signal when triggered by the game
@@ -275,8 +276,15 @@ namespace User.PluginSdkDemo
                     {
                         sendTcSignal_local_b = true;
                     }
-
-                    RPM_value = (Byte)(data.NewData.Rpms / 1000);
+                    if (data.NewData.CarSettings_MaxRPM == 0)
+                    {
+                        RPM_MAX = 10000;
+                    }
+                    else
+                    {
+                        RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                    }
+                    RPM_value = (data.NewData.Rpms / RPM_MAX*100);
                     game_running_index = 1;
 
                 }
@@ -309,6 +317,7 @@ namespace User.PluginSdkDemo
 
 
 
+            bool update_flag = false;
 
             if (data.GameRunning)
             {
@@ -320,35 +329,27 @@ namespace User.PluginSdkDemo
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                    tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
-                    if (RPM_value != rpm_last_value)
+                    tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                    if ((RPM_value - rpm_last_value>10) || (RPM_value-rpm_last_value<-10))
                     {
-                        tmp.payloadPedalAction_.RPM_u8 = RPM_value;
-                        DAP_action_st* v = &tmp;
-                        byte* p = (byte*)v;
-                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
-                        int length = sizeof(DAP_action_st);
-                        byte[] newBuffer = new byte[length];
-                        newBuffer = getBytes_Action(tmp);
-
-
-                        // clear inbuffer 
-                        _serialPort[1].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
-
-                        rpm_last_value = RPM_value;
-
+                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                        update_flag = true;
+                        rpm_last_value = (Byte)RPM_value;
                     }
+
+
                     if (sendAbsSignal_local_b)
                     {
                         //_serialPort[1].Write("2");
 
                         // compute checksum
                         tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        update_flag = true;
+
+                    }
+
+                    if (update_flag)
+                    {
                         DAP_action_st* v = &tmp;
                         byte* p = (byte*)v;
                         tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -365,11 +366,14 @@ namespace User.PluginSdkDemo
                         // send query command
                         _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
 
+                        
                     }
 
 
-                }
 
+
+                }
+                
                 // Send TC trigger signal via serial
                 if (_serialPort[2].IsOpen)
                 {
@@ -379,32 +383,23 @@ namespace User.PluginSdkDemo
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                     tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
-                    if (RPM_value != rpm_last_value)
+
+                    if ((RPM_value - rpm_last_value > 10) || (RPM_value - rpm_last_value < -10))
                     {
-                        tmp.payloadPedalAction_.RPM_u8 = RPM_value;
-                        DAP_action_st* v = &tmp;
-                        byte* p = (byte*)v;
-                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
-                        int length = sizeof(DAP_action_st);
-                        byte[] newBuffer = new byte[length];
-                        newBuffer = getBytes_Action(tmp);
-
-
-                        // clear inbuffer 
-                        _serialPort[2].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
-                        rpm_last_value = RPM_value;
-
+                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                        update_flag = true;
+                        rpm_last_value = (Byte)RPM_value;
                     }
                     if (sendTcSignal_local_b)
                     {
                         // compute checksum
 
                         tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        update_flag = true;
+
+                    }
+                    if (update_flag)
+                    {
                         DAP_action_st* v = &tmp;
                         byte* p = (byte*)v;
                         tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -420,9 +415,9 @@ namespace User.PluginSdkDemo
 
                         // send query command
                         _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
-                        rpm_last_value = RPM_value;
-
+                        rpm_last_value = (Byte)RPM_value;
                     }
+
 
 
                 }
