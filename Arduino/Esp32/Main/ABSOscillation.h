@@ -88,11 +88,8 @@ public:
       RPM_min_freq=0;
 
     }
-    else
-    {
-      RPM_min_freq=15;
-    }
-    float RPM_freq=constrain(RPM_value/RPM_max*(RPM_max_freq-RPM_min_freq)*2*PI,RPM_min_freq*2*PI,RPM_max_freq*2*PI);
+
+    float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100, RPM_min_freq, RPM_max_freq);
     
 
 
@@ -107,7 +104,7 @@ public:
       float RPMTimeSeconds = _RPMTimeMillis / 1000.0f;
 
       //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
-      RPMForceOffset = RPM_amp * sin( RPM_freq* RPMTimeSeconds);
+      RPMForceOffset = RPM_amp * sin( 2*PI* RPM_freq* RPMTimeSeconds);
     }
 
     _lastCallTimeMillis = timeNowMillis;
