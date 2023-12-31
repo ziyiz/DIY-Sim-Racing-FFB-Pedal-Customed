@@ -18,7 +18,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 111;
+    public const uint pedalConfigPayload_version = 112;
 
 
     // pyload types
@@ -46,6 +46,7 @@ public struct payloadPedalAction
     public byte resetPedalPos_u8;
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
+    public byte RPM_u8;
 };
 
 public struct payloadPedalConfig
@@ -86,6 +87,9 @@ public struct payloadPedalConfig
     public byte lengthPedal_CB;
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value
+    public byte RPM_max_freq;
+    public byte RPM_min_freq;
+    public byte RPM_AMP;
 
     // cubic spline params
     public float cubic_spline_param_a_0;
@@ -159,6 +163,8 @@ namespace User.PluginSdkDemo
 
         public bool sendAbsSignal = false;
 		public DAP_config_st dap_config_initial_st;
+        public byte rpm_last_value = 0 ;
+        public byte game_running_index = 0 ;
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
@@ -252,7 +258,8 @@ namespace User.PluginSdkDemo
 			
 			bool sendAbsSignal_local_b = false;
             bool sendTcSignal_local_b = false;
-            
+            Byte RPM_value =0;
+
 
             // Send ABS signal when triggered by the game
             if (data.GameRunning)
@@ -261,7 +268,7 @@ namespace User.PluginSdkDemo
                 {
                     if (data.NewData.ABSActive > 0)
                     {
-						sendAbsSignal_local_b = true;
+                        sendAbsSignal_local_b = true;
                     }
 
                     if (data.NewData.TCActive > 0)
@@ -269,15 +276,22 @@ namespace User.PluginSdkDemo
                         sendTcSignal_local_b = true;
                     }
 
+                    RPM_value = (Byte)(data.NewData.Rpms / 1000);
+                    game_running_index = 1;
+
+                }
+                else
+                {
+                    RPM_value = 0;                
                 }
             }
-			
-			// Send ABS test signal if requested
-            if (sendAbsSignal)
+            else
             {
-                sendAbsSignal_local_b = true;
-                sendTcSignal_local_b = true;
+                RPM_value = 0;
             }
+			
+
+
 
 
             absTrigger_currentTime = DateTime.Now;
@@ -295,73 +309,192 @@ namespace User.PluginSdkDemo
 
 
 
-            
 
-            // Send ABS trigger signal via serial
-            if (sendAbsSignal_local_b)
-			{
-				if (_serialPort[1].IsOpen)
+            if (data.GameRunning)
+            {
+                // Send ABS trigger signal via serial
+                if (_serialPort[1].IsOpen)
                 {
-                    //_serialPort[1].Write("2");
 
-                    // compute checksum
                     DAP_action_st tmp;
-
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
+                    if (RPM_value != rpm_last_value)
+                    {
+                        tmp.payloadPedalAction_.RPM_u8 = RPM_value;
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
 
-                    DAP_action_st* v = &tmp;
-                    byte* p = (byte*)v;
-                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
 
 
-                    int length = sizeof(DAP_action_st);
-                    byte[] newBuffer = new byte[length];
-                    newBuffer = getBytes_Action(tmp);
+                        // clear inbuffer 
+                        _serialPort[1].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+
+                        rpm_last_value = RPM_value;
+
+                    }
+                    if (sendAbsSignal_local_b)
+                    {
+                        //_serialPort[1].Write("2");
+
+                        // compute checksum
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
 
-                    // clear inbuffer 
-                    _serialPort[1].DiscardInBuffer();
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
 
-                    // send query command
-                    _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+
+                        // clear inbuffer 
+                        _serialPort[1].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+
+                    }
+
 
                 }
-			}
 
-            // Send TC trigger signal via serial
-            if (sendTcSignal_local_b)
-            {
+                // Send TC trigger signal via serial
                 if (_serialPort[2].IsOpen)
                 {
-                    // compute checksum
                     DAP_action_st tmp;
 
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
+                    if (RPM_value != rpm_last_value)
+                    {
+                        tmp.payloadPedalAction_.RPM_u8 = RPM_value;
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
 
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
+
+
+                        // clear inbuffer 
+                        _serialPort[2].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                        rpm_last_value = RPM_value;
+
+                    }
+                    if (sendTcSignal_local_b)
+                    {
+                        // compute checksum
+
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+
+
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = getBytes_Action(tmp);
+
+
+                        // clear inbuffer 
+                        _serialPort[2].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                        rpm_last_value = RPM_value;
+
+                    }
+
+
+                }
+
+            }
+            else
+            {
+                if (game_running_index == 1)
+                {
+                    DAP_action_st tmp;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
+                    if (_serialPort[2].IsOpen)
+                    {
+                        // clear inbuffer 
+                        _serialPort[2].DiscardInBuffer();
 
+                        // send query command
+                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    if (_serialPort[1].IsOpen)
+                    {
+                        // clear inbuffer 
+                        _serialPort[1].DiscardInBuffer();
 
+                        // send query command
+                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    game_running_index = 0;
+                }
+            }
+            // Send ABS test signal if requested
+            if (sendAbsSignal)
+            {
+                sendAbsSignal_local_b = true;
+                sendTcSignal_local_b = true;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                DAP_action_st* v = &tmp;
+                byte* p = (byte*)v;
+                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                int length = sizeof(DAP_action_st);
+                byte[] newBuffer = new byte[length];
+                newBuffer = getBytes_Action(tmp);
+                if (_serialPort[2].IsOpen)
+                {
                     // clear inbuffer 
                     _serialPort[2].DiscardInBuffer();
 
                     // send query command
                     _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
                 }
-            }
+                if (_serialPort[1].IsOpen)
+                {
+                    // clear inbuffer 
+                    _serialPort[1].DiscardInBuffer();
 
+                    // send query command
+                    _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                }
+            }
 
         }
 		
@@ -603,6 +736,10 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;
             dap_config_initial_st.payloadPedalConfig_.lengthPedal_CB = 200;
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_trigger = 0;
+            dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_value = 50;
+            dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;
+            dap_config_initial_st.payloadPedalConfig_.RPM_min_freq = 10;
+            dap_config_initial_st.payloadPedalConfig_.RPM_AMP = 5;
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;

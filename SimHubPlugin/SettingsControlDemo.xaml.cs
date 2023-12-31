@@ -29,6 +29,7 @@ using SimHub.Plugins.OutputPlugins.GraphicalDash.PSE;
 using SimHub.Plugins.Styles;
 using System.Windows.Media;
 using System.Runtime.Remoting.Messaging;
+using SimHub.Plugins.OutputPlugins.GraphicalDash.Behaviors.DoubleText.Imp;
 
 
 namespace User.PluginSdkDemo
@@ -257,6 +258,9 @@ namespace User.PluginSdkDemo
                 dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
                 dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger= 0;
                 dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value= 80;
+                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
+                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
+                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30; ;
                 dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
                 dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
@@ -336,6 +340,15 @@ namespace User.PluginSdkDemo
                 Line_H_LC_rating.Stroke = btn_update.Background;
                 text_LC_rating.Foreground = btn_update.Background;
                 rect_LC_rating.Fill = btn_update.Background;
+
+                text_RPM_freq_min.Foreground = btn_update.Background;
+                text_RPM_freq_max.Foreground = btn_update.Background;
+                text_RPM_AMP.Foreground = btn_update.Background;
+                Line_H_RPM_AMP.Stroke = btn_update.Background;
+                rect_RPM_AMP.Fill = btn_update.Background;
+                Line_H_RPM_freq.Stroke = btn_update.Background;
+                rect_RPM_max.Fill = btn_update.Background;
+                rect_RPM_min.Fill = btn_update.Background;
 
                 // Call this method to generate gridlines on the Canvas
                 DrawGridLines();
@@ -660,6 +673,20 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect7, rect7.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition);
             Canvas.SetLeft(text_max_pos, rect6.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition - text_max_pos.Width / 2);
             Canvas.SetTop(text_max_pos, canvas_horz_slider.Height - 10);
+
+            //set for RPM freq slider;
+            dx = (canvas_horz_RPM_freq.Width - 10) / 200;
+            Canvas.SetTop(rect_RPM_min, 15);
+            
+            Canvas.SetLeft(rect_RPM_min, rect_RPM_min.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq);
+            Canvas.SetLeft(text_RPM_freq_min, rect_RPM_min.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq - text_RPM_freq_min.Width / 2);
+            Canvas.SetTop(text_RPM_freq_min, canvas_horz_RPM_freq.Height - 10);
+            text_RPM_freq_min.Text = "RPM freq\nmin: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+            text_RPM_freq_max.Text = "RPM freq\nmax: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
+            Canvas.SetTop(rect_RPM_max, 15);
+            Canvas.SetLeft(rect_RPM_max, rect_RPM_max.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq);
+            Canvas.SetLeft(text_RPM_freq_max, rect_RPM_max.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq - text_RPM_freq_max.Width / 2);
+            Canvas.SetTop(text_RPM_freq_max, canvas_horz_RPM_freq.Height - 10);
             //set for force vertical slider
             double dy = (canvas_vert_slider.Height/250);
             Canvas.SetTop(rect8,canvas_vert_slider.Height-dy* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
@@ -716,7 +743,14 @@ namespace User.PluginSdkDemo
             text_LC_rating.Text = "LC Rating: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2+"Kg";
             Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) - text_LC_rating.Width / 2 + rect_LC_rating.Width/2);
             Canvas.SetTop(text_LC_rating, canvas_horz_LC_rating.Height - 10);
+            //RPM AMP slider
 
+            double RPM_AMP_max = 200;
+            dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
+            Canvas.SetLeft(rect_RPM_AMP, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP);
+            text_RPM_AMP.Text = "RPM AMP: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP/100 + "Kg";
+            Canvas.SetLeft(text_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
+            Canvas.SetTop(text_RPM_AMP, canvas_horz_RPM_AMP.Height - 10);
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
             try
@@ -1928,6 +1962,47 @@ namespace User.PluginSdkDemo
 
             }
         }
+        private void Rectangle_MouseMove_H_RPM(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                var rectangle = sender as Rectangle;
+                double x = e.GetPosition(canvas_horz_RPM_freq).X - offset.X;
+                //double y = e.GetPosition(canvas).Y - offset.Y;
+
+                // Ensure the rectangle stays within the canvas
+
+                double min_posiiton = Canvas.GetLeft(rect_RPM_min) + rectangle.ActualWidth / 2;
+                double max_position = Canvas.GetLeft(rect_RPM_max) - rectangle.ActualWidth / 2;
+                double dx = 50 / (canvas_horz_slider.Width - 10);
+                if (rectangle.Name == "rect_RPM_min")
+                {
+                    x = Math.Max(-1 * rectangle.ActualWidth / 2, Math.Min(x, max_position));
+                    double actual_x = (x - 5) * dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = Convert.ToByte(actual_x);
+                    //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+                    Canvas.SetLeft(text_RPM_freq_min, x - text_min_pos.Width / 2);
+                    Canvas.SetTop(text_RPM_freq_min, canvas_horz_RPM_freq.Height - 10);
+                }
+                if (rectangle.Name == "rect_RPM_max")
+                {
+                    x = Math.Max(min_posiiton, Math.Min(x, canvas_horz_slider.ActualWidth - rectangle.ActualWidth));
+                    double actual_x = (x - 5) * dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = Convert.ToByte(actual_x);
+
+                    //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
+                    Canvas.SetLeft(text_RPM_freq_max, x - text_max_pos.Width / 2);
+                    Canvas.SetTop(text_RPM_freq_max, canvas_horz_RPM_freq.Height - 10);
+                }
+                text_RPM_freq_min.Text = "RPM Min\nfreq: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+                text_RPM_freq_max.Text = "RPM Max\nfreq: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
+
+                //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
+
+                Canvas.SetLeft(rectangle, x);
+
+            }
+        }
         private void Rectangle_MouseMove_V(object sender, MouseEventArgs e)
         {
             if (isDragging)
@@ -2126,6 +2201,24 @@ namespace User.PluginSdkDemo
 
                     text_LC_rating.Text = "LC Rating: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "Kg";
                     Canvas.SetLeft(text_LC_rating, x - text_LC_rating.Width / 2+rect_LC_rating.Width/2);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                // RPM effect AMP
+                if (rectangle.Name == "rect_RPM_AMP")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_RPM_AMP).X - offset.X;
+                    double RPM_AMP_max = 200;
+                    double dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
+                    double min_position = 0 * dx;
+                    double max_position = RPM_AMP_max * dx;
+
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(actual_x);
+
+                    text_RPM_AMP.Text = "RPM AMP: " + ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100 + "Kg";
+                    Canvas.SetLeft(text_RPM_AMP, x - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
                     Canvas.SetLeft(rectangle, x);
                 }
 
