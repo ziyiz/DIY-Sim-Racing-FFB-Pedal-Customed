@@ -432,6 +432,7 @@ namespace User.PluginSdkDemo
             {
                 if (game_running_index == 1)
                 {
+                    game_running_index = 0;
                     DAP_action_st tmp;
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
@@ -459,7 +460,7 @@ namespace User.PluginSdkDemo
                         // send query command
                         _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                     }
-                    game_running_index = 0;
+                    
                 }
             }
             // Send ABS test signal if requested

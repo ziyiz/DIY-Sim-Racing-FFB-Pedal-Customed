@@ -675,7 +675,7 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(text_max_pos, canvas_horz_slider.Height - 10);
 
             //set for RPM freq slider;
-            dx = (canvas_horz_RPM_freq.Width - 10) / 200;
+            dx = (canvas_horz_RPM_freq.Width - 10) / 50;
             Canvas.SetTop(rect_RPM_min, 15);
             
             Canvas.SetLeft(rect_RPM_min, rect_RPM_min.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq);
@@ -1981,7 +1981,7 @@ namespace User.PluginSdkDemo
                     double actual_x = (x - 5) * dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = Convert.ToByte(actual_x);
                     //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(text_RPM_freq_min, x - text_min_pos.Width / 2);
+                    Canvas.SetLeft(text_RPM_freq_min, x - text_RPM_freq_min.Width / 2);
                     Canvas.SetTop(text_RPM_freq_min, canvas_horz_RPM_freq.Height - 10);
                 }
                 if (rectangle.Name == "rect_RPM_max")
@@ -1991,7 +1991,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = Convert.ToByte(actual_x);
 
                     //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(text_RPM_freq_max, x - text_max_pos.Width / 2);
+                    Canvas.SetLeft(text_RPM_freq_max, x - text_RPM_freq_max.Width / 2);
                     Canvas.SetTop(text_RPM_freq_max, canvas_horz_RPM_freq.Height - 10);
                 }
                 text_RPM_freq_min.Text = "RPM Min\nfreq: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
