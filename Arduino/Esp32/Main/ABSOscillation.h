@@ -4,6 +4,8 @@
 
 
 static const long ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static const long RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static int RPM_VALUE_LAST = 0;
 
 class ABSOscillation {
 private:
@@ -43,6 +45,74 @@ public:
     _lastCallTimeMillis = timeNowMillis;
 
     return absForceOffset;
+    
+
+  }
+};
+
+class RPMOscillation {
+private:
+  long _timeLastTriggerMillis;
+  long _RPMTimeMillis;
+  long _lastCallTimeMillis = 0;
+  
+
+public:
+  RPMOscillation()
+    : _timeLastTriggerMillis(0)
+  {}
+  float RPM_value =0;
+  float RPM_debug =0;
+  float RPM_debug_MAX_freq =0;
+  float RPM_debug_MIN_freq =0;
+public:
+  void trigger() {
+    _timeLastTriggerMillis = millis();
+  }
+  
+  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
+
+
+    long timeNowMillis = millis();
+    float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
+    float RPMForceOffset = 0;
+    float RPM_max_freq = calcVars_st->RPM_max_freq;
+    float RPM_min_freq = calcVars_st->RPM_min_freq;
+    float RPM_max =10;
+    float RPM_amp = calcVars_st->RPM_AMP;
+    RPM_debug=RPM_amp;
+    RPM_debug_MAX_freq=RPM_max_freq;
+    RPM_debug_MIN_freq=RPM_min_freq;
+    if(RPM_value==0)
+    {
+      RPM_min_freq=0;
+
+    }
+    else
+    {
+      RPM_min_freq=15;
+    }
+    float RPM_freq=constrain(RPM_value/RPM_max*(RPM_max_freq-RPM_min_freq)*2*PI,RPM_min_freq*2*PI,RPM_max_freq*2*PI);
+    
+
+
+    if (timeSinceTrigger > RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS)
+    {
+      _RPMTimeMillis = 0;
+      RPMForceOffset = RPM_VALUE_LAST;
+    }
+    else
+    {
+      _RPMTimeMillis += timeNowMillis - _lastCallTimeMillis;
+      float RPMTimeSeconds = _RPMTimeMillis / 1000.0f;
+
+      //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
+      RPMForceOffset = RPM_amp * sin( RPM_freq* RPMTimeSeconds);
+    }
+
+    _lastCallTimeMillis = timeNowMillis;
+    RPM_VALUE_LAST=RPMForceOffset;
+    return RPMForceOffset;
     
 
   }

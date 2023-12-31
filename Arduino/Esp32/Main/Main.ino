@@ -50,6 +50,7 @@ bool splineDebug_b = false;
 
 #include "ABSOscillation.h"
 ABSOscillation absOscillation;
+RPMOscillation RPMOscillation;
 #define ABS_OSCILLATION
 
 
@@ -211,6 +212,9 @@ void setup()
   // init controller
   SetupController();
   delay(2000);
+  #ifdef Using_analog_output
+    delay(8000);
+  #endif
 
 
 
@@ -536,10 +540,19 @@ void pedalUpdateTask( void * pvParameters )
 
       // compute pedal oscillation, when ABS is active
     float absForceOffset_fl32 = 0.0f;
+    float RPMForceOffset_fl32 = 0.0f;
+    float total_effect_force = 0.0f;
     #ifdef ABS_OSCILLATION
       absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st);
+      RPMOscillation.trigger();
+      RPMForceOffset_fl32 = RPMOscillation.forceOffset(&dap_calculationVariables_st);
+      //total_effect_force = absForceOffset_fl32+RPMForceOffset_fl32;
+      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_AMP);
+      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_max_freq);
+      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_min_freq);
+      //Dap_action_st.
     #endif
-
+    //dap_calculationVariables_st.Force_Max+=total_effect_force;
 
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
@@ -610,7 +623,8 @@ void pedalUpdateTask( void * pvParameters )
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32);
+    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32, RPMForceOffset_fl32);
+    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, total_effect_force);
 
 
     //#define DEBUG_STEPPER_POS
@@ -872,7 +886,9 @@ void serialCommunicationTask( void * pvParameters )
             {
               absOscillation.trigger();
             }
-
+            //RPM effect
+            RPMOscillation.RPM_value=dap_actions_st.payloadPedalAction_.RPM_u8;
+            
             // trigger system identification
             if (dap_actions_st.payloadPedalAction_.startSystemIdentification_u8)
             {
