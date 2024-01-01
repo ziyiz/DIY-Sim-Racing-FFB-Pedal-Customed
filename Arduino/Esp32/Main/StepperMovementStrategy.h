@@ -66,7 +66,7 @@ void tunePidValues(DAP_config_st& config_st)
   myPID.SetTunings(config_st.payLoadPedalConfig_.PID_p_gain, config_st.payLoadPedalConfig_.PID_i_gain, config_st.payLoadPedalConfig_.PID_d_gain);
 }
 
-int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float RPM_offest) {
+int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32) {
 
   if (pidWasInitialized == false)
   {
@@ -118,7 +118,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
   loadCellTargetKg -=absForceOffset_fl32;
-  float step_RPM = RPM_offest/calc_st->Force_Range * (calc_st->stepperPosMax - calc_st->stepperPosMin);
+  //float step_RPM = RPM_offest/calc_st->Force_Range * (calc_st->stepperPosMax - calc_st->stepperPosMin);
   
   // ToDO
   // - Min and Max force need to be identified from forceCurve->forceAtPosition() as they migh differ from calc_st.Force_Min & calc_st.Force_Max
@@ -148,9 +148,9 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   float posStepperNew_fl32 = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
   posStepperNew_fl32 += calc_st->stepperPosMin;
-  //int32_t posStepperNew = floor(posStepperNew_fl32);
-  int32_t posStepperNew = floor(posStepperNew_fl32+step_RPM);
-  posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax+step_RPM );
+  int32_t posStepperNew = floor(posStepperNew_fl32);
+  //int32_t posStepperNew = floor(posStepperNew_fl32+step_RPM);
+  posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
 
   //#define PLOT_PID_VALUES
   #ifdef PLOT_PID_VALUES

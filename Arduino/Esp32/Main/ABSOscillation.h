@@ -65,6 +65,7 @@ public:
   float RPM_debug =0;
   float RPM_debug_MAX_freq =0;
   float RPM_debug_MIN_freq =0;
+  int32_t RPM_position_offset = 0;
 public:
   void trigger() {
     _timeLastTriggerMillis = millis();
@@ -86,8 +87,8 @@ public:
     if(RPM_value==0)
     {
       RPM_min_freq=0;
-
     }
+
 
     float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100, RPM_min_freq, RPM_max_freq);
     
@@ -109,6 +110,7 @@ public:
 
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
+    RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
     return RPMForceOffset;
     
 
