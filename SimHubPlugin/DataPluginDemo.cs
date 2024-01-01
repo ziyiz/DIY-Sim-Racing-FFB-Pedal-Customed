@@ -520,6 +520,8 @@ namespace User.PluginSdkDemo
             {
                 if (_serialPort[pedalIdx].IsOpen)
                 {
+                    _serialPort[pedalIdx].DiscardInBuffer();
+                    _serialPort[pedalIdx].DiscardOutBuffer();
                     _serialPort[pedalIdx].Close();
                 }
                 /*
