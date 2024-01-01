@@ -544,7 +544,7 @@ void pedalUpdateTask( void * pvParameters )
     #ifdef ABS_OSCILLATION
       absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st);
       RPMOscillation.trigger();
-
+      RPMOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
 
     // compute the pedal incline angle 

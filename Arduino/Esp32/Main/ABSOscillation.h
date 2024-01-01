@@ -91,7 +91,7 @@ public:
     if (timeSinceTrigger > RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS)
     {
       _RPMTimeMillis = 0;
-      //RPMForceOffset = RPM_VALUE_LAST;
+      RPMForceOffset = RPM_VALUE_LAST;
     }
     else
     {
@@ -103,7 +103,7 @@ public:
     }
 
     _lastCallTimeMillis = timeNowMillis;
-    //RPM_VALUE_LAST=RPMForceOffset;
+    RPM_VALUE_LAST=RPMForceOffset;
     RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
     //return RPMForceOffset;
     
