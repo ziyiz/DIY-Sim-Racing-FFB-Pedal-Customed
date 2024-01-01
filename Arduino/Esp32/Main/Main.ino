@@ -540,19 +540,12 @@ void pedalUpdateTask( void * pvParameters )
 
       // compute pedal oscillation, when ABS is active
     float absForceOffset_fl32 = 0.0f;
-    float RPMForceOffset_fl32 = 0.0f;
-    float total_effect_force = 0.0f;
+
     #ifdef ABS_OSCILLATION
       absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st);
       RPMOscillation.trigger();
-      RPMForceOffset_fl32 = RPMOscillation.forceOffset(&dap_calculationVariables_st);
-      //total_effect_force = absForceOffset_fl32+RPMForceOffset_fl32;
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_AMP);
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_max_freq);
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_min_freq);
-      //Dap_action_st.
+
     #endif
-    //dap_calculationVariables_st.Force_Max+=total_effect_force;
 
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
@@ -624,7 +617,7 @@ void pedalUpdateTask( void * pvParameters )
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
     int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32);
-    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, total_effect_force);
+    
 
 
     //#define DEBUG_STEPPER_POS
@@ -650,8 +643,9 @@ void pedalUpdateTask( void * pvParameters )
     
 
   
-    // clip target position to configured target interval
+    //Adding RPM effect
     Position_Next +=RPMOscillation.RPM_position_offset;
+    // clip target position to configured target interval with RPM effect movement in the endstop
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax+RPMOscillation.RPM_position_offset);
 
     // if pedal in min position, recalibrate position 

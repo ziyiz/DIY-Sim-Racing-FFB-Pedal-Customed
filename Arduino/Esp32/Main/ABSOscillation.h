@@ -62,16 +62,13 @@ public:
     : _timeLastTriggerMillis(0)
   {}
   float RPM_value =0;
-  float RPM_debug =0;
-  float RPM_debug_MAX_freq =0;
-  float RPM_debug_MIN_freq =0;
   int32_t RPM_position_offset = 0;
 public:
   void trigger() {
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
+  void forceOffset(DAP_calculationVariables_st* calcVars_st) {
 
 
     long timeNowMillis = millis();
@@ -79,11 +76,8 @@ public:
     float RPMForceOffset = 0;
     float RPM_max_freq = calcVars_st->RPM_max_freq;
     float RPM_min_freq = calcVars_st->RPM_min_freq;
-    float RPM_max =10;
+    //float RPM_max =10;
     float RPM_amp = calcVars_st->RPM_AMP;
-    RPM_debug=RPM_amp;
-    RPM_debug_MAX_freq=RPM_max_freq;
-    RPM_debug_MIN_freq=RPM_min_freq;
     if(RPM_value==0)
     {
       RPM_min_freq=0;
@@ -97,7 +91,7 @@ public:
     if (timeSinceTrigger > RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS)
     {
       _RPMTimeMillis = 0;
-      RPMForceOffset = RPM_VALUE_LAST;
+      //RPMForceOffset = RPM_VALUE_LAST;
     }
     else
     {
@@ -109,9 +103,9 @@ public:
     }
 
     _lastCallTimeMillis = timeNowMillis;
-    RPM_VALUE_LAST=RPMForceOffset;
+    //RPM_VALUE_LAST=RPMForceOffset;
     RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
-    return RPMForceOffset;
+    //return RPMForceOffset;
     
 
   }
