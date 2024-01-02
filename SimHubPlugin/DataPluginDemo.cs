@@ -322,58 +322,70 @@ namespace User.PluginSdkDemo
             if (data.GameRunning)
             {
                 // Send ABS trigger signal via serial
-                if (_serialPort[1].IsOpen)
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-
-                    DAP_action_st tmp;
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                    tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
-                    if ((RPM_value - rpm_last_value>10) || (RPM_value-rpm_last_value<-10))
+                    if (_serialPort[pedalIdx].IsOpen)
                     {
-                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
-                        update_flag = true;
-                        rpm_last_value = (Byte)RPM_value;
+
+                        DAP_action_st tmp;
+                        tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                        tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                        tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                        if (((RPM_value - rpm_last_value > 10) || (RPM_value - rpm_last_value < -10)) && Settings.RPM_enable_flag[pedalIdx] == 1)
+                        {
+                            tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                            update_flag = true;
+                            rpm_last_value = (Byte)RPM_value;
+                        }
+
+                        if (pedalIdx == 1)
+                        {
+                            if (sendAbsSignal_local_b && Settings.ABS_enable_flag[pedalIdx] ==1)
+                            {
+                                //_serialPort[1].Write("2");
+
+                                // compute checksum
+                                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                                update_flag = true;
+
+                            }
+                        }
+                        if (pedalIdx == 2)
+                        {
+                            if (sendTcSignal_local_b && Settings.ABS_enable_flag[pedalIdx] == 1)
+                            {
+                                // compute checksum
+
+                                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                                update_flag = true;
+
+                            }
+                        }
+
+                        if (update_flag)
+                        {
+                            DAP_action_st* v = &tmp;
+                            byte* p = (byte*)v;
+                            tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+
+
+                            int length = sizeof(DAP_action_st);
+                            byte[] newBuffer = new byte[length];
+                            newBuffer = getBytes_Action(tmp);
+
+
+                            // clear inbuffer 
+                            _serialPort[pedalIdx].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+
+
+                        }
                     }
-
-
-                    if (sendAbsSignal_local_b)
-                    {
-                        //_serialPort[1].Write("2");
-
-                        // compute checksum
-                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
-                        update_flag = true;
-
-                    }
-
-                    if (update_flag)
-                    {
-                        DAP_action_st* v = &tmp;
-                        byte* p = (byte*)v;
-                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
-                        int length = sizeof(DAP_action_st);
-                        byte[] newBuffer = new byte[length];
-                        newBuffer = getBytes_Action(tmp);
-
-
-                        // clear inbuffer 
-                        _serialPort[1].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
-
-                        
-                    }
-
-
-
-
                 }
-                
+                /*
                 // Send TC trigger signal via serial
                 if (_serialPort[2].IsOpen)
                 {
@@ -421,6 +433,7 @@ namespace User.PluginSdkDemo
 
 
                 }
+                */
 
             }
             else
@@ -439,21 +452,16 @@ namespace User.PluginSdkDemo
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
-                    if (_serialPort[2].IsOpen)
+                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                     {
-                        // clear inbuffer 
-                        _serialPort[2].DiscardInBuffer();
+                        if (_serialPort[pedalIdx].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[pedalIdx].DiscardInBuffer();
 
-                        // send query command
-                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
-                    }
-                    if (_serialPort[1].IsOpen)
-                    {
-                        // clear inbuffer 
-                        _serialPort[1].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                            // send query command
+                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                        }
                     }
                     
                 }
@@ -524,23 +532,6 @@ namespace User.PluginSdkDemo
                     _serialPort[pedalIdx].DiscardOutBuffer();
                     _serialPort[pedalIdx].Close();
                 }
-                /*
-                _serialPort[pedalIdx].Handshake = Handshake.None;
-                _serialPort[pedalIdx].Parity = Parity.None;
-                //_serialPort[pedalIdx].StopBits = StopBits.None;
-
-
-                _serialPort[pedalIdx].ReadTimeout = 2000;
-                _serialPort[pedalIdx].WriteTimeout = 500;
-
-                try
-                {
-                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
-                }
-                catch (Exception caughtEx)
-                {
-                }
-                */
 
 
             }
@@ -631,50 +622,55 @@ namespace User.PluginSdkDemo
                 catch (Exception caughtEx)
                 {
                 }
+
                 //try connect back to com port
-                if (Settings.connect_status[pedalIdx] == 1)
+                if (Settings.auto_connect_flag == 1)
                 {
-                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
-                    //SerialPort.GetPortNames
-                    if (PortExists(_serialPort[pedalIdx].PortName))
+
+                    if (Settings.connect_status[pedalIdx] == 1)
                     {
-                        if (_serialPort[pedalIdx].IsOpen == false)
+                        _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                        //SerialPort.GetPortNames
+                        if (PortExists(_serialPort[pedalIdx].PortName))
                         {
-                            try
+                            if (_serialPort[pedalIdx].IsOpen == false)
                             {
-                                _serialPort[pedalIdx].Open();
-
-                                //TextBox_debugOutput.Text = "Serialport open";
-                                //ConnectToPedal.IsChecked = true;
-
                                 try
                                 {
-                                    while (_serialPort[pedalIdx].BytesToRead > 0)
+                                    _serialPort[pedalIdx].Open();
+
+                                    //TextBox_debugOutput.Text = "Serialport open";
+                                    //ConnectToPedal.IsChecked = true;
+
+                                    try
                                     {
-                                        string message = _serialPort[pedalIdx].ReadLine();
+                                        while (_serialPort[pedalIdx].BytesToRead > 0)
+                                        {
+                                            string message = _serialPort[pedalIdx].ReadLine();
+                                        }
                                     }
+                                    catch (TimeoutException) { }
+
                                 }
-                                catch (TimeoutException) { }
+                                catch (Exception ex)
+                                {
+                                    //TextBox_debugOutput.Text = ex.Message;
+                                    //ConnectToPedal.IsChecked = false;
+                                }
 
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                //TextBox_debugOutput.Text = ex.Message;
+                                _serialPort[pedalIdx].Close();
                                 //ConnectToPedal.IsChecked = false;
+                                //TextBox_debugOutput.Text = "Serialport already open, close it";
                             }
-
-                        }
-                        else
-                        {
-                            _serialPort[pedalIdx].Close();
-                            //ConnectToPedal.IsChecked = false;
-                            //TextBox_debugOutput.Text = "Serialport already open, close it";
                         }
                     }
-                }
-                else
-                {
-                    Settings.connect_status[pedalIdx] = 0;
+                    else
+                    {
+                        Settings.connect_status[pedalIdx] = 0;
+                    }
                 }
 
             }

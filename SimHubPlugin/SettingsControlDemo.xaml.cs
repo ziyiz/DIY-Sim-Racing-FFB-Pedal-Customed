@@ -279,7 +279,7 @@ namespace User.PluginSdkDemo
                 dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
                 dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
 
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 0;
+                dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 0;
 
                 dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
 
@@ -576,6 +576,7 @@ namespace User.PluginSdkDemo
             if (plugin.Settings.reading_config == 1)
             {
                 checkbox_pedal_read.IsChecked = true;
+                
             }
             else
             {
@@ -583,6 +584,15 @@ namespace User.PluginSdkDemo
             }
             indexOfSelectedPedal_u = plugin.Settings.table_selected;
             MyTab.SelectedIndex = (int)indexOfSelectedPedal_u;
+
+            if (plugin.Settings.auto_connect_flag == 1)
+            {
+                checkbox_auto_connect.IsChecked = true;
+            }
+            else
+            {
+                checkbox_auto_connect.IsChecked = false;
+            }
 
 
         }
@@ -771,6 +781,28 @@ namespace User.PluginSdkDemo
             else
             {
                 ConnectToPedal.IsChecked = false;
+            }
+
+            if (Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_enable_RPM.IsChecked = true;
+                checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+            }
+            else
+            {
+                checkbox_enable_RPM.IsChecked = false;
+                checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+            }
+
+            if (Plugin.Settings.ABS_enable_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_enable_ABS.IsChecked = true;
+                checkbox_enable_ABS.Content = "ABS/TC Effect Enabled";
+            }
+            else
+            {
+                checkbox_enable_ABS.IsChecked = false;
+                checkbox_enable_ABS.Content = "ABS/TC Effect Disabled";
             }
 
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
@@ -2302,6 +2334,41 @@ namespace User.PluginSdkDemo
         {
             Plugin.Settings.reading_config = 0;
         }
+
+        private void checkbox_auto_connect_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.auto_connect_flag = 1;
+        }
+
+        private void checkbox_auto_connect_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.auto_connect_flag = 0 ;
+        }
+
+        private void checkbox_enable_ABS_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.ABS_enable_flag[indexOfSelectedPedal_u] = 1;
+            checkbox_enable_ABS.Content = "ABS/TC Effect Enabled";
+        }
+        private void checkbox_enable_ABS_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.ABS_enable_flag[indexOfSelectedPedal_u] = 0;
+            checkbox_enable_ABS.Content = "ABS/TC Effect Disabled";
+        }
+
+        private void checkbox_enable_RPM_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 1;
+            checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+        }
+
+        private void checkbox_enable_RPM_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 0;
+            checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+        }
+
+
 
 
         /*

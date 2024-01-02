@@ -14,7 +14,7 @@
 
     <!-- Define the GUI interface, common for all pedals -->
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
-        <Grid>
+        <Grid RenderTransformOrigin="0.497,0.499">
 
             <!-- Define the GUI grid -->
             <Grid.RowDefinitions>
@@ -24,16 +24,16 @@
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="46"/>
+                <RowDefinition Height="150"/>
                 <RowDefinition Height="120"/>
-                <RowDefinition Height="46"/>
-                <RowDefinition Height="46"/>
+                <RowDefinition Height="120"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="400"/>
-                <ColumnDefinition Width="500"/>
+                <ColumnDefinition Width="600"/>
                 <ColumnDefinition Width="900"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
@@ -72,7 +72,7 @@
 
             <!-- read/write config from/to JSON file buttons -->
             <!--<styles:SHButtonPrimary Click="SaveStructToJson_click" HorizontalAlignment="Left" Grid.Row="4"  Grid.Column="1" Width="180" >Save config to JSON</styles:SHButtonPrimary>-->
-            <styles:SHButtonPrimary Click="OpenButton_Click" HorizontalAlignment="Left" Grid.Row="6" Width="100" Margin="5,5,0,77" Content="Open config" />
+            <styles:SHButtonPrimary Click="OpenButton_Click" HorizontalAlignment="Left" Grid.Row="6" Width="100" Margin="5,5,0,105" Content="Open config" Height="38" />
             <!--<styles:SHButtonPrimary Click="ReadStructFromJson_click" HorizontalAlignment="Right" Grid.Row="4"  Grid.Column="1" Width="180" >Read config from JSON</styles:SHButtonPrimary>-->
 
 
@@ -137,7 +137,7 @@
 
 
             <!-- Travel vs Force curve GUI elements -->
-            <Canvas x:Name="canvas" Height="200" Width="400" Background="#7F333333" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="390,37,0,0" Grid.RowSpan="6" Grid.ColumnSpan="2" >
+            <Canvas x:Name="canvas" Height="200" Width="400" Background="#7F333333" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="83,17,0,0" Grid.RowSpan="5" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -245,38 +245,38 @@
             <!-- Travel vs Force curve adjustment sliders -->
             <TextBlock HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Margin="385,9,0,0" 
+                   Margin="84,2,0,0" 
                    Text="Force curve adjustment:" 
                    Grid.Row="1" 
                    Width="160" 
-                   Foreground="White" Grid.ColumnSpan="2" FontFamily="Arial"/>
+                   Foreground="White" FontFamily="Arial" Grid.Column="1"/>
 
 
             <!-- PID sliders -->
 
             <TextBlock x:Name="text_debug_PID_para" HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Margin="0,113,0,0" 
+                   Margin="5,113,0,0" 
                    Text="PID parameters:" 
-                   Grid.Row="9" 
+                   Grid.Row="7" 
                    Grid.Column="0" 
                    Width="120" 
-                   Foreground="White"/>
+                   Foreground="White" Grid.RowSpan="2"/>
 
 
             <TextBlock x:Name="text_debug_pgain" HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Margin="5,133,0,0" 
+                   Margin="5,13,0,0" 
                    Text="P-gain:" 
-                   Grid.Row="9" 
+                   Grid.Row="8" 
                    Grid.Column="0" 
                    Width="120" 
                    Foreground="White"/>
             <Slider x:Name="PID_tuning_P_gain_slider" 
             HorizontalAlignment="Center" 
             VerticalAlignment="Top" 
-            Margin="0,133,0,0" 
-            Grid.Row="9" 
+            Margin="0,13,0,0" 
+            Grid.Row="8" 
             Width="300" 
             ValueChanged="PID_tuning_P_gain_changed" 
             AutoToolTipPlacement="TopLeft" 
@@ -291,18 +291,18 @@
             />
 
             <TextBlock x:Name="text_debug_igain" HorizontalAlignment="Left" 
-                   VerticalAlignment="Top" 
-                   Margin="5,173,0,0" 
+                   VerticalAlignment="Center" 
+                   Margin="5,0,0,0" 
                    Text="I-gain:" 
-                   Grid.Row="9" 
+                   Grid.Row="8" 
                    Grid.Column="0" 
                    Width="120" 
                    Foreground="White"/>
             <Slider x:Name="PID_tuning_I_gain_slider" 
             HorizontalAlignment="Center" 
             VerticalAlignment="Top" 
-            Margin="0,173,0,0" 
-            Grid.Row="9" 
+            Margin="0,53,0,0" 
+            Grid.Row="8" 
             Width="300" 
             ValueChanged="PID_tuning_I_gain_changed" 
             AutoToolTipPlacement="TopLeft" 
@@ -317,17 +317,17 @@
 
             <TextBlock x:Name="text_debug_dgain" HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Margin="5,213,0,0" 
+                   Margin="5,93,0,0" 
                    Text="D-gain:" 
-                   Grid.Row="9" 
+                   Grid.Row="8" 
                    Grid.Column="0" 
                    Width="120" 
                    Foreground="White"/>
             <Slider x:Name="PID_tuning_D_gain_slider" 
             HorizontalAlignment="Center" 
             VerticalAlignment="Top" 
-            Margin="0,213,0,0" 
-            Grid.Row="9" 
+            Margin="0,93,0,0" 
+            Grid.Row="8" 
             Width="300" 
             ValueChanged="PID_tuning_D_gain_changed" 
             AutoToolTipPlacement="TopLeft" 
@@ -342,7 +342,7 @@
 
 
 
-            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" HorizontalAlignment="Left" Grid.Row="9" Width="180" Margin="4,202,0,61" Grid.Column="1" >System identification</styles:SHButtonPrimary>
+            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" HorizontalAlignment="Left" Grid.Row="9" Width="180" Margin="4,61,0,202" >System identification</styles:SHButtonPrimary>
 
 
 
@@ -360,10 +360,9 @@
 
             <TextBlock x:Name="text_debug_flag" HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Margin="5,150,0,0" 
+                   Margin="5,9,0,0" 
                    Text="Debug flags 0:" 
                    Grid.Row="9" 
-                   Grid.Column="1" 
                    Width="120" 
                    Foreground="White"/>
 
@@ -382,16 +381,15 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <styles:SHButtonPrimary Click="SaveButton_Click" HorizontalAlignment="Left" Grid.Row="6" Width="100" Margin="109,5,0,77" Content="Save config" />
+            <styles:SHButtonPrimary Click="SaveButton_Click" HorizontalAlignment="Left" Grid.Row="6" Width="100" Margin="109,5,0,105" Content="Save config" Height="38" />
             <TextBox x:Name="TextBox2" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Width="204" AutomationProperties.Name="TextBox2" Height="46" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True"/>
             <Button Content="Test-ABS/TC" Margin="172,20,0,0" Grid.Row="3" VerticalAlignment="Top" Click="TestAbs_click" Height="20" Background="#FF050550" HorizontalAlignment="Left" FontWeight="Bold" FontSize="9"/>
             <styles:SHButtonSecondary Click="DisconnectToPedal_click" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0" Width="115" Margin="171,35,0,29" FontSize="8" Background="Red" Content="Disconnect from Pedal" Grid.RowSpan="2" />
             <Slider x:Name="debugFlagSlider_0" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
-                Margin="10,171,0,0" 
+                Margin="10,30,0,0" 
                 Grid.Row="9" 
-                Grid.Column="1" 
                 Width="320" 
                 ValueChanged="debugFlagSlider_0_changed" 
                 AutoToolTipPlacement="TopLeft" 
@@ -405,8 +403,8 @@
             />
             <CheckBox x:Name="Simulate_ABS_check" HorizontalAlignment="Left" Grid.Row="6"
                 Width="236"
-                Height="34" VerticalAlignment="Center" Content="Simulate ABS for non-supported game" Foreground="White" Margin="4,0,0,0" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10"/>
-            <Canvas x:Name="canvas_horz_slider" Height="40" Width="410" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="385,20,0,0" Grid.ColumnSpan="2" >
+                Height="34" VerticalAlignment="Top" Content="Simulate ABS for non-supported game" Foreground="White" Margin="250,148,0,0" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Grid.Column="1" Grid.RowSpan="2"/>
+            <Canvas x:Name="canvas_horz_slider" Height="40" Width="410" Background="#00333333" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,41,0,0" Grid.Column="1" Grid.RowSpan="2" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -460,7 +458,7 @@
 
             </Canvas>
             <Canvas x:Name="canvas_vert_slider" Height="200" Width="40
-                    " Background="#00333333" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="404,37,0,0" Grid.Column="1" Grid.RowSpan="6" >
+                    " Background="#00333333" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="488,17,0,0" Grid.Column="1" Grid.RowSpan="5" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -513,11 +511,11 @@
                 <Rectangle x:Name="rect9" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="7"
+            <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="6"
                 Width="120"
-                Height="34" VerticalAlignment="Center" Content="Debug Mode" Foreground="White" Margin="4,0,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Grid.RowSpan="2"/>
-            <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="4,104,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Grid.RowSpan="2"/>
-            <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="384,70,0,0" Grid.ColumnSpan="2" >
+                Height="34" VerticalAlignment="Top" Content="Debug Mode" Foreground="White" Margin="5,98,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Grid.RowSpan="2"/>
+            <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="5,81,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225"/>
+            <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,42,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -552,7 +550,7 @@
                 <Rectangle x:Name="rect_damping" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="384,111,0,0" Grid.ColumnSpan="2" Grid.RowSpan="2" >
+            <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,30,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -586,7 +584,7 @@
 
             </Canvas>
 
-            <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="384,29,0,0" Grid.ColumnSpan="2" Grid.RowSpan="2" >
+            <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,70,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -619,7 +617,7 @@
                 <Rectangle x:Name="rect_ABS_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_max_game" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="258,29,0,0" Grid.RowSpan="2" >
+            <Canvas x:Name="canvas_horz_max_game" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="378,86,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -653,7 +651,7 @@
 
             </Canvas>
 
-            <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="258,70,0,0" >
+            <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,86,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -686,7 +684,7 @@
                 <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_LC_rating" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="258,111,0,0" Grid.RowSpan="2" >
+            <Canvas x:Name="canvas_horz_LC_rating" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="228,86,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -721,12 +719,12 @@
             </Canvas>
             <CheckBox x:Name="dynamic_PID_checkbox" HorizontalAlignment="Left" Grid.Row="6"
                 Width="120"
-                Height="34" VerticalAlignment="Top" Content="Dynamic PID control" Foreground="White" Margin="4,70,0,0" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10"/>
-            <CheckBox x:Name="JoystickOutput_check" HorizontalAlignment="Left" Grid.Row="7"
-                Width="155"
-                Height="34" VerticalAlignment="Top" Content="Joystick output from travel" Foreground="White" Margin="4,2,0,0" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10"/>
-            <styles:SHButtonPrimary Click="RestartPedal_click" HorizontalAlignment="Left" Grid.Row="6" Width="105" Margin="228,5,0,77" Content="Restart pedal" />
-            <Canvas x:Name="canvas_horz_RPM_freq" Height="40" Width="410" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="385,14,0,0" Grid.ColumnSpan="2" Grid.RowSpan="2" >
+                Height="34" VerticalAlignment="Top" Content="Dynamic PID control" Foreground="White" Margin="280,50,0,0" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10"/>
+            <CheckBox x:Name="JoystickOutput_check" HorizontalAlignment="Left" Grid.Row="6"
+                Width="156"
+                Height="34" VerticalAlignment="Top" Content="Joystick output from travel" Foreground="White" Margin="280,74,0,0" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Grid.ColumnSpan="2"/>
+            <styles:SHButtonPrimary Click="RestartPedal_click" HorizontalAlignment="Left" Grid.Row="6" Width="110" Margin="214,5,0,105" Content="Restart pedal" Height="38" />
+            <Canvas x:Name="canvas_horz_RPM_freq" Height="40" Width="410" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Grid.Column="1" Margin="78,63,0,0" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -779,7 +777,7 @@
                 <Rectangle x:Name="rect_RPM_max" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="258,15,0,0" Grid.RowSpan="2" >
+            <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,25,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -812,6 +810,9 @@
                 <Rectangle x:Name="rect_RPM_AMP" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
+            <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect back after initialized" HorizontalAlignment="Left" Margin="5,57,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="225"/>
+            <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" HorizontalAlignment="Left" Margin="78,5,0,0" Grid.Row="7" VerticalAlignment="Top" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="150" Height="20" Grid.Column="1"/>
+            <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" HorizontalAlignment="Left" Margin="78,5,0,0" Grid.Row="8" VerticalAlignment="Top" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Grid.Column="1" Height="20"/>
 
 
 
