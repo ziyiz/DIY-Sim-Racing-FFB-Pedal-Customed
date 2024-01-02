@@ -515,7 +515,7 @@
                 Width="120"
                 Height="34" VerticalAlignment="Top" Content="Debug Mode" Foreground="White" Margin="5,98,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Grid.RowSpan="2"/>
             <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="5,81,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225"/>
-            <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,42,0,0" Grid.Column="1" >
+            <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="73,42,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -550,7 +550,7 @@
                 <Rectangle x:Name="rect_damping" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,30,0,0" Grid.Column="1" >
+            <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="73,30,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -584,7 +584,7 @@
 
             </Canvas>
 
-            <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,70,0,0" Grid.Column="1" >
+            <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="73,70,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -651,7 +651,7 @@
 
             </Canvas>
 
-            <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,86,0,0" Grid.Column="1" >
+            <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="73,86,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -777,7 +777,7 @@
                 <Rectangle x:Name="rect_RPM_max" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
             </Canvas>
-            <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="78,25,0,0" Grid.Column="1" >
+            <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="76,25,0,0" Grid.Column="1" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>

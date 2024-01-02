@@ -332,16 +332,19 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
-                        if (((RPM_value - rpm_last_value > 10) || (RPM_value - rpm_last_value < -10)) && Settings.RPM_enable_flag[pedalIdx] == 1)
+                        if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
-                            tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
-                            update_flag = true;
-                            rpm_last_value = (Byte)RPM_value;
+                            if (Math.Abs(RPM_value - rpm_last_value) >10)
+                            {
+                                tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
+                                update_flag = true;
+                                rpm_last_value = (Byte)RPM_value;
+                            }
                         }
 
                         if (pedalIdx == 1)
                         {
-                            if (sendAbsSignal_local_b && Settings.ABS_enable_flag[pedalIdx] ==1)
+                            if (sendAbsSignal_local_b & Settings.ABS_enable_flag[pedalIdx] ==1)
                             {
                                 //_serialPort[1].Write("2");
 
@@ -353,7 +356,7 @@ namespace User.PluginSdkDemo
                         }
                         if (pedalIdx == 2)
                         {
-                            if (sendTcSignal_local_b && Settings.ABS_enable_flag[pedalIdx] == 1)
+                            if (sendTcSignal_local_b & Settings.ABS_enable_flag[pedalIdx] == 1)
                             {
                                 // compute checksum
 
@@ -446,6 +449,7 @@ namespace User.PluginSdkDemo
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                     tmp.payloadPedalAction_.RPM_u8 = 0;
+                    rpm_last_value = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
