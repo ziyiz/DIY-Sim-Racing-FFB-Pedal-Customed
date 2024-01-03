@@ -190,6 +190,8 @@ SimHub plugin:
 - [ ] include the types header file and use it
 - [ ] Make use of effects from the ShakeIt plugin
 - [ ] add OTA update for esp firmware
+- [ ] automatic serial monitor update
+- [ ] serial plotter
       
 Misc:
 - [ ] Create a video describing the build progress and the features
