@@ -189,7 +189,8 @@ SimHub plugin:
  - [ ] https://www.codeproject.com/Questions/651144/Csharp-Loop-through-all-struct-members
 - [ ] include the types header file and use it
 - [ ] Make use of effects from the ShakeIt plugin
-
+- [ ] add OTA update for esp firmware
+      
 Misc:
 - [ ] Create a video describing the build progress and the features
 - [ ] Add Doxygen + Graphviz to the project to automatically generate documentation, architectural design overview, etc.
