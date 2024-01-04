@@ -752,7 +752,7 @@
 
                             <TextBlock HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
-                   Text="Travel -&gt;" 
+                   Text="Travel -&gt; &#2192;" 
                    Width="60" 
                    Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="160" Canvas.Top="200" FontFamily="Arial">
                                 <TextBlock.RenderTransform>
