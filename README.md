@@ -184,9 +184,8 @@ ESP code:
 
 SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
-- [ ] GUI design improvements for the SimHub plugin 
-- [ ] JSON deserialization make compatible with older revisions
- - [ ] https://www.codeproject.com/Questions/651144/Csharp-Loop-through-all-struct-members
+- [x] GUI design improvements for the SimHub plugin 
+- [x] JSON deserialization make compatible with older revisions
 - [ ] include the types header file and use it
 - [ ] Make use of effects from the ShakeIt plugin
 - [ ] add OTA update for esp firmware
