@@ -736,9 +736,9 @@
 
                             <TextBlock HorizontalAlignment="Center" 
                    VerticalAlignment="Top" 
-                   Text="Force -&gt;" 
+                   Text="Force &#x2794;" 
                    Width="60" 
-                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="-40" Canvas.Top="110" FontFamily="Arial">
+                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="-40" Canvas.Top="86" FontFamily="Arial">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -751,10 +751,10 @@
 
 
                             <TextBlock HorizontalAlignment="Left" 
-                   VerticalAlignment="Top" 
-                   Text="Travel -&gt; &#2192;" 
+                   VerticalAlignment="Center" 
+                   Text="Travel &#x2794;" 
                    Width="60" 
-                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="160" Canvas.Top="200" FontFamily="Arial">
+                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="178" Canvas.Top="200" FontFamily="Arial">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
