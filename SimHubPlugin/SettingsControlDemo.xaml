@@ -300,12 +300,12 @@
             <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" HorizontalAlignment="Left" Margin="5,81,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225"/>
             <styles:SHButtonPrimary Click="RestartPedal_click" HorizontalAlignment="Left" Grid.Row="6" Width="110" Margin="214,5,0,105" Content="Restart pedal" Height="38" />
             <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect back after initialized" HorizontalAlignment="Left" Margin="5,57,0,0" Grid.Row="6" VerticalAlignment="Top" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="225"/>
-            <Border BorderBrush="#00000000" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="140" Margin="0,5,0,0" Grid.Row="8" VerticalAlignment="Top" Width="600" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
-                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="600">
-                    <StackPanel Height="40" Width="600" Orientation="Horizontal" HorizontalAlignment="Left">
-                        <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" Margin="100,0,0,0" Background="#7F4E4E4E"/>
+            <Border BorderBrush="#00000000" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="140" Margin="0,5,0,0" Grid.Row="8" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
+                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
+                    <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                     </StackPanel>
-                    <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -349,7 +349,7 @@
                             </TextBlock.RenderTransform></TextBlock>
 
                     </Canvas>
-                    <Canvas x:Name="canvas_horz_RPM_freq" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_RPM_freq" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -417,15 +417,15 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="120" Grid.Row="7" VerticalAlignment="Top" Width="600" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Margin="0,5,0,0">
-                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="600">
-                    <StackPanel Height="40" Width="600" Orientation="Horizontal">
-                        <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="150" Height="20" HorizontalAlignment="Left" Margin="100,0,0,0" Background="#7F4E4E4E"/>
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="120" Grid.Row="7" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Margin="0,5,0,0">
+                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
+                    <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="150" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                         <CheckBox x:Name="Simulate_ABS_check"
                 Width="236"
                 Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E"/>
                     </StackPanel>
-                    <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -469,7 +469,7 @@
                             </TextBlock.RenderTransform><Run Text="ABS"/><Run Text="/TC"/><Run Text=" Amplitude"/></TextBlock>
 
                     </Canvas>
-                    <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -516,18 +516,18 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="25,30,0,0" Grid.Row="9" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5"/>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="131" Grid.Row="6" VerticalAlignment="Top" Width="600" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Margin="0,29,0,0">
-                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="600">
-                    <StackPanel Height="40" Width="600" Orientation="Horizontal">
+            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="58,0,0,0" Grid.Row="11" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5"/>
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="131" Grid.Row="6" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Margin="0,29,0,0">
+                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
+                    <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="dynamic_PID_checkbox"
                 Width="150"
-                Height="34" Content="Dynamic PID control" Foreground="White" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Margin="100,0,0,0" Background="#7F4E4E4E"/>
+                Height="34" Content="Dynamic PID control" Foreground="White" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                         <CheckBox x:Name="JoystickOutput_check"
                 Width="156"
                 Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
                     </StackPanel>
-                    <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -576,8 +576,8 @@
                         <Rectangle x:Name="rect_damping" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
                     </Canvas>
-                    <StackPanel Height="40" Width="600" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
-                        <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,0,0,0" >
+                    <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                        <Canvas x:Name="canvas_horz_KF" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,0,0,0" >
                             <Canvas.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -602,7 +602,7 @@
                             <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" 
                     VerticalAlignment="Center" 
                     Width="60" 
-                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="KF" Margin="20,0,0,0">
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="KF" Margin="20,0,0,0" Canvas.Left="0">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -654,7 +654,7 @@
                             <Rectangle x:Name="rect_LC_rating" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <TextBlock x:Name="text_LC_rating_text" 
                                 Width="100" 
-                                Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="LC Rate" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="LC Rate" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -698,7 +698,7 @@
                             <Rectangle x:Name="rect_max_game" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <TextBlock x:Name="text_max_game_text" 
                                 Width="100" 
-                                Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,0,0">
+                                Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -712,16 +712,16 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2">
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
                     <TextBlock 
                    Text="Force curve adjustment:" 
                    Width="160" 
                    Foreground="White" FontFamily="Arial" HorizontalAlignment="Left" Margin="100,0,0,0" Height="15" VerticalAlignment="Center"/>
-                    <StackPanel Height="230" Width="600" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <StackPanel Height="230" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                         <!-- Travel vs Force curve GUI elements -->
-                        <Canvas x:Name="canvas" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="100,0,0,0" >
+                        <Canvas x:Name="canvas" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,0,0,0" >
                             <Canvas.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -836,8 +836,8 @@
                             <TextBlock x:Name="text_min_force" HorizontalAlignment="Left" 
                     VerticalAlignment="Center" 
                     Text="Preload:" 
-                    Width="90" 
-                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="95" FontSize="8" FontFamily="Arial Black" Canvas.Left="28">
+                    Width="45" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="95" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -850,8 +850,8 @@
                             <TextBlock x:Name="text_max_force" HorizontalAlignment="Left" 
                     VerticalAlignment="Center" 
                     Text="Max Force:" 
-                    Width="90" 
-                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="12" FontSize="8" FontFamily="Arial Black" Canvas.Left="28">
+                    Width="50" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="12" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -875,7 +875,7 @@
 
                         </Canvas>
                     </StackPanel>
-                    <Canvas x:Name="canvas_horz_slider" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="100,0,0,0" >
+                    <Canvas x:Name="canvas_horz_slider" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
