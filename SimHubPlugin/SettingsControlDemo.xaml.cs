@@ -30,7 +30,8 @@ using SimHub.Plugins.Styles;
 using System.Windows.Media;
 using System.Runtime.Remoting.Messaging;
 using SimHub.Plugins.OutputPlugins.GraphicalDash.Behaviors.DoubleText.Imp;
-
+using System.Reflection;
+using System.Text.Json.Nodes;
 
 namespace User.PluginSdkDemo
 {
@@ -1749,7 +1750,7 @@ namespace User.PluginSdkDemo
             Plugin._serialPort[indexOfSelectedPedal_u].DtrEnable = false;
             Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = false;
         }
-        
+
         private void OpenButton_Click(object sender, EventArgs e)
         {
             using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
@@ -1761,21 +1762,91 @@ namespace User.PluginSdkDemo
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-
-                    string filePath = openFileDialog.FileName;
-                    string text1 = System.IO.File.ReadAllText(filePath);
                     string content = (string)openFileDialog.FileName;
                     TextBox_debugOutput.Text = content;
-                    DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
-                    var ms = new MemoryStream(Encoding.UTF8.GetBytes(text1));
-                    dap_config_st[indexOfSelectedPedal_u] = (DAP_config_st)deserializer.ReadObject(ms);
-                    //TextBox_debugOutput.Text = "Config loaded!";
-                    //TextBox_debugOutput.Text += ComboBox_JsonFileSelected.Text;
-                    //TextBox_debugOutput.Text += "    ";
-                    //TextBox_debugOutput.Text += ComboBox_JsonFileSelected.SelectedIndex;
+
+                    string filePath = openFileDialog.FileName;
+
+
+                    if (false)
+                    {
+                        string text1 = System.IO.File.ReadAllText(filePath);
+                        DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
+                        var ms = new MemoryStream(Encoding.UTF8.GetBytes(text1));
+                        dap_config_st[indexOfSelectedPedal_u] = (DAP_config_st)deserializer.ReadObject(ms);
+                    }
+                    else
+                    {
+                        // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
+
+
+                        // c# code to iterate over all fields of struct and set values from json file
+
+                        // Read the entire JSON file
+                        string jsonString = File.ReadAllText(filePath);
+
+                        // Parse all of the JSON.
+                        JsonNode forecastNode = JsonNode.Parse(jsonString);
+
+                        payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
+                        //var s = default(payloadPedalConfig);
+                        Object obj = payloadPedalConfig_fromJson_st;// s;
+
+
+                        
+                        FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+                        // Iterate over each field and print its name and value
+                        foreach (var field in fi)
+                        {
+
+                            if (forecastNode["payloadPedalConfig_"][field.Name] != null)
+                            {
+                                try
+                                {
+                                    if (field.FieldType == typeof(float))
+                                    {
+                                        float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                        field.SetValue(obj, value);
+                                    }
+
+                                    if (field.FieldType == typeof(byte))
+                                    {
+                                        byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        field.SetValue(obj, value);
+                                    }
+
+
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+
+
+                            }
+                        }
+
+                        // set values in global structure
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                    }
+
+
+
+
+
+                    //var s = default(payloadPedalConfig);
+                    //Object obj = s;
+                    //s.horPos_AB = 1;
+                    //var fld = typeof(payloadPedalConfig).GetField("horPos_AB");
+                    //fld.SetValue(obj, (byte)5);
+                    //s = (payloadPedalConfig)obj;
+
+
+
                     updateTheGuiFromConfig();
                     TextBox_debugOutput.Text = "Config new imported!";
-                    TextBox2.Text = "Open "+openFileDialog.FileName;
+                    TextBox2.Text = "Open " + openFileDialog.FileName;
                 }
             }
 
