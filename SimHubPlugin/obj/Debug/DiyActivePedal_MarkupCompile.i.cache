@@ -4,7 +4,7 @@
 library
 C#
 .cs
-C:\Users\chris\OneDrive\Desktop\GIT\DIY-Sim-Racing-Active-Pedal\SimHubPlugin\obj\Debug\
+X:\AC MOD\private works\ActivePedal\simhub_plugin\V69-upload-0106\SimHubPlugin\obj\Debug\
 User.PluginSdkDemo
 none
 false
@@ -13,7 +13,11 @@ DEBUG;TRACE
 1-1832596077
 1-1358375093
 7-893686490
+<<<<<<< Updated upstream
 33-678590650
+=======
+34-1248565486
+>>>>>>> Stashed changes
 SettingsControlDemo.xaml;
 
 True

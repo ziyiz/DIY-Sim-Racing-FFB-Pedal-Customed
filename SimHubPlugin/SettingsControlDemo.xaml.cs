@@ -32,6 +32,11 @@ using System.Runtime.Remoting.Messaging;
 using SimHub.Plugins.OutputPlugins.GraphicalDash.Behaviors.DoubleText.Imp;
 using System.Reflection;
 using System.Text.Json.Nodes;
+<<<<<<< Updated upstream
+=======
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+>>>>>>> Stashed changes
 
 namespace User.PluginSdkDemo
 {
@@ -1751,6 +1756,7 @@ namespace User.PluginSdkDemo
             Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = false;
         }
 
+<<<<<<< Updated upstream
         private void OpenButton_Click(object sender, EventArgs e)
         {
             using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
@@ -1821,16 +1827,164 @@ namespace User.PluginSdkDemo
                                 catch (Exception)
                                 {
 
+=======
+        private void OpenButton_Click(object sender, EventArgs e)
+        {
+            using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                openFileDialog.Title = "Datei auswählen";
+                openFileDialog.Filter = "Configdateien (*.json)|*.json";
+                string currentDirectory = Directory.GetCurrentDirectory();
+                openFileDialog.InitialDirectory = currentDirectory + "\\PluginsData\\Common";
+
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string content = (string)openFileDialog.FileName;
+                    TextBox_debugOutput.Text = content;
+
+                    string filePath = openFileDialog.FileName;
+
+                    //------------
+                    // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
+
+
+                    // c# code to iterate over all fields of struct and set values from json file
+
+                    // Read the entire JSON file
+                    string jsonString = File.ReadAllText(filePath);
+                    dynamic forecastNode = JsonConvert.DeserializeObject<DAP_config_st>(jsonString);
+                    //TextBox_debugOutput.Text = content;
+
+
+                    //TextBox_debugOutput.Text = content;
+
+                    // Parse all of the JSON.
+                    //JsonNode forecastNode = JsonNode.Parse(jsonString);
+
+                    payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
+                    //var s = default(payloadPedalConfig);
+                    Object obj = payloadPedalConfig_fromJson_st;// s;
+
+
+
+
+                    FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+                    //TextBox_serialMonitor.Text = forecastNode.payloadPedalConfig_.pedalStartPosition.ToString();
+                    TextBox_serialMonitor.Text = fi[1].GetValue(forecastNode.payloadPedalConfig_).ToString();
+                    //var properties = forecastNode.payloadPedalConfig_.Properties();
+                    // Iterate over each field and print its name and value
+                    foreach (var field in fi)
+                    {
+                        if (field.GetValue(forecastNode.payloadPedalConfig_) != null)
+                        {
+                            try
+                            {
+                                if (field.FieldType == typeof(float))
+                                {
+                                    float value = field.GetValue(forecastNode.payloadPedalConfig_);
+                                    field.SetValue(obj, value);
+                                }
+
+                                if (field.FieldType == typeof(byte))
+                                {
+                                    byte value = field.GetValue(forecastNode.payloadPedalConfig_);
+                                    field.SetValue(obj, value);
+>>>>>>> Stashed changes
                                 }
 
 
                             }
+<<<<<<< Updated upstream
                         }
 
                         // set values in global structure
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
                     }
 
+=======
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+                    }
+
+                    // set values in global structure
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+
+
+                    //---------------
+
+
+                    /*
+                    if (true)
+                    {
+                        string text1 = System.IO.File.ReadAllText(filePath);
+                        DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
+                        var ms = new MemoryStream(Encoding.UTF8.GetBytes(text1));
+                        dap_config_st[indexOfSelectedPedal_u] = (DAP_config_st)deserializer.ReadObject(ms);
+                    }
+                    else
+                    {
+                        // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
+
+
+                        // c# code to iterate over all fields of struct and set values from json file
+
+                        // Read the entire JSON file
+                        string jsonString = File.ReadAllText(filePath);
+
+                        // Parse all of the JSON.
+                        JsonNode forecastNode = JsonNode.Parse(jsonString);
+
+                        payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
+                        //var s = default(payloadPedalConfig);
+                        Object obj = payloadPedalConfig_fromJson_st;// s;
+
+
+
+                        FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+                        // Iterate over each field and print its name and value
+                        foreach (var field in fi)
+                        {
+
+                            if (forecastNode["payloadPedalConfig_"][field.Name] != null)
+                            {
+                                try
+                                {
+                                    if (field.FieldType == typeof(float))
+                                    {
+                                        float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                        field.SetValue(obj, value);
+                                    }
+
+                                    if (field.FieldType == typeof(byte))
+                                    {
+                                        byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        field.SetValue(obj, value);
+                                    }
+
+
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+
+
+                            }
+                        }
+                    
+
+                        // set values in global structure
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                    
+                    }
+                    */
+
+>>>>>>> Stashed changes
 
 
 
@@ -1844,9 +1998,15 @@ namespace User.PluginSdkDemo
 
 
 
+<<<<<<< Updated upstream
                     updateTheGuiFromConfig();
                     TextBox_debugOutput.Text = "Config new imported!";
                     TextBox2.Text = "Open " + openFileDialog.FileName;
+=======
+                    updateTheGuiFromConfig();
+                    TextBox_debugOutput.Text = "Config new imported!";
+                    TextBox2.Text = "Open " + openFileDialog.FileName;
+>>>>>>> Stashed changes
                 }
             }
 
@@ -2031,13 +2191,15 @@ namespace User.PluginSdkDemo
 
                 // Ensure the rectangle stays within the canvas
 
-                double min_posiiton = Canvas.GetLeft(rect6)+rectangle.ActualWidth/2;
-                double max_position = Canvas.GetLeft(rect7)-rectangle.ActualWidth/2;
-                double dx = 100/(canvas_horz_slider.Width - 10);
+                double min_posiiton = Canvas.GetLeft(rect6) + rectangle.Width / 2;
+                double max_position = Canvas.GetLeft(rect7) - rectangle.Width / 2;
+                double min_pedal_position = (canvas_horz_slider.Width - 10) * 0.05 + rect6.Width;
+                double max_pedal_position = (canvas_horz_slider.Width - 10) * 0.95 + rect7.Width;
+                double dx = 100 / (canvas_horz_slider.Width - 10);
                 if (rectangle.Name == "rect6")
                 {
-                    x = Math.Max(-1*rectangle.ActualWidth/2, Math.Min(x, max_position));
-                    double actual_x = (x-5) * dx;
+                    x = Math.Max(min_pedal_position - 1 * rectangle.Width / 2, Math.Min(x, max_position));
+                    double actual_x = (x - 5) * dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = Convert.ToByte(actual_x);
 
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition)
@@ -2046,12 +2208,16 @@ namespace User.PluginSdkDemo
                         //PedalMinPos_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
                     }
                     TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+<<<<<<< Updated upstream
                     Canvas.SetLeft(text_min_pos, x-text_min_pos.Width/2 + rect6.Width / 2);
+=======
+                    Canvas.SetLeft(text_min_pos, x - text_min_pos.Width / 2 + rect6.Width / 2);
+>>>>>>> Stashed changes
                     Canvas.SetTop(text_min_pos, 5);
                 }
                 if (rectangle.Name == "rect7")
                 {
-                    x = Math.Max(min_posiiton, Math.Min(x, canvas_horz_slider.ActualWidth - rectangle.ActualWidth));
+                    x = Math.Max(min_posiiton, Math.Min(x, max_pedal_position - rectangle.Width / 2));
                     double actual_x = (x - 5) * dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = Convert.ToByte(actual_x);
 
@@ -2061,11 +2227,19 @@ namespace User.PluginSdkDemo
                         //PedalMaxPos_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
                     }
                     TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
+<<<<<<< Updated upstream
                     Canvas.SetLeft(text_max_pos, x - text_max_pos.Width / 2+rect7.Width/2);
                     Canvas.SetTop(text_max_pos, 5);
                 }
                 text_min_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition+"%";
                 text_max_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition+"%";
+=======
+                    Canvas.SetLeft(text_max_pos, x - text_max_pos.Width / 2 + rect7.Width / 2);
+                    Canvas.SetTop(text_max_pos, 5);
+                }
+                text_min_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
+                text_max_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
+>>>>>>> Stashed changes
 
                 //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
 
