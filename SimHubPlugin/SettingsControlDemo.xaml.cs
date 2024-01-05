@@ -2325,7 +2325,7 @@ namespace User.PluginSdkDemo
                     // Ensure the rectangle stays within the canvas
                     double x = e.GetPosition(canvas_horz_RPM_AMP).X - offset.X;
                     double RPM_AMP_max = 200;
-                    double dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
+                    double dx = (canvas_horz_RPM_AMP.Width -10)/ RPM_AMP_max;
                     double min_position = 0 * dx;
                     double max_position = RPM_AMP_max * dx;
 

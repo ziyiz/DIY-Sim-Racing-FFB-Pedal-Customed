@@ -305,7 +305,7 @@
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                     </StackPanel>
-                    <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
+                    <Canvas x:Name="canvas_horz_RPM_AMP" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -332,7 +332,7 @@
 
                         <Line x:Name="Line_H_RPM_AMP"
                     X1="5" Y1="20"
-                    X2="105" Y2="20"
+                    X2="405" Y2="20"
                     Stroke="#7F87CEFA"
                     StrokeThickness="2" />
                         <Rectangle x:Name="rect_RPM_AMP" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
@@ -712,14 +712,14 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2">
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2" Margin="0,30,0,0">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
                     <TextBlock 
-                   Text="Force curve adjustment:" 
-                   Width="160" 
-                   Foreground="White" FontFamily="Arial" HorizontalAlignment="Left" Margin="100,0,0,0" Height="15" VerticalAlignment="Center"/>
-                    <StackPanel Height="230" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                   Text="FORCE CURVE ADJUSTMENT" 
+                   Width="200" 
+                   Foreground="White" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,10,0,0" Height="15" VerticalAlignment="Center"/>
+                    <StackPanel Height="200" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                         <!-- Travel vs Force curve GUI elements -->
                         <Canvas x:Name="canvas" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,0,0,0" >
                             <Canvas.RenderTransform>
@@ -736,9 +736,9 @@
 
                             <TextBlock HorizontalAlignment="Center" 
                    VerticalAlignment="Top" 
-                   Text="Force &#x2794;" 
+                   Text="FORCE" 
                    Width="60" 
-                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="-40" Canvas.Top="86" FontFamily="Arial">
+                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="-35" Canvas.Top="100" FontFamily="Arial Black">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -750,11 +750,11 @@
                             </TextBlock>
 
 
-                            <TextBlock HorizontalAlignment="Left" 
+                            <TextBlock HorizontalAlignment="Center" 
                    VerticalAlignment="Center" 
-                   Text="Travel &#x2794;" 
+                   Text="TRAVEL" 
                    Width="60" 
-                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="178" Canvas.Top="200" FontFamily="Arial">
+                   Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="170" Canvas.Top="200" FontFamily="Arial Black" TextAlignment="Center">
                                 <TextBlock.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
