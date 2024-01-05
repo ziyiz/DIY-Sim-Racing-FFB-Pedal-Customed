@@ -92,7 +92,7 @@ Here are some examples of mechanical designs awesome DIYers have done:
 |<img src="https://user-images.githubusercontent.com/17485523/231913569-695fcab1-f0bb-4af6-8d90-b1bfaece13bc.png" height="200">  |  [Tjfenwick design](https://github.com/tjfenwick/DIY-Sim-Racing-Active-Pedal)|
 |<img src="https://user-images.githubusercontent.com/79850208/261399337-b313371c-9262-416d-a131-44fa269f9557.png" height="200">  |  [Bjoes design](https://github.com/Bjoes/DIY-Active-pedal-mechanical-design)|
 |<img src="https://media.printables.com/media/prints/557527/images/4471984_0fbfebf6-7b91-47dd-9602-44a6c7e8b851/thumbs/inside/1600x1200/png/screenshot-2023-08-19-150158.webp" height="200">  |  [GWiz design](https://www.printables.com/de/model/557527-simucube-style-active-pedal/files)|
-|<img src="" height="200">  | [shf90's design](https://www.thingiverse.com/thing:6414587)|
+|<img src="https://www.yeggi.com/goto/nZqbnXV2Ze7isZfV2Z6s14bEv6qosvbx9pfi9u6b4PDuzuju1uWeo3O83emU3tPRsK2e6MunqdeTmKXflcjCr7WttKuumJqvqp4=" height="200">  | [shf90's design](https://www.thingiverse.com/thing:6414587)|
 
 
 
@@ -181,8 +181,9 @@ ESP code:
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
 - [ ] Add field to invert motor and losdcell direction
 - [ ] send joystick data to simhub plugin and provide data as vJoy gamecontroller
+- [ ] check sebastiand issue eith sticking gas pedal
 
-
+      
 SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
 - [x] GUI design improvements for the SimHub plugin 
@@ -196,3 +197,4 @@ SimHub plugin:
 Misc:
 - [ ] Create a video describing the build progress and the features
 - [ ] Add Doxygen + Graphviz to the project to automatically generate documentation, architectural design overview, etc.
+- [ ] add thumbnail of sebastians design
