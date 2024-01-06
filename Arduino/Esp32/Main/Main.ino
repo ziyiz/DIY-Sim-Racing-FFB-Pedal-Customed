@@ -211,10 +211,7 @@ void setup()
   // init controller
   SetupController();
   delay(2000);
-  #ifdef Using_analog_output
-    delay(8000);
-  #endif
-
+  
 
 
 // check whether iSV57 communication can be established
@@ -234,6 +231,9 @@ void setup()
   delay(200);
 #endif
 
+
+// initialize configuration and update local variables
+  dap_config_st.initialiseDefaults();
 
   // Load config from EEPROM, if valid, overwrite initial config
   EEPROM.begin(sizeof(DAP_config_st));
@@ -285,14 +285,7 @@ void setup()
 
 
 
-  // initialize configuration and update local variables
-  #ifdef PEDAL_IS_BRAKE
-    dap_config_st.initialiseDefaults();
-  #endif
-
-  #ifdef PEDAL_IS_ACCELERATOR
-    dap_config_st.initialiseDefaults_Accelerator();
-  #endif
+  
 
   
 
