@@ -165,6 +165,11 @@ After sending the initial config, power cycling of the pedal is necessary. The p
 1. Make sure, that you follow the above instructions. The default PID values are set to 0 thus the pedal will not move. You have to send non-zero PID values and restart the pedal to observe pedal travel.
 2. Open the serial monitor in Arduino IDE, set the baud rate to 921600, and restart the pedal. You should see some debug info. Make a screenshot and kindly ask the Discord server for help.
 
+## Bluetooth doesn't show gamepad data
+Install DirectX 9
+
+## The serial monitor shows a message "Couldn't load config from EPROM due to version mismatch"
+Install a SimHub plugin matching the ESP firmware you installed and send a config ro the pedal.
 
 # Misc
 ## Pedal kinematics calculation
