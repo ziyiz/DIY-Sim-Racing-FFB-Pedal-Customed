@@ -170,7 +170,7 @@ After sending the initial config, power cycling of the pedal is necessary. The p
 Install DirectX 9
 
 ## The serial monitor shows a message "Couldn't load config from EPROM due to version mismatch"
-Install a SimHub plugin matching the ESP firmware you installed and send a config ro the pedal.
+Install a SimHub plugin matching the ESP firmware you installed and send a config to the pedal.
 
 # Misc
 ## Pedal kinematics calculation
