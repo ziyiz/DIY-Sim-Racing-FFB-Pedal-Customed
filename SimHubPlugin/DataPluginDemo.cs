@@ -18,7 +18,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 112;
+    public const uint pedalConfigPayload_version = 113;
 
 
     // pyload types
@@ -125,6 +125,9 @@ public struct payloadPedalConfig
     // use loadcell or travel as joystick output
     public byte travelAsJoystickOutput_u8;
 
+    // invert loadcell sign
+    public byte invertLoadcellReading_u8;
+
 
 }
 
@@ -176,6 +179,8 @@ namespace User.PluginSdkDemo
         //public uint pedalConfigPayload_type = 100;
         //public uint pedalActionPayload_type = 110;
 
+        //public SettingsControlDemo settings { get; }
+
 
 
 
@@ -191,6 +196,8 @@ namespace User.PluginSdkDemo
 
 
         public DataPluginDemoSettings Settings;
+
+
 
         /// <summary>
         /// Instance of the current plugin manager
@@ -260,6 +267,17 @@ namespace User.PluginSdkDemo
             bool sendTcSignal_local_b = false;
             double RPM_value =0;
             double RPM_MAX = 0;
+
+            //for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            //{
+            //    if (_serialPort[pedalIdx].IsOpen)
+            //    {
+            //        int receivedLength = _serialPort[pedalIdx].BytesToRead;
+
+            //        settings.TextBox_debugOutput.Text = "Test";
+            //    }
+            //}
+
 
 
             // Send ABS signal when triggered by the game
@@ -765,7 +783,7 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
-
+            dap_config_initial_st.payloadPedalConfig_.invertLoadcellReading_u8 = 0;
         }
     }
 }

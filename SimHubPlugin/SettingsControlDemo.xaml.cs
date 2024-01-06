@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace User.PluginSdkDemo
 {
@@ -58,10 +59,10 @@ namespace User.PluginSdkDemo
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
         private string stringValue;
 
+
         
 
 
-        
 
 
         // read config from JSON on startup
@@ -288,6 +289,9 @@ namespace User.PluginSdkDemo
 
                 dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
+                dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+
                 InitializeComponent();
 
                 // debug mode invisiable
@@ -298,6 +302,7 @@ namespace User.PluginSdkDemo
                 text_debug_pgain.Opacity = 0;
                 text_serial.Opacity = 0;
                 TextBox_serialMonitor.Visibility= System.Windows.Visibility.Hidden;
+                InvertLoadcellReading_check.Opacity = 0;
                 PID_tuning_D_gain_slider.Opacity = 0;
                 PID_tuning_I_gain_slider.Opacity = 0;
                 PID_tuning_P_gain_slider.Opacity = 0;
@@ -817,6 +822,7 @@ namespace User.PluginSdkDemo
             }
 
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
+            InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
 
             //try
             //{
@@ -1246,6 +1252,11 @@ namespace User.PluginSdkDemo
             // read system return log
             try
             {
+                // clear inbuffer 
+                //Plugin._serialPort[indexOfSelectedPedal_u].DiscardInBuffer();
+
+                System.Threading.Thread.Sleep(100);
+
                 DateTime startTime = DateTime.Now;
                 while ((Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0) && (DateTime.Now - startTime).Seconds < 2)
                 {
@@ -1358,7 +1369,7 @@ namespace User.PluginSdkDemo
 
 
                 // wait for response
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(300);
 
                 TextBox_debugOutput.Text = "Reading pedal config: ";
 
@@ -1540,11 +1551,29 @@ namespace User.PluginSdkDemo
 
 
 
+        private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+            {
+                // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
+                this.Dispatcher.Invoke(() =>
+                {
+                    //TextBox_debugOutput.Text = "Data received";
+                    byte tmp = 5;
+
+                    // obtain data and check whether it is from known payload type or just debug info
+                });
+            }
+        }
+
+
+
+
 
         /********************************************************************************************************************/
-        /*							Connect to pedal																		*/
-        /********************************************************************************************************************/
-        unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
+            /*							Connect to pedal																		*/
+            /********************************************************************************************************************/
+            unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
         {
 
 
@@ -1557,6 +1586,12 @@ namespace User.PluginSdkDemo
                         Plugin._serialPort[indexOfSelectedPedal_u].Open();
                         TextBox_debugOutput.Text = "Serialport open";
                         ConnectToPedal.IsChecked = true;
+
+                        // register a callback that is triggered when serial data is received
+                        // see https://gist.github.com/mini-emmy/9617732
+                        Plugin._serialPort[indexOfSelectedPedal_u].DataReceived += new SerialDataReceivedEventHandler(sp_DataReceived);
+
+
 
                         try
                         {
@@ -1579,6 +1614,9 @@ namespace User.PluginSdkDemo
                 else
                 {
                     Plugin._serialPort[indexOfSelectedPedal_u].Close();
+
+                    Plugin._serialPort[indexOfSelectedPedal_u].DataReceived -= sp_DataReceived;
+
                     ConnectToPedal.IsChecked = false;
                     TextBox_debugOutput.Text = "Serialport already open, close it";
                 }
@@ -1586,6 +1624,8 @@ namespace User.PluginSdkDemo
             else
             {
                 ConnectToPedal.IsChecked = false;
+                Plugin._serialPort[indexOfSelectedPedal_u].DataReceived -= sp_DataReceived;
+
                 Plugin._serialPort[indexOfSelectedPedal_u].Close();
                 TextBox_debugOutput.Text = "Serialport close";
             }
@@ -1762,7 +1802,6 @@ namespace User.PluginSdkDemo
                 string currentDirectory = Directory.GetCurrentDirectory();
                 openFileDialog.InitialDirectory = currentDirectory + "\\PluginsData\\Common";
 
-
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string content = (string)openFileDialog.FileName;
@@ -1770,71 +1809,8 @@ namespace User.PluginSdkDemo
 
                     string filePath = openFileDialog.FileName;
 
-                    //------------
-                    // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
 
-
-                    // c# code to iterate over all fields of struct and set values from json file
-
-                    // Read the entire JSON file
-                    string jsonString = File.ReadAllText(filePath);
-                    dynamic forecastNode = JsonConvert.DeserializeObject<DAP_config_st>(jsonString);
-                    //TextBox_debugOutput.Text = content;
-
-
-                    //TextBox_debugOutput.Text = content;
-
-                    // Parse all of the JSON.
-                    //JsonNode forecastNode = JsonNode.Parse(jsonString);
-
-                    payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
-                    //var s = default(payloadPedalConfig);
-                    Object obj = payloadPedalConfig_fromJson_st;// s;
-
-
-
-
-                    FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
-                    //TextBox_serialMonitor.Text = forecastNode.payloadPedalConfig_.pedalStartPosition.ToString();
-                    TextBox_serialMonitor.Text = fi[1].GetValue(forecastNode.payloadPedalConfig_).ToString();
-                    //var properties = forecastNode.payloadPedalConfig_.Properties();
-                    // Iterate over each field and print its name and value
-                    foreach (var field in fi)
-                    {
-                        if (field.GetValue(forecastNode.payloadPedalConfig_) != null)
-                        {
-                            try
-                            {
-                                if (field.FieldType == typeof(float))
-                                {
-                                    float value = field.GetValue(forecastNode.payloadPedalConfig_);
-                                    field.SetValue(obj, value);
-                                }
-
-                                if (field.FieldType == typeof(byte))
-                                {
-                                    byte value = field.GetValue(forecastNode.payloadPedalConfig_);
-                                    field.SetValue(obj, value);
-                                }
-
-
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-                    }
-
-                    // set values in global structure
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
-
-
-                    //---------------
-
-
-                    /*
-                    if (true)
+                    if (false)
                     {
                         string text1 = System.IO.File.ReadAllText(filePath);
                         DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
@@ -1852,7 +1828,10 @@ namespace User.PluginSdkDemo
                         string jsonString = File.ReadAllText(filePath);
 
                         // Parse all of the JSON.
-                        JsonNode forecastNode = JsonNode.Parse(jsonString);
+                        //JsonNode forecastNode = JsonNode.Parse(jsonString);
+                        dynamic data = JsonConvert.DeserializeObject(jsonString);
+
+
 
                         payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
                         //var s = default(payloadPedalConfig);
@@ -1866,19 +1845,22 @@ namespace User.PluginSdkDemo
                         foreach (var field in fi)
                         {
 
-                            if (forecastNode["payloadPedalConfig_"][field.Name] != null)
+                            if (data["payloadPedalConfig_"][field.Name] != null)
+                            //if (forecastNode["payloadPedalConfig_"][field.Name] != null)
                             {
                                 try
                                 {
                                     if (field.FieldType == typeof(float))
                                     {
-                                        float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                        //float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                        float value = (float)data["payloadPedalConfig_"][field.Name];
                                         field.SetValue(obj, value);
                                     }
 
                                     if (field.FieldType == typeof(byte))
                                     {
-                                        byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        byte value = (byte)data["payloadPedalConfig_"][field.Name];
                                         field.SetValue(obj, value);
                                     }
 
@@ -1889,29 +1871,12 @@ namespace User.PluginSdkDemo
 
                                 }
 
-
                             }
                         }
-                    
 
                         // set values in global structure
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
-                    
                     }
-                    */
-
-
-
-
-
-                    //var s = default(payloadPedalConfig);
-                    //Object obj = s;
-                    //s.horPos_AB = 1;
-                    //var fld = typeof(payloadPedalConfig).GetField("horPos_AB");
-                    //fld.SetValue(obj, (byte)5);
-                    //s = (payloadPedalConfig)obj;
-
-
 
                     updateTheGuiFromConfig();
                     TextBox_debugOutput.Text = "Config new imported!";
@@ -2451,6 +2416,8 @@ namespace User.PluginSdkDemo
             debugFlagSlider_0.Opacity = 1;
             btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
+
+            InvertLoadcellReading_check.Opacity = 1;
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -2467,6 +2434,8 @@ namespace User.PluginSdkDemo
             debugFlagSlider_0.Opacity = 0;
             btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
+
+            InvertLoadcellReading_check.Opacity = 0;
         }
 
 
@@ -2478,6 +2447,16 @@ namespace User.PluginSdkDemo
         private void JoystickOutput_unchecked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+        }
+
+
+        private void InvertLoadcellReading_checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 = 1;
+        }
+        private void InvertLoadcellReading_unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
         }
 
 

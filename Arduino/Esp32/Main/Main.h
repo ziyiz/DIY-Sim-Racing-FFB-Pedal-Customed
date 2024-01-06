@@ -132,6 +132,8 @@
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
 
+  #define Using_analog_output
+
 #endif
 
 

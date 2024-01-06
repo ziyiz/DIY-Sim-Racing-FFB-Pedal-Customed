@@ -944,6 +944,8 @@
                     </Canvas>
                 </StackPanel>
             </Border>
+            <CheckBox x:Name="InvertLoadcellReading_check"
+                Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="4,10,240,81" Grid.Row="7"/>
 
 
 

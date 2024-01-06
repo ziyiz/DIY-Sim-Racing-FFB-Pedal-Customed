@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 112
+#define DAP_VERSION_CONFIG 113
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -97,6 +97,10 @@ struct payloadPedalConfig {
 
   // use loadcell or travel as joystick output
   uint8_t travelAsJoystickOutput_u8;
+
+  // invert loadcell sign
+  uint8_t invertLoadcellReading_u8;
+
 };
 
 struct payloadFooter {

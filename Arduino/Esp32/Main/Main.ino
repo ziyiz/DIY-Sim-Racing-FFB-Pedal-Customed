@@ -1,6 +1,5 @@
 #define ESTIMATE_LOADCELL_VARIANCE
 #define ISV_COMMUNICATION
-//#define Using_analog_output
 //#define PRINT_SERVO_STATES
 
 #define DEBUG_INFO_0_CYCLE_TIMER 1
@@ -567,6 +566,11 @@ void pedalUpdateTask( void * pvParameters )
 
     // Get the loadcell reading
     float loadcellReading = loadcell->getReadingKg();
+
+    if (dap_config_st.payLoadPedalConfig_.invertLoadcellReading_u8 == 1)
+    {
+      loadcellReading *= -1;
+    }
 
     // Do the loadcell signal filtering
     float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
