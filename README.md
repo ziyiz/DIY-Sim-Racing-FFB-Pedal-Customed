@@ -120,8 +120,9 @@ Firmware can be built and flashed via Arduino-IDE or Arduino-CLI.
 
 #### Built from source (via Arduino-CLI)
 1. Install the [Arduino CLI](https://github.com/arduino/arduino-cli/releases)
-2. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
-3. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
+2. Install the libraries `git submodule update --init --recursive`
+3. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
+4. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
 
 #### Flash prebuilt binaries via web flasher
 The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
