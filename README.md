@@ -120,8 +120,9 @@ Firmware can be built and flashed via Arduino-IDE or Arduino-CLI.
 
 #### Built from source (via Arduino-CLI)
 1. Install the [Arduino CLI](https://github.com/arduino/arduino-cli/releases)
-2. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
-3. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
+2. Install the libraries `git submodule update --init --recursive`
+3. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
+4. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
 
 #### Flash prebuilt binaries via web flasher
 The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
@@ -144,7 +145,7 @@ The SimHub plugin was designed to communicate with the ESP to (a) modify the ped
 
 ![image](SimHubPlugin/Images/Plugin-UI.png)
 
-To install the plugin, the plugin [dll](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases) has to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
+To install the plugin, the plugin [DiyActivePedal.dll](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases) has to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
 
 # Steps after flashing the firmware
 The pedal will not move initially after flashing. One has to open the SimHub plugin, connect to the pedal, and send a config with non-zero PID values.
