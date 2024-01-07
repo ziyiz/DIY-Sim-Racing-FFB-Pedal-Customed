@@ -1442,6 +1442,19 @@ namespace User.PluginSdkDemo
             }
         }
 
+        string[] STOPCHAR = { "\r\n"};
+        private bool EndsWithStop(string incomingData)
+        {
+            for (int i = 0; i < STOPCHAR.Length; i++)
+            {
+                if (incomingData.EndsWith(STOPCHAR[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /********************************************************************************************************************/
         /*							Read config from pedal																	*/
         /********************************************************************************************************************/
@@ -1479,67 +1492,71 @@ namespace User.PluginSdkDemo
 
                 TextBox_debugOutput.Text = "Reading pedal config: ";
 
-                try
-                {
+                ////////try
+                ////////{
 
-                    length = sizeof(DAP_config_st);
-                    byte[] newBuffer_config = new byte[length];
+                ////////    length = sizeof(DAP_config_st);
+                ////////    byte[] newBuffer_config = new byte[length];
 
-                    int receivedLength = Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead;
+                ////////    int receivedLength = Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead;
 
-                    if (receivedLength == length)
-                    {
-                        Plugin._serialPort[indexOfSelectedPedal_u].Read(newBuffer_config, 0, length);
+                ////////    if (receivedLength == length)
+                ////////    {
+                ////////        //Plugin._serialPort[indexOfSelectedPedal_u].Read(newBuffer_config, 0, length);
+
+                ////////        //reads the available data which may or may not contain one or more stopchar
+                ////////        //string incomingData = Plugin._serialPort[indexOfSelectedPedal_u].ReadExisting();
+                ////////        //bool endsWithStop = EndsWithStop(incomingData);
 
 
-                        DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config);
+                ////////        DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config);
                         
-                        // check CRC
-                        DAP_config_st* v_config = &pedalConfig_read_st;
-                        byte* p_config = (byte*)v_config;
+                ////////        // check CRC
+                ////////        DAP_config_st* v_config = &pedalConfig_read_st;
+                ////////        byte* p_config = (byte*)v_config;
 
 
-                        if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
-                        {
-                            this.dap_config_st[indexOfSelectedPedal_u] = pedalConfig_read_st;
-                            updateTheGuiFromConfig();
-                            TextBox_debugOutput.Text += "Read config from pedal successful!";
-                        }
-                        else
-                        {
-                            TextBox_debugOutput.Text += "CRC mismatch!";
+                ////////        if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                ////////        {
+                ////////            this.dap_config_st[indexOfSelectedPedal_u] = pedalConfig_read_st;
+                ////////            updateTheGuiFromConfig();
+                ////////            TextBox_debugOutput.Text += "Read config from pedal successful!";
+                ////////        }
+                ////////        else
+                ////////        {
+                ////////            TextBox_debugOutput.Text += "CRC mismatch!";
                             
-                        }
-                    }
-                    else 
-                    {
-                        TextBox_debugOutput.Text += "Data size mismatch!\n";
-                        TextBox_debugOutput.Text += "Expected size: " + length + "\n";
-                        TextBox_debugOutput.Text += "Received size: " + receivedLength;
+                ////////        }
+                ////////    }
+                ////////    else 
+                ////////    {
+                ////////        TextBox_debugOutput.Text += "Data size mismatch!\n";
+                ////////        TextBox_debugOutput.Text += "Expected size: " + length + "\n";
+                ////////        TextBox_debugOutput.Text += "Received size: " + receivedLength;
 
-                        DateTime startTime = DateTime.Now;
-                        //TimeSpan diffTime = DateTime.Now - startTime;
-                        //int millisceonds = (int)diffTime.TotalSeconds;
+                ////////        DateTime startTime = DateTime.Now;
+                ////////        //TimeSpan diffTime = DateTime.Now - startTime;
+                ////////        //int millisceonds = (int)diffTime.TotalSeconds;
                         
 
-                        while ( (Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0) && (DateTime.Now - startTime).Seconds < 2 )
-                        {
-                            string message = Plugin._serialPort[indexOfSelectedPedal_u].ReadLine();
-                            TextBox_debugOutput.Text += message;
+                ////////        while ( (Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0) && (DateTime.Now - startTime).Seconds < 2 )
+                ////////        {
+                ////////            string message = Plugin._serialPort[indexOfSelectedPedal_u].ReadLine();
+                ////////            TextBox_debugOutput.Text += message;
 
-                        }
+                ////////        }
 
-                    }
+                ////////    }
 
                     
                     
 
-                }
-                catch (Exception ex)
-                {
-                    TextBox_debugOutput.Text = ex.Message;
-                    ConnectToPedal.IsChecked = false;
-                }
+                ////////}
+                ////////catch (Exception ex)
+                ////////{
+                ////////    TextBox_debugOutput.Text = ex.Message;
+                ////////    ConnectToPedal.IsChecked = false;
+                ////////}
 
                 //catch (TimeoutException) { }
 
@@ -1549,20 +1566,174 @@ namespace User.PluginSdkDemo
         }
 
 
+        private string[] _data = {"", "", "" };// = "";
 
-
-        private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        //unsafe private void sp_DataReceived(object sender, object e)
+        unsafe private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+
+            SerialPort sp = (SerialPort)sender;
+            //string _type = (string)e;
+
+            //if (Plugin._serialPort[indexOfSelectedPedal_u].PortName = sp.PortName)
+
+            // identify which pedal has send the data
+            int pedalSelected = 5;
+            for (int pedalIdx_i = 0; pedalIdx_i < 3; pedalIdx_i++)
+            {
+                if (Plugin._serialPort[pedalIdx_i].PortName == sp.PortName)
+                {
+                    pedalSelected = pedalIdx_i;
+                }
+            }
+
+            // once the pedal has identified, go ahead
+            if(pedalSelected < 3)
+            //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
                 // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
-                this.Dispatcher.Invoke(() =>
-                {
-                    //TextBox_debugOutput.Text = "Data received";
-                    byte tmp = 5;
+                
 
-                    // obtain data and check whether it is from known payload type or just debug info
-                });
+                int length = sizeof(DAP_config_st);
+                byte[] newBuffer_config = new byte[length];
+
+                int receivedLength = sp.BytesToRead;
+
+                    
+                string incomingData = sp.ReadExisting();
+                //if the data doesn't end with a stop char this will signal to keep it in _data 
+                //for appending to the following read of data
+                bool endsWithStop = EndsWithStop(incomingData);
+
+                //each array object will be sent separately to the callback
+                string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
+
+                for (int i = 0; i < dataArray.Length; i++)
+                {
+                    string newData = dataArray[i];
+
+                //if you are at the last object in the array and this hasn't got a stopchar after
+                //it will be saved in _data
+                if (!endsWithStop && i == dataArray.Length - 1)
+                {
+                    _data[pedalSelected] += newData;
+                }
+                else
+                {
+                    string dataToSend = _data[pedalSelected] + newData;
+                    _data[pedalSelected] = "";
+
+
+                    // decode into config struct
+                    if (dataToSend.Length == length)
+                    {
+                        DAP_config_st tmp;
+
+                        // transform string into byte
+                        fixed (byte* p = Encoding.ASCII.GetBytes(dataToSend))
+                        {
+                            // create a fixed size buffer
+                            length = sizeof(DAP_config_st);
+                            byte[] newBuffer_config_2 = new byte[length];
+
+                            // copy the received bytes into byte array
+                            for (int j = 0; j < length; j++)
+                            {
+                                newBuffer_config_2[j] = p[j];
+                            }
+
+                            // parse byte array as config struct
+                            DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+
+                            // check whether receive struct is plausible
+                            DAP_config_st* v_config = &pedalConfig_read_st;
+                            byte* p_config = (byte*)v_config;
+
+                            // payload type check
+                            bool check_payload_config_b = false;
+                            if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+                            {
+                                check_payload_config_b = true;
+                            }
+
+                            // CRC check
+                            bool check_crc_config_b = false;
+                            if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                            {
+                                check_crc_config_b = true;
+                            }
+
+
+                            // when all checks are passed, accept the config. Otherwise discard and trow error
+                            // 
+
+                            Dispatcher.Invoke(
+                            new Action<DAP_config_st>((t) => this.dap_config_st[pedalSelected] = t),
+                            pedalConfig_read_st);
+
+
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                // update pedal config
+                                if (check_payload_config_b)
+                                {
+                                    //this.dap_config_st[indexOfSelectedPedal_u] = pedalConfig_read_st;
+                                    updateTheGuiFromConfig();
+                                }
+
+                                TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                            });
+
+                        }
+
+                    }
+                    else 
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            //TextBox_serialMonitor.Text += "DataArrayLength: " + dataArray.Length + "\n";
+                            //TextBox_serialMonitor.Text += "DataLength: " + dataToSend.Length + "\n";
+                            TextBox_serialMonitor.Text += dataToSend + "\n";
+
+                            TextBox_serialMonitor.ScrollToEnd();
+                            //TextBox_serialMonitor.Text += receivedLength + "\n";
+                        });
+                    }
+
+                            
+                }
+
+
+
+                                
+
+                                
+
+                            
+
+
+
+                //limits the data stored to 1000 to avoid using up all the memory in case of 
+                //failure to register callback or include stopchar
+
+                if (_data[pedalSelected].Length > 1000)
+                {
+                    _data[pedalSelected] = "";
+                }
+
+
+                //////this.Dispatcher.Invoke(() =>
+                //////    {
+                //////        TextBox_serialMonitor.Text += incomingData;
+
+                //////        TextBox_serialMonitor.ScrollToEnd();
+                //////        //TextBox_serialMonitor.Text += receivedLength + "\n";
+                //////    });
+                }
+
+                // obtain data and check whether it is from known payload type or just debug info
+                
             }
         }
 

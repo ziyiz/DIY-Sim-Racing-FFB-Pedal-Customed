@@ -896,6 +896,7 @@ void serialCommunicationTask( void * pvParameters )
               crc = checksumCalculator((uint8_t*)(&(dap_config_st.payLoadHeader_)), sizeof(dap_config_st.payLoadHeader_) + sizeof(dap_config_st.payLoadPedalConfig_));
               dap_config_st_local_ptr->payloadFooter_.checkSum = crc;
               Serial.write((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
+              Serial.print("\r\n");
             }
 
 
