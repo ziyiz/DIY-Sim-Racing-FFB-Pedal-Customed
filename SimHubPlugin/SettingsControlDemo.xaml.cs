@@ -1578,10 +1578,10 @@ namespace User.PluginSdkDemo
             //if (Plugin._serialPort[indexOfSelectedPedal_u].PortName = sp.PortName)
 
             // identify which pedal has send the data
-            int pedalSelected = 5;
+            int pedalSelected = 255;
             for (int pedalIdx_i = 0; pedalIdx_i < 3; pedalIdx_i++)
             {
-                if (Plugin._serialPort[pedalIdx_i].PortName == sp.PortName)
+                if ( (Plugin._serialPort[pedalIdx_i].PortName == sp.PortName) && (Plugin._serialPort[pedalIdx_i].IsOpen))
                 {
                     pedalSelected = pedalIdx_i;
                 }
@@ -1665,8 +1665,6 @@ namespace User.PluginSdkDemo
 
 
                             // when all checks are passed, accept the config. Otherwise discard and trow error
-                            // 
-
                             Dispatcher.Invoke(
                             new Action<DAP_config_st>((t) => this.dap_config_st[pedalSelected] = t),
                             pedalConfig_read_st);
