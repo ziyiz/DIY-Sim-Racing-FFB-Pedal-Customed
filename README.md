@@ -188,6 +188,7 @@ ESP code:
 - [ ] Add field to invert motor and losdcell direction
 - [ ] send joystick data to simhub plugin and provide data as vJoy gamecontroller
 - [ ] check sebastiand issue eith sticking gas pedal
+- [ ] allow effects to move stepper beyond configured max/min position, but not the measured homing positions.
 
       
 SimHub plugin:
