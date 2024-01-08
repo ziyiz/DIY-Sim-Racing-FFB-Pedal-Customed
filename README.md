@@ -200,6 +200,7 @@ SimHub plugin:
 - [ ] add OTA update for esp firmware
 - [ ] automatic serial monitor update
 - [ ] serial plotter
+- [ ] add different abs effect patterns, e.g. sawtooth
       
 Misc:
 - [ ] Create a video describing the build progress and the features
