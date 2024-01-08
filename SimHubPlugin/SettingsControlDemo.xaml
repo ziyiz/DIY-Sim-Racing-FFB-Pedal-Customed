@@ -826,6 +826,7 @@
                             <Rectangle x:Name="rect4" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect5" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
+                            <Rectangle x:Name="rect_State" Width="10" Height="10" Fill="#4CF90808" Canvas.Left="0" Canvas.Top="0" />
 
                         </Canvas>
                         <Canvas x:Name="canvas_vert_slider" Height="200" Width="40                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="-8,0,0,0" >

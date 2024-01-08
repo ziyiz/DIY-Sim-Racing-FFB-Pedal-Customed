@@ -440,6 +440,23 @@ namespace User.PluginSdkDemo
         }
 
 
+        public DAP_state_st getStateFromBytes(byte[] myBuffer)
+        {
+            DAP_state_st aux;
+
+            // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
+            int size = Marshal.SizeOf(typeof(DAP_state_st));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(myBuffer, 0, ptr, size);
+
+            aux = (DAP_state_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_st));
+            Marshal.FreeHGlobal(ptr);
+
+            return aux;
+        }
+
+
         //unsafe private UInt16 checksumCalc(byte* data, int length)
         //{
 
@@ -1606,7 +1623,67 @@ namespace User.PluginSdkDemo
                             string dataToSend = _data[pedalSelected] + newData;
                             _data[pedalSelected] = "";
 
-                            // decode into config struct
+
+
+                            // check for pedal state struct
+                            if ((dataToSend.Length == sizeof(DAP_state_st)))
+                            {
+
+                                // transform string into byte
+                                fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+                                {
+                                    // create a fixed size buffer
+                                    length = sizeof(DAP_state_st);
+                                    byte[] newBuffer_state_2 = new byte[length];
+
+                                    // copy the received bytes into byte array
+                                    for (int j = 0; j < length; j++)
+                                    {
+                                        newBuffer_state_2[j] = p[j];
+                                    }
+
+                                    // parse byte array as config struct
+                                    DAP_state_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
+
+                                    // check whether receive struct is plausible
+                                    DAP_state_st* v_state = &pedalState_read_st;
+                                    byte* p_state = (byte*)v_state;
+
+                                    // payload type check
+                                    bool check_payload_state_b = false;
+                                    if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
+                                    {
+                                        check_payload_state_b = true;
+                                    }
+
+                                    // CRC check
+                                    bool check_crc_state_b = false;
+                                    if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
+                                    {
+                                        check_crc_state_b = true;
+                                    }
+
+                                    if ((check_payload_state_b) && check_crc_state_b)
+                                    {
+                                        TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                        TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+
+
+                                        text_point_pos.Opacity = 0;
+                                        double control_rect_value_max = 65535;
+                                        double dyy = canvas.Height / control_rect_value_max;
+                                        double dxx = canvas.Width / control_rect_value_max;
+
+
+                                        Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
+                                        Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+
+                                    }
+
+
+                                }
+                            }
+                                // decode into config struct
                             if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == length))
                             {
                                 DAP_config_st tmp;

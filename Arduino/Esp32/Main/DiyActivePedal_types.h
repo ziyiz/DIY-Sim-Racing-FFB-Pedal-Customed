@@ -3,11 +3,12 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 114
+#define DAP_VERSION_CONFIG 115
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
 #define DAP_PAYLOAD_TYPE_ACTION 110
+#define DAP_PAYLOAD_TYPE_STATE 120
 
 struct payloadHeader {
   
@@ -28,6 +29,11 @@ struct payloadPedalAction {
   uint8_t startSystemIdentification_u8;
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
+};
+
+struct payloadPedalState {
+  uint16_t pedalPosition_u16;
+  uint16_t pedalForce_u16;
 };
 
 struct payloadPedalConfig {
@@ -113,6 +119,12 @@ struct payloadFooter {
 struct DAP_actions_st {
   payloadHeader payLoadHeader_;
   payloadPedalAction payloadPedalAction_;
+  payloadFooter payloadFooter_; 
+};
+
+struct DAP_state_st {
+  payloadHeader payLoadHeader_;
+  payloadPedalState payloadPedalState_;
   payloadFooter payloadFooter_; 
 };
 

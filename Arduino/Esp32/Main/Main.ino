@@ -7,7 +7,7 @@
 #define DEBUG_INFO_0_LOADCELL_READING 4
 #define DEBUG_INFO_0_SERVO_READINGS 8
 #define DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS 16
-
+#define DEBUG_INFO_0_STATE_INFO_STRUCT 32
 
 bool resetServoEncoder = true;
 bool isv57LifeSignal_b = false;
@@ -57,7 +57,7 @@ RPMOscillation RPMOscillation;
 #include "DiyActivePedal_types.h"
 DAP_config_st dap_config_st;
 DAP_calculationVariables_st dap_calculationVariables_st;
-
+DAP_state_st dap_state_st;
 
 
 
@@ -713,7 +713,27 @@ void pedalUpdateTask( void * pvParameters )
       }
     }
 
-    
+    if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) 
+    {
+      printCycleCounter++;
+
+      printCycleCounter %= 20;
+      if (printCycleCounter == 0)
+      {
+        float normalizedPedalReading_fl32 = constrain(((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Max), 0, 1);
+        dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
+        dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
+        dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
+        dap_state_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
+        dap_state_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_st.payLoadHeader_)), sizeof(dap_state_st.payLoadHeader_) + sizeof(dap_state_st.payloadPedalState_));
+
+        DAP_state_st * dap_state_st_local_ptr;
+        dap_state_st_local_ptr = &dap_state_st;
+        Serial.write((char*)dap_state_st_local_ptr, sizeof(DAP_state_st));
+        Serial.print("\r\n");
+      }
+      
+    }
 
     #ifdef PRINT_USED_STACK_SIZE
       unsigned int temp2 = uxTaskGetStackHighWaterMark(nullptr);

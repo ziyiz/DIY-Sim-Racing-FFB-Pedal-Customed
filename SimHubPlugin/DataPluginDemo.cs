@@ -19,12 +19,13 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 114;
+    public const uint pedalConfigPayload_version = 115;
 
 
     // pyload types
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
+    public const uint pedalStatePayload_type = 120;
 }
 
 
@@ -48,6 +49,12 @@ public struct payloadPedalAction
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
+};
+
+public struct payloadPedalState
+{
+    public UInt16 pedalPosition_u16;
+    public UInt16 pedalForce_u16;
 };
 
 public struct payloadPedalConfig
@@ -148,10 +155,18 @@ public struct DAP_action_st
     public payloadFooter payloadFooter_;
 }
 
+
 public struct DAP_config_st
 {
     public payloadHeader payloadHeader_;
     public payloadPedalConfig payloadPedalConfig_;
+    public payloadFooter payloadFooter_;
+}
+
+public struct DAP_state_st
+{
+    public payloadHeader payloadHeader_;
+    public payloadPedalState payloadPedalState_;
     public payloadFooter payloadFooter_;
 }
 
