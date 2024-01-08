@@ -89,9 +89,10 @@ Here are some examples of mechanical designs awesome DIYers have done:
 
 | Design           |  Link |
 :------------------------- | :-------------------------
-|<img src="https://user-images.githubusercontent.com/17485523/231913569-695fcab1-f0bb-4af6-8d90-b1bfaece13bc.png" height="200">  |  [Tjfenwick design](https://github.com/tjfenwick/DIY-Sim-Racing-Active-Pedal)|
+|<img src="https://user-images.githubusercontent.com/17485523/231913569-695fcab1-f0bb-4af6-8d90-b1bfaece13bc.png" height="200">  |  [Tjfenwick's design](https://github.com/tjfenwick/DIY-Sim-Racing-Active-Pedal)|
 |<img src="https://user-images.githubusercontent.com/79850208/261399337-b313371c-9262-416d-a131-44fa269f9557.png" height="200">  |  [Bjoes design](https://github.com/Bjoes/DIY-Active-pedal-mechanical-design)|
-|<img src="https://media.printables.com/media/prints/557527/images/4471984_0fbfebf6-7b91-47dd-9602-44a6c7e8b851/thumbs/inside/1600x1200/png/screenshot-2023-08-19-150158.webp" height="200">  |  [GWiz design](https://www.printables.com/de/model/557527-simucube-style-active-pedal/files)|
+|<img src="https://media.printables.com/media/prints/557527/images/4471984_0fbfebf6-7b91-47dd-9602-44a6c7e8b851/thumbs/inside/1600x1200/png/screenshot-2023-08-19-150158.webp" height="200">  |  [GWiz's design](https://www.printables.com/de/model/557527-simucube-style-active-pedal/files)|
+|<img src="https://cdn.thingiverse.com/assets/14/7d/56/cd/03/large_display_9d83a9a8-2c8a-4940-b9ce-b4ae4f9674c6.jpg" height="200">  | [shf90's design](https://www.thingiverse.com/thing:6414587)|
 
 
 
@@ -119,8 +120,9 @@ Firmware can be built and flashed via Arduino-IDE or Arduino-CLI.
 
 #### Built from source (via Arduino-CLI)
 1. Install the [Arduino CLI](https://github.com/arduino/arduino-cli/releases)
-2. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
-3. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
+2. Install the libraries `git submodule update --init --recursive`
+3. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
+4. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
 
 #### Flash prebuilt binaries via web flasher
 The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
@@ -143,7 +145,7 @@ The SimHub plugin was designed to communicate with the ESP to (a) modify the ped
 
 ![image](SimHubPlugin/Images/Plugin-UI.png)
 
-To install the plugin, the plugin [binaries](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases), hidden inside the SimHub_plugin.zip, have to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
+To install the plugin, the plugin [DiyActivePedal.dll](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases) has to be copied to the SimHub directory, e.g. C:/Program Files (x86)/SimHub
 
 # Steps after flashing the firmware
 The pedal will not move initially after flashing. One has to open the SimHub plugin, connect to the pedal, and send a config with non-zero PID values.
@@ -164,6 +166,11 @@ After sending the initial config, power cycling of the pedal is necessary. The p
 1. Make sure, that you follow the above instructions. The default PID values are set to 0 thus the pedal will not move. You have to send non-zero PID values and restart the pedal to observe pedal travel.
 2. Open the serial monitor in Arduino IDE, set the baud rate to 921600, and restart the pedal. You should see some debug info. Make a screenshot and kindly ask the Discord server for help.
 
+## Bluetooth doesn't show gamepad data
+Install DirectX 9
+
+## The serial monitor shows a message "Couldn't load config from EPROM due to version mismatch"
+Install a SimHub plugin matching the ESP firmware you installed and send a config to the pedal.
 
 # Misc
 ## Pedal kinematics calculation
@@ -178,17 +185,23 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
-- [ ] Add field to select joystick output to be conputed from force or travel
+- [ ] Add field to invert motor and losdcell direction
+- [ ] send joystick data to simhub plugin and provide data as vJoy gamecontroller
+- [ ] check sebastiand issue eith sticking gas pedal
+- [ ] allow effects to move stepper beyond configured max/min position, but not the measured homing positions.
 
-
+      
 SimHub plugin:
 - [ ] Send SimHub data via wifi to ESP 
-- [ ] GUI design improvements for the SimHub plugin 
-- [ ] JSON deserialization make compatible with older revisions
-- [ ] JSON deserialization add nicer formating
-- [ ] add button to reset the ESP https://stackoverflow.com/questions/51084038/c-sharp-dtrenable-and-rtsenable-in-the-serialport
+- [x] GUI design improvements for the SimHub plugin 
+- [x] JSON deserialization make compatible with older revisions
 - [ ] include the types header file and use it
-
+- [ ] Make use of effects from the ShakeIt plugin
+- [ ] add OTA update for esp firmware
+- [ ] automatic serial monitor update
+- [ ] serial plotter
+- [ ] add different abs effect patterns, e.g. sawtooth
+      
 Misc:
 - [ ] Create a video describing the build progress and the features
 - [ ] Add Doxygen + Graphviz to the project to automatically generate documentation, architectural design overview, etc.

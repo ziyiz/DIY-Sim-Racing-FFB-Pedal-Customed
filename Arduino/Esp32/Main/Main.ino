@@ -1,6 +1,5 @@
 #define ESTIMATE_LOADCELL_VARIANCE
 #define ISV_COMMUNICATION
-//#define Using_analog_output
 //#define PRINT_SERVO_STATES
 
 #define DEBUG_INFO_0_CYCLE_TIMER 1
@@ -212,10 +211,7 @@ void setup()
   // init controller
   SetupController();
   delay(2000);
-  #ifdef Using_analog_output
-    delay(8000);
-  #endif
-
+  
 
 
 // check whether iSV57 communication can be established
@@ -235,6 +231,9 @@ void setup()
   delay(200);
 #endif
 
+
+// initialize configuration and update local variables
+  dap_config_st.initialiseDefaults();
 
   // Load config from EEPROM, if valid, overwrite initial config
   EEPROM.begin(sizeof(DAP_config_st));
@@ -286,14 +285,7 @@ void setup()
 
 
 
-  // initialize configuration and update local variables
-  #ifdef PEDAL_IS_BRAKE
-    dap_config_st.initialiseDefaults();
-  #endif
-
-  #ifdef PEDAL_IS_ACCELERATOR
-    dap_config_st.initialiseDefaults_Accelerator();
-  #endif
+  
 
   
 
@@ -540,19 +532,12 @@ void pedalUpdateTask( void * pvParameters )
 
       // compute pedal oscillation, when ABS is active
     float absForceOffset_fl32 = 0.0f;
-    float RPMForceOffset_fl32 = 0.0f;
-    float total_effect_force = 0.0f;
+
     #ifdef ABS_OSCILLATION
-      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st);
+      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern);
       RPMOscillation.trigger();
-      RPMForceOffset_fl32 = RPMOscillation.forceOffset(&dap_calculationVariables_st);
-      //total_effect_force = absForceOffset_fl32+RPMForceOffset_fl32;
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_AMP);
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_max_freq);
-      //Serial.println(dap_config_st.payLoadPedalConfig_.RPM_min_freq);
-      //Dap_action_st.
+      RPMOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
-    //dap_calculationVariables_st.Force_Max+=total_effect_force;
 
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
@@ -574,6 +559,11 @@ void pedalUpdateTask( void * pvParameters )
 
     // Get the loadcell reading
     float loadcellReading = loadcell->getReadingKg();
+
+    if (dap_config_st.payLoadPedalConfig_.invertLoadcellReading_u8 == 1)
+    {
+      loadcellReading *= -1;
+    }
 
     // Do the loadcell signal filtering
     float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
@@ -623,8 +613,8 @@ void pedalUpdateTask( void * pvParameters )
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32, RPMForceOffset_fl32);
-    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, total_effect_force);
+    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32);
+    
 
 
     //#define DEBUG_STEPPER_POS
@@ -650,8 +640,10 @@ void pedalUpdateTask( void * pvParameters )
     
 
   
-    // clip target position to configured target interval
-    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax);
+    //Adding RPM effect
+    Position_Next +=RPMOscillation.RPM_position_offset;
+    // clip target position to configured target interval with RPM effect movement in the endstop
+    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax+RPMOscillation.RPM_position_offset);
 
     // if pedal in min position, recalibrate position 
     #ifdef ISV_COMMUNICATION
@@ -904,6 +896,7 @@ void serialCommunicationTask( void * pvParameters )
               crc = checksumCalculator((uint8_t*)(&(dap_config_st.payLoadHeader_)), sizeof(dap_config_st.payLoadHeader_) + sizeof(dap_config_st.payLoadPedalConfig_));
               dap_config_st_local_ptr->payloadFooter_.checkSum = crc;
               Serial.write((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
+              Serial.print("\r\n");
             }
 
 

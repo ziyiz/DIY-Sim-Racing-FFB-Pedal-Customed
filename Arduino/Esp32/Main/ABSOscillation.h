@@ -23,7 +23,7 @@ public:
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
+  float forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern) {
 
 
     long timeNowMillis = millis();
@@ -39,7 +39,25 @@ public:
     {
       _absTimeMillis += timeNowMillis - _lastCallTimeMillis;
       float absTimeSeconds = _absTimeMillis / 1000.0f;
-      absForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * absTimeSeconds);
+
+      switch (absPattern) {
+        case 0:
+          // sine wave pattern
+          absForceOffset = calcVars_st->absAmplitude * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
+          break;
+        case 1:
+          // sawtooth pattern
+          if (calcVars_st->absFrequency > 0)
+          {
+            absForceOffset = calcVars_st->absAmplitude * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
+          }
+          break;
+        default:
+          break;
+      }
+      
+
+      
     }
 
     _lastCallTimeMillis = timeNowMillis;
@@ -62,15 +80,13 @@ public:
     : _timeLastTriggerMillis(0)
   {}
   float RPM_value =0;
-  float RPM_debug =0;
-  float RPM_debug_MAX_freq =0;
-  float RPM_debug_MIN_freq =0;
+  int32_t RPM_position_offset = 0;
 public:
   void trigger() {
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
+  void forceOffset(DAP_calculationVariables_st* calcVars_st) {
 
 
     long timeNowMillis = millis();
@@ -78,16 +94,13 @@ public:
     float RPMForceOffset = 0;
     float RPM_max_freq = calcVars_st->RPM_max_freq;
     float RPM_min_freq = calcVars_st->RPM_min_freq;
-    float RPM_max =10;
+    //float RPM_max =10;
     float RPM_amp = calcVars_st->RPM_AMP;
-    RPM_debug=RPM_amp;
-    RPM_debug_MAX_freq=RPM_max_freq;
-    RPM_debug_MIN_freq=RPM_min_freq;
     if(RPM_value==0)
     {
       RPM_min_freq=0;
-
     }
+
 
     float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100, RPM_min_freq, RPM_max_freq);
     
@@ -109,7 +122,8 @@ public:
 
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
-    return RPMForceOffset;
+    RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
+    //return RPMForceOffset;
     
 
   }
