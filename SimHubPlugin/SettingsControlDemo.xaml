@@ -235,7 +235,7 @@
 
 
 
-            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" HorizontalAlignment="Left" Grid.Row="9" Width="180" Margin="4,61,0,202" >System identification</styles:SHButtonPrimary>
+            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" HorizontalAlignment="Left" Grid.Row="9" Width="180" Margin="4,89,0,174" RenderTransformOrigin="0.522,1.216" >System identification</styles:SHButtonPrimary>
 
 
 
@@ -278,22 +278,11 @@
             <TextBox x:Name="TextBox2" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Width="204" AutomationProperties.Name="TextBox2" Height="46" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True"/>
             <Button Content="Test-ABS/TC" Margin="172,20,0,0" Grid.Row="3" VerticalAlignment="Top" Click="TestAbs_click" Height="20" Background="#FF050550" HorizontalAlignment="Left" FontWeight="Bold" FontSize="9"/>
             <styles:SHButtonSecondary Click="DisconnectToPedal_click" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0" Width="115" Margin="171,35,0,29" FontSize="8" Background="Red" Content="Disconnect from Pedal" Grid.RowSpan="2" />
-            <Slider x:Name="debugFlagSlider_0" 
-                HorizontalAlignment="Left" 
-                VerticalAlignment="Top" 
-                Margin="10,30,0,0" 
-                Grid.Row="9" 
-                Width="320" 
-                ValueChanged="debugFlagSlider_0_changed" 
-                AutoToolTipPlacement="TopLeft" 
-                AutoToolTipPrecision="0"
-                Minimum="0"
-                Maximum="255"
-                TickPlacement="BottomRight"
-                TickFrequency="16" RenderTransformOrigin="0.508,0.525"
-                Value="0"
-                IsSnapToTickEnabled="False"
-            />
+            
+
+            <TextBox x:Name="textBox_debug_Flag_0"  Margin="5,26,295,244" Width="100" Height="30"  
+                Grid.Row="9" PreviewTextInput="NumericTextBox_PreviewTextInput"/>
+            
             <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="6"
                 Width="120"
                 Height="34" VerticalAlignment="Top" Content="Debug Mode" Foreground="White" Margin="5,98,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Grid.RowSpan="2"/>
@@ -420,18 +409,18 @@
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="120" Grid.Row="7" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Margin="0,5,0,0">
                 <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                        <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="150" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
+                        <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="120" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                         <CheckBox x:Name="Simulate_ABS_check"
-                Width="236"
+                Width="210"
                 Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E"/>
-
-                        <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged" Margin="0,0,0,0" 
-                          Width="90" HorizontalAlignment="Left"
+                        <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged" 
+                          Width="80"
+                                  Height="10"
                             FontSize="10" SelectedIndex="0">
                             <ComboBoxItem Content="Sinewave"/>
                             <ComboBoxItem Content="Sawtooth"/>
                         </ComboBox>
-                                  
+
 
 
                     </StackPanel>

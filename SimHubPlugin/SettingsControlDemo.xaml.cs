@@ -35,6 +35,8 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Text.RegularExpressions;
+
 
 namespace User.PluginSdkDemo
 {
@@ -308,7 +310,7 @@ namespace User.PluginSdkDemo
                 PID_tuning_D_gain_slider.Opacity = 0;
                 PID_tuning_I_gain_slider.Opacity = 0;
                 PID_tuning_P_gain_slider.Opacity = 0;
-                debugFlagSlider_0.Opacity = 0;
+                textBox_debug_Flag_0.Opacity = 0;
                 //btn_serial.Visibility = System.Windows.Visibility.Hidden;
                 btn_system_id.Visibility = System.Windows.Visibility.Hidden;
                 //setting drawing color with Simhub theme workaround
@@ -626,12 +628,12 @@ namespace User.PluginSdkDemo
             PID_tuning_I_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
             PID_tuning_D_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
 
-            
 
 
-            debugFlagSlider_0.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0;
+            int debugFlagValue_0 = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0;
+            textBox_debug_Flag_0.Text = debugFlagValue_0.ToString();
 
-            
+
 
             Update_BrakeForceCurve();
             //Simulated ABS trigger
@@ -1020,16 +1022,34 @@ namespace User.PluginSdkDemo
 
 
 
-        public void debugFlagSlider_0_changed(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if ( (e.NewValue >= 0) && (e.NewValue <= 255) )
-            {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)e.NewValue;
-            }
 
-            //extBox_debugOutput.Text = e.NewValue.ToString();
+        private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+
+            //if ((e.NewValue >= 0) && (e.NewValue <= 255))
+            //{
+            //    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)e.NewValue;
+            //}
+
+            // Use a regular expression to allow only numeric input
+            Regex regex = new Regex("[^0-9]+");
+
+            System.Windows.Controls.TextBox textBox = (System.Windows.Controls.TextBox)sender;
+
+            e.Handled = regex.IsMatch(textBox.Text + e.Text);
+
+            if (!e.Handled)
+            {
+                if (int.TryParse(textBox.Text + e.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 255))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)result;
+                    }
+                }
+            }
         }
-        
+
 
         /********************************************************************************************************************/
         /*							Write/read config to/from Json file														*/
@@ -1157,19 +1177,6 @@ namespace User.PluginSdkDemo
                     string errorMessage = caughtEx.Message;
                     TextBox_debugOutput.Text = errorMessage;
                 }
-
-
-
-
-                //try
-                //{
-                //    DateTime startTime = DateTime.Now;
-                //    while ((Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0) && (DateTime.Now - startTime).Seconds < 2)
-                //    {
-                //        string message = Plugin._serialPort[indexOfSelectedPedal_u].ReadLine();
-                //    }
-                //}
-                //catch (TimeoutException) { }
             }
         }
 
@@ -1256,29 +1263,6 @@ namespace User.PluginSdkDemo
 
 
 
-        /********************************************************************************************************************/
-        /*							Serial monitor update																	*/
-        /********************************************************************************************************************/
-        //public void SerialMonitorRead_click(object sender, RoutedEventArgs e)
-        //{
-
-        //    // read system return log
-        //    try
-        //    {
-        //        // clear inbuffer 
-        //        //Plugin._serialPort[indexOfSelectedPedal_u].DiscardInBuffer();
-
-        //        System.Threading.Thread.Sleep(100);
-
-        //        DateTime startTime = DateTime.Now;
-        //        while ((Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0) && (DateTime.Now - startTime).Seconds < 2)
-        //        {
-        //            string message = Plugin._serialPort[indexOfSelectedPedal_u].ReadLine();
-        //            TextBox_serialMonitor.Text += message;
-        //        }
-        //    }
-        //    catch (TimeoutException) { }
-        //}
 
 
         /********************************************************************************************************************/
@@ -1331,23 +1315,6 @@ namespace User.PluginSdkDemo
                     TextBox_debugOutput.Text = errorMessage;
                 }
 
-
-                
-                System.Threading.Thread.Sleep(100);
-                try
-                {
-                    
-                    while (Plugin._serialPort[indexOfSelectedPedal_u].BytesToRead > 0)
-                    {
-                        string message = Plugin._serialPort[indexOfSelectedPedal_u].ReadLine();
-                        TextBox_debugOutput.Text += message;
-
-                    }
-                }
-                catch (TimeoutException) { }
-
-
-
             }
         }
 
@@ -1377,7 +1344,7 @@ namespace User.PluginSdkDemo
 
                 
                 // try N times and check whether config has been received
-                for (int rep = 0; rep < 2; rep++)
+                for (int rep = 0; rep < 1; rep++)
                 {
                     // send query command
                     Plugin._serialPort[i].Write(newBuffer, 0, newBuffer.Length);
@@ -1610,46 +1577,12 @@ namespace User.PluginSdkDemo
                 byte[] newBuffer_config = new byte[length];
 
 
-
-
-
-
-
-
-
                 int receivedLength = sp.BytesToRead;
 
                 if (receivedLength > 0)
                 {
 
-
-                    ////length = sizeof(DAP_config_st);
-                    ////byte[] newBuffer_config_3 = new byte[length];
-
-                    ////int receivedLength_3 = sp.BytesToRead;
-
-                    //////if (receivedLength == length)
-                    ////{
-                    ////    sp.Read(newBuffer_config, 0, length);
-
-
-                    ////    DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config);
-
-                    ////    // check CRC
-                    ////    DAP_config_st* v_config = &pedalConfig_read_st;
-                    ////    byte* p_config = (byte*)v_config;
-
-
-                    ////}
-                    
-                    
                     string incomingData = sp.ReadExisting();
-
-                    //byte[] retBuffer = new byte[2000];
-                    //sp.Read(retBuffer, 0, receivedLength);
-
-                    //newLine = Encoding.ASCII.GetBytes(Environment.NewLine);
-
 
                     //if the data doesn't end with a stop char this will signal to keep it in _data 
                     //for appending to the following read of data
@@ -1713,21 +1646,19 @@ namespace User.PluginSdkDemo
                                         check_crc_config_b = true;
                                     }
 
-
-                                    // when all checks are passed, accept the config. Otherwise discard and trow error
-                                    //Dispatcher.Invoke(
-                                    //new Action<DAP_config_st>((t) => this.dap_config_st[pedalSelected] = t),
-                                    //pedalConfig_read_st);
-
-                                    if ((check_payload_config_b))
+                                    if ((check_payload_config_b) && check_crc_config_b)
                                     {
                                         waiting_for_pedal_config[pedalSelected] = false;
                                         this.dap_config_st[pedalSelected] = pedalConfig_read_st;
                                         updateTheGuiFromConfig();
                                     }
+                                    else 
+                                    {
+                                        TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                        TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                    }
 
-                                    TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
-                                    TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                    
 
                                 }
 
@@ -1756,11 +1687,15 @@ namespace User.PluginSdkDemo
 
                         }
 
-
-                        //while (TextBox_serialMonitor.LineCount > 30)
-                        //{
-                        //    TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
-                        //}
+                        try
+                        {
+                            while (TextBox_serialMonitor.LineCount > 30)
+                            {
+                                TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
+                            }
+                        }
+                        catch { }
+                        
 
 
 
@@ -2551,7 +2486,7 @@ namespace User.PluginSdkDemo
             PID_tuning_D_gain_slider.Opacity = 1;
             PID_tuning_I_gain_slider.Opacity = 1;
             PID_tuning_P_gain_slider.Opacity= 1;
-            debugFlagSlider_0.Opacity = 1;
+            textBox_debug_Flag_0.Opacity = 1;
             //btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
 
@@ -2569,7 +2504,7 @@ namespace User.PluginSdkDemo
             PID_tuning_D_gain_slider.Opacity = 0;
             PID_tuning_I_gain_slider.Opacity = 0;
             PID_tuning_P_gain_slider.Opacity = 0;
-            debugFlagSlider_0.Opacity = 0;
+            textBox_debug_Flag_0.Opacity = 0;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
 
