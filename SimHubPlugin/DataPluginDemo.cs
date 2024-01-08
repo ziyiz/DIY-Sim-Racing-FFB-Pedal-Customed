@@ -6,6 +6,7 @@ using System;
 using System.IO.Ports;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media;
 
 
@@ -634,6 +635,9 @@ namespace User.PluginSdkDemo
 
                 _serialPort[pedalIdx].ReadTimeout = 2000;
 				_serialPort[pedalIdx].WriteTimeout = 500;
+
+                // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+                _serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
 
                 _serialPort[pedalIdx].DtrEnable = false;
 
