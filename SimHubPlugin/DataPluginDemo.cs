@@ -19,7 +19,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 113;
+    public const uint pedalConfigPayload_version = 114;
 
 
     // pyload types
@@ -77,8 +77,9 @@ public struct payloadPedalConfig
     // configure ABS effect 
     public byte absFrequency; // In Hz
     public byte absAmplitude; // In kg/20
+    public byte absPattern; // 0: sinewave, 1: sawtooth
 
-    
+
 
     // geometric properties of the pedal
     // in mm
@@ -751,6 +752,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.dampingPull = 0;
             dap_config_initial_st.payloadPedalConfig_.absFrequency = 5;
             dap_config_initial_st.payloadPedalConfig_.absAmplitude = 100;
+            dap_config_initial_st.payloadPedalConfig_.absPattern = 0;
             dap_config_initial_st.payloadPedalConfig_.lengthPedal_AC = 150;
             dap_config_initial_st.payloadPedalConfig_.horPos_AB = 215;
             dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;

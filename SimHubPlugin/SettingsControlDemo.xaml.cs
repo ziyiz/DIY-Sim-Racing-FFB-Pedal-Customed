@@ -257,6 +257,7 @@ namespace User.PluginSdkDemo
                 dap_config_st[pedalIdx].payloadPedalConfig_.dampingPull = 0;
                 dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
                 dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
+                dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
                 dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
                 dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
                 dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
@@ -748,6 +749,17 @@ namespace User.PluginSdkDemo
             text_ABS_freq.Text =dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency+"Hz";
             Canvas.SetLeft(text_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2-text_ABS_freq.Width/2);
             Canvas.SetTop(text_ABS_freq, 5);
+
+            // ABS pattern
+            try
+            {
+                AbsPattern.SelectedIndex = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+            
+
             //max game output slider
             double max_game_max = 100;
             dx = canvas_horz_max_game.Width / max_game_max;
@@ -1886,6 +1898,26 @@ namespace User.PluginSdkDemo
 
 
         }
+
+
+
+
+
+        public void AbsPatternChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern = (byte)AbsPattern.SelectedIndex;
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+        }
+
+
+
 
 
         private void RestartPedal_click(object sender, RoutedEventArgs e)

@@ -23,7 +23,7 @@ public:
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st) {
+  float forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern) {
 
 
     long timeNowMillis = millis();
@@ -39,7 +39,25 @@ public:
     {
       _absTimeMillis += timeNowMillis - _lastCallTimeMillis;
       float absTimeSeconds = _absTimeMillis / 1000.0f;
-      absForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * absTimeSeconds);
+
+      switch (absPattern) {
+        case 0:
+          // sine wave pattern
+          absForceOffset = calcVars_st->absAmplitude * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
+          break;
+        case 1:
+          // sawtooth pattern
+          if (calcVars_st->absFrequency > 0)
+          {
+            absForceOffset = calcVars_st->absAmplitude * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
+          }
+          break;
+        default:
+          break;
+      }
+      
+
+      
     }
 
     _lastCallTimeMillis = timeNowMillis;

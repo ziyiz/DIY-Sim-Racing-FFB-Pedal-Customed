@@ -534,7 +534,7 @@ void pedalUpdateTask( void * pvParameters )
     float absForceOffset_fl32 = 0.0f;
 
     #ifdef ABS_OSCILLATION
-      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st);
+      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern);
       RPMOscillation.trigger();
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
     #endif

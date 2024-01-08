@@ -424,6 +424,16 @@
                         <CheckBox x:Name="Simulate_ABS_check"
                 Width="236"
                 Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E"/>
+
+                        <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged" Margin="0,0,0,0" 
+                          Width="90" HorizontalAlignment="Left"
+                            FontSize="10" SelectedIndex="0">
+                            <ComboBoxItem Content="Sinewave"/>
+                            <ComboBoxItem Content="Sawtooth"/>
+                        </ComboBox>
+                                  
+
+
                     </StackPanel>
                     <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
@@ -526,6 +536,14 @@
                         <CheckBox x:Name="JoystickOutput_check"
                 Width="156"
                 Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
+                        
+                        <!--<CheckBox x:Name="JoystickOutput_check_Copy"
+                            Width="156"
+                            Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E"/>-->
+
+                        
+
+
                     </StackPanel>
                     <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
