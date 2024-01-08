@@ -278,11 +278,11 @@
             <TextBox x:Name="TextBox2" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Width="204" AutomationProperties.Name="TextBox2" Height="46" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True"/>
             <Button Content="Test-ABS/TC" Margin="172,20,0,0" Grid.Row="3" VerticalAlignment="Top" Click="TestAbs_click" Height="20" Background="#FF050550" HorizontalAlignment="Left" FontWeight="Bold" FontSize="9"/>
             <styles:SHButtonSecondary Click="DisconnectToPedal_click" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0" Width="115" Margin="171,35,0,29" FontSize="8" Background="Red" Content="Disconnect from Pedal" Grid.RowSpan="2" />
-            
+
 
             <TextBox x:Name="textBox_debug_Flag_0"  Margin="5,26,295,244" Width="100" Height="30"  
                 Grid.Row="9" PreviewTextInput="NumericTextBox_PreviewTextInput"/>
-            
+
             <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="6"
                 Width="120"
                 Height="34" VerticalAlignment="Top" Content="Debug Mode" Foreground="White" Margin="5,98,0,0" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Grid.RowSpan="2"/>
@@ -525,12 +525,12 @@
                         <CheckBox x:Name="JoystickOutput_check"
                 Width="156"
                 Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
-                        
+
                         <!--<CheckBox x:Name="JoystickOutput_check_Copy"
                             Width="156"
                             Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E"/>-->
 
-                        
+
 
 
                     </StackPanel>
@@ -826,7 +826,7 @@
                             <Rectangle x:Name="rect4" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect5" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
-                            <Rectangle x:Name="rect_State" Width="10" Height="10" Fill="#4CF90808" Canvas.Left="0" Canvas.Top="0" />
+                            <Rectangle x:Name="rect_State" Width="10" Height="10" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#FFEF0707" />
 
                         </Canvas>
                         <Canvas x:Name="canvas_vert_slider" Height="200" Width="40                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="-8,0,0,0" >

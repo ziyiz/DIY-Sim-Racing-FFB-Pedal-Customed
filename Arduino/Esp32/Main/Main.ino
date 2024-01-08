@@ -720,7 +720,7 @@ void pedalUpdateTask( void * pvParameters )
       printCycleCounter %= 20;
       if (printCycleCounter == 0)
       {
-        float normalizedPedalReading_fl32 = constrain(((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Max), 0, 1);
+        float normalizedPedalReading_fl32 = constrain(((filteredReading - dap_calculationVariables_st.Force_Min) / ( dap_calculationVariables_st.Force_Max - dap_calculationVariables_st.Force_Min)), 0, 1);
         dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
         dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
         dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
