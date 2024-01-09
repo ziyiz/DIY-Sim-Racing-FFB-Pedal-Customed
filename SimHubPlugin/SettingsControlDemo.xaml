@@ -281,7 +281,7 @@
 
 
             <TextBox x:Name="textBox_debug_Flag_0"  Margin="5,26,295,244" Width="100" Height="30"  
-                Grid.Row="9" PreviewTextInput="NumericTextBox_PreviewTextInput"/>
+                Grid.Row="9" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="NumericTextBox_TextChanged"/>
 
             <CheckBox x:Name="Debug_check" HorizontalAlignment="Left" Grid.Row="6"
                 Width="120"

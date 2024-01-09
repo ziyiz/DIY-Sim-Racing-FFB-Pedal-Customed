@@ -1034,12 +1034,24 @@ namespace User.PluginSdkDemo
 
 
 
-        
 
 
 
 
 
+        private void NumericTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //labelEingabe.Content = "Sie haben '" + textBox_debug_Flag_0.Text + "' eingegeben!";
+            //TextBox_debugOutput.Text = textBox_debug_Flag_0.Text;
+
+            if (int.TryParse(textBox_debug_Flag_0.Text, out int result))
+            {
+                if ((result >= 0) && (result <= 255))
+                {
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)result;
+                }
+            }
+        }
         private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
 
@@ -1055,16 +1067,16 @@ namespace User.PluginSdkDemo
 
             e.Handled = regex.IsMatch(textBox.Text + e.Text);
 
-            if (!e.Handled)
-            {
-                if (int.TryParse(textBox.Text + e.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 255))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)result;
-                    }
-                }
-            }
+            ////if (!e.Handled)
+            ////{
+            ////    if (int.TryParse(textBox.Text + e.Text, out int result))
+            ////    {
+            ////        if ((result >= 0) && (result <= 255))
+            ////        {
+            ////            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 = (byte)result;
+            ////        }
+            ////    }
+            ////}
         }
 
 
