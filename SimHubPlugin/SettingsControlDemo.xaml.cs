@@ -686,7 +686,7 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(rect4, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 - rect0.Height / 2);
             Canvas.SetLeft(rect4, 4 * canvas.Width / 5 - rect4.Width / 2);
             Canvas.SetTop(rect5, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 - rect0.Height / 2);
-            Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2);
+            Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2 - 2);
             //set for ABS slider
             Canvas.SetTop(rect_SABS_Control, (control_rect_value_max- dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value ) *dyy-rect_SABS_Control.Height/2);
             Canvas.SetLeft(rect_SABS_Control , 0);
@@ -1589,6 +1589,7 @@ namespace User.PluginSdkDemo
 
             int pedalSelected = Int32.Parse( (sender as System.Windows.Forms.Timer).Tag.ToString() );
 
+            bool pedalStateHasAlreadyBeenUpdated_b = false;
 
             // once the pedal has identified, go ahead
             if (pedalSelected < 3)
@@ -1602,8 +1603,8 @@ namespace User.PluginSdkDemo
                 // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
 
 
-                int length = sizeof(DAP_config_st);
-                byte[] newBuffer_config = new byte[length];
+                //int length = sizeof(DAP_config_st);
+                //byte[] newBuffer_config = new byte[length];
 
 
                 int receivedLength = sp.BytesToRead;
@@ -1620,7 +1621,7 @@ namespace User.PluginSdkDemo
                     //each array object will be sent separately to the callback
                     string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
 
-                    for (int i = 0; i < dataArray.Length - 1; i++)
+                    for (int i = 0;  i < dataArray.Length - 1; i++)
                     {
                         string newData = dataArray[i];
 
@@ -1645,7 +1646,7 @@ namespace User.PluginSdkDemo
                                 fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
                                 {
                                     // create a fixed size buffer
-                                    length = sizeof(DAP_state_st);
+                                    int length = sizeof(DAP_state_st);
                                     byte[] newBuffer_state_2 = new byte[length];
 
                                     // copy the received bytes into byte array
@@ -1677,26 +1678,32 @@ namespace User.PluginSdkDemo
 
                                     if ((check_payload_state_b) && check_crc_state_b)
                                     {
-                                        TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                        TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+
+                                        if (pedalStateHasAlreadyBeenUpdated_b == false)
+                                        {
+                                            TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                            TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                            pedalStateHasAlreadyBeenUpdated_b = true;
+
+                                            text_point_pos.Opacity = 0;
+                                            double control_rect_value_max = 65535;
+                                            double dyy = canvas.Height / control_rect_value_max;
+                                            double dxx = canvas.Width / control_rect_value_max;
 
 
-                                        text_point_pos.Opacity = 0;
-                                        double control_rect_value_max = 65535;
-                                        double dyy = canvas.Height / control_rect_value_max;
-                                        double dxx = canvas.Width / control_rect_value_max;
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                        }
 
 
-                                        Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                        Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
-
+                                        continue;
                                     }
-
-
                                 }
                             }
-                                // decode into config struct
-                            if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == length))
+
+
+                            // decode into config struct
+                            if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == sizeof(DAP_config_st)))
                             {
                                 DAP_config_st tmp;
 
@@ -1705,7 +1712,7 @@ namespace User.PluginSdkDemo
                                 fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend) )
                                 {
                                     // create a fixed size buffer
-                                    length = sizeof(DAP_config_st);
+                                    int length = sizeof(DAP_config_st);
                                     byte[] newBuffer_config_2 = new byte[length];
 
                                     // copy the received bytes into byte array
@@ -1740,38 +1747,37 @@ namespace User.PluginSdkDemo
                                         waiting_for_pedal_config[pedalSelected] = false;
                                         this.dap_config_st[pedalSelected] = pedalConfig_read_st;
                                         updateTheGuiFromConfig();
+
+                                        continue;
                                     }
                                     else 
                                     {
                                         TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
                                         TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
                                     }
-
-                                    
-
                                 }
 
                             }
-                            else
+                            //else
+                            //{
+
+
+                            // When too many messages are received, only print every Nth message
+
+                            // When only a few messages are received, make the counter greater than N thus every message is printed
+                            if (dataArray.Length < 10)
                             {
-
-
-                                // When too many messages are received, only print every Nth message
-
-                                // When only a few messages are received, make the counter greater than N thus every message is printed
-                                if (dataArray.Length < 10)
-                                {
-                                    printCtr = 600;
-                                }
-
-                                if (printCtr++ > 200)
-                                {
-                                    printCtr = 0;
-                                    TextBox_serialMonitor.Text += dataToSend + "\n";
-                                    TextBox_serialMonitor.ScrollToEnd();
-                                }
-
+                                printCtr = 600;
                             }
+
+                            if (printCtr++ > 200)
+                            {
+                                printCtr = 0;
+                                TextBox_serialMonitor.Text += dataToSend + "\n";
+                                TextBox_serialMonitor.ScrollToEnd();
+                            }
+
+                            //}
 
 
                         }

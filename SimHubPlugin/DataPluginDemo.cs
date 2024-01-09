@@ -657,6 +657,9 @@ namespace User.PluginSdkDemo
 
                 _serialPort[pedalIdx].DtrEnable = false;
 
+                _serialPort[pedalIdx].NewLine = "\r\n";
+                _serialPort[pedalIdx].ReadBufferSize = 10000;
+
                 try
                 {
                     _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
