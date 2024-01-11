@@ -525,6 +525,8 @@
                         <CheckBox x:Name="JoystickOutput_check"
                 Width="156"
                 Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
+                        <CheckBox x:Name="InvertLoadcellReading_check"
+                Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="34" Width="156"/>
 
                         <!--<CheckBox x:Name="JoystickOutput_check_Copy"
                             Width="156"
@@ -829,7 +831,7 @@
                             <Rectangle x:Name="rect_State" Width="10" Height="10" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#FFEF0707" />
 
                         </Canvas>
-                        <Canvas x:Name="canvas_vert_slider" Height="200" Width="40                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="-8,0,0,0" >
+                        <Canvas x:Name="canvas_vert_slider" Height="200" Width="20                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="-4,0,0,0" >
                             <Canvas.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -873,10 +875,10 @@
 
 
                             <Line x:Name="Line_V_force"
-                    X1="20" Y1="0"
-                    X2="20" Y2="200"
+                    X1="10" Y1="0"
+                    X2="10" Y2="200"
                     Stroke="#7E87CEFA"
-                    StrokeThickness="2" HorizontalAlignment="Left" Canvas.Left="-1" VerticalAlignment="Center" />
+                    StrokeThickness="2" HorizontalAlignment="Left" Canvas.Left="0" VerticalAlignment="Center" />
 
                             <Rectangle x:Name="rect8" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="98" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect9" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
@@ -952,8 +954,6 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <CheckBox x:Name="InvertLoadcellReading_check"
-                Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="4,10,240,81" Grid.Row="7"/>
 
 
 

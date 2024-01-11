@@ -540,8 +540,18 @@ namespace User.PluginSdkDemo
             }
 
         }
-		
-		
+
+        /// <summary>
+        /// Returns the settings control, return null if no settings control is required
+        /// </summary>
+        /// <param name="pluginManager"></param>
+        /// <returns></returns>
+        public System.Windows.Controls.Control GetWPFSettingsControl(PluginManager pluginManager)
+        {
+
+            return new SettingsControlDemo(this);
+        }
+
 
         /// <summary>
         /// Called at plugin manager stop, close/dispose anything needed here !
@@ -565,26 +575,30 @@ namespace User.PluginSdkDemo
             // close all serial port interfaces
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
+                SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
+                //tmp.timmer_remove(pedalIdx);
+                if (tmp.pedal_serial_read_timer[pedalIdx] != null)
+                {
+                    tmp.pedal_serial_read_timer[pedalIdx].Stop();
+                    tmp.pedal_serial_read_timer[pedalIdx].Dispose();
+                }
+
+                //tmp.pedal_serial_read_timer[pedalIdx].Enabled = false;
+                System.Threading.Thread.Sleep(100);
                 if (_serialPort[pedalIdx].IsOpen)
                 {
                     _serialPort[pedalIdx].DiscardInBuffer();
                     _serialPort[pedalIdx].DiscardOutBuffer();
                     _serialPort[pedalIdx].Close();
+                    
                 }
-
+                
+                
 
             }
         }
 
-        /// <summary>
-        /// Returns the settings control, return null if no settings control is required
-        /// </summary>
-        /// <param name="pluginManager"></param>
-        /// <returns></returns>
-        public System.Windows.Controls.Control GetWPFSettingsControl(PluginManager pluginManager)
-        {
-            return new SettingsControlDemo(this);
-        }
+
 
         public bool PortExists(string portName)
         {
@@ -695,7 +709,18 @@ namespace User.PluginSdkDemo
                                         }
                                     }
                                     catch (TimeoutException) { }
-
+                                    //add timer once the auto connect back
+                                    /*
+                                    if (_serialPort[pedalIdx].IsOpen)
+                                    {
+                                        SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
+                                        tmp.pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                                        tmp.pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(tmp.timer1_Tick);
+                                        tmp.pedal_serial_read_timer[pedalIdx].Interval = 100; // in miliseconds
+                                        tmp.pedal_serial_read_timer[pedalIdx].Start();
+                                        System.Threading.Thread.Sleep(100);
+                                    }
+                                    */
                                 }
                                 catch (Exception ex)
                                 {
@@ -709,7 +734,12 @@ namespace User.PluginSdkDemo
                                 _serialPort[pedalIdx].Close();
                                 //ConnectToPedal.IsChecked = false;
                                 //TextBox_debugOutput.Text = "Serialport already open, close it";
+                                Settings.connect_status[pedalIdx] = 0;
                             }
+                        }
+                        else
+                        {
+                            Settings.connect_status[pedalIdx] = 0;
                         }
                     }
                     else

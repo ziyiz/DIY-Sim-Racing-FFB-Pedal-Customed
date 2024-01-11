@@ -36,6 +36,8 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Text.RegularExpressions;
+using SimHub.Plugins;
+using log4net.Plugin;
 
 
 namespace User.PluginSdkDemo
@@ -63,8 +65,10 @@ namespace User.PluginSdkDemo
 
 
         bool[] waiting_for_pedal_config = new bool[3];
-
-
+        public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
+        //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
+        int printCtr = 0;
+        
 
 
 
@@ -298,84 +302,84 @@ namespace User.PluginSdkDemo
 
                 InitializeComponent();
 
-                // debug mode invisiable
-                text_debug_flag.Opacity = 0;
-                text_debug_PID_para.Opacity = 0;
-                text_debug_dgain.Opacity = 0;
-                text_debug_igain.Opacity = 0;
-                text_debug_pgain.Opacity = 0;
-                text_serial.Opacity = 0;
-                TextBox_serialMonitor.Visibility= System.Windows.Visibility.Hidden;
-                InvertLoadcellReading_check.Opacity = 0;
-                PID_tuning_D_gain_slider.Opacity = 0;
-                PID_tuning_I_gain_slider.Opacity = 0;
-                PID_tuning_P_gain_slider.Opacity = 0;
-                textBox_debug_Flag_0.Opacity = 0;
-                //btn_serial.Visibility = System.Windows.Visibility.Hidden;
-                btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-                //setting drawing color with Simhub theme workaround
-                text_min_force.Foreground= btn_update.Background;
-                text_max_force.Foreground = btn_update.Background;
-                text_max_pos.Foreground = btn_update.Background;
-                text_min_pos.Foreground = btn_update.Background;
-                text_position.Foreground = btn_update.Background;
-                rect0.Fill = btn_update.Background;
-                rect1.Fill = btn_update.Background;
-                rect2.Fill = btn_update.Background;
-                rect3.Fill = btn_update.Background;
-                rect4.Fill = btn_update.Background;
-                rect5.Fill = btn_update.Background;
-                rect6.Fill = btn_update.Background;
-                rect7.Fill = btn_update.Background;
-                rect8.Fill = btn_update.Background;
-                rect9.Fill = btn_update.Background;
-                Line_V_force.Stroke = btn_update.Background;
-                Line_H_pos.Stroke = btn_update.Background;
-                Polyline_BrakeForceCurve.Stroke = btn_update.Background;
-
-                text_damping_text.Foreground = btn_update.Background;
-                Line_H_damping.Stroke = btn_update.Background;
-                text_damping.Foreground = btn_update.Background;
-                rect_damping.Fill = btn_update.Background;
-                Line_H_ABS.Stroke = btn_update.Background;
-                text_ABS.Foreground = btn_update.Background;
-                rect_ABS.Fill = btn_update.Background;
-                text_ABS_text.Foreground = btn_update.Background;
-                Line_H_ABS_freq.Stroke = btn_update.Background;
-                text_ABS_freq.Foreground = btn_update.Background;
-                rect_ABS_freq.Fill = btn_update.Background;
-                text_ABS_freq_text.Foreground = btn_update.Background;
-                Line_H_max_game.Stroke = btn_update.Background;
-                text_max_game.Foreground = btn_update.Background;
-                text_max_game_text.Foreground = btn_update.Background;  
-                rect_max_game.Fill = btn_update.Background;
-
-                Line_H_KF.Stroke = btn_update.Background;
-                text_KF.Foreground = btn_update.Background;
-                rect_KF.Fill = btn_update.Background;
-                text_KF_text.Foreground = btn_update.Background;
-                Line_H_LC_rating.Stroke = btn_update.Background;
-                text_LC_rating.Foreground = btn_update.Background;
-                text_LC_rating_text.Foreground = btn_update.Background;
-                rect_LC_rating.Fill = btn_update.Background;
-
-                text_RPM_freq_min.Foreground = btn_update.Background;
-                text_RPM_freq_max.Foreground = btn_update.Background;
-                text_RPM_AMP.Foreground = btn_update.Background;
-                Line_H_RPM_AMP.Stroke = btn_update.Background;
-                rect_RPM_AMP.Fill = btn_update.Background;
-                text_RPM_AMP_text.Foreground = btn_update.Background;
-
-                Line_H_RPM_freq.Stroke = btn_update.Background;
-                rect_RPM_max.Fill = btn_update.Background;
-                rect_RPM_min.Fill = btn_update.Background;
-                text_RPM_freq_text.Foreground= btn_update.Background;
-                // Call this method to generate gridlines on the Canvas
-                DrawGridLines();
-                
-
+               
             }
-            
+            // debug mode invisiable
+            text_debug_flag.Opacity = 0;
+            text_debug_PID_para.Opacity = 0;
+            text_debug_dgain.Opacity = 0;
+            text_debug_igain.Opacity = 0;
+            text_debug_pgain.Opacity = 0;
+            text_serial.Opacity = 0;
+            TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
+            InvertLoadcellReading_check.Opacity = 0;
+            PID_tuning_D_gain_slider.Opacity = 0;
+            PID_tuning_I_gain_slider.Opacity = 0;
+            PID_tuning_P_gain_slider.Opacity = 0;
+            textBox_debug_Flag_0.Opacity = 0;
+            //btn_serial.Visibility = System.Windows.Visibility.Hidden;
+            btn_system_id.Visibility = System.Windows.Visibility.Hidden;
+            //setting drawing color with Simhub theme workaround
+            text_min_force.Foreground = btn_update.Background;
+            text_max_force.Foreground = btn_update.Background;
+            text_max_pos.Foreground = btn_update.Background;
+            text_min_pos.Foreground = btn_update.Background;
+            text_position.Foreground = btn_update.Background;
+            rect0.Fill = btn_update.Background;
+            rect1.Fill = btn_update.Background;
+            rect2.Fill = btn_update.Background;
+            rect3.Fill = btn_update.Background;
+            rect4.Fill = btn_update.Background;
+            rect5.Fill = btn_update.Background;
+            rect6.Fill = btn_update.Background;
+            rect7.Fill = btn_update.Background;
+            rect8.Fill = btn_update.Background;
+            rect9.Fill = btn_update.Background;
+            Line_V_force.Stroke = btn_update.Background;
+            Line_H_pos.Stroke = btn_update.Background;
+            Polyline_BrakeForceCurve.Stroke = btn_update.Background;
+
+            text_damping_text.Foreground = btn_update.Background;
+            Line_H_damping.Stroke = btn_update.Background;
+            text_damping.Foreground = btn_update.Background;
+            rect_damping.Fill = btn_update.Background;
+            Line_H_ABS.Stroke = btn_update.Background;
+            text_ABS.Foreground = btn_update.Background;
+            rect_ABS.Fill = btn_update.Background;
+            text_ABS_text.Foreground = btn_update.Background;
+            Line_H_ABS_freq.Stroke = btn_update.Background;
+            text_ABS_freq.Foreground = btn_update.Background;
+            rect_ABS_freq.Fill = btn_update.Background;
+            text_ABS_freq_text.Foreground = btn_update.Background;
+            Line_H_max_game.Stroke = btn_update.Background;
+            text_max_game.Foreground = btn_update.Background;
+            text_max_game_text.Foreground = btn_update.Background;
+            rect_max_game.Fill = btn_update.Background;
+
+            Line_H_KF.Stroke = btn_update.Background;
+            text_KF.Foreground = btn_update.Background;
+            rect_KF.Fill = btn_update.Background;
+            text_KF_text.Foreground = btn_update.Background;
+            Line_H_LC_rating.Stroke = btn_update.Background;
+            text_LC_rating.Foreground = btn_update.Background;
+            text_LC_rating_text.Foreground = btn_update.Background;
+            rect_LC_rating.Fill = btn_update.Background;
+
+            text_RPM_freq_min.Foreground = btn_update.Background;
+            text_RPM_freq_max.Foreground = btn_update.Background;
+            text_RPM_AMP.Foreground = btn_update.Background;
+            Line_H_RPM_AMP.Stroke = btn_update.Background;
+            rect_RPM_AMP.Fill = btn_update.Background;
+            text_RPM_AMP_text.Foreground = btn_update.Background;
+
+            Line_H_RPM_freq.Stroke = btn_update.Background;
+            rect_RPM_max.Fill = btn_update.Background;
+            rect_RPM_min.Fill = btn_update.Background;
+            text_RPM_freq_text.Foreground = btn_update.Background;
+            // Call this method to generate gridlines on the Canvas
+            DrawGridLines();
+
+
 
         }
 
@@ -486,6 +490,8 @@ namespace User.PluginSdkDemo
             this.Plugin = plugin;
 
             UpdateSerialPortList_click();
+
+
 
             // check if Json config files are present, otherwise create new ones
             //for (int jsonIndex = 0; jsonIndex < ComboBox_JsonFileSelected.Items.Count; jsonIndex++)
@@ -632,6 +638,9 @@ namespace User.PluginSdkDemo
             }
 
 
+
+
+
         }
 
 
@@ -738,11 +747,11 @@ namespace User.PluginSdkDemo
             double dy = (canvas_vert_slider.Height/250);
             Canvas.SetTop(rect8,canvas_vert_slider.Height-dy* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
             Canvas.SetLeft(rect8, canvas_vert_slider.Width / 2 - rect8.Width / 2- Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_min_force, 12 + rect8.Width+3);
+            Canvas.SetLeft(text_min_force,  rect8.Width+3);
             Canvas.SetTop(text_min_force, Canvas.GetTop(rect8));
             Canvas.SetTop(rect9, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce);
             Canvas.SetLeft(rect9, canvas_vert_slider.Width / 2 - rect9.Width / 2-Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_max_force, 12 + rect9.Width+3);
+            Canvas.SetLeft(text_max_force,  rect9.Width+3);
             Canvas.SetTop(text_max_force, Canvas.GetTop(rect9)-6-text_max_force.Height/2);
             
             text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "Kg";
@@ -1582,12 +1591,13 @@ namespace User.PluginSdkDemo
 
 
 
-        private System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
-        int printCtr = 0;
-        unsafe private void timer1_Tick(object sender, EventArgs e)
+        
+        unsafe public void timer1_Tick(object sender, EventArgs e)
         {
 
-            int pedalSelected = Int32.Parse( (sender as System.Windows.Forms.Timer).Tag.ToString() );
+
+            int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
+            //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
 
             bool pedalStateHasAlreadyBeenUpdated_b = false;
 
@@ -1606,213 +1616,214 @@ namespace User.PluginSdkDemo
                 //int length = sizeof(DAP_config_st);
                 //byte[] newBuffer_config = new byte[length];
 
-
-                int receivedLength = sp.BytesToRead;
-
-                if (receivedLength > 0)
+                if (sp.IsOpen)
                 {
+                    int receivedLength = sp.BytesToRead;
 
-                    string incomingData = sp.ReadExisting();
-
-                    //if the data doesn't end with a stop char this will signal to keep it in _data 
-                    //for appending to the following read of data
-                    bool endsWithStop = EndsWithStop(incomingData);
-
-                    //each array object will be sent separately to the callback
-                    string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
-
-                    for (int i = 0;  i < dataArray.Length - 1; i++)
+                    if (receivedLength > 0)
                     {
-                        string newData = dataArray[i];
 
-                        //if you are at the last object in the array and this hasn't got a stopchar after
-                        //it will be saved in _data
-                        if (!endsWithStop && (i == dataArray.Length - 2))
+                        string incomingData = sp.ReadExisting();
+
+                        //if the data doesn't end with a stop char this will signal to keep it in _data 
+                        //for appending to the following read of data
+                        bool endsWithStop = EndsWithStop(incomingData);
+
+                        //each array object will be sent separately to the callback
+                        string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
+
+                        for (int i = 0; i < dataArray.Length - 1; i++)
                         {
-                            _data[pedalSelected] += newData;
-                        }
-                        else
-                        {
-                            string dataToSend = _data[pedalSelected] + newData;
-                            _data[pedalSelected] = "";
+                            string newData = dataArray[i];
 
-
-
-                            // check for pedal state struct
-                            if ((dataToSend.Length == sizeof(DAP_state_st)))
+                            //if you are at the last object in the array and this hasn't got a stopchar after
+                            //it will be saved in _data
+                            if (!endsWithStop && (i == dataArray.Length - 2))
                             {
+                                _data[pedalSelected] += newData;
+                            }
+                            else
+                            {
+                                string dataToSend = _data[pedalSelected] + newData;
+                                _data[pedalSelected] = "";
 
-                                // transform string into byte
-                                fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+
+
+                                // check for pedal state struct
+                                if ((dataToSend.Length == sizeof(DAP_state_st)))
                                 {
-                                    // create a fixed size buffer
-                                    int length = sizeof(DAP_state_st);
-                                    byte[] newBuffer_state_2 = new byte[length];
 
-                                    // copy the received bytes into byte array
-                                    for (int j = 0; j < length; j++)
+                                    // transform string into byte
+                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
                                     {
-                                        newBuffer_state_2[j] = p[j];
-                                    }
+                                        // create a fixed size buffer
+                                        int length = sizeof(DAP_state_st);
+                                        byte[] newBuffer_state_2 = new byte[length];
 
-                                    // parse byte array as config struct
-                                    DAP_state_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
-
-                                    // check whether receive struct is plausible
-                                    DAP_state_st* v_state = &pedalState_read_st;
-                                    byte* p_state = (byte*)v_state;
-
-                                    // payload type check
-                                    bool check_payload_state_b = false;
-                                    if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
-                                    {
-                                        check_payload_state_b = true;
-                                    }
-
-                                    // CRC check
-                                    bool check_crc_state_b = false;
-                                    if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
-                                    {
-                                        check_crc_state_b = true;
-                                    }
-
-                                    if ((check_payload_state_b) && check_crc_state_b)
-                                    {
-
-                                        if (pedalStateHasAlreadyBeenUpdated_b == false)
+                                        // copy the received bytes into byte array
+                                        for (int j = 0; j < length; j++)
                                         {
-                                            TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                            TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
-                                            pedalStateHasAlreadyBeenUpdated_b = true;
-
-                                            text_point_pos.Opacity = 0;
-                                            double control_rect_value_max = 65535;
-                                            double dyy = canvas.Height / control_rect_value_max;
-                                            double dxx = canvas.Width / control_rect_value_max;
-
-
-                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                            Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                            newBuffer_state_2[j] = p[j];
                                         }
 
+                                        // parse byte array as config struct
+                                        DAP_state_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
 
-                                        continue;
+                                        // check whether receive struct is plausible
+                                        DAP_state_st* v_state = &pedalState_read_st;
+                                        byte* p_state = (byte*)v_state;
+
+                                        // payload type check
+                                        bool check_payload_state_b = false;
+                                        if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
+                                        {
+                                            check_payload_state_b = true;
+                                        }
+
+                                        // CRC check
+                                        bool check_crc_state_b = false;
+                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
+                                        {
+                                            check_crc_state_b = true;
+                                        }
+
+                                        if ((check_payload_state_b) && check_crc_state_b)
+                                        {
+
+                                            if (pedalStateHasAlreadyBeenUpdated_b == false)
+                                            {
+                                                TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                                TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                                pedalStateHasAlreadyBeenUpdated_b = true;
+
+                                                text_point_pos.Opacity = 0;
+                                                double control_rect_value_max = 65535;
+                                                double dyy = canvas.Height / control_rect_value_max;
+                                                double dxx = canvas.Width / control_rect_value_max;
+
+
+                                                Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
+                                                Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                            }
+
+
+                                            continue;
+                                        }
                                     }
                                 }
-                            }
 
 
-                            // decode into config struct
-                            if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == sizeof(DAP_config_st)))
-                            {
-                                DAP_config_st tmp;
-
-
-                                // transform string into byte
-                                fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend) )
+                                // decode into config struct
+                                if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == sizeof(DAP_config_st)))
                                 {
-                                    // create a fixed size buffer
-                                    int length = sizeof(DAP_config_st);
-                                    byte[] newBuffer_config_2 = new byte[length];
+                                    DAP_config_st tmp;
 
-                                    // copy the received bytes into byte array
-                                    for (int j = 0; j < length; j++)
+
+                                    // transform string into byte
+                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
                                     {
-                                        newBuffer_config_2[j] = p[j];
+                                        // create a fixed size buffer
+                                        int length = sizeof(DAP_config_st);
+                                        byte[] newBuffer_config_2 = new byte[length];
+
+                                        // copy the received bytes into byte array
+                                        for (int j = 0; j < length; j++)
+                                        {
+                                            newBuffer_config_2[j] = p[j];
+                                        }
+
+                                        // parse byte array as config struct
+                                        DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+
+                                        // check whether receive struct is plausible
+                                        DAP_config_st* v_config = &pedalConfig_read_st;
+                                        byte* p_config = (byte*)v_config;
+
+                                        // payload type check
+                                        bool check_payload_config_b = false;
+                                        if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+                                        {
+                                            check_payload_config_b = true;
+                                        }
+
+                                        // CRC check
+                                        bool check_crc_config_b = false;
+                                        if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                                        {
+                                            check_crc_config_b = true;
+                                        }
+
+                                        if ((check_payload_config_b) && check_crc_config_b)
+                                        {
+                                            waiting_for_pedal_config[pedalSelected] = false;
+                                            this.dap_config_st[pedalSelected] = pedalConfig_read_st;
+                                            updateTheGuiFromConfig();
+
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                            TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                        }
                                     }
 
-                                    // parse byte array as config struct
-                                    DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+                                }
+                                //else
+                                //{
 
-                                    // check whether receive struct is plausible
-                                    DAP_config_st* v_config = &pedalConfig_read_st;
-                                    byte* p_config = (byte*)v_config;
 
-                                    // payload type check
-                                    bool check_payload_config_b = false;
-                                    if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
-                                    {
-                                        check_payload_config_b = true;
-                                    }
+                                // When too many messages are received, only print every Nth message
 
-                                    // CRC check
-                                    bool check_crc_config_b = false;
-                                    if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
-                                    {
-                                        check_crc_config_b = true;
-                                    }
-
-                                    if ((check_payload_config_b) && check_crc_config_b)
-                                    {
-                                        waiting_for_pedal_config[pedalSelected] = false;
-                                        this.dap_config_st[pedalSelected] = pedalConfig_read_st;
-                                        updateTheGuiFromConfig();
-
-                                        continue;
-                                    }
-                                    else 
-                                    {
-                                        TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
-                                        TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
-                                    }
+                                // When only a few messages are received, make the counter greater than N thus every message is printed
+                                if (dataArray.Length < 10)
+                                {
+                                    printCtr = 600;
                                 }
 
+                                if (printCtr++ > 200)
+                                {
+                                    printCtr = 0;
+                                    TextBox_serialMonitor.Text += dataToSend + "\n";
+                                    TextBox_serialMonitor.ScrollToEnd();
+                                }
+
+                                //}
+
+
                             }
-                            //else
-                            //{
 
-
-                            // When too many messages are received, only print every Nth message
-
-                            // When only a few messages are received, make the counter greater than N thus every message is printed
-                            if (dataArray.Length < 10)
+                            try
                             {
-                                printCtr = 600;
+                                while (TextBox_serialMonitor.LineCount > 30)
+                                {
+                                    TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
+                                }
                             }
+                            catch { }
 
-                            if (printCtr++ > 200)
+
+
+
+
+
+
+                            //limits the data stored to 1000 to avoid using up all the memory in case of 
+                            //failure to register callback or include stopchar
+
+                            if (_data[pedalSelected].Length > 1000)
                             {
-                                printCtr = 0;
-                                TextBox_serialMonitor.Text += dataToSend + "\n";
-                                TextBox_serialMonitor.ScrollToEnd();
+                                _data[pedalSelected] = "";
                             }
-
-                            //}
 
 
                         }
 
-                        try
-                        {
-                            while (TextBox_serialMonitor.LineCount > 30)
-                            {
-                                TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
-                            }
-                        }
-                        catch { }
-                        
-
-
-
-
-
-
-                        //limits the data stored to 1000 to avoid using up all the memory in case of 
-                        //failure to register callback or include stopchar
-
-                        if (_data[pedalSelected].Length > 1000)
-                        {
-                            _data[pedalSelected] = "";
-                        }
-
+                        // obtain data and check whether it is from known payload type or just debug info
 
                     }
 
-                    // obtain data and check whether it is from known payload type or just debug info
-
                 }
-
-
             }
         }
 
@@ -2119,6 +2130,7 @@ namespace User.PluginSdkDemo
 
         }
 
+
         private void Simulate_ABS_check_Checked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 1;
@@ -2345,7 +2357,7 @@ namespace User.PluginSdkDemo
                     }
                     
                     //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(text_min_force, 12+rect8.Width+3);
+                    Canvas.SetLeft(text_min_force, rect8.Width+3);
                     Canvas.SetTop(text_min_force, Canvas.GetTop(rect8));
                 }
                 if (rectangle.Name == "rect9")
@@ -2361,7 +2373,7 @@ namespace User.PluginSdkDemo
                     }
                     
                     //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(text_max_force, 12 + rect9.Width+3);
+                    Canvas.SetLeft(text_max_force,  rect9.Width+3);
                     Canvas.SetTop(text_max_force, Canvas.GetTop(rect9) - 6-text_max_force.Height/2);
                     
                     
