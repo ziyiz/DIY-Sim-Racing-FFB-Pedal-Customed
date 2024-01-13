@@ -187,6 +187,10 @@ namespace User.PluginSdkDemo
 		public DAP_config_st dap_config_initial_st;
         public byte rpm_last_value = 0 ;
         public byte game_running_index = 0 ;
+        public uint testValue = 0;
+
+        public SettingsControlDemo wpfHandle;
+
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
@@ -200,7 +204,7 @@ namespace User.PluginSdkDemo
 
         //public SettingsControlDemo settings { get; }
 
-        SettingsControlDemo wpfHandler;
+        //SettingsControlDemo wpfHandler;
 
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
@@ -231,7 +235,7 @@ namespace User.PluginSdkDemo
         /// <summary>
         /// Gets a short plugin title to show in left menu. Return null if you want to use the title as defined in PluginName attribute.
         /// </summary>
-        public string LeftMenuTitle => "DIY active pedal plugin";
+        public string LeftMenuTitle => "DIY FFB pedal plugin";
 
         /// <summary>
         /// Called one time per game data update, contains all normalized game data,
@@ -549,7 +553,7 @@ namespace User.PluginSdkDemo
         /////////*							read serial stream																		*/
         /////////********************************************************************************************************************/
         ////////public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
-        ////////public void openSeriialAndAddReadCallback(uint pedalIdx)
+        ////////public void openSerialAndAddReadCallback(uint pedalIdx)
         ////////{
 
         ////////    // serial port settings
@@ -868,15 +872,15 @@ namespace User.PluginSdkDemo
             // Save settings
             this.SaveCommonSettings("GeneralSettings", Settings);
 
-
-            // get WPF handler
-            //SettingsControlDemo wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
-
             // close serial communication
-            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            if (wpfHandle != null)
             {
-                wpfHandler.closeSerialAndStopReadCallback(pedalIdx);
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+                    wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
+                }
             }
+            
         }
 
 
@@ -935,7 +939,7 @@ namespace User.PluginSdkDemo
 
 
             // get WPF handler
-            wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
+            //wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
 
             //if (wpfHandler.)
             {
@@ -956,55 +960,56 @@ namespace User.PluginSdkDemo
                     {
                     }
 
-                    //////try connect back to com port
-                    ////if (Settings.auto_connect_flag == 1)
-                    ////{
+                    //try connect back to com port
+                    if (Settings.auto_connect_flag == 1)
+                    {
 
-                    ////    if (Settings.connect_status[pedalIdx] == 1)
-                    ////    {
-                    ////        //_serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
-                    ////        //SerialPort.GetPortNames
-                    ////        if (PortExists(_serialPort[pedalIdx].PortName))
-                    ////        {
-                    ////            if (_serialPort[pedalIdx].IsOpen == false)
-                    ////            {
-                    ////                try
-                    ////                {
-                    ////                    wpfHandler.openSeriialAndAddReadCallback(pedalIdx);
-                    ////                }
-                    ////                catch (Exception ex)
-                    ////                {
-                    ////                    //TextBox_debugOutput.Text = ex.Message;
-                    ////                    //ConnectToPedal.IsChecked = false;
-                    ////                }
+                        if (Settings.connect_status[pedalIdx] == 1)
+                        {
+                            //_serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                            //SerialPort.GetPortNames
+                            if (PortExists(_serialPort[pedalIdx].PortName))
+                            {
+                                if (_serialPort[pedalIdx].IsOpen == false)
+                                {
+                                    if (wpfHandle != null)
+                                    {
+                                        wpfHandle.openSerialAndAddReadCallback(pedalIdx);
+                                    }
+                                }
+                                else
+                                {
+                                    if (wpfHandle != null)
+                                    {
+                                        wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
+                                    }
+                                    //ConnectToPedal.IsChecked = false;
+                                    //TextBox_debugOutput.Text = "Serialport already open, close it";
+                                    Settings.connect_status[pedalIdx] = 0;
+                                }
 
-                    ////            }
-                    ////            else
-                    ////            {
-                    ////                wpfHandler.closeSerialAndStopReadCallback(pedalIdx);
-                    ////                //ConnectToPedal.IsChecked = false;
-                    ////                //TextBox_debugOutput.Text = "Serialport already open, close it";
-                    ////                Settings.connect_status[pedalIdx] = 0;
-                    ////            }
-
-                    ////            if (_serialPort[pedalIdx].IsOpen)
-                    ////            {
-                    ////                wpfHandler.Reading_config_auto(pedalIdx);
-                    ////            }
+                                if (_serialPort[pedalIdx].IsOpen)
+                                {
+                                    if (wpfHandle != null)
+                                    {
+                                        wpfHandle.Reading_config_auto(pedalIdx);
+                                    }
+                                    
+                                }
 
 
-                    ////        }
-                    ////        else
-                    ////        {
-                    ////            Settings.connect_status[pedalIdx] = 0;
-                    ////        }
-                    ////    }
-                    ////    else
-                    ////    {
-                    ////        Settings.connect_status[pedalIdx] = 0;
-                    ////    }
+                            }
+                            else
+                            {
+                                Settings.connect_status[pedalIdx] = 0;
+                            }
+                        }
+                        else
+                        {
+                            Settings.connect_status[pedalIdx] = 0;
+                        }
 
-                    ////}
+                    }
 
                 }
 

@@ -60,6 +60,8 @@ namespace User.PluginSdkDemo
 
         public DataPluginDemo Plugin { get; }
 
+
+
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
         private string stringValue;
 
@@ -488,6 +490,9 @@ namespace User.PluginSdkDemo
         public SettingsControlDemo(DataPluginDemo plugin) : this()
         {
             this.Plugin = plugin;
+            plugin.testValue = 1;
+            plugin.wpfHandle = this;
+
 
             UpdateSerialPortList_click();
             //closeSerialAndStopReadCallback(1);
@@ -1610,7 +1615,7 @@ namespace User.PluginSdkDemo
         /********************************************************************************************************************/
         /*							read serial stream																		*/
         /********************************************************************************************************************/
-        public void openSeriialAndAddReadCallback(uint pedalIdx)
+        public void openSerialAndAddReadCallback(uint pedalIdx)
         {
 
             // serial port settings
@@ -1913,7 +1918,7 @@ namespace User.PluginSdkDemo
                 {
                     try
                     {
-                        openSeriialAndAddReadCallback(indexOfSelectedPedal_u);
+                        openSerialAndAddReadCallback(indexOfSelectedPedal_u);
                         TextBox_debugOutput.Text = "Serialport open";
                         ConnectToPedal.IsChecked = true;
 
