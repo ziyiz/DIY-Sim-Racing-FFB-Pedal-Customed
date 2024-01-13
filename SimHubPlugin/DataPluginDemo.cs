@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 115;
+    public const uint pedalConfigPayload_version = 116;
 
 
     // pyload types

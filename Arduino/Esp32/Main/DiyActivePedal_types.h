@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 115
+#define DAP_VERSION_CONFIG 116
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
