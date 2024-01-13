@@ -581,21 +581,33 @@ namespace User.PluginSdkDemo
 
                 System.IO.File.WriteAllText(fileNameC, jsonString);
             }
-
+            InitReadStructFromJson();
             for (uint pedalIndex = 0; pedalIndex < 3; pedalIndex++)
             {
-                indexOfSelectedPedal_u = pedalIndex;
+                //indexOfSelectedPedal_u = pedalIndex;
                 //ComboBox_JsonFileSelected.SelectedIndex = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
                 //ComboBox_JsonFileSelected.SelectedIndex = Plugin.Settings.selectedJsonIndexLast[indexOfSelectedPedal_u];
                 InitReadStructFromJson();
+                /*
                 if (plugin.Settings.connect_status[pedalIndex] == 1)
                 {
                     if (plugin.Settings.reading_config == 1)
                     {
-                        Reading_config_auto(pedalIndex);
+                        if (plugin._serialPort[pedalIndex].IsOpen)
+                        {
+                            Reading_config_auto(pedalIndex);
+                        }
+                        else
+                        {
+                            plugin.Settings.connect_status[pedalIndex] = 0;
+                        }
+                        
                     }
 
                 }
+                */
+                
+                
                 /*
                 if (plugin.PortExists(plugin._serialPort[pedalIndex].PortName))
                 {
@@ -612,7 +624,10 @@ namespace User.PluginSdkDemo
                 else
                 {
                     plugin.Settings.connect_status[pedalIndex] = 0;
-                }*/
+                }
+                */
+
+
                 updateTheGuiFromConfig();
             }
 
@@ -999,17 +1014,17 @@ namespace User.PluginSdkDemo
         public void TestAbs_click(object sender, RoutedEventArgs e)
         {
             //if (indexOfSelectedPedal_u == 1)
-                if (TestAbs.IsChecked==false)
+                if (TestAbs_check.IsChecked==false)
                 { 
-                    TestAbs.IsChecked= true;
-                    Plugin.sendAbsSignal = (bool)TestAbs.IsChecked;
+                    TestAbs_check.IsChecked= true;
+                    Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
                     TextBox_debugOutput.Text = "ABS-Test begin";
                 }
                 else
                 {
-                    TestAbs.IsChecked = false;
+                    TestAbs_check.IsChecked = false;
                     //Plugin.sendAbsSignal = !Plugin.sendAbsSignal;
-                    Plugin.sendAbsSignal = (bool)TestAbs.IsChecked;
+                    Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
                     TextBox_debugOutput.Text = "ABS-Test stopped";
                 }
             
@@ -1829,10 +1844,40 @@ namespace User.PluginSdkDemo
 
 
 
-            /********************************************************************************************************************/
-            /*							Connect to pedal																		*/
-            /********************************************************************************************************************/
-            unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
+        /********************************************************************************************************************/
+        /*							Connect to pedal																		*/
+        /********************************************************************************************************************/
+        public void init_timmer_auto()
+        {
+            if (Plugin.Settings.auto_connect_flag == 1)
+            {
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+                    if (Plugin.Settings.connect_status[pedalIdx] == 1)
+                    {
+                        if (Plugin._serialPort[pedalIdx].IsOpen == true)
+                        {
+
+                            pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timer1_Tick);
+                            pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+                            pedal_serial_read_timer[pedalIdx].Interval = 100; // in miliseconds
+                            pedal_serial_read_timer[pedalIdx].Start();
+                            System.Threading.Thread.Sleep(100);
+
+                        }
+                        else
+                        {
+                            Plugin.Settings.connect_status[pedalIdx] = 0;
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
             {
 
 
@@ -1859,7 +1904,7 @@ namespace User.PluginSdkDemo
 
                         System.Threading.Thread.Sleep(100);
 
-                        Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 1;
+                        Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 1; 
 
                     }
                     catch (Exception ex)
@@ -1878,6 +1923,7 @@ namespace User.PluginSdkDemo
 
                     ConnectToPedal.IsChecked = false;
                     TextBox_debugOutput.Text = "Serialport already open, close it";
+                    Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
                 }
             }
             else
@@ -1925,10 +1971,13 @@ namespace User.PluginSdkDemo
 
             try
             {
-                Plugin.Settings.selectedComPortNames[indexOfSelectedPedal_u] = tmp;
-                Plugin._serialPort[indexOfSelectedPedal_u].PortName = tmp;
-
+                if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 0)
+                {
+                    Plugin.Settings.selectedComPortNames[indexOfSelectedPedal_u] = tmp;
+                    Plugin._serialPort[indexOfSelectedPedal_u].PortName = tmp;
+                }
                 TextBox_debugOutput.Text = "COM port selected: " + Plugin.Settings.selectedComPortNames[indexOfSelectedPedal_u];
+
             }
             catch (Exception caughtEx)
             {

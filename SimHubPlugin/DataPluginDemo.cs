@@ -573,9 +573,11 @@ namespace User.PluginSdkDemo
             // Save settings
             this.SaveCommonSettings("GeneralSettings", Settings);
             // close all serial port interfaces
+            
+            SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
+               
                 //tmp.timmer_remove(pedalIdx);
                 if (tmp.pedal_serial_read_timer[pedalIdx] != null)
                 {
@@ -584,7 +586,7 @@ namespace User.PluginSdkDemo
                 }
 
                 //tmp.pedal_serial_read_timer[pedalIdx].Enabled = false;
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(300);
                 if (_serialPort[pedalIdx].IsOpen)
                 {
                     _serialPort[pedalIdx].DiscardInBuffer();
@@ -649,7 +651,7 @@ namespace User.PluginSdkDemo
 
 
 
-
+            SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
             // prepare serial port interfaces
             for (uint pedalIdx = 0; pedalIdx<3; pedalIdx++)
 			{
@@ -688,7 +690,7 @@ namespace User.PluginSdkDemo
 
                     if (Settings.connect_status[pedalIdx] == 1)
                     {
-                        _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                        //_serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
                         //SerialPort.GetPortNames
                         if (PortExists(_serialPort[pedalIdx].PortName))
                         {
@@ -701,6 +703,7 @@ namespace User.PluginSdkDemo
                                     //TextBox_debugOutput.Text = "Serialport open";
                                     //ConnectToPedal.IsChecked = true;
 
+                                    /*
                                     try
                                     {
                                         while (_serialPort[pedalIdx].BytesToRead > 0)
@@ -709,18 +712,12 @@ namespace User.PluginSdkDemo
                                         }
                                     }
                                     catch (TimeoutException) { }
-                                    //add timer once the auto connect back
-                                    /*
-                                    if (_serialPort[pedalIdx].IsOpen)
-                                    {
-                                        SettingsControlDemo tmp = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
-                                        tmp.pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-                                        tmp.pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(tmp.timer1_Tick);
-                                        tmp.pedal_serial_read_timer[pedalIdx].Interval = 100; // in miliseconds
-                                        tmp.pedal_serial_read_timer[pedalIdx].Start();
-                                        System.Threading.Thread.Sleep(100);
-                                    }
                                     */
+                                    //add timer once the auto connect back
+                                    
+
+
+
                                 }
                                 catch (Exception ex)
                                 {
@@ -736,6 +733,13 @@ namespace User.PluginSdkDemo
                                 //TextBox_debugOutput.Text = "Serialport already open, close it";
                                 Settings.connect_status[pedalIdx] = 0;
                             }
+                            
+                            if (_serialPort[pedalIdx].IsOpen)
+                            {
+                                tmp.Reading_config_auto(pedalIdx);
+                            }
+                            
+
                         }
                         else
                         {
@@ -746,12 +750,14 @@ namespace User.PluginSdkDemo
                     {
                         Settings.connect_status[pedalIdx] = 0;
                     }
+                    
                 }
 
             }
+            
+            tmp.init_timmer_auto();
 
-
-
+         
 
 
             //// check if Json config files are present, otherwise create new ones
