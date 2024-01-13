@@ -1764,7 +1764,7 @@ namespace User.PluginSdkDemo
                                         if ((check_payload_state_b) && check_crc_state_b)
                                         {
 
-                                            if (pedalStateHasAlreadyBeenUpdated_b == false)
+                                            if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
                                             {
                                                 TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
                                                 TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
