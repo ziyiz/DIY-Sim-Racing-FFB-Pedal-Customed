@@ -255,15 +255,14 @@ namespace User.PluginSdkDemo
         public SettingsControlDemo()
         {
 
-            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
-            uint vJoystickId = 1;
-            joystick = new VirtualJoystick(vJoystickId);
-            joystick.Aquire();                                  // Aquire vJoy device 1
+            
 
 
-            
-            
-            
+
+
+
+
+
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
                 dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
@@ -400,6 +399,15 @@ namespace User.PluginSdkDemo
 
 
 
+            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
+            uint vJoystickId = 1;
+            joystick = new VirtualJoystick(vJoystickId);
+            joystick.Aquire();                                  // Aquire vJoy device 1
+
+
+
+
+            
         }
 
 
@@ -676,7 +684,15 @@ namespace User.PluginSdkDemo
             }
 
 
-
+            // autoconnect serial
+            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            {
+                if (Plugin.connectSerialPort[pedalIdx] == true)
+                {
+                    openSerialAndAddReadCallback(pedalIdx);
+                    Reading_config_auto(pedalIdx);
+                }
+            }
 
 
         }
@@ -1700,7 +1716,6 @@ namespace User.PluginSdkDemo
                 Plugin._serialPort[pedalIdx].DiscardOutBuffer();
                 Plugin._serialPort[pedalIdx].Close();
                 Plugin.Settings.connect_status[pedalIdx] = 0;
-
             }
         }
 

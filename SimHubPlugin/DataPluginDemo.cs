@@ -213,10 +213,10 @@ namespace User.PluginSdkDemo
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
 
-        
-        
 
-        public bool serialPortConnected = false;
+
+
+        public bool[] connectSerialPort = { false, false, false };
 
 
         public DataPluginDemoSettings Settings;
@@ -984,29 +984,32 @@ namespace User.PluginSdkDemo
                             {
                                 if (_serialPort[pedalIdx].IsOpen == false)
                                 {
-                                    if (wpfHandle != null)
-                                    {
-                                        wpfHandle.openSerialAndAddReadCallback(pedalIdx);
-                                    }
+                                    //if (wpfHandle != null)
+                                    //{
+                                    //    wpfHandle.openSerialAndAddReadCallback(pedalIdx);
+                                    //}
+
+                                    connectSerialPort[pedalIdx] = true;
                                 }
                                 else
                                 {
-                                    if (wpfHandle != null)
-                                    {
-                                        wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
-                                    }
+                                    //if (wpfHandle != null)
+                                    //{
+                                    //    wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
+                                    //}
                                     //ConnectToPedal.IsChecked = false;
                                     //TextBox_debugOutput.Text = "Serialport already open, close it";
                                     Settings.connect_status[pedalIdx] = 0;
+                                    connectSerialPort[pedalIdx] = false;
                                 }
 
                                 if (_serialPort[pedalIdx].IsOpen)
                                 {
-                                    if (wpfHandle != null)
-                                    {
-                                        wpfHandle.Reading_config_auto(pedalIdx);
-                                    }
-                                    
+                                    //if (wpfHandle != null)
+                                    //{
+                                    //    wpfHandle.Reading_config_auto(pedalIdx);
+                                    //}
+                                    connectSerialPort[pedalIdx] = true;
                                 }
 
 
