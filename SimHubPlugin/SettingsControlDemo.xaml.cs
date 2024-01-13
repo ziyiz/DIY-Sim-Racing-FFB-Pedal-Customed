@@ -677,7 +677,7 @@ namespace User.PluginSdkDemo
 
             info_label.Content = "State: ";
             string info_text;
-            if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
+            if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
                 info_text = "Connected";
             }
