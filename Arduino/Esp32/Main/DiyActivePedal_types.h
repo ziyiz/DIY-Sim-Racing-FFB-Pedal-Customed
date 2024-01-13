@@ -34,6 +34,7 @@ struct payloadPedalAction {
 struct payloadPedalState {
   uint16_t pedalPosition_u16;
   uint16_t pedalForce_u16;
+  uint16_t joystickOutput_u16;
 };
 
 struct payloadPedalConfig {

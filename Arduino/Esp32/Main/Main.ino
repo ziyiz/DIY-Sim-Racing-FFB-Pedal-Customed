@@ -723,6 +723,7 @@ void pedalUpdateTask( void * pvParameters )
         float normalizedPedalReading_fl32 = constrain(((filteredReading - dap_calculationVariables_st.Force_Min) / ( dap_calculationVariables_st.Force_Max - dap_calculationVariables_st.Force_Min)), 0, 1);
         dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
         dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
+        dap_state_st.payloadPedalState_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
         dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
         dap_state_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_st.payLoadHeader_)), sizeof(dap_state_st.payLoadHeader_) + sizeof(dap_state_st.payloadPedalState_));

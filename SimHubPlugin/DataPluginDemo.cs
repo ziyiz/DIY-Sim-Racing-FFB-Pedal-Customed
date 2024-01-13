@@ -56,6 +56,7 @@ public struct payloadPedalState
 {
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
+    public UInt16 joystickOutput_u16;
 };
 
 public struct payloadPedalConfig
@@ -875,6 +876,17 @@ namespace User.PluginSdkDemo
             // close serial communication
             if (wpfHandle != null)
             {
+
+                try
+                {
+                    wpfHandle.joystick.Release();
+                    wpfHandle.joystick.Dispose();
+                }
+                catch (Exception caughtEx)
+                { 
+                }
+                
+
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
                     wpfHandle.closeSerialAndStopReadCallback(pedalIdx);

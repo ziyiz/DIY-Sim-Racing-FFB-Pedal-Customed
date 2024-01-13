@@ -40,6 +40,12 @@ using SimHub.Plugins;
 using log4net.Plugin;
 //using System.Drawing;
 
+//using vJoyInterfaceWrap;
+
+// Win 11 install, see https://github.com/jshafer817/vJoy/releases
+using vJoy.Wrapper;
+
+
 
 namespace User.PluginSdkDemo
 {
@@ -62,7 +68,6 @@ namespace User.PluginSdkDemo
         public DataPluginDemo Plugin { get; }
 
 
-
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
         private string stringValue;
 
@@ -74,6 +79,8 @@ namespace User.PluginSdkDemo
 
         public double[] Force_curve_Y = new double[100];
         public bool debug_flag = false;
+
+        public VirtualJoystick joystick;
 
 
         // read config from JSON on startup
@@ -248,7 +255,15 @@ namespace User.PluginSdkDemo
         public SettingsControlDemo()
         {
 
+            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
+            uint vJoystickId = 1;
+            joystick = new VirtualJoystick(vJoystickId);
+            joystick.Aquire();                                  // Aquire vJoy device 1
 
+
+            
+            
+            
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
                 dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
@@ -1664,7 +1679,7 @@ namespace User.PluginSdkDemo
 
             // read callback
             pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timer1_Tick);
+            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
             pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
             pedal_serial_read_timer[pedalIdx].Interval = 20; // in miliseconds
             pedal_serial_read_timer[pedalIdx].Start();
@@ -1690,7 +1705,7 @@ namespace User.PluginSdkDemo
         }
 
 
-        unsafe public void timer1_Tick(object sender, EventArgs e)
+        unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
 
@@ -1788,10 +1803,28 @@ namespace User.PluginSdkDemo
                                         if ((check_payload_state_b) && check_crc_state_b)
                                         {
 
+                                            // write vJoy data
+                                            switch (pedalSelected)
+                                            {
+                                                case 0:
+                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_X);  // Center X axis
+                                                    break;
+                                                case 1:
+                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Y);  // Center X axis
+                                                    break;
+                                                case 2:
+                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Z);  // Center X axis
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            
+
+                                            // GUI update
                                             if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
                                             {
-                                                TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                                TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                                //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                                //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
                                                 pedalStateHasAlreadyBeenUpdated_b = true;
 
                                                 text_point_pos.Opacity = 0;
