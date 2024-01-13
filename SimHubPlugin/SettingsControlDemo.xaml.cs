@@ -38,6 +38,7 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using SimHub.Plugins;
 using log4net.Plugin;
+//using System.Drawing;
 
 
 namespace User.PluginSdkDemo
@@ -70,8 +71,9 @@ namespace User.PluginSdkDemo
         public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
         //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
         int printCtr = 0;
-        
 
+        public double[] Force_curve_Y = new double[100];
+        public bool debug_flag = false;
 
 
         // read config from JSON on startup
@@ -685,6 +687,10 @@ namespace User.PluginSdkDemo
             {
                 info_text = "Waiting";
             }
+            if ((bool)TestAbs_check.IsChecked)
+            {
+                info_text += "\nABS/TC Testing";
+            }
             info_label_2.Content = info_text;
 
 
@@ -727,7 +733,9 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(rect4, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 - rect0.Height / 2);
             Canvas.SetLeft(rect4, 4 * canvas.Width / 5 - rect4.Width / 2);
             Canvas.SetTop(rect5, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 - rect0.Height / 2);
-            Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2 - 2);
+            Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2);
+            Canvas.SetTop(rect_State, canvas.Height - rect_State.Height / 2);
+            Canvas.SetLeft(rect_State,  - rect_State.Width / 2);
             //set for ABS slider
             Canvas.SetTop(rect_SABS_Control, (control_rect_value_max- dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value ) *dyy-rect_SABS_Control.Height/2);
             Canvas.SetLeft(rect_SABS_Control , 0);
@@ -988,9 +996,11 @@ namespace User.PluginSdkDemo
             {
                 System.Windows.Point Pointlcl = new System.Windows.Point(dx * xs2[pointIdx], dy*ys2[pointIdx]);
                 myPointCollection2.Add(Pointlcl);
+                Force_curve_Y[pointIdx] =  dy * ys2[pointIdx];
             }
 
             this.Polyline_BrakeForceCurve.Points = myPointCollection2;
+            
 
         }
 
@@ -1036,6 +1046,7 @@ namespace User.PluginSdkDemo
                     TestAbs_check.IsChecked= true;
                     Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
                     TextBox_debugOutput.Text = "ABS-Test begin";
+                    updateTheGuiFromConfig();
                 }
                 else
                 {
@@ -1043,6 +1054,7 @@ namespace User.PluginSdkDemo
                     //Plugin.sendAbsSignal = !Plugin.sendAbsSignal;
                     Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
                     TextBox_debugOutput.Text = "ABS-Test stopped";
+                    updateTheGuiFromConfig();
                 }
             
         }
@@ -1787,9 +1799,19 @@ namespace User.PluginSdkDemo
                                                 double dyy = canvas.Height / control_rect_value_max;
                                                 double dxx = canvas.Width / control_rect_value_max;
 
+                                                if (debug_flag)
+                                                {
+                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
+                                                    Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                                }
+                                                else
+                                                {
+                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
+                                                    int round_x = (int)(100 * pedalState_read_st.payloadPedalState_.pedalPosition_u16 / control_rect_value_max)-1;
+                                                    round_x = Math.Max(0, Math.Min(round_x, 99));
+                                                    Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
+                                                }
 
-                                                Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
                                             }
 
 
@@ -2680,6 +2702,7 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
 
             InvertLoadcellReading_check.Opacity = 1;
+            debug_flag = true;
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -2698,6 +2721,7 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
 
             InvertLoadcellReading_check.Opacity = 0;
+            debug_flag = false;
         }
 
 
