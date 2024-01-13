@@ -675,6 +675,17 @@ namespace User.PluginSdkDemo
             PID_tuning_I_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
             PID_tuning_D_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
 
+            info_label.Content = "State: ";
+            string info_text;
+            if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
+            {
+                info_text = "Connected";
+            }
+            else
+            {
+                info_text = "Waiting";
+            }
+            info_label_2.Content = info_text;
 
 
             int debugFlagValue_0 = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0;
@@ -1661,6 +1672,7 @@ namespace User.PluginSdkDemo
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
                 Plugin._serialPort[pedalIdx].DiscardOutBuffer();
                 Plugin._serialPort[pedalIdx].Close();
+                Plugin.Settings.connect_status[pedalIdx] = 0;
 
             }
         }
@@ -2196,6 +2208,7 @@ namespace User.PluginSdkDemo
                 ConnectToPedal.IsChecked = false;
                                 TextBox_debugOutput.Text = "Not Checked Serialport close";
             }
+            updateTheGuiFromConfig();
 
         }
 

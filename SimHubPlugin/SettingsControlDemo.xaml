@@ -279,6 +279,7 @@
                 <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540">
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="130" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
+                        <Label Content="ABS/TC effect wave profile:" Height="20" Width="135" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
                         <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged" 
                           Width="80"
                                   Height="10"
@@ -825,23 +826,26 @@
                 </StackPanel>
             </Border>
             <StackPanel HorizontalAlignment="Left" Height="600" Grid.Row="1" VerticalAlignment="Top" Width="250" Grid.RowSpan="8" Margin="5,0,0,0">
-                <Label x:Name="info_label" Content="" Height="80" Width="245"/>
+                <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Label x:Name="info_label" Content="" Height="80" Width="50"/>
+                    <Label x:Name="info_label_2" Content="Label" Height="80" Width="110"/>
+                </StackPanel>
                 <StackPanel Height="30" Width="250" Orientation="Horizontal">
                     <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged"
-      Width="115"
+      Width="135"
       ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
                     <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
                     <CheckBox x:Name="ConnectToPedal"
-      Width="64"
-      Height="26" IsChecked="False" IsEnabled="False" Content="Connected" FontSize="8"/>
+      Width="30"
+      Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
                 </StackPanel>
                 <styles:SHButtonSecondary Click="ConnectToPedal_click" Width="160" Background="#FF08FF00" Height="28" Content="Connect to Pedal" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonSecondary Click="DisconnectToPedal_click" Width="160" Background="Red" Content="Disconnect from Pedal" Height="28" HorizontalAlignment="Left" Margin="0,4,0,0" />
-                <styles:SHButtonPrimary Click="RestartPedal_click" Width="160" Content="Restart pedal" Height="28" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="28" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonPrimary Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="28" Content="Send config to pedal" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="28" Content="Read config from pedal" Margin="0,4,0,0" HorizontalAlignment="Left" />
+                <styles:SHButtonPrimary Click="RestartPedal_click" Width="160" Content="Restart pedal" Height="28" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open config" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                 <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save config" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Left"/>
