@@ -982,6 +982,7 @@ int64_t timeDiff = 0;
 
 
 uint64_t print_cycle_counter_u64 = 0;
+uint64_t lifeline_cycle_counter_u64 = 0;
 void servoCommunicationTask( void * pvParameters )
 {
   
@@ -993,10 +994,19 @@ void servoCommunicationTask( void * pvParameters )
       timerServoCommunication.Bump();
     }
 
+    // check if servo communication is still there every N cycles
+    if ( (lifeline_cycle_counter_u64 % 2000) == 0 )
+    {
+      isv57LifeSignal_b = isv57.checkCommunication();
+      lifeline_cycle_counter_u64 = 0;
+    } 
+    
+
+    delay(20);
     if (isv57LifeSignal_b)
     {
 
-        delay(20);
+        
         //isv57.readServoStates();
         
 
@@ -1122,6 +1132,7 @@ void servoCommunicationTask( void * pvParameters )
     }
     else
     {
+      Serial.println("Servo communication lost!");
       delay(1000);
     }
 
