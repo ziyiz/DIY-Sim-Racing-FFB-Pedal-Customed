@@ -64,7 +64,7 @@ namespace User.PluginSdkDemo
         private string stringValue;
 
 
-        bool[] waiting_for_pedal_config = new bool[3];
+        public bool[] waiting_for_pedal_config = new bool[3];
         public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
         //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
         int printCtr = 0;
@@ -490,6 +490,7 @@ namespace User.PluginSdkDemo
             this.Plugin = plugin;
 
             UpdateSerialPortList_click();
+            //closeSerialAndStopReadCallback(1);
 
 
 
@@ -661,7 +662,7 @@ namespace User.PluginSdkDemo
 
 
 
-        private void updateTheGuiFromConfig()
+        public void updateTheGuiFromConfig()
         {
             // update the sliders
 
@@ -1413,8 +1414,8 @@ namespace User.PluginSdkDemo
             }
         }
 
-        string[] STOPCHAR = { "\r\n"};
-        private bool EndsWithStop(string incomingData)
+        public string[] STOPCHAR = { "\r\n"};
+        public bool EndsWithStop(string incomingData)
         {
             for (int i = 0; i < STOPCHAR.Length; i++)
             {
@@ -1435,7 +1436,7 @@ namespace User.PluginSdkDemo
         }
 
 
-        private string[] _data = {"", "", "" };// = "";
+        public string[] _data = {"", "", "" };// = "";
 
         //unsafe private void sp_DataReceived(object sender, object e)
         unsafe private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1606,7 +1607,60 @@ namespace User.PluginSdkDemo
 
 
 
-        
+        /********************************************************************************************************************/
+        /*							read serial stream																		*/
+        /********************************************************************************************************************/
+        public void openSeriialAndAddReadCallback(uint pedalIdx)
+        {
+
+            // serial port settings
+            Plugin._serialPort[pedalIdx].Handshake = Handshake.None;
+            Plugin._serialPort[pedalIdx].Parity = Parity.None;
+            //_serialPort[pedalIdx].StopBits = StopBits.None;
+
+
+            Plugin._serialPort[pedalIdx].ReadTimeout = 2000;
+            Plugin._serialPort[pedalIdx].WriteTimeout = 500;
+
+            // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+            Plugin._serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
+
+            Plugin._serialPort[pedalIdx].DtrEnable = false;
+
+            Plugin._serialPort[pedalIdx].NewLine = "\r\n";
+            Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
+
+
+            Plugin._serialPort[pedalIdx].Open();
+
+
+            // read callback
+            pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timer1_Tick);
+            pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+            pedal_serial_read_timer[pedalIdx].Interval = 20; // in miliseconds
+            pedal_serial_read_timer[pedalIdx].Start();
+            System.Threading.Thread.Sleep(100);
+        }
+
+        public void closeSerialAndStopReadCallback(uint pedalIdx)
+        {
+            if (pedal_serial_read_timer[pedalIdx] != null)
+            {
+                pedal_serial_read_timer[pedalIdx].Stop();
+                pedal_serial_read_timer[pedalIdx].Dispose();
+            }
+            System.Threading.Thread.Sleep(300);
+            if (Plugin._serialPort[pedalIdx].IsOpen)
+            {
+                Plugin._serialPort[pedalIdx].DiscardInBuffer();
+                Plugin._serialPort[pedalIdx].DiscardOutBuffer();
+                Plugin._serialPort[pedalIdx].Close();
+
+            }
+        }
+
+
         unsafe public void timer1_Tick(object sender, EventArgs e)
         {
 
@@ -1729,7 +1783,7 @@ namespace User.PluginSdkDemo
 
 
                                 // decode into config struct
-                                if ((waiting_for_pedal_config[indexOfSelectedPedal_u]) && (dataToSend.Length == sizeof(DAP_config_st)))
+                                if ((waiting_for_pedal_config[pedalSelected]) && (dataToSend.Length == sizeof(DAP_config_st)))
                                 {
                                     DAP_config_st tmp;
 
@@ -1771,7 +1825,7 @@ namespace User.PluginSdkDemo
                                         if ((check_payload_config_b) && check_crc_config_b)
                                         {
                                             waiting_for_pedal_config[pedalSelected] = false;
-                                            this.dap_config_st[pedalSelected] = pedalConfig_read_st;
+                                            dap_config_st[pedalSelected] = pedalConfig_read_st;
                                             updateTheGuiFromConfig();
 
                                             continue;
@@ -1847,35 +1901,7 @@ namespace User.PluginSdkDemo
         /********************************************************************************************************************/
         /*							Connect to pedal																		*/
         /********************************************************************************************************************/
-        public void init_timmer_auto()
-        {
-            if (Plugin.Settings.auto_connect_flag == 1)
-            {
-                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
-                {
-                    if (Plugin.Settings.connect_status[pedalIdx] == 1)
-                    {
-                        if (Plugin._serialPort[pedalIdx].IsOpen == true)
-                        {
 
-                            pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-                            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timer1_Tick);
-                            pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-                            pedal_serial_read_timer[pedalIdx].Interval = 100; // in miliseconds
-                            pedal_serial_read_timer[pedalIdx].Start();
-                            System.Threading.Thread.Sleep(100);
-
-                        }
-                        else
-                        {
-                            Plugin.Settings.connect_status[pedalIdx] = 0;
-                        }
-                    }
-                }
-
-            }
-
-        }
 
         unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
             {
@@ -1887,20 +1913,13 @@ namespace User.PluginSdkDemo
                 {
                     try
                     {
-                        Plugin._serialPort[indexOfSelectedPedal_u].Open();
+                        openSeriialAndAddReadCallback(indexOfSelectedPedal_u);
                         TextBox_debugOutput.Text = "Serialport open";
                         ConnectToPedal.IsChecked = true;
 
                         // register a callback that is triggered when serial data is received
                         // see https://gist.github.com/mini-emmy/9617732
                         //Plugin._serialPort[indexOfSelectedPedal_u].DataReceived += new SerialDataReceivedEventHandler(sp_DataReceived);
-
-
-                        pedal_serial_read_timer[indexOfSelectedPedal_u] = new System.Windows.Forms.Timer();
-                        pedal_serial_read_timer[indexOfSelectedPedal_u].Tick += new EventHandler(timer1_Tick);
-                        pedal_serial_read_timer[indexOfSelectedPedal_u].Interval = 100; // in miliseconds
-                        pedal_serial_read_timer[indexOfSelectedPedal_u].Tag = indexOfSelectedPedal_u;
-                        pedal_serial_read_timer[indexOfSelectedPedal_u].Start();
 
                         System.Threading.Thread.Sleep(100);
 
@@ -1916,8 +1935,7 @@ namespace User.PluginSdkDemo
                 }
                 else
                 {
-                    pedal_serial_read_timer[indexOfSelectedPedal_u].Stop();
-                    Plugin._serialPort[indexOfSelectedPedal_u].Close();
+                    closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
 
                     //Plugin._serialPort[indexOfSelectedPedal_u].DataReceived -= sp_DataReceived;
 
@@ -1929,10 +1947,7 @@ namespace User.PluginSdkDemo
             else
             {
                 ConnectToPedal.IsChecked = false;
-                pedal_serial_read_timer[indexOfSelectedPedal_u].Stop();
-                //Plugin._serialPort[indexOfSelectedPedal_u].DataReceived -= sp_DataReceived;
-
-                Plugin._serialPort[indexOfSelectedPedal_u].Close();
+                closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
                 TextBox_debugOutput.Text = "Serialport close";
             }
 
@@ -2161,10 +2176,12 @@ namespace User.PluginSdkDemo
 
         private void DisconnectToPedal_click(object sender, RoutedEventArgs e)
         {
+
+            closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
+
+
             if (ConnectToPedal.IsChecked == true)
             {
-                pedal_serial_read_timer[indexOfSelectedPedal_u].Stop();
-                Plugin._serialPort[indexOfSelectedPedal_u].Close();
                 ConnectToPedal.IsChecked = false;
                 TextBox_debugOutput.Text = "Serialport close";
                 Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
@@ -2172,9 +2189,7 @@ namespace User.PluginSdkDemo
             else
             {
                 ConnectToPedal.IsChecked = false;
-                pedal_serial_read_timer[indexOfSelectedPedal_u].Stop();
-                Plugin._serialPort[indexOfSelectedPedal_u].Close();
-                TextBox_debugOutput.Text = "Not Checked Serialport close";
+                                TextBox_debugOutput.Text = "Not Checked Serialport close";
             }
 
         }
