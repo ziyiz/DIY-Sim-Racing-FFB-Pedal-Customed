@@ -1697,7 +1697,7 @@ namespace User.PluginSdkDemo
             pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
             pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
             pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-            pedal_serial_read_timer[pedalIdx].Interval = 20; // in miliseconds
+            pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
             pedal_serial_read_timer[pedalIdx].Start();
             System.Threading.Thread.Sleep(100);
         }

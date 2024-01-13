@@ -717,7 +717,7 @@ void pedalUpdateTask( void * pvParameters )
     {
       printCycleCounter++;
 
-      printCycleCounter %= 20;
+      printCycleCounter %= 10;
       if (printCycleCounter == 0)
       {
         float normalizedPedalReading_fl32 = constrain(((filteredReading - dap_calculationVariables_st.Force_Min) / ( dap_calculationVariables_st.Force_Max - dap_calculationVariables_st.Force_Min)), 0, 1);
