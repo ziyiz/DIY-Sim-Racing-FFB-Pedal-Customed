@@ -204,8 +204,7 @@ ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
 - [ ] Add field to invert motor and losdcell direction
-- [ ] send joystick data to simhub plugin and provide data as vJoy gamecontroller
-- [ ] check sebastiand issue eith sticking gas pedal
+- [x] send joystick data to simhub plugin and provide data as vJoy gamecontroller
 - [ ] allow effects to move stepper beyond configured max/min position, but not the measured homing positions.
 
       
@@ -216,9 +215,10 @@ SimHub plugin:
 - [ ] include the types header file and use it
 - [ ] Make use of effects from the ShakeIt plugin
 - [ ] add OTA update for esp firmware
-- [ ] automatic serial monitor update
+- [x] automatic serial monitor update
 - [ ] serial plotter
-- [ ] add different abs effect patterns, e.g. sawtooth
+- [x] add different abs effect patterns, e.g. sawtooth
+- [ ] make effects proportional to force or travel selectable by dropdown menu
       
 Misc:
 - [ ] Create a video describing the build progress and the features
