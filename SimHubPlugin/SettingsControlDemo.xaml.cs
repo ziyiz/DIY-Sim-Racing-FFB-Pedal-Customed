@@ -689,8 +689,16 @@ namespace User.PluginSdkDemo
             {
                 if (Plugin.connectSerialPort[pedalIdx] == true)
                 {
-                    openSerialAndAddReadCallback(pedalIdx);
-                    Reading_config_auto(pedalIdx);
+                    if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+                    {
+                        openSerialAndAddReadCallback(pedalIdx);
+                        Reading_config_auto(pedalIdx);
+                    }
+                    else
+                    {
+                        Plugin.connectSerialPort[pedalIdx] = false;
+                    }
+
                 }
             }
 
@@ -933,6 +941,14 @@ namespace User.PluginSdkDemo
                 checkbox_enable_ABS.Content = "ABS/TC Effect Disabled";
             }
 
+            if (Plugin.Settings.vjoy_output_flag == 1)
+            {
+                Vjoy_out_check.IsChecked = true;
+            }
+            else
+            { 
+                Vjoy_out_check.IsChecked= false;
+            }
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
 
@@ -1689,17 +1705,27 @@ namespace User.PluginSdkDemo
             Plugin._serialPort[pedalIdx].NewLine = "\r\n";
             Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
 
+            if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+            {
+                Plugin._serialPort[pedalIdx].Open();
+                // read callback
+                pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
+                pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+                pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
+                pedal_serial_read_timer[pedalIdx].Start();
+                System.Threading.Thread.Sleep(100);
+            }
+            else
+            {
+                Plugin.Settings.connect_status[pedalIdx] = 0;
+                Plugin.connectSerialPort[pedalIdx] = false;
 
-            Plugin._serialPort[pedalIdx].Open();
+            }
+            
 
 
-            // read callback
-            pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-            pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
-            pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-            pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
-            pedal_serial_read_timer[pedalIdx].Start();
-            System.Threading.Thread.Sleep(100);
+
         }
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
@@ -1819,20 +1845,25 @@ namespace User.PluginSdkDemo
                                         {
 
                                             // write vJoy data
-                                            switch (pedalSelected)
+                                            if(Plugin.Settings.vjoy_output_flag==1)
                                             {
-                                                case 0:
-                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_X);  // Center X axis
-                                                    break;
-                                                case 1:
-                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Y);  // Center X axis
-                                                    break;
-                                                case 2:
-                                                    joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Z);  // Center X axis
-                                                    break;
-                                                default:
-                                                    break;
+                                                switch (pedalSelected)
+                                                {
+                                                    case 0:
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_X);  // Center X axis
+                                                        break;
+                                                    case 1:
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Y);  // Center X axis
+                                                        break;
+                                                    case 2:
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Z);  // Center X axis
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+
                                             }
+
                                             
 
                                             // GUI update
@@ -2836,6 +2867,17 @@ namespace User.PluginSdkDemo
             Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 0;
             checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
         }
+
+        private void Vjoy_out_check_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.vjoy_output_flag = 1;
+        }
+
+        private void Vjoy_out_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.vjoy_output_flag = 0;
+        }
+
 
 
 

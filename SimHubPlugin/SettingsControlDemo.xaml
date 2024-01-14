@@ -700,7 +700,7 @@
                             <Rectangle x:Name="rect4" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect5" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
-                            
+
 
                         </Canvas>
                         <Canvas x:Name="canvas_vert_slider" Height="200" Width="20                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="2,0,0,0" >
@@ -852,6 +852,7 @@
                 <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Left"/>
                 <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect back after initialized" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" HorizontalAlignment="Left" Margin="0,4,0,0"/>
                 <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="0,4,0,0" HorizontalAlignment="Left"/>
+                <CheckBox x:Name="Vjoy_out_check" Content="Vjoy Output" Height="20" Width="100" Checked="Vjoy_out_check_Checked" Unchecked="Vjoy_out_check_Unchecked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,4,0,0"/>
                 <CheckBox x:Name="Debug_check"
                 Width="120"
                 Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Left"/>
