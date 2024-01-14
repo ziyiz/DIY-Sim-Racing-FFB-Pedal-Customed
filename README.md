@@ -7,8 +7,27 @@
 This repository documents my research progress. I wanted to understand the necessary signal processing and control theory algorithms behind such a device. 
 
 The FFB pedal is a robot and can be dangerous. Please watch [The Terminator](https://en.wikipedia.org/wiki/The_Terminator) before continuing. If not interacted with care, it may cause harm. I'm not responsible for any harm caused by this design suggestion. Use responsibly and at your own risk.
-  
 
+
+
+# Features
+## Control of pedal parameters
+To tune the pedal parameters, a SimHub plugin was developed, which communicates with the pedal over USB.
+
+## Effects
+Currently ABS, TC and RPM vibration are supported effects. The SimHub plugin communicates with the pedal and triggers game effects as parameterized.
+
+## Servo tuning
+The used microcontroller has software to communicate with the used iSV57 servo. Therefore, it can tune the servos PID loop and read certain servo states like position, torque, power. 
+
+## Joystick data stream
+The joystick/gamepad data is provided via three redundant channels
+1) Bluetooth
+2) 0V-3.3V output analog signal. Can be read by e.g. https://gp2040-ce.info/
+3) vJoy gamecontroller (only available when SimHub runs).
+
+
+  
 # Discord
 A [Discord](https://discord.gg/j8QhD5hCv7) server has been created to allow joint research.
 
@@ -158,7 +177,6 @@ D=0
 ```
 
 After sending the initial config, power cycling of the pedal is necessary. The pedal should move afterward.
-
 
 
 # Error handling
