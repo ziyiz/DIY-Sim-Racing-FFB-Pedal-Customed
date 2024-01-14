@@ -32,7 +32,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.absFrequency = 15;
   payLoadPedalConfig_.absAmplitude = 0;
   payLoadPedalConfig_.absPattern = 0;
-
+  payLoadPedalConfig_.absForceOrTarvelBit = 0;
 
   payLoadPedalConfig_.lengthPedal_AC = 150;
   payLoadPedalConfig_.horPos_AB = 215;
@@ -122,7 +122,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   endPosRel = ((float)config_st.payLoadPedalConfig_.pedalEndPosition) / 100.0f;
 
   absFrequency = ((float)config_st.payLoadPedalConfig_.absFrequency);
-  absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg
+  absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg or percent
 
   dampingPress = ((float)config_st.payLoadPedalConfig_.dampingPress) / 400.0f;
   RPM_max_freq = ((float)config_st.payLoadPedalConfig_.RPM_max_freq);

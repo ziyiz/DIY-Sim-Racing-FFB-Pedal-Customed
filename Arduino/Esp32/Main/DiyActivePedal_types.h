@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 116
+#define DAP_VERSION_CONFIG 117
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -64,6 +64,7 @@ struct payloadPedalConfig {
   uint8_t absFrequency; // In Hz
   uint8_t absAmplitude; // In kg/20
   uint8_t absPattern; // 0: sinewave, 1: sawtooth
+  uint8_t absForceOrTarvelBit; // 0: Force, 1: travel
 
 
   // geometric properties of the pedal

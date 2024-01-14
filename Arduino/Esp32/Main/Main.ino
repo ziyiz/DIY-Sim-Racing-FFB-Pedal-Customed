@@ -341,7 +341,7 @@ void setup()
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
                     &Task2,      /* Task handle to keep track of created task */
-                    0);          /* pin task to core 1 */
+                    1);          /* pin task to core 1 */
   delay(500);
 
   xTaskCreatePinnedToCore(
@@ -352,7 +352,7 @@ void setup()
                     NULL,      
                     1,         
                     &Task2,    
-                    1);     
+                    0);     
   delay(500);
 
   #ifdef ISV_COMMUNICATION
@@ -365,7 +365,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task2,    
-                      1);     
+                      0);     
     delay(500);
 #endif
 
@@ -533,8 +533,10 @@ void pedalUpdateTask( void * pvParameters )
       // compute pedal oscillation, when ABS is active
     float absForceOffset_fl32 = 0.0f;
 
+    float absForceOffset = 0;
+    float absPosOffset = 0;
     #ifdef ABS_OSCILLATION
-      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern);
+      absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
       RPMOscillation.trigger();
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
@@ -613,7 +615,7 @@ void pedalUpdateTask( void * pvParameters )
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32);
+    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset);
     
 
 
@@ -637,13 +639,14 @@ void pedalUpdateTask( void * pvParameters )
       
 
 
-    
+    // clip target position to configured target interval with RPM effect movement in the endstop
+    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax);
 
   
-    //Adding RPM effect
+    //Adding effects
     Position_Next +=RPMOscillation.RPM_position_offset;
-    // clip target position to configured target interval with RPM effect movement in the endstop
-    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax+RPMOscillation.RPM_position_offset);
+    Position_Next +=absPosOffset;
+    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
 
     // if pedal in min position, recalibrate position 
     #ifdef ISV_COMMUNICATION

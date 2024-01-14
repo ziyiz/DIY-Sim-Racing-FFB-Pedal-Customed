@@ -282,6 +282,7 @@ namespace User.PluginSdkDemo
                 dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
                 dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
                 dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
+                dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
                 dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
                 dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
                 dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
@@ -836,8 +837,8 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(text_max_force,  rect9.Width+3);
             Canvas.SetTop(text_max_force, Canvas.GetTop(rect9)-6-text_max_force.Height/2);
             
-            text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "Kg";
-            text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "Kg";
+            text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+            text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
             //damping slider
             double damping_max = 255;
             dx = canvas_horz_damping.Width / damping_max;
@@ -849,7 +850,18 @@ namespace User.PluginSdkDemo
             double abs_max = 255;
             dx = canvas_horz_ABS.Width / abs_max;
             Canvas.SetLeft(rect_ABS, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude);
-            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "Kg";
+            switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+            {
+                case 0:
+                    text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                    break;
+                case 1:
+                    text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                    break;
+                default:
+                    break;
+            }
+            
             Canvas.SetLeft(text_ABS, Canvas.GetLeft(rect_ABS) - text_ABS.Width / 2 + rect_ABS.Width / 2);
             Canvas.SetTop(text_ABS, 5);
             //ABS freq slider
@@ -868,7 +880,16 @@ namespace User.PluginSdkDemo
             catch (Exception caughtEx)
             {
             }
-            
+
+            // ABS force or travel dependent
+            try
+            {
+                EffectAppliedOnForceOrTravel_combobox.SelectedIndex = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+
 
             //max game output slider
             double max_game_max = 100;
@@ -889,7 +910,7 @@ namespace User.PluginSdkDemo
             double LC_max = 510;
             dx = canvas_horz_LC_rating.Width / LC_max;
             Canvas.SetLeft(rect_LC_rating, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2);
-            text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "Kg";
+            text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "kg";
             Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
             Canvas.SetTop(text_LC_rating, 5);
             //RPM AMP slider
@@ -897,7 +918,7 @@ namespace User.PluginSdkDemo
             double RPM_AMP_max = 200;
             dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
             Canvas.SetLeft(rect_RPM_AMP, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP);
-            text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "Kg";
+            text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "kg";
             Canvas.SetLeft(text_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
             Canvas.SetTop(text_RPM_AMP, 5);
             //// Select serial port accordingly
@@ -2154,6 +2175,10 @@ namespace User.PluginSdkDemo
 
 
 
+        
+
+
+
 
 
         private void RestartPedal_click(object sender, RoutedEventArgs e)
@@ -2576,8 +2601,8 @@ namespace User.PluginSdkDemo
                     
                     
                 }
-                text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "Kg";
-                text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "Kg";
+                text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+                text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
                 
                 //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
 
@@ -2652,7 +2677,20 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = Convert.ToByte(actual_x);
 
-                    text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude/20+"Kg";
+
+                    switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+                    {
+                        case 0:
+                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                            break;
+                        case 1:
+                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    
                     Canvas.SetLeft(text_ABS, Canvas.GetLeft(rect_ABS) - text_ABS.Width / 2 + rect_ABS.Width / 2);
                     Canvas.SetTop(text_ABS, 5);
                     Canvas.SetLeft(rectangle, x);
@@ -2728,7 +2766,7 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(actual_x / 2);
 
-                    text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "Kg";
+                    text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
                     Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
                     Canvas.SetTop(text_LC_rating, 5);
                     Canvas.SetLeft(rectangle, x);
@@ -2747,7 +2785,7 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(actual_x);
 
-                    text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100 + "Kg";
+                    text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100 + "kg";
                     Canvas.SetLeft(text_RPM_AMP, x - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
                     Canvas.SetTop(text_RPM_AMP, 5);
                     Canvas.SetLeft(rectangle, x);
@@ -2897,6 +2935,34 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 0;
         }
 
+
+        public void EffectAppliedOnForceOrTravel_combobox_changed(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = (byte)EffectAppliedOnForceOrTravel_combobox.SelectedIndex;
+
+
+                switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+                {
+                    case 0:
+                        text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                        break;
+                    case 1:
+                        text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+
+        }
 
 
 

@@ -23,12 +23,12 @@ public:
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern) {
+  void forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern, uint8_t absForceOrTarvelBit, float * absForceOffset, float * absPosOffset) {
 
 
     long timeNowMillis = millis();
     float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
-    float absForceOffset = 0;
+    float absForceOffset_local = 0;
 
     if (timeSinceTrigger > ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS)
     {
@@ -40,31 +40,56 @@ public:
       _absTimeMillis += timeNowMillis - _lastCallTimeMillis;
       float absTimeSeconds = _absTimeMillis / 1000.0f;
 
+      // abs amplitude
+      float absAmp_fl32 = 0;
+      switch (absForceOrTarvelBit) {
+        case 0:
+          absAmp_fl32 = calcVars_st->absAmplitude;
+          break;
+        case 1:
+          absAmp_fl32 = calcVars_st->stepperPosRange * calcVars_st->absAmplitude / 100.;
+          break;
+        default:
+          break;
+      }
+
+
+      
       switch (absPattern) {
         case 0:
           // sine wave pattern
-          absForceOffset = calcVars_st->absAmplitude * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
+          absForceOffset_local =  absAmp_fl32 * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
           break;
         case 1:
           // sawtooth pattern
           if (calcVars_st->absFrequency > 0)
           {
-            absForceOffset = calcVars_st->absAmplitude * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
+            absForceOffset_local = absAmp_fl32 * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
           }
           break;
         default:
           break;
       }
       
-
+      switch (absForceOrTarvelBit) {
+        case 0:
+          *absForceOffset = absForceOffset_local;
+          *absPosOffset = 0;
+          break;
+        case 1:
+          *absForceOffset = 0;
+          *absPosOffset = absForceOffset_local;
+          break;
+        default:
+          break;
+      }
       
     }
 
     _lastCallTimeMillis = timeNowMillis;
 
-    return absForceOffset;
+    return;
     
-
   }
 };
 
