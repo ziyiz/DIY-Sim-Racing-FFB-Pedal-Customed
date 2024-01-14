@@ -37,10 +37,10 @@
             </Grid.ColumnDefinitions>
 
             <!-- Define the tabs to select the pedal -->
-            <TabControl x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left">
-                <TabItem x:Name="tabPedalSelection_clutch" Header="Clutch"/>
-                <TabItem x:Name="tabPedalSelection_brake" Header="Brake"/>
-                <TabItem x:Name="tabPedalSelection_accelerator" Header="Accelerator"/>
+            <TabControl x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TabItem x:Name="tabPedalSelection_clutch" Header="Clutch" FontFamily="Yu Gothic UI Semibold" Height="39" HorizontalAlignment="Left" Width="90" />
+                <TabItem x:Name="tabPedalSelection_brake" Header="Brake" FontFamily="Yu Gothic UI Semibold"/>
+                <TabItem x:Name="tabPedalSelection_accelerator" Header="Accelerator" FontFamily="Yu Gothic UI Semibold"/>
             </TabControl>
 
 

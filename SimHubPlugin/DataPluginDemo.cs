@@ -236,7 +236,7 @@ namespace User.PluginSdkDemo
         /// <summary>
         /// Gets a short plugin title to show in left menu. Return null if you want to use the title as defined in PluginName attribute.
         /// </summary>
-        public string LeftMenuTitle => "DIY FFB pedal plugin";
+        public string LeftMenuTitle => "DIY FFB Pedal";
 
         /// <summary>
         /// Called one time per game data update, contains all normalized game data,
