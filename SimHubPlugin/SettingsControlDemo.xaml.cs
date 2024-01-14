@@ -336,7 +336,10 @@ namespace User.PluginSdkDemo
             PID_tuning_P_gain_slider.Opacity = 0;
             textBox_debug_Flag_0.Opacity = 0;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
+            button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
+            button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
+            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             text_min_force.Foreground = btn_update.Background;
             text_max_force.Foreground = btn_update.Background;
@@ -913,10 +916,12 @@ namespace User.PluginSdkDemo
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == true)
             {
                 ConnectToPedal.IsChecked = true;
+                btn_pedal_connect.Content = "Disconnect From Pedal";
             }
             else
             {
                 ConnectToPedal.IsChecked = false;
+                btn_pedal_connect.Content = "Connect To Pedal";
             }
 
             if (Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] == 1)
@@ -940,6 +945,7 @@ namespace User.PluginSdkDemo
                 checkbox_enable_ABS.IsChecked = false;
                 checkbox_enable_ABS.Content = "ABS/TC Effect Disabled";
             }
+            
 
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
@@ -2022,7 +2028,7 @@ namespace User.PluginSdkDemo
 
 
         unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
-            {
+        {
 
 
             if (ConnectToPedal.IsChecked == false)
@@ -2034,6 +2040,7 @@ namespace User.PluginSdkDemo
                         openSerialAndAddReadCallback(indexOfSelectedPedal_u);
                         TextBox_debugOutput.Text = "Serialport open";
                         ConnectToPedal.IsChecked = true;
+                        btn_pedal_connect.Content = "Disconnect From Pedal";
 
                         // register a callback that is triggered when serial data is received
                         // see https://gist.github.com/mini-emmy/9617732
@@ -2060,6 +2067,8 @@ namespace User.PluginSdkDemo
                     ConnectToPedal.IsChecked = false;
                     TextBox_debugOutput.Text = "Serialport already open, close it";
                     Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                    Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
+                    btn_pedal_connect.Content = "Connect To Pedal";
                 }
             }
             else
@@ -2067,6 +2076,10 @@ namespace User.PluginSdkDemo
                 ConnectToPedal.IsChecked = false;
                 closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
                 TextBox_debugOutput.Text = "Serialport close";
+                Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
+                Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                btn_pedal_connect.Content = "Connect To Pedal";
+
             }
 
             ////reading config from pedal
@@ -2075,7 +2088,7 @@ namespace User.PluginSdkDemo
             {
                 Reading_config_auto(indexOfSelectedPedal_u);
             }
-
+            updateTheGuiFromConfig();
         }
 
         /********************************************************************************************************************/
@@ -2292,6 +2305,7 @@ namespace User.PluginSdkDemo
             }
         }
 
+        
         private void DisconnectToPedal_click(object sender, RoutedEventArgs e)
         {
 
@@ -2312,6 +2326,7 @@ namespace User.PluginSdkDemo
             updateTheGuiFromConfig();
 
         }
+        
 
 
         private void Simulate_ABS_check_Checked(object sender, RoutedEventArgs e)
@@ -2779,7 +2794,9 @@ namespace User.PluginSdkDemo
             textBox_debug_Flag_0.Opacity = 1;
             //btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
-
+            button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
+            button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
+            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Opacity = 1;
             debug_flag = true;
         }
@@ -2798,7 +2815,9 @@ namespace User.PluginSdkDemo
             textBox_debug_Flag_0.Opacity = 0;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-
+            button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
+            button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
+            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
             debug_flag = false;
         }
