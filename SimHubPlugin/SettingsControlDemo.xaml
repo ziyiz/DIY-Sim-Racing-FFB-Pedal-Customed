@@ -841,7 +841,7 @@
                 <styles:SHButtonPrimary x:Name="btn_pedal_connect" Click="ConnectToPedal_click" Width="160"  Height="28" Content="Connect to Pedal" HorizontalAlignment="Left" Margin="0,4,0,0"  />
                 <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="28" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,4,0,0" />
                 <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="28" Content="Send config to pedal &gt;&gt;" HorizontalAlignment="Left" Margin="0,4,0,0" Padding="0,6,0,6" />
-                <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="28" Content="Read config from pedal&lt;&lt;" Margin="0,4,0,0" HorizontalAlignment="Left" Padding="0,6,0,6" />
+                <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="28" Content="Read config from pedal &lt;&lt;" Margin="0,4,0,0" HorizontalAlignment="Left" Padding="0,6,0,6" />
                 <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open Config file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                 <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Left"/>
