@@ -835,7 +835,7 @@
             </Border>
             <StackPanel HorizontalAlignment="Left" Height="600" Grid.Row="1" VerticalAlignment="Top" Width="250" Grid.RowSpan="8" Margin="5,0,0,0">
                 <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Label x:Name="info_label" Content="" Height="80" Width="50"/>
+                    <Label x:Name="info_label" Content="" Height="80" Width="120"/>
                     <Label x:Name="info_label_2" Content="Label" Height="80" Width="110"/>
                 </StackPanel>
                 <StackPanel Height="30" Width="250" Orientation="Horizontal">

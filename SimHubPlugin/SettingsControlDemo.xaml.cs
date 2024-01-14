@@ -720,7 +720,7 @@ namespace User.PluginSdkDemo
             PID_tuning_I_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
             PID_tuning_D_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
 
-            info_label.Content = "State: ";
+            info_label.Content = "Connection State:\nDAP Version:";
             string info_text;
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
@@ -730,6 +730,7 @@ namespace User.PluginSdkDemo
             {
                 info_text = "Waiting";
             }
+            info_text += "\n" + Constants.pedalConfigPayload_version;
             if ((bool)TestAbs_check.IsChecked)
             {
                 info_text += "\nABS/TC Testing";
