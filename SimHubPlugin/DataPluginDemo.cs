@@ -1003,25 +1003,18 @@ namespace User.PluginSdkDemo
                                     connectSerialPort[pedalIdx] = false;
                                 }
 
-                                if (_serialPort[pedalIdx].IsOpen)
-                                {
-                                    //if (wpfHandle != null)
-                                    //{
-                                    //    wpfHandle.Reading_config_auto(pedalIdx);
-                                    //}
-                                    connectSerialPort[pedalIdx] = true;
-                                }
-
 
                             }
                             else
                             {
                                 Settings.connect_status[pedalIdx] = 0;
+                                connectSerialPort[pedalIdx] = false;
                             }
                         }
                         else
                         {
                             Settings.connect_status[pedalIdx] = 0;
+                            connectSerialPort[pedalIdx] = false;
                         }
 
                     }
@@ -1032,7 +1025,7 @@ namespace User.PluginSdkDemo
 
             
             
-            //tmp.init_timmer_auto();
+            
 
          
 

@@ -678,6 +678,7 @@ namespace User.PluginSdkDemo
             indexOfSelectedPedal_u = plugin.Settings.table_selected;
             MyTab.SelectedIndex = (int)indexOfSelectedPedal_u;
 
+            //reconnect to com port
             if (plugin.Settings.auto_connect_flag == 1)
             {
                 checkbox_auto_connect.IsChecked = true;
@@ -695,12 +696,22 @@ namespace User.PluginSdkDemo
                 {
                     if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                     {
-                        openSerialAndAddReadCallback(pedalIdx);
-                        Reading_config_auto(pedalIdx);
+                        if (Plugin._serialPort[pedalIdx].IsOpen == false)
+                        {
+                            openSerialAndAddReadCallback(pedalIdx);
+                            Reading_config_auto(pedalIdx);
+                        }
+                        else
+                        {
+                            Plugin.connectSerialPort[pedalIdx] = false;
+                            Plugin.Settings.connect_status[pedalIdx] = 0;
+                        }
+
                     }
                     else
                     {
                         Plugin.connectSerialPort[pedalIdx] = false;
+                        Plugin.Settings.connect_status[pedalIdx] = 0;
                     }
 
                 }

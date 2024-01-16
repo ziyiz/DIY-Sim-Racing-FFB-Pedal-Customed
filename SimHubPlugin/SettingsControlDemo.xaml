@@ -20,9 +20,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="277"/>
-                <RowDefinition Height="135"/>
+                <RowDefinition Height="155"/>
                 <RowDefinition Height="205"/>
-                <RowDefinition Height="145"/>
+                <RowDefinition Height="165"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="300"/>
@@ -156,8 +156,9 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <Border BorderBrush="#00000000" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="140" Grid.Row="4" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
-                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
+            <Border BorderBrush="#00000000" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="160" Grid.Row="4" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
+                <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540">
+                    <Label Content="Engine RPM Effect Config" Height="15" Width="170" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                     </StackPanel>
@@ -274,10 +275,11 @@
                 </StackPanel>
             </Border>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="200" Grid.Row="3" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
-                <StackPanel HorizontalAlignment="Left" Height="200" VerticalAlignment="Top" Width="540">
+                <StackPanel HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="540">
+                    <Label Content="ABS/TC Effect Config" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="130" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
-                        <Label Content="ABS/TC Effect Profile:" Height="20" Width="105" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
+                        <Label Content="Effect Profile:" Height="20" Width="65" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
                         <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged" 
                           Width="80"
                                   Height="10"
@@ -285,23 +287,21 @@
                             <ComboBoxItem Content="Sinewave"/>
                             <ComboBoxItem Content="Sawtooth"/>
                         </ComboBox>
-
-
-                    </StackPanel>
-                    <StackPanel Height="40" Width="540" Orientation="Horizontal">
-                        <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                        <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0"/>
                         <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left"/>
-                        <CheckBox x:Name="Simulate_ABS_check" Width="210" Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="20,0,0,0"/>
+
+
                     </StackPanel>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal">
-                        <Label Content="Effect Apply By:" Height="25" Width="85" FontSize="10" Margin="70,5,0,0" FontFamily="Arial" VerticalAlignment="Center"/>
+                        <Label Content="Effect Apply By:" Height="25" Width="85" FontSize="10" Margin="70,0,0,0" FontFamily="Arial" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                         <ComboBox x:Name="EffectAppliedOnForceOrTravel_combobox" SelectionChanged="EffectAppliedOnForceOrTravel_combobox_changed" 
-                            Width="80"
-                            Height="10"
-                            FontSize="10" SelectedIndex="0">
+    Width="80"
+    Height="10"
+    FontSize="10" SelectedIndex="0">
                             <ComboBoxItem Content="Force"/>
                             <ComboBoxItem Content="Travel"/>
                         </ComboBox>
+                        <CheckBox x:Name="Simulate_ABS_check" Width="210" Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="20,0,0,0"/>
                     </StackPanel>
                     <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                         <Canvas.RenderTransform>
@@ -381,7 +381,7 @@
                         <TextBlock x:Name="text_ABS_freq_text" 
                             Width="100" 
                             Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="26
-                                   " FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="150">
+                                   " FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="150" Height="10">
                             <TextBlock.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform/>
@@ -397,9 +397,11 @@
                 </StackPanel>
             </Border>
             <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="72,281,0,0" Grid.Row="5" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5"/>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="130" Grid.Row="2" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
-                <StackPanel HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="540">
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="150" Grid.Row="2" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
+                <StackPanel HorizontalAlignment="Left" Height="150" VerticalAlignment="Top" Width="540">
+                    <Label Content="System Config" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
+                        
                         <CheckBox x:Name="dynamic_PID_checkbox"
                 Width="150"
                 Height="34" Content="Dynamic PID control" Foreground="White" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
@@ -409,7 +411,7 @@
                         <CheckBox x:Name="InvertLoadcellReading_check"
                 Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="34" Width="156"/>
 
-                       
+
 
 
 
@@ -597,6 +599,7 @@
 
                         </Canvas>
                     </StackPanel>
+                    
                 </StackPanel>
             </Border>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2" Grid.Row="1">
@@ -835,8 +838,8 @@
             </Border>
             <StackPanel HorizontalAlignment="Left" Height="600" Grid.Row="1" VerticalAlignment="Top" Width="250" Grid.RowSpan="8" Margin="5,0,0,0">
                 <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Label x:Name="info_label" Content="" Height="80" Width="120"/>
-                    <Label x:Name="info_label_2" Content="Label" Height="80" Width="110"/>
+                    <Label x:Name="info_label" Content="" Height="80" Width="120" FontFamily="Segoe UI"/>
+                    <Label x:Name="info_label_2" Content="Label" Height="80" Width="110" FontFamily="Segoe UI Light"/>
                 </StackPanel>
                 <StackPanel Height="30" Width="250" Orientation="Horizontal">
                     <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged"
