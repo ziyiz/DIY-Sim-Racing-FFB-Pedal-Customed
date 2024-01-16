@@ -23,8 +23,8 @@ The used microcontroller has software to communicate with the used iSV57 servo. 
 ## Joystick data stream
 The joystick/gamepad data is provided via three redundant channels
 1) Bluetooth
-2) 0V-3.3V output analog signal. Can be read by e.g. https://gp2040-ce.info/
-3) vJoy gamecontroller (only available when SimHub runs).
+2) 0V-3.3V output analog signal. Can be read by e.g. https://gp2040-ce.info/. The pin 25 was used for analog output.
+3) vJoy gamecontroller (only available when SimHub runs, also need enable control map plugin).
 
 
   
