@@ -701,12 +701,6 @@ namespace User.PluginSdkDemo
                             openSerialAndAddReadCallback(pedalIdx);
                             Reading_config_auto(pedalIdx);
                         }
-                        else
-                        {
-                            Plugin.connectSerialPort[pedalIdx] = false;
-                            Plugin.Settings.connect_status[pedalIdx] = 0;
-                        }
-
                     }
                     else
                     {
