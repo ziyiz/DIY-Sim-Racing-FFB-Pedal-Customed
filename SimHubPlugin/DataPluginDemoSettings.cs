@@ -17,5 +17,6 @@
         public int[] ABS_enable_flag = new int[3] { 0, 0, 0 };
         public int[] RPM_enable_flag = new int[3] { 0, 0, 0 };
         public int vjoy_output_flag = 0;
+        public uint vjoy_order = 1;
     }
 }

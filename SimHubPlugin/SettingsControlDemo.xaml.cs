@@ -403,10 +403,7 @@ namespace User.PluginSdkDemo
 
 
 
-            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
-            uint vJoystickId = 1;
-            joystick = new VirtualJoystick(vJoystickId);
-            joystick.Aquire();                                  // Aquire vJoy device 1
+
 
 
 
@@ -698,8 +695,12 @@ namespace User.PluginSdkDemo
                     {
                         if (Plugin._serialPort[pedalIdx].IsOpen == false)
                         {
-                            openSerialAndAddReadCallback(pedalIdx);
-                            Reading_config_auto(pedalIdx);
+                            if (Plugin.Settings.connect_status[pedalIdx] == 1)
+                            {
+                                openSerialAndAddReadCallback(pedalIdx);
+                                Reading_config_auto(pedalIdx);
+                            }
+
                         }
                     }
                     else
@@ -984,7 +985,7 @@ namespace User.PluginSdkDemo
             }
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
-
+            Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
             //try
             //{
             //    //ComboBox_JsonFileSelected.SelectedItem = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
@@ -2934,11 +2935,16 @@ namespace User.PluginSdkDemo
         private void Vjoy_out_check_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.vjoy_output_flag = 1;
+            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
+            uint vJoystickId = Plugin.Settings.vjoy_order;
+            joystick = new VirtualJoystick(vJoystickId);
+            joystick.Aquire();                                  // Aquire vJoy device 1
         }
 
         private void Vjoy_out_check_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.vjoy_output_flag = 0;
+            joystick.Release();
         }
 
 
@@ -2970,6 +2976,33 @@ namespace User.PluginSdkDemo
 
         }
 
+        private void vjoy_plus_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.vjoy_order += 1;
+            uint max = 4;
+            uint min = 1;
+            Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
+            Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+            joystick.Release();
+            
+            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+            joystick.Aquire();
+
+        }
+
+        private void vjoy_minus_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.vjoy_order -= 1;
+            uint max = 4;
+            uint min = 1;
+            Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
+            Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+            joystick.Release();
+            
+            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+            joystick.Aquire();
+
+        }
 
 
 

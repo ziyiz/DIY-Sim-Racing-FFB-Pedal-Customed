@@ -861,6 +861,11 @@
                 <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect after initialized" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" HorizontalAlignment="Left" Margin="0,4,0,0"/>
                 <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="0,4,0,0" HorizontalAlignment="Left"/>
                 <CheckBox x:Name="Vjoy_out_check" Content="vJoy Output" Height="20" Width="100" Checked="Vjoy_out_check_Checked" Unchecked="Vjoy_out_check_Unchecked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,4,0,0" FontSize="10"/>
+                <StackPanel Height="15" Width="80" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,4,0,0">
+                    <Button x:Name="btn_plus"  Click="vjoy_plus_click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
+                    <Label x:Name="Label_vjoy_order" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                    <Button x:Name="btn_minus"  Click="vjoy_minus_click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
+                </StackPanel>
                 <CheckBox x:Name="Debug_check"
                 Width="120"
                 Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Left"/>
