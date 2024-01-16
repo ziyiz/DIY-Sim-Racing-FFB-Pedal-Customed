@@ -40,7 +40,7 @@ using SimHub.Plugins;
 using log4net.Plugin;
 //using System.Drawing;
 
-//using vJoyInterfaceWrap;
+using vJoyInterfaceWrap;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 using vJoy.Wrapper;
@@ -978,6 +978,9 @@ namespace User.PluginSdkDemo
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
                 Vjoy_out_check.IsChecked = true;
+                uint vJoystickId = Plugin.Settings.vjoy_order;
+                joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                joystick.Aquire();
             }
             else
             { 
@@ -1884,13 +1887,13 @@ namespace User.PluginSdkDemo
                                                 switch (pedalSelected)
                                                 {
                                                     case 0:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_X);  // Center X axis
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
                                                         break;
                                                     case 1:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Y);  // Center X axis
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
                                                         break;
                                                     case 2:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_Z);  // Center X axis
+                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
                                                         break;
                                                     default:
                                                         break;
@@ -2353,7 +2356,7 @@ namespace User.PluginSdkDemo
             else
             {
                 ConnectToPedal.IsChecked = false;
-                                TextBox_debugOutput.Text = "Not Checked Serialport close";
+                TextBox_debugOutput.Text = "Not Checked Serialport close";
             }
             updateTheGuiFromConfig();
 
@@ -2937,8 +2940,9 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 1;
             // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
             uint vJoystickId = Plugin.Settings.vjoy_order;
-            joystick = new VirtualJoystick(vJoystickId);
-            joystick.Aquire();                                  // Aquire vJoy device 1
+            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+            joystick.Aquire();
+
         }
 
         private void Vjoy_out_check_Unchecked(object sender, RoutedEventArgs e)
@@ -2983,10 +2987,50 @@ namespace User.PluginSdkDemo
             uint min = 1;
             Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
-            joystick.Release();
+            if (Plugin.Settings.vjoy_output_flag == 1)
+            {
+                joystick.Release();
+                VjdStat status;
+                status = joystick.Joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
+                switch (status)
+                {
+                    case VjdStat.VJD_STAT_OWN:
+                        TextBox_debugOutput.Text = "vjoy already aquaried";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        break;
+                    case VjdStat.VJD_STAT_FREE:
+
+                        TextBox_debugOutput.Text = "vjoy aquaried";
+                        joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                        joystick.Aquire();
+                        if (Vjoy_out_check.IsChecked == false)
+                        {
+                            Vjoy_out_check.IsChecked = true;
+                        }
+                        //Console.WriteLine("vJoy Device {0} is free\n", id);
+                        break;
+                    case VjdStat.VJD_STAT_BUSY:
+                        TextBox_debugOutput.Text = "vjoy was aquaried by other program";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} is already owned by another feeder\nCannot continue\n", id);
+                        return;
+                    case VjdStat.VJD_STAT_MISS:
+                        TextBox_debugOutput.Text = "the selected vjoy device not enabled";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} is not installed or disabled\nCannot continue\n", id);
+                        return;
+                    default:
+                        TextBox_debugOutput.Text = "vjoy device error";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} general error\nCannot continue\n", id);
+                        return;
+                };
+            }
             
-            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-            joystick.Aquire();
 
         }
 
@@ -2997,10 +3041,52 @@ namespace User.PluginSdkDemo
             uint min = 1;
             Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
-            joystick.Release();
-            
-            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-            joystick.Aquire();
+            if (Plugin.Settings.vjoy_output_flag == 1)
+            {
+                joystick.Release();
+                VjdStat status;
+                status = joystick.Joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
+                switch (status)
+                {
+                    case VjdStat.VJD_STAT_OWN:
+                        TextBox_debugOutput.Text = "vjoy already aquaried";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        break;
+                    case VjdStat.VJD_STAT_FREE:
+
+                        TextBox_debugOutput.Text = "vjoy aquaried";
+                        joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                        joystick.Aquire();
+                        if (Vjoy_out_check.IsChecked == false)
+                        {
+                            Vjoy_out_check.IsChecked = true;
+                        }
+                        //Console.WriteLine("vJoy Device {0} is free\n", id);
+                        break;
+                    case VjdStat.VJD_STAT_BUSY:
+                        TextBox_debugOutput.Text = "vjoy was aquaried by other program";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} is already owned by another feeder\nCannot continue\n", id);
+                        return;
+                    case VjdStat.VJD_STAT_MISS:
+                        TextBox_debugOutput.Text = "the selected vjoy device not enabled";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} is not installed or disabled\nCannot continue\n", id);
+                        return;
+                    default:
+                        TextBox_debugOutput.Text = "vjoy device error";
+                        Plugin.Settings.vjoy_output_flag = 0;
+                        Vjoy_out_check.IsChecked = false;
+                        //Console.WriteLine("vJoy Device {0} general error\nCannot continue\n", id);
+                        return;
+                };
+            }
+
+
+
 
         }
 
