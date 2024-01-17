@@ -126,7 +126,21 @@ namespace User.PluginSdkDemo
 
 
         //}
+        private void vjoy_axis_initialize()
+        {
+            //center all axis/hats reader
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_X);
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_Y);
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_Z);
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RX);
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RY);
+            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RZ);
+            joystick.SetJoystickHat(0, Hats.Hat);
+            joystick.SetJoystickHat(0, Hats.HatExt1);
+            joystick.SetJoystickHat(0, Hats.HatExt2);
+            joystick.SetJoystickHat(0, Hats.HatExt3);
 
+        }
         private void DrawGridLines()
         {
             // Specify the number of rows and columns for the grid
@@ -711,6 +725,19 @@ namespace User.PluginSdkDemo
 
                 }
             }
+            //vjoy initialized
+            if (Plugin.Settings.vjoy_output_flag == 1)
+            {
+                Vjoy_out_check.IsChecked = true;
+                uint vJoystickId = Plugin.Settings.vjoy_order;
+                joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                joystick.Aquire();
+                vjoy_axis_initialize();
+            }
+            else
+            {
+                Vjoy_out_check.IsChecked = false;
+            }
 
 
         }
@@ -975,17 +1002,7 @@ namespace User.PluginSdkDemo
             }
             
 
-            if (Plugin.Settings.vjoy_output_flag == 1)
-            {
-                Vjoy_out_check.IsChecked = true;
-                uint vJoystickId = Plugin.Settings.vjoy_order;
-                joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-                joystick.Aquire();
-            }
-            else
-            { 
-                Vjoy_out_check.IsChecked= false;
-            }
+
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
@@ -2942,6 +2959,7 @@ namespace User.PluginSdkDemo
             uint vJoystickId = Plugin.Settings.vjoy_order;
             joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
             joystick.Aquire();
+            vjoy_axis_initialize();
 
         }
 
