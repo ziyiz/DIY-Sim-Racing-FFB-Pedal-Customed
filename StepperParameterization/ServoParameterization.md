@@ -21,10 +21,10 @@ Bit: LSB
 Signal Inversion: Inverted Mode: Normal  
 
 A typical message is shown below:
-![Message](message_1.PNG)
+![Message](message_1.png)
 
 The protocol is similar to the modbus and even seems to use the modbus CRC as can be seen here:
-![Message](message_2.PNG)
+![Message](message_2.png)
 
 For more detailed information abour modbus, please refer to [here](https://docs.arduino.cc/learn/communication/modbus/)
 
