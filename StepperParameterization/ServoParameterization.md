@@ -8,6 +8,26 @@ Sec. 5.4, gives a good introduction to manual gain adjustment<br>
 Sec. 5.7, feedforward gain<br>
 Sec. 5.10, vibration suppression
 
+
+## Communication protocoll
+# Decoding
+The communication protocoll between the iSV57 and the Stepperonline application is partly decoded. It was done be sniffing the traffic on the debug port with a logic analyzer. The logic analyzer settings were as follows:
+
+"Async Serial" protocoll  
+Baud rate: 38400 Bits per Frame: 8 Bits   
+per Transfer Stop Bits: 1  
+Parity Bit: No Parity Bit Significant   
+Bit: LSB  
+Signal Inversion: Inverted Mode: Normal  
+
+A typical message is shown below:
+![Message](message_1.PNG)
+
+The protocol is similar to the modbus and even seems to use the modbus CRC as can be seen here:
+![Message](message_2.PNG)
+
+For more detailed information abour modbus, please refer to [here](https://docs.arduino.cc/learn/communication/modbus/)
+
 ## Link:     
 https://www.leadshine.com/upfiles/downloads/8aa085a2d9e91e0ec1986b2a35b10ebe_1690180312325.pdf
 
