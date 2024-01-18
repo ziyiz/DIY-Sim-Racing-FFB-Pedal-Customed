@@ -159,7 +159,7 @@
         </ComboBox>-->
             <Border BorderBrush="#00000000" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="160" Grid.Row="4" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
                 <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540">
-                    <Label Content="Engine RPM Effect Config" Height="15" Width="170" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    <Label Content="Engine RPM Effect Setting" Height="15" Width="200" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_RPM" Content="Engine RPM Effect Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                     </StackPanel>
@@ -277,7 +277,7 @@
             </Border>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="200" Grid.Row="3" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
                 <StackPanel HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="540">
-                    <Label Content="ABS/TC Effect Config" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    <Label Content="ABS/TC Effect Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkbox_enable_ABS" Content="ABS Effect Enabled" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="130" Height="20" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
                         <Label Content="Effect Profile:" Height="20" Width="65" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
@@ -400,7 +400,7 @@
             <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,180,0,0" Grid.Row="6" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5"/>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="150" Grid.Row="2" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
                 <StackPanel HorizontalAlignment="Left" Height="150" VerticalAlignment="Top" Width="540">
-                    <Label Content="System Config" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    <Label Content="Pedal Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
 
                         <CheckBox x:Name="dynamic_PID_checkbox"
@@ -939,6 +939,103 @@
             IsSnapToTickEnabled="False" Height="20" Margin="0,3,0,0"
             />
             </StackPanel>
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="160" Grid.Row="5" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2">
+                <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540" Margin="0,-1,0,0">
+                    <Label Content="Bite Point Effect Setting" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    <StackPanel Height="40" Width="540" Orientation="Horizontal">
+                        <CheckBox x:Name="checkbox_enable_bite_point" Content="Bite point Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="20" Width="160" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    </StackPanel>
+                    <Canvas x:Name="canvas_horz_bite_amp" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="70,0,0,0" >
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+
+                        </Canvas.RenderTransform>
+                        <TextBlock x:Name="text_bite_amp" HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Width="100" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="4">
+                            <TextBlock.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </TextBlock.RenderTransform><Run Text="ABS"/><Run Language="zh-tw" Text="/TC"/><Run Text=" Amplitude"/><Run Text=":"/></TextBlock>
+
+
+
+                        <Line x:Name="Line_H_bite_amp"
+                    X1="5" Y1="20"
+                    X2="405" Y2="20"
+                    Stroke="#7F87CEFA"
+                    StrokeThickness="2" />
+                        <Rectangle x:Name="rect_bite_amp" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                        <TextBlock x:Name="text_bite_amp_text" 
+                    Width="100" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Bite Point Amplitude">
+                            <TextBlock.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </TextBlock.RenderTransform></TextBlock>
+
+                    </Canvas>
+                    <Canvas x:Name="canvas_horz_bite_freq" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="70,0,0,0" >
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+
+                        </Canvas.RenderTransform>
+                        <TextBlock x:Name="text_bite_freq" HorizontalAlignment="Center" 
+                    VerticalAlignment="Top" 
+                    Width="120" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency :">
+                            <TextBlock.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </TextBlock.RenderTransform></TextBlock>
+
+
+
+                        <Line x:Name="Line_H_bite_freq"
+                    X1="5" Y1="20"
+                    X2="405" Y2="20"
+                    Stroke="#7F87CEFA"
+                    StrokeThickness="2" />
+                        <Rectangle x:Name="rect_bite_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                        <TextBlock x:Name="text_bite_freq_text" 
+                    Width="100" 
+                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="26                                    " FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="Bite Point Frequency" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="150" Height="10">
+                            <TextBlock.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </TextBlock.RenderTransform></TextBlock>
+
+                    </Canvas>
+
+                </StackPanel>
+            </Border>
 
 
 
