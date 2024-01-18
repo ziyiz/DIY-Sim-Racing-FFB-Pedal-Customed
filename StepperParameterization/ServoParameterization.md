@@ -23,10 +23,12 @@ Signal Inversion: Inverted Mode: Normal
 A typical message is shown below:
 ![Message](message_1.png)
 
-The protocol is similar to the modbus and even seems to use the modbus CRC as can be seen here:
+The protocol is similar to the modbus. In the above example, the first byte (63) is the device address, the second byte (6) is a function code, the next two bytes (0+25) are the register adress, the next two bytes is the data (0+0) and the remaining two bytes are modbus CRC as can be seen here:
 ![Message](message_2.png)
 
 For more detailed information abour modbus, please refer to [here](https://docs.arduino.cc/learn/communication/modbus/)
+
+A sample Arduino script for testing the functionslity can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/blob/main/Arduino/ModbusTest/ModbusTest.ino)
 
 ## Link:     
 https://www.leadshine.com/upfiles/downloads/8aa085a2d9e91e0ec1986b2a35b10ebe_1690180312325.pdf
