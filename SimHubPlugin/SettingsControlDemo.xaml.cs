@@ -3031,7 +3031,7 @@ namespace User.PluginSdkDemo
             joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
 
             Plugin.Settings.vjoy_order += 1;
-            uint max = 4;
+            uint max = 16;
             uint min = 1;
             Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
@@ -3088,7 +3088,7 @@ namespace User.PluginSdkDemo
         private void vjoy_minus_click(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.vjoy_order -= 1;
-            uint max = 4;
+            uint max = 16;
             uint min = 1;
             Plugin.Settings.vjoy_order = Math.Max(min, Math.Min(Plugin.Settings.vjoy_order, max));
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
