@@ -41,9 +41,11 @@ using log4net.Plugin;
 //using System.Drawing;
 
 using vJoyInterfaceWrap;
+//using vJoy.Wrapper;
+using System.Runtime;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
-using vJoy.Wrapper;
+//using vJoy.Wrapper;
 
 
 
@@ -80,8 +82,8 @@ namespace User.PluginSdkDemo
         public double[] Force_curve_Y = new double[100];
         public bool debug_flag = false;
 
-        public VirtualJoystick joystick;
-
+        //public VirtualJoystick joystick;
+        internal vJoyInterfaceWrap.vJoy joystick;
 
         // read config from JSON on startup
         //ReadStructFromJson();
@@ -129,16 +131,16 @@ namespace User.PluginSdkDemo
         private void vjoy_axis_initialize()
         {
             //center all axis/hats reader
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_X);
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_Y);
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_Z);
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RX);
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RY);
-            joystick.SetJoystickAxis(16384, Axis.HID_USAGE_RZ);
-            joystick.SetJoystickHat(0, Hats.Hat);
-            joystick.SetJoystickHat(0, Hats.HatExt1);
-            joystick.SetJoystickHat(0, Hats.HatExt2);
-            joystick.SetJoystickHat(0, Hats.HatExt3);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_X);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_Y);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_Z);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);
+            joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);
+            //joystick.SetJoystickHat(0, Hats.Hat);
+            //joystick.SetJoystickHat(0, Hats.HatExt1);
+            //joystick.SetJoystickHat(0, Hats.HatExt2);
+            //joystick.SetJoystickHat(0, Hats.HatExt3);
 
         }
         private void DrawGridLines()
@@ -730,8 +732,11 @@ namespace User.PluginSdkDemo
             {
                 Vjoy_out_check.IsChecked = true;
                 uint vJoystickId = Plugin.Settings.vjoy_order;
-                joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-                joystick.Aquire();
+                //joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                joystick = new vJoyInterfaceWrap.vJoy();
+
+                joystick.AcquireVJD(vJoystickId);
+                //joystick.Aquire();
                 vjoy_axis_initialize();
             }
             else
@@ -1741,41 +1746,45 @@ namespace User.PluginSdkDemo
         /********************************************************************************************************************/
         public void openSerialAndAddReadCallback(uint pedalIdx)
         {
-
-            // serial port settings
-            Plugin._serialPort[pedalIdx].Handshake = Handshake.None;
-            Plugin._serialPort[pedalIdx].Parity = Parity.None;
-            //_serialPort[pedalIdx].StopBits = StopBits.None;
-
-
-            Plugin._serialPort[pedalIdx].ReadTimeout = 2000;
-            Plugin._serialPort[pedalIdx].WriteTimeout = 500;
-
-            // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
-            Plugin._serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
-
-            Plugin._serialPort[pedalIdx].DtrEnable = false;
-
-            Plugin._serialPort[pedalIdx].NewLine = "\r\n";
-            Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-
-            if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+            try
             {
-                Plugin._serialPort[pedalIdx].Open();
-                // read callback
-                pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-                pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
-                pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-                pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
-                pedal_serial_read_timer[pedalIdx].Start();
-                System.Threading.Thread.Sleep(100);
-            }
-            else
-            {
-                Plugin.Settings.connect_status[pedalIdx] = 0;
-                Plugin.connectSerialPort[pedalIdx] = false;
+                // serial port settings
+                Plugin._serialPort[pedalIdx].Handshake = Handshake.None;
+                Plugin._serialPort[pedalIdx].Parity = Parity.None;
+                //_serialPort[pedalIdx].StopBits = StopBits.None;
 
+
+                Plugin._serialPort[pedalIdx].ReadTimeout = 2000;
+                Plugin._serialPort[pedalIdx].WriteTimeout = 500;
+
+                // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+                Plugin._serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
+
+                Plugin._serialPort[pedalIdx].DtrEnable = false;
+
+                Plugin._serialPort[pedalIdx].NewLine = "\r\n";
+                Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
+
+                if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+                {
+                    Plugin._serialPort[pedalIdx].Open();
+                    // read callback
+                    pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                    pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
+                    pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+                    pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
+                    pedal_serial_read_timer[pedalIdx].Start();
+                    System.Threading.Thread.Sleep(100);
+                }
+                else
+                {
+                    Plugin.Settings.connect_status[pedalIdx] = 0;
+                    Plugin.connectSerialPort[pedalIdx] = false;
+
+                }
             }
+            catch (Exception ex)
+            { }
             
 
 
@@ -1903,14 +1912,18 @@ namespace User.PluginSdkDemo
                                             {
                                                 switch (pedalSelected)
                                                 {
+
                                                     case 0:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);	// HID_USAGES Enums
                                                         break;
                                                     case 1:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);	// HID_USAGES Enums
                                                         break;
                                                     case 2:
-                                                        joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);	// HID_USAGES Enums
                                                         break;
                                                     default:
                                                         break;
@@ -2165,7 +2178,8 @@ namespace User.PluginSdkDemo
 
             try
             {
-                if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 0)
+                //if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 0)
+                if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == false)
                 {
                     Plugin.Settings.selectedComPortNames[indexOfSelectedPedal_u] = tmp;
                     Plugin._serialPort[indexOfSelectedPedal_u].PortName = tmp;
@@ -2955,18 +2969,28 @@ namespace User.PluginSdkDemo
         private void Vjoy_out_check_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.vjoy_output_flag = 1;
-            // vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
+            ////// vJoy c# wrapper, see https://github.com/bobhelander/vJoy.Wrapper
+            ////uint vJoystickId = Plugin.Settings.vjoy_order;
+            ////joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+            ////joystick.Aquire();
+            ////vjoy_axis_initialize();
+
             uint vJoystickId = Plugin.Settings.vjoy_order;
-            joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-            joystick.Aquire();
+            //joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+            joystick = new vJoyInterfaceWrap.vJoy();
+
+            joystick.AcquireVJD(vJoystickId);
+            //joystick.Aquire();
             vjoy_axis_initialize();
 
         }
 
+
         private void Vjoy_out_check_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.vjoy_output_flag = 0;
-            joystick.Release();
+            //joystick.Release();
+            joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
         }
 
 
@@ -2976,18 +3000,21 @@ namespace User.PluginSdkDemo
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = (byte)EffectAppliedOnForceOrTravel_combobox.SelectedIndex;
 
-
-                switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+                if (text_ABS != null)
                 {
-                    case 0:
-                        text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
-                        break;
-                    case 1:
-                        text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
-                        break;
-                    default:
-                        break;
+                    switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+                    {
+                        case 0:
+                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                            break;
+                        case 1:
+                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                
 
             }
             catch (Exception caughtEx)
@@ -3000,6 +3027,9 @@ namespace User.PluginSdkDemo
 
         private void vjoy_plus_click(object sender, RoutedEventArgs e)
         {
+            // release old joystick
+            joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
+
             Plugin.Settings.vjoy_order += 1;
             uint max = 4;
             uint min = 1;
@@ -3007,9 +3037,11 @@ namespace User.PluginSdkDemo
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
-                joystick.Release();
-                VjdStat status;
-                status = joystick.Joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
+                //joystick.Release();
+                
+                //VjdStat status;
+                VjdStat status = joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
+                //status = joystick.Joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
                 switch (status)
                 {
                     case VjdStat.VJD_STAT_OWN:
@@ -3020,8 +3052,9 @@ namespace User.PluginSdkDemo
                     case VjdStat.VJD_STAT_FREE:
 
                         TextBox_debugOutput.Text = "vjoy aquaried";
-                        joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-                        joystick.Aquire();
+                        //joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                        //joystick.Aquire();
+                        joystick.AcquireVJD(Plugin.Settings.vjoy_order);
                         if (Vjoy_out_check.IsChecked == false)
                         {
                             Vjoy_out_check.IsChecked = true;
@@ -3061,9 +3094,10 @@ namespace User.PluginSdkDemo
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
-                joystick.Release();
+                //joystick.Release();
+                joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
                 VjdStat status;
-                status = joystick.Joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
+                status = joystick.GetVJDStatus(Plugin.Settings.vjoy_order);
                 switch (status)
                 {
                     case VjdStat.VJD_STAT_OWN:
@@ -3074,8 +3108,9 @@ namespace User.PluginSdkDemo
                     case VjdStat.VJD_STAT_FREE:
 
                         TextBox_debugOutput.Text = "vjoy aquaried";
-                        joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
-                        joystick.Aquire();
+                        //joystick = new VirtualJoystick(Plugin.Settings.vjoy_order);
+                        joystick.AcquireVJD(Plugin.Settings.vjoy_order);
+                        //joystick.Aquire();
                         if (Vjoy_out_check.IsChecked == false)
                         {
                             Vjoy_out_check.IsChecked = true;

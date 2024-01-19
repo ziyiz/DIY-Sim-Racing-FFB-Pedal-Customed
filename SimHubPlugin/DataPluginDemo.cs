@@ -879,8 +879,10 @@ namespace User.PluginSdkDemo
 
                 try
                 {
-                    wpfHandle.joystick.Release();
-                    wpfHandle.joystick.Dispose();
+                    //wpfHandle.joystick.Release();
+                    //wpfHandle.joystick.Dispose();
+                    wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    
                 }
                 catch (Exception caughtEx)
                 { 
