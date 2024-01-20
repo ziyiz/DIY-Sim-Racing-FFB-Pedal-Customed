@@ -190,6 +190,10 @@ Install DirectX 9
 ## The serial monitor shows a message "Couldn't load config from EPROM due to version mismatch"
 Install a SimHub plugin matching the ESP firmware you installed and send a config to the pedal.
 
+## The com port showed acess denied or can not connect
+Check the arduino plugin scan setting, please use scan only specfiec port as below.<br>
+<img src="Images/ArduinoPlugin_0.png" width="800">
+
 # Misc
 ## Pedal kinematics calculation
 To get a better understanding of the motion and forces, a [python](Validation/PedalKinematics/main.py) script for simulation of the pedal angle, the pedal angular velocity and maximum pedal force has been written. Feel free to tune the pedal geometry as needed. The simulation result for my pedal geometry looks as follows:
