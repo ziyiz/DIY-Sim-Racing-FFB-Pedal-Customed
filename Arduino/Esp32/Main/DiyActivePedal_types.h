@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 118
+#define DAP_VERSION_CONFIG 119
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -80,6 +80,12 @@ struct payloadPedalConfig {
   uint8_t RPM_max_freq; //In HZ
   uint8_t RPM_min_freq; //In HZ
   uint8_t RPM_AMP; //In Kg
+
+  //configure for bite point
+  uint8_t BP_trigger_value;
+  uint8_t BP_amp;
+  uint8_t BP_freq;
+  uint8_t BP_trigger;
   
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
@@ -167,7 +173,9 @@ struct DAP_calculationVariables_st
   float absFrequency;
   float absAmplitude;
   float rpm_value;
-
+  float BP_trigger_value;
+  float BP_amp;
+  float BP_freq;
   float dampingPress;
 
   void updateFromConfig(DAP_config_st& config_st);

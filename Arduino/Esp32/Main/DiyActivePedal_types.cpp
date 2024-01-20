@@ -129,10 +129,11 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   RPM_max_freq = ((float)config_st.payLoadPedalConfig_.RPM_max_freq);
   RPM_min_freq = ((float)config_st.payLoadPedalConfig_.RPM_min_freq);
   RPM_AMP = ((float)config_st.payLoadPedalConfig_.RPM_AMP) / 100.0f;
-  /*
-  RPM_max_freq = 40;
-  RPM_min_freq = 10;*/
-  //RPM_AMP = 0.05;
+  //Bite point effect;
+  
+  BP_trigger_value=(float)config_st.payLoadPedalConfig_.BP_trigger_value;
+  BP_amp=((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
+  BP_freq=(float)config_st.payLoadPedalConfig_.BP_freq;
   
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);

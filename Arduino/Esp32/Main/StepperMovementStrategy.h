@@ -87,7 +87,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
   float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction);
-
+  loadCellTargetKg -=absForceOffset_fl32;
   // clip to min & max force to prevent Ki to overflow
   float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
   float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
@@ -138,7 +138,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     
 
 
-  loadCellTargetKg -=absForceOffset_fl32;
+  
   
   
   // ToDO

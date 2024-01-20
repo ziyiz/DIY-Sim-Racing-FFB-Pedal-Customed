@@ -50,6 +50,7 @@ bool splineDebug_b = false;
 #include "ABSOscillation.h"
 ABSOscillation absOscillation;
 RPMOscillation RPMOscillation;
+BitePointOscillation BitePointOscillation;
 #define ABS_OSCILLATION
 
 
@@ -539,6 +540,7 @@ void pedalUpdateTask( void * pvParameters )
       absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
       RPMOscillation.trigger();
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
+      BitePointOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
 
     // compute the pedal incline angle 
@@ -611,11 +613,16 @@ void pedalUpdateTask( void * pvParameters )
       filteredReading += forceAbsOffset;
     #endif*/
 
+
+    //Add effect by force
+    float effect_force=absForceOffset+ BitePointOscillation.BitePoint_Force_offset;
+
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset);
+    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset);
+    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force);
     
 
 
@@ -713,6 +720,22 @@ void pedalUpdateTask( void * pvParameters )
       if(joystickNormalizedToInt32 > ABS_trigger_value)
       {
         absOscillation.trigger();
+      }
+    }
+
+    //bitepoint trigger
+
+    int32_t BP_trigger_value=dap_config_st.payLoadPedalConfig_.BP_trigger_value;
+    int32_t BP_trigger_min=(BP_trigger_value-4)*100;
+    int32_t BP_trigger_max=(BP_trigger_value+4)*100;
+    if(dap_config_st.payLoadPedalConfig_.BP_trigger==1)
+    {
+      if(joystickNormalizedToInt32 > BP_trigger_min)
+      {
+        if(joystickNormalizedToInt32 < BP_trigger_max)
+        {
+          BitePointOscillation.trigger();
+        }
       }
     }
 

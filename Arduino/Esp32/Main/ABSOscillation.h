@@ -5,6 +5,7 @@
 
 static const long ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static const long BP_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static int RPM_VALUE_LAST = 0;
 
 class ABSOscillation {
@@ -148,6 +149,58 @@ public:
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
     RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
+    //return RPMForceOffset;
+    
+
+  }
+};
+
+class BitePointOscillation {
+private:
+  long _timeLastTriggerMillis;
+  long _BiteTimeMillis;
+  long _lastCallTimeMillis = 0;
+  
+
+public:
+  BitePointOscillation()
+    : _timeLastTriggerMillis(0)
+  {}
+  //float RPM_value =0;
+  float BitePoint_Force_offset = 0;
+public:
+  void trigger() {
+    _timeLastTriggerMillis = millis();
+  }
+  
+  void forceOffset(DAP_calculationVariables_st* calcVars_st) {
+
+
+    long timeNowMillis = millis();
+    float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
+    float BitePointForceOffset = 0;
+    float BP_freq = calcVars_st->BP_freq;
+    //float BP_freq = 15;
+    float BP_amp = calcVars_st->BP_amp;
+    //float BP_amp = 2;
+
+    if (timeSinceTrigger > BP_ACTIVE_TIME_PER_TRIGGER_MILLIS)
+    {
+      _BiteTimeMillis = 0;
+      BitePointForceOffset = 0;
+    }
+    else
+    {
+      _BiteTimeMillis += timeNowMillis - _lastCallTimeMillis;
+      float BPTimeSeconds = _BiteTimeMillis / 1000.0f;
+
+      //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
+      BitePointForceOffset = BP_amp * sin( 2*PI* BP_freq* BPTimeSeconds);
+    }
+    BitePoint_Force_offset=BitePointForceOffset;
+    _lastCallTimeMillis = timeNowMillis;
+    //RPM_VALUE_LAST=RPMForceOffset;
+    
     //return RPMForceOffset;
     
 
