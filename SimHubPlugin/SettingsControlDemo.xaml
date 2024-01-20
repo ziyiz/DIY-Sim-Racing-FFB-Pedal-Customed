@@ -888,7 +888,7 @@
                 <TextBlock x:Name="text_debug_PID_para" 
                    Text="PID parameters:" 
                    Width="120" 
-                   Foreground="White" HorizontalAlignment="Left" Height="15" Margin="0,3,0,0"/>
+                   Foreground="White" HorizontalAlignment="Left" Height="18" Margin="0,3,0,0"/>
                 <TextBlock x:Name="text_debug_pgain" 
                    Text="P-gain:" 
                    Width="120" 
@@ -899,9 +899,9 @@
             AutoToolTipPlacement="TopLeft" 
             AutoToolTipPrecision="2"
             Minimum="0"
-			Maximum="20"
+			Maximum="2"
             TickPlacement="BottomRight"
-			TickFrequency="0.1" RenderTransformOrigin="0.508,0.525"
+			TickFrequency="0.2" RenderTransformOrigin="0.508,0.525"
             Value="0.3"
             IsSnapToTickEnabled="False" 
             SmallChange="0.05" Height="20" Margin="0,3,0,0"
@@ -918,7 +918,7 @@
             Minimum="0"
 			Maximum="500"
             TickPlacement="BottomRight"
-			TickFrequency="5" RenderTransformOrigin="0.508,0.525"
+			TickFrequency="50" RenderTransformOrigin="0.508,0.525"
             Value="50"
             IsSnapToTickEnabled="False" Height="20" Margin="0,3,0,0"
             />
@@ -932,11 +932,28 @@
             AutoToolTipPlacement="TopLeft" 
             AutoToolTipPrecision="3"
             Minimum="0"
-			Maximum="0.1"
+			Maximum="0.01"
             TickPlacement="BottomRight"
-			TickFrequency="5" RenderTransformOrigin="0.508,0.525"
+			TickFrequency="0.001" RenderTransformOrigin="0.508,0.525"
             Value="0"
-            IsSnapToTickEnabled="False" Height="20" Margin="0,3,0,0"
+            IsSnapToTickEnabled="False" Height="25" Margin="0,3,0,0"
+            />
+                <TextBlock x:Name="text_debug_feedforward" 
+                    Text="Feedforward-gain:" 
+                    Width="252" 
+                    Foreground="White" Height="19"/>
+                <Slider x:Name="PID_tuning_Feedforward_gain_slider" 
+                    Width="250" 
+                    ValueChanged="PID_tuning_Feedforward_gain_changed" 
+                    AutoToolTipPlacement="TopLeft" 
+                    AutoToolTipPrecision="2"
+                    Minimum="0"
+                    Maximum="1"
+                    TickPlacement="BottomRight"
+                    TickFrequency="0.1" RenderTransformOrigin="0.496,0.827"
+                    Value="0.0"
+                    IsSnapToTickEnabled="False" 
+                    SmallChange="0.05" Height="52"
             />
             </StackPanel>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="160" Grid.Row="5" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2">

@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 117
+#define DAP_VERSION_CONFIG 118
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -89,6 +89,7 @@ struct payloadPedalConfig {
   float PID_p_gain;
   float PID_i_gain;
   float PID_d_gain;
+  float PID_feedforward_gain;
 
   uint8_t control_strategy_b;
 

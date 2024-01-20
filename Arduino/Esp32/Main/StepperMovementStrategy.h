@@ -88,6 +88,27 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction);
 
+  // clip to min & max force to prevent Ki to overflow
+  float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
+  float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
+
+  // compute feedforward
+  float posStepperNew_FF_fl32 = 0;
+  if ((config_st->payLoadPedalConfig_.PID_feedforward_gain > 0) 
+      & (config_st->payLoadPedalConfig_.PID_feedforward_gain <= 1)
+      & (calc_st->stepperPosMax > calc_st->stepperPosMin) 
+      & (calc_st->Force_Max > calc_st->Force_Min)) 
+  {
+    //float gradient_FF_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction, false);
+    float gradient_FF_fl32 = (calc_st->Force_Max - calc_st->Force_Min) / ( (float)(calc_st->stepperPosMax - calc_st->stepperPosMin) );
+    if (gradient_FF_fl32 > 0)
+    {
+      posStepperNew_FF_fl32 = (loadCellReadingKg_clip - calc_st->Force_Min) / gradient_FF_fl32;
+      posStepperNew_FF_fl32 *= config_st->payLoadPedalConfig_.PID_feedforward_gain;
+    }
+  }
+  
+
 
   if (control_strategy_u8 == 1) // dynamic PID parameters depending on force curve gradient
   {
@@ -127,9 +148,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //	https://github.com/pronenewbits/Arduino_Constrained_MPC_Library
 
   
-  // clip to min & max force to prevent Ki to overflow
-  float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
-  float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
+  
 
 
   // normalize input & setpoint
@@ -141,13 +160,18 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   // compute PID output
   myPID.Compute();
-  
+
+
   // unnormalize output
   //int32_t posStepperNew = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
   //posStepperNew += calc_st->stepperPosMin;
 
   float posStepperNew_fl32 = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
   posStepperNew_fl32 += calc_st->stepperPosMin;
+
+  // add feedforward gain
+  posStepperNew_fl32 += posStepperNew_FF_fl32;
+
   int32_t posStepperNew = floor(posStepperNew_fl32);
   
   posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );

@@ -58,6 +58,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.PID_p_gain = 0.3;
   payLoadPedalConfig_.PID_i_gain = 50.0;
   payLoadPedalConfig_.PID_d_gain = 0.0;
+  payLoadPedalConfig_.PID_feedforward_gain = 0.0;
 
   payLoadPedalConfig_.control_strategy_b = 0;
 
