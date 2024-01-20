@@ -307,7 +307,11 @@ namespace User.PluginSdkDemo
                 dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value= 80;
                 dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
                 dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30; ;
+                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30;
+                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger_value = 50;
+                dap_config_st[pedalIdx].payloadPedalConfig_.BP_amp = 1;
+                dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
+                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
                 dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
                 dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
@@ -417,6 +421,15 @@ namespace User.PluginSdkDemo
             rect_RPM_max.Fill = btn_update.Background;
             rect_RPM_min.Fill = btn_update.Background;
             text_RPM_freq_text.Foreground = btn_update.Background;
+
+            text_bite_amp.Foreground = btn_update.Background;
+            text_bite_freq.Foreground = btn_update.Background;
+            rect_bite_amp.Fill = btn_update.Background;
+            rect_bite_freq.Fill = btn_update.Background;
+            text_bite_amp_text.Foreground = btn_update.Background;
+            text_bite_freq_text.Foreground = btn_update.Background;
+            Line_H_bite_amp.Stroke = btn_update.Background;
+            Line_H_bite_freq.Stroke = btn_update.Background;
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -964,6 +977,30 @@ namespace User.PluginSdkDemo
             text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "kg";
             Canvas.SetLeft(text_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
             Canvas.SetTop(text_RPM_AMP, 5);
+
+            //Bite point control
+            double BP_max = 100;
+            dx = (double)canvas.Width / BP_max;
+            text_BP.Text = "Bite Point:\n" + ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value) + "%";
+            Canvas.SetLeft(rect_BP_Control, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value * dx - rect_BP_Control.Width / 2);
+            Canvas.SetLeft(text_BP, Canvas.GetLeft(rect_BP_Control) + rect_BP_Control.Width + 3);
+            Canvas.SetTop(text_BP, canvas.Height - text_BP.Height);
+            //Bite point freq slider
+            double BP_freq_max = 30;
+            dx = canvas_horz_bite_freq.Width / BP_freq_max;
+            Canvas.SetLeft(rect_bite_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq);
+            text_bite_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
+            Canvas.SetLeft(text_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - text_bite_freq.Width / 2);
+            Canvas.SetTop(text_bite_freq, 5);
+
+            //Bite point AMP slider
+            double BP_amp_max = 200;
+            dx = canvas_horz_bite_amp.Width / BP_amp_max;
+            Canvas.SetLeft(rect_bite_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp);
+            text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
+            Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
+            Canvas.SetTop(text_bite_amp, 5);
+
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
             try
@@ -1009,7 +1046,21 @@ namespace User.PluginSdkDemo
                 checkbox_enable_ABS.IsChecked = false;
                 checkbox_enable_ABS.Content = "ABS/TC Effect Disabled";
             }
-            
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger == 1)
+            {
+                checkbox_enable_bite_point.IsChecked = true;
+                text_BP.Visibility = Visibility.Visible;
+                rect_BP_Control.Visibility = Visibility.Visible;
+                checkbox_enable_bite_point.Content = "Bite Point Vibration Enabled";
+
+            }
+            else
+            {
+                checkbox_enable_bite_point.IsChecked = false;
+                text_BP.Visibility = Visibility.Hidden;
+                rect_BP_Control.Visibility = Visibility.Hidden;
+                checkbox_enable_bite_point.Content = "Bite Point Vibration Disabled";
+            }
 
 
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
@@ -2840,7 +2891,61 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
+                //Bite point control
+                if (rectangle.Name == "rect_BP_Control")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas).X - offset.X;
+                    double BP_max = 100;
+                    double dx = (canvas.Width) / BP_max;
+                    double min_position = 10 * dx - rect_BP_Control.Width / 2;
+                    double max_position = (BP_max - 10) * dx - rect_BP_Control.Width / 2;
 
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = (x + rect_BP_Control.Width / 2) / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value = (byte)(actual_x);
+
+                    text_BP.Text = "Bite Point:\n" + ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value) + "%";
+                    Canvas.SetLeft(rectangle, x);
+                    Canvas.SetLeft(text_BP, Canvas.GetLeft(rect_BP_Control) + rect_BP_Control.Width + 3);
+                    Canvas.SetTop(text_BP, canvas.Height - text_BP.Height);
+
+                }
+
+                if (rectangle.Name == "rect_bite_amp")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_bite_amp).X - offset.X;
+                    double bite_amp_max = 200;
+                    double dx = canvas_horz_bite_amp.Width / bite_amp_max;
+                    double min_position = 0 * dx;
+                    double max_position = bite_amp_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = Convert.ToByte(actual_x);
+                    text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
+                    Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
+                    Canvas.SetTop(text_bite_amp, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                if (rectangle.Name == "rect_bite_freq")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_bite_freq).X - offset.X;
+                    double bite_freq_max = 30;
+                    double dx = canvas_horz_bite_freq.Width / bite_freq_max;
+                    double min_position = 0 * dx;
+                    double max_position = bite_freq_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = Convert.ToByte(actual_x);
+                    text_bite_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq) + "Hz";
+                    Canvas.SetLeft(text_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - text_bite_freq.Width / 2);
+                    Canvas.SetTop(text_bite_freq, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
 
 
             }
@@ -3154,7 +3259,27 @@ namespace User.PluginSdkDemo
 
 
         }
+        private void checkbox_enable_bite_point_Checked(object sender, RoutedEventArgs e)
+        {
 
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger = 1;
+            text_BP.Visibility = Visibility.Visible;
+            rect_BP_Control.Visibility = Visibility.Visible;
+            checkbox_enable_bite_point.Content = "Bite Point Vibration Enabled";
+
+
+        }
+
+        private void checkbox_enable_bite_point_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger = 0;
+            text_BP.Visibility = Visibility.Hidden;
+            rect_BP_Control.Visibility = Visibility.Hidden;
+            checkbox_enable_bite_point.Content = "Bite Point Vibration Disabled";
+
+
+        }
 
 
         /*

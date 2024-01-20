@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 118;
+    public const uint pedalConfigPayload_version = 119;
 
 
     // pyload types
@@ -101,7 +101,10 @@ public struct payloadPedalConfig
     public byte RPM_max_freq;
     public byte RPM_min_freq;
     public byte RPM_AMP;
-
+    public byte BP_trigger_value;
+    public byte BP_amp;
+    public byte BP_freq;
+    public byte BP_trigger;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -1090,6 +1093,11 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;
             dap_config_initial_st.payloadPedalConfig_.RPM_min_freq = 10;
             dap_config_initial_st.payloadPedalConfig_.RPM_AMP = 5;
+            dap_config_initial_st.payloadPedalConfig_.BP_trigger_value = 50;
+            dap_config_initial_st.payloadPedalConfig_.BP_amp = 1;
+            dap_config_initial_st.payloadPedalConfig_.BP_freq = 15;
+            dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
+
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;

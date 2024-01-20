@@ -703,6 +703,7 @@
                             </TextBlock>
                             <Rectangle x:Name="rect_SABS" Width="400" Height="40" Fill="#4C8B0000" Canvas.Left="0" Canvas.Top="0" />
                             <Rectangle x:Name="rect_SABS_Control" Width="400" Height="6" Fill="#998B0000" Canvas.Left="0" Canvas.Top="37" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_ABS" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                            <Rectangle x:Name="rect_BP_Control" Width="32" Height="200" Fill="#990954CE" Canvas.Left="200" Canvas.Top="0" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect_State" Width="10" Height="10" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#FFEF0707" />
                             <Rectangle x:Name="rect0" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect1" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="75" Canvas.Top="155" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
@@ -710,7 +711,19 @@
                             <Rectangle x:Name="rect3" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="235" Canvas.Top="75" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect4" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                             <Rectangle x:Name="rect5" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
+                            <TextBlock x:Name="text_BP" 
+                                Text="BitePoint:" 
+                                Width="120" 
+                                Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="235" Canvas.Top="187" FontSize="8" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <TextBlock.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="0"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
 
 
                         </Canvas>
@@ -958,9 +971,9 @@
             </StackPanel>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="160" Grid.Row="5" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2">
                 <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540" Margin="0,-1,0,0">
-                    <Label Content="Bite Point Effect Setting" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                    <Label Content="Bite Point Vibration Setting" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     <StackPanel Height="40" Width="540" Orientation="Horizontal">
-                        <CheckBox x:Name="checkbox_enable_bite_point" Content="Bite point Enabled" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="20" Width="160" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                        <CheckBox x:Name="checkbox_enable_bite_point" Content="Bite point Enabled" Checked="checkbox_enable_bite_point_Checked" Unchecked="checkbox_enable_bite_point_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="20" Width="160" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                     </StackPanel>
                     <Canvas x:Name="canvas_horz_bite_amp" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="70,0,0,0" >
                         <Canvas.RenderTransform>
