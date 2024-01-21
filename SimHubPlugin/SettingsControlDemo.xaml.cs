@@ -833,8 +833,21 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect4, 4 * canvas.Width / 5 - rect4.Width / 2);
             Canvas.SetTop(rect5, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 - rect0.Height / 2);
             Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2);
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 == 32)
+            {
+                rect_State.Visibility = Visibility.Visible;
+                text_state.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                rect_State.Visibility = Visibility.Hidden;
+                text_state.Visibility = Visibility.Hidden;
+            }
             Canvas.SetTop(rect_State, canvas.Height - rect_State.Height / 2);
-            Canvas.SetLeft(rect_State,  - rect_State.Width / 2);
+            Canvas.SetLeft(rect_State, -rect_State.Width / 2);
+            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+            Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+            text_state.Text = "0%";
             //set for ABS slider
             Canvas.SetTop(rect_SABS_Control, (control_rect_value_max- dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value ) *dyy-rect_SABS_Control.Height/2);
             Canvas.SetLeft(rect_SABS_Control , 0);
@@ -2008,13 +2021,18 @@ namespace User.PluginSdkDemo
                                                 {
                                                     Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
                                                     Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+
                                                 }
                                                 else
                                                 {
                                                     Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
                                                     int round_x = (int)(100 * pedalState_read_st.payloadPedalState_.pedalPosition_u16 / control_rect_value_max)-1;
+                                                    int x_showed = round_x + 1;
                                                     round_x = Math.Max(0, Math.Min(round_x, 99));
                                                     Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
+                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                                    text_state.Text = x_showed + "%";
                                                 }
 
                                             }
@@ -2992,7 +3010,9 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Opacity = 1;
+            text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
+            
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -3015,6 +3035,7 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
+            text_state.Visibility = Visibility.Visible;
             debug_flag = false;
         }
 
