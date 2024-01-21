@@ -2021,6 +2021,10 @@ namespace User.PluginSdkDemo
                                                 {
                                                     Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
                                                     Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                                    
+                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                                    text_state.Text = Math.Round( pedalState_read_st.payloadPedalState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
 
                                                 }
                                                 else
