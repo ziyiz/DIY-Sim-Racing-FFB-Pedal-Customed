@@ -190,7 +190,7 @@ Install DirectX 9
 ## The serial monitor shows a message "Couldn't load config from EPROM due to version mismatch"
 Install a SimHub plugin matching the ESP firmware you installed and send a config to the pedal.
 
-## The com port showed acess denied or can not connect
+## The com port showed access denied or can not connect
 Check the arduino plugin scan setting, please use scan only specfiec port as below.<br>
 <img src="Images/ArduinoPlugin_0.png" width="800">
 
