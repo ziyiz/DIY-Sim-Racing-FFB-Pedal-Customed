@@ -209,7 +209,10 @@ ESP code:
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
 - [ ] Add field to invert motor and losdcell direction
 - [x] send joystick data to simhub plugin and provide data as vJoy gamecontroller
-- [ ] allow effects to move stepper beyond configured max/min position, but not the measured homing positions.
+- [x] allow effects to move stepper beyond configured max/min position, but not the measured homing positions
+- [ ] Optimize iSV57 communication
+  - [ ] Let the communication task run from the beginning of the setup routine
+  - [ ] Read pedal state every cycle (currently, the pedal performance is degraded)
 
       
 SimHub plugin:
@@ -222,7 +225,7 @@ SimHub plugin:
 - [x] automatic serial monitor update
 - [ ] serial plotter
 - [x] add different abs effect patterns, e.g. sawtooth
-- [ ] make effects proportional to force or travel selectable by dropdown menu
+- [x] make effects proportional to force or travel selectable by dropdown menu
       
 Misc:
 - [ ] Create a video describing the build progress and the features
