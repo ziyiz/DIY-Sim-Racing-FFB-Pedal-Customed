@@ -34,7 +34,7 @@ A sample Arduino script for testing the functionslity can be found [here](https:
 ## Lifeline check
 To check if the slave with ID 63 is responding, one can send the message: 0x3F 0x03 0x00 0x00 0x00 0x02 0xC0 0xD5. The first byte is the slave ID (=63). The second byte is the function code.
 
-The image below shows the message from ESO to servo in channel 0 and the returned message from servo to ESP in channel 1:  
+The image below shows the message from ESP to servo in channel 0 and the returned message from servo to ESP in channel 1:  
 ![image](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/assets/21274895/64e641e8-8f18-4116-917b-c6201357ffe3)
 
 
@@ -42,7 +42,7 @@ The image below shows the message from ESO to servo in channel 0 and the returne
 ## Read multiple registers 
 It seems like that the iSV57 has 4 coil registers to read the servo states from (Address: 0x01F3 - 0x01F6). If one want to read these registers value, one can send the message: 0x3F 0x03 0x01 0xF3 0x00 0x03 0xF0 0xDA. The first byte is the slave ID (=63), the second byte is the function code (=coil register). The third byte is read. The fourth byte is the firsts register address. The fifth and sixth bytes are the number of registers to read, here 3 of the above mentioned registers. The last two bytes are the CRC.
 
-The image below shows the message from ESO to servo in channel 0 and the returned message from servo to ESP in channel 1:  
+The image below shows the message from ESP to servo in channel 0 and the returned message from servo to ESP in channel 1:  
 ![image](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/assets/21274895/122f6a16-bc5f-45df-9f88-fa37a2a603a8)
  
 
