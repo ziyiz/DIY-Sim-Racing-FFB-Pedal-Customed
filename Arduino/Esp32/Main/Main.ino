@@ -746,7 +746,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
 
-    //if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) 
+    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) )
     {
       printCycleCounter++;
 

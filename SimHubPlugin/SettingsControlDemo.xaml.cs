@@ -833,7 +833,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect4, 4 * canvas.Width / 5 - rect4.Width / 2);
             Canvas.SetTop(rect5, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 - rect0.Height / 2);
             Canvas.SetLeft(rect5, 5 * canvas.Width / 5 - rect5.Width / 2);
-            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 == 32)
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0 != 32)
             {
                 rect_State.Visibility = Visibility.Visible;
                 text_state.Visibility = Visibility.Visible;
