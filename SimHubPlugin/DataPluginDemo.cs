@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 119;
+    public const uint pedalConfigPayload_version = 120;
 
 
     // pyload types
@@ -57,6 +57,10 @@ public struct payloadPedalState
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
+
+    // register values from servo
+    public Int16 servoPosition_i16;
+    public Int16 servoPositionTarget_i16;
 };
 
 public struct payloadPedalConfig

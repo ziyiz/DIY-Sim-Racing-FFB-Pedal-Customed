@@ -1880,7 +1880,7 @@ namespace User.PluginSdkDemo
             }
         }
 
-
+        Int64 writeCntr = 0;
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
@@ -2010,6 +2010,30 @@ namespace User.PluginSdkDemo
                                             {
                                                 //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
                                                 //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                                //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+                                                //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+
+                                                if (false)
+                                                {
+                                                    // Specify the path to the file
+                                                    string filePath = "C:\\Users\\chris\\Downloads\\output.txt";
+                                                    // Use StreamWriter to write to the file
+                                                    using (StreamWriter writer = new StreamWriter(filePath, true))
+                                                    {
+                                                        // Write the content to the file
+                                                        writeCntr++;
+                                                        writer.Write(writeCntr);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_read_st.payloadPedalState_.pedalForce_u16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_read_st.payloadPedalState_.servoPositionTarget_i16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_read_st.payloadPedalState_.servoPosition_i16);
+                                                        writer.Write("\n");
+                                                    }
+                                                }
+                                                
+
                                                 pedalStateHasAlreadyBeenUpdated_b = true;
 
                                                 text_point_pos.Opacity = 0;
@@ -2111,7 +2135,7 @@ namespace User.PluginSdkDemo
                                 // When too many messages are received, only print every Nth message
 
                                 // When only a few messages are received, make the counter greater than N thus every message is printed
-                                if (dataArray.Length < 10)
+                                if (dataArray.Length < 100)
                                 {
                                     printCtr = 600;
                                 }
@@ -2146,7 +2170,7 @@ namespace User.PluginSdkDemo
                             //limits the data stored to 1000 to avoid using up all the memory in case of 
                             //failure to register callback or include stopchar
 
-                            if (_data[pedalSelected].Length > 1000)
+                            if (_data[pedalSelected].Length > 5000)
                             {
                                 _data[pedalSelected] = "";
                             }

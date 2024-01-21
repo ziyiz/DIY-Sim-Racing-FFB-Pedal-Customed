@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 119
+#define DAP_VERSION_CONFIG 120
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -35,6 +35,10 @@ struct payloadPedalState {
   uint16_t pedalPosition_u16;
   uint16_t pedalForce_u16;
   uint16_t joystickOutput_u16;
+
+  // register values from servo
+  int16_t servoPosition_i16;
+  int16_t servoPositionTarget_i16;
 };
 
 struct payloadPedalConfig {

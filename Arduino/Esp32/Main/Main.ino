@@ -35,7 +35,7 @@ void updatePedalCalcParameters();
 
 bool systemIdentificationMode_b = false;
 
-
+int16_t servoPos_i16 = 0;
 
 
 
@@ -112,6 +112,8 @@ static SemaphoreHandle_t semaphore_updateJoystick=NULL;
 
 static SemaphoreHandle_t semaphore_resetServoPos=NULL;
 bool resetPedalPosition = false;
+
+static SemaphoreHandle_t semaphore_readServoValues=NULL;
 
 
 /**********************************************************************************************/
@@ -750,12 +752,28 @@ void pedalUpdateTask( void * pvParameters )
     {
       printCycleCounter++;
 
-      if (printCycleCounter >= 10)
+      if (printCycleCounter >= 2)
       {
         printCycleCounter = 0;
         dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
         dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
         dap_state_st.payloadPedalState_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
+
+        if(semaphore_readServoValues!=NULL)
+        {
+          if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
+            dap_state_st.payloadPedalState_.servoPosition_i16 = servoPos_i16;
+            xSemaphoreGive(semaphore_readServoValues);
+          }
+        }
+        else
+        {
+          semaphore_readServoValues = xSemaphoreCreateMutex();
+        }
+
+        dap_state_st.payloadPedalState_.servoPositionTarget_i16 = stepper->getCurrentPositionSteps();
+
+        
         dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
         dap_state_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_st.payLoadHeader_)), sizeof(dap_state_st.payLoadHeader_) + sizeof(dap_state_st.payloadPedalState_));
@@ -1016,6 +1034,7 @@ int64_t timeDiff = 0;
 
 uint64_t print_cycle_counter_u64 = 0;
 uint64_t lifeline_cycle_counter_u64 = 0;
+unsigned long cycleTimeLastCall_lifelineCheck = micros();
 void servoCommunicationTask( void * pvParameters )
 {
   
@@ -1027,20 +1046,38 @@ void servoCommunicationTask( void * pvParameters )
       timerServoCommunication.Bump();
     }
 
-    // check if servo communication is still there every N cycles
-    if ( (lifeline_cycle_counter_u64 % 2000) == 0 )
+    // check if servo communication is still there every N milliseconds
+    unsigned long now = millis();
+    if ( (now - cycleTimeLastCall_lifelineCheck) > 5000) 
     {
+      // if target cycle time is reached, update last time
+      cycleTimeLastCall_lifelineCheck = now;
+
       isv57LifeSignal_b = isv57.checkCommunication();
       lifeline_cycle_counter_u64 = 0;
-    } 
-    
+      //Serial.println("Lifeline check");
+    }
 
-    delay(20);
+
+
     if (isv57LifeSignal_b)
     {
 
+        //delay(5);
+        isv57.readServoStates();
+
+        if(semaphore_readServoValues!=NULL)
+        {
+          if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
+            servoPos_i16 = -( isv57.servo_pos_given_p - isv57.getZeroPos() );
+            xSemaphoreGive(semaphore_readServoValues);
+          }
+        }
+        else
+        {
+          semaphore_readServoValues = xSemaphoreCreateMutex();
+        }
         
-        //isv57.readServoStates();
         
 
         int32_t servo_offset_compensation_steps_local_i32 = 0;
@@ -1056,7 +1093,7 @@ void servoCommunicationTask( void * pvParameters )
 
         if (cond_2 == true)
         {
-          isv57.readServoStates();
+          //isv57.readServoStates();
           int16_t servoPos_now_i16 = isv57.servo_pos_given_p;
           timeNow_l = millis();
 
