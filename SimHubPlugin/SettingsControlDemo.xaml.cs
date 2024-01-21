@@ -3014,7 +3014,7 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Opacity = 1;
-            text_state.Visibility = Visibility.Hidden;
+            //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             
         }
@@ -3039,7 +3039,7 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
-            text_state.Visibility = Visibility.Visible;
+            //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
         }
 
