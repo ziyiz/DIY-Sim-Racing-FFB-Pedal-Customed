@@ -654,6 +654,25 @@ void pedalUpdateTask( void * pvParameters )
     Position_Next +=RPMOscillation.RPM_position_offset;
     Position_Next +=absPosOffset;
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
+    
+    
+    //bitepoint trigger
+
+    int32_t BP_trigger_value=dap_config_st.payLoadPedalConfig_.BP_trigger_value;
+    int32_t BP_trigger_min=(BP_trigger_value-4);
+    int32_t BP_trigger_max=(BP_trigger_value+4);
+    int32_t Position_check=100*((Position_Next-dap_calculationVariables_st.stepperPosMin) / dap_calculationVariables_st.stepperPosRange);
+    //Serial.println(Position_check);
+    if(dap_config_st.payLoadPedalConfig_.BP_trigger==1)
+    {
+      if(Position_check > BP_trigger_min)
+      {
+        if(Position_check < BP_trigger_max)
+        {
+          BitePointOscillation.trigger();
+        }
+      }
+    }
 
     // if pedal in min position, recalibrate position 
     #ifdef ISV_COMMUNICATION
@@ -723,21 +742,7 @@ void pedalUpdateTask( void * pvParameters )
       }
     }
 
-    //bitepoint trigger
 
-    int32_t BP_trigger_value=dap_config_st.payLoadPedalConfig_.BP_trigger_value;
-    int32_t BP_trigger_min=(BP_trigger_value-4)*100;
-    int32_t BP_trigger_max=(BP_trigger_value+4)*100;
-    if(dap_config_st.payLoadPedalConfig_.BP_trigger==1)
-    {
-      if(joystickNormalizedToInt32 > BP_trigger_min)
-      {
-        if(joystickNormalizedToInt32 < BP_trigger_max)
-        {
-          BitePointOscillation.trigger();
-        }
-      }
-    }
 
     if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) 
     {
