@@ -32,7 +32,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.absFrequency = 15;
   payLoadPedalConfig_.absAmplitude = 0;
   payLoadPedalConfig_.absPattern = 0;
-
+  payLoadPedalConfig_.absForceOrTarvelBit = 0;
 
   payLoadPedalConfig_.lengthPedal_AC = 150;
   payLoadPedalConfig_.horPos_AB = 215;
@@ -58,6 +58,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.PID_p_gain = 0.3;
   payLoadPedalConfig_.PID_i_gain = 50.0;
   payLoadPedalConfig_.PID_d_gain = 0.0;
+  payLoadPedalConfig_.PID_feedforward_gain = 0.0;
 
   payLoadPedalConfig_.control_strategy_b = 0;
 
@@ -122,16 +123,17 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   endPosRel = ((float)config_st.payLoadPedalConfig_.pedalEndPosition) / 100.0f;
 
   absFrequency = ((float)config_st.payLoadPedalConfig_.absFrequency);
-  absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg
+  absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg or percent
 
   dampingPress = ((float)config_st.payLoadPedalConfig_.dampingPress) / 400.0f;
   RPM_max_freq = ((float)config_st.payLoadPedalConfig_.RPM_max_freq);
   RPM_min_freq = ((float)config_st.payLoadPedalConfig_.RPM_min_freq);
   RPM_AMP = ((float)config_st.payLoadPedalConfig_.RPM_AMP) / 100.0f;
-  /*
-  RPM_max_freq = 40;
-  RPM_min_freq = 10;*/
-  //RPM_AMP = 0.05;
+  //Bite point effect;
+  
+  BP_trigger_value=(float)config_st.payLoadPedalConfig_.BP_trigger_value;
+  BP_amp=((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
+  BP_freq=(float)config_st.payLoadPedalConfig_.BP_freq;
   
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);

@@ -3,11 +3,12 @@
 #include <stdint.h>
 
 
-#define DAP_VERSION_CONFIG 114
+#define DAP_VERSION_CONFIG 119
 
 
 #define DAP_PAYLOAD_TYPE_CONFIG 100
 #define DAP_PAYLOAD_TYPE_ACTION 110
+#define DAP_PAYLOAD_TYPE_STATE 120
 
 struct payloadHeader {
   
@@ -28,6 +29,12 @@ struct payloadPedalAction {
   uint8_t startSystemIdentification_u8;
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
+};
+
+struct payloadPedalState {
+  uint16_t pedalPosition_u16;
+  uint16_t pedalForce_u16;
+  uint16_t joystickOutput_u16;
 };
 
 struct payloadPedalConfig {
@@ -57,6 +64,7 @@ struct payloadPedalConfig {
   uint8_t absFrequency; // In Hz
   uint8_t absAmplitude; // In kg/20
   uint8_t absPattern; // 0: sinewave, 1: sawtooth
+  uint8_t absForceOrTarvelBit; // 0: Force, 1: travel
 
 
   // geometric properties of the pedal
@@ -72,6 +80,12 @@ struct payloadPedalConfig {
   uint8_t RPM_max_freq; //In HZ
   uint8_t RPM_min_freq; //In HZ
   uint8_t RPM_AMP; //In Kg
+
+  //configure for bite point
+  uint8_t BP_trigger_value;
+  uint8_t BP_amp;
+  uint8_t BP_freq;
+  uint8_t BP_trigger;
   
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
@@ -81,6 +95,7 @@ struct payloadPedalConfig {
   float PID_p_gain;
   float PID_i_gain;
   float PID_d_gain;
+  float PID_feedforward_gain;
 
   uint8_t control_strategy_b;
 
@@ -113,6 +128,12 @@ struct payloadFooter {
 struct DAP_actions_st {
   payloadHeader payLoadHeader_;
   payloadPedalAction payloadPedalAction_;
+  payloadFooter payloadFooter_; 
+};
+
+struct DAP_state_st {
+  payloadHeader payLoadHeader_;
+  payloadPedalState payloadPedalState_;
   payloadFooter payloadFooter_; 
 };
 
@@ -152,7 +173,9 @@ struct DAP_calculationVariables_st
   float absFrequency;
   float absAmplitude;
   float rpm_value;
-
+  float BP_trigger_value;
+  float BP_amp;
+  float BP_freq;
   float dampingPress;
 
   void updateFromConfig(DAP_config_st& config_st);

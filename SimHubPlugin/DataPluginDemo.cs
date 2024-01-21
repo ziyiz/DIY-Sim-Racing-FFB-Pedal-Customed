@@ -7,6 +7,7 @@ using System.IO.Ports;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 
@@ -19,12 +20,13 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 114;
+    public const uint pedalConfigPayload_version = 119;
 
 
     // pyload types
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
+    public const uint pedalStatePayload_type = 120;
 }
 
 
@@ -48,6 +50,13 @@ public struct payloadPedalAction
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
+};
+
+public struct payloadPedalState
+{
+    public UInt16 pedalPosition_u16;
+    public UInt16 pedalForce_u16;
+    public UInt16 joystickOutput_u16;
 };
 
 public struct payloadPedalConfig
@@ -78,7 +87,7 @@ public struct payloadPedalConfig
     public byte absFrequency; // In Hz
     public byte absAmplitude; // In kg/20
     public byte absPattern; // 0: sinewave, 1: sawtooth
-
+    public byte absForceOrTarvelBit;
 
 
     // geometric properties of the pedal
@@ -92,7 +101,10 @@ public struct payloadPedalConfig
     public byte RPM_max_freq;
     public byte RPM_min_freq;
     public byte RPM_AMP;
-
+    public byte BP_trigger_value;
+    public byte BP_amp;
+    public byte BP_freq;
+    public byte BP_trigger;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -110,6 +122,7 @@ public struct payloadPedalConfig
     public float PID_p_gain;
     public float PID_i_gain;
     public float PID_d_gain;
+    public float PID_feedforward_gain;
 
     public byte control_strategy_b;
 
@@ -148,10 +161,18 @@ public struct DAP_action_st
     public payloadFooter payloadFooter_;
 }
 
+
 public struct DAP_config_st
 {
     public payloadHeader payloadHeader_;
     public payloadPedalConfig payloadPedalConfig_;
+    public payloadFooter payloadFooter_;
+}
+
+public struct DAP_state_st
+{
+    public payloadHeader payloadHeader_;
+    public payloadPedalState payloadPedalState_;
     public payloadFooter payloadFooter_;
 }
 
@@ -165,11 +186,16 @@ namespace User.PluginSdkDemo
     public class DataPluginDemo : IPlugin, IDataPlugin, IWPFSettingsV2
     {
 
+        public PluginManager pluginHandle;// = this;
 
         public bool sendAbsSignal = false;
 		public DAP_config_st dap_config_initial_st;
         public byte rpm_last_value = 0 ;
         public byte game_running_index = 0 ;
+        public uint testValue = 0;
+
+        public SettingsControlDemo wpfHandle;
+
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
@@ -183,7 +209,7 @@ namespace User.PluginSdkDemo
 
         //public SettingsControlDemo settings { get; }
 
-
+        //SettingsControlDemo wpfHandler;
 
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
@@ -191,10 +217,10 @@ namespace User.PluginSdkDemo
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
 
-        
-        
 
-        public bool serialPortConnected = false;
+
+
+        public bool[] connectSerialPort = { false, false, false };
 
 
         public DataPluginDemoSettings Settings;
@@ -214,7 +240,7 @@ namespace User.PluginSdkDemo
         /// <summary>
         /// Gets a short plugin title to show in left menu. Return null if you want to use the title as defined in PluginName attribute.
         /// </summary>
-        public string LeftMenuTitle => "DIY active pedal plugin";
+        public string LeftMenuTitle => "DIY FFB Pedal";
 
         /// <summary>
         /// Called one time per game data update, contains all normalized game data,
@@ -525,41 +551,309 @@ namespace User.PluginSdkDemo
             }
 
         }
-		
-		
-
-        /// <summary>
-        /// Called at plugin manager stop, close/dispose anything needed here !
-        /// Plugins are rebuilt at game change
-        /// </summary>
-        /// <param name="pluginManager"></param>
-        public void End(PluginManager pluginManager)
-        {
-            //for(uint pedalIndex = 0; pedalIndex<3; pedalIndex++)
-            //{
-            //    Settings.selectedComPortNames[pedalIndex] = _serialPort[pedalIndex].PortName;
 
 
-            //    SimHub.Logging.Current.Info("Diy active pedas plugin - Test 2: " + _serialPort[pedalIndex].PortName);
+
+        /////////********************************************************************************************************************/
+        /////////*							read serial stream																		*/
+        /////////********************************************************************************************************************/
+        ////////public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
+        ////////public void openSerialAndAddReadCallback(uint pedalIdx)
+        ////////{
+
+        ////////    // serial port settings
+        ////////    _serialPort[pedalIdx].Handshake = Handshake.None;
+        ////////    _serialPort[pedalIdx].Parity = Parity.None;
+        ////////    //_serialPort[pedalIdx].StopBits = StopBits.None;
 
 
-            //}
-            
-            // Save settings
-            this.SaveCommonSettings("GeneralSettings", Settings);
-            // close all serial port interfaces
-            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
-            {
-                if (_serialPort[pedalIdx].IsOpen)
-                {
-                    _serialPort[pedalIdx].DiscardInBuffer();
-                    _serialPort[pedalIdx].DiscardOutBuffer();
-                    _serialPort[pedalIdx].Close();
-                }
+        ////////    _serialPort[pedalIdx].ReadTimeout = 2000;
+        ////////    _serialPort[pedalIdx].WriteTimeout = 500;
+
+        ////////    // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+        ////////    _serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
+
+        ////////    _serialPort[pedalIdx].DtrEnable = false;
+
+        ////////    _serialPort[pedalIdx].NewLine = "\r\n";
+        ////////    _serialPort[pedalIdx].ReadBufferSize = 10000;
 
 
-            }
-        }
+        ////////    _serialPort[pedalIdx].Open();
+
+
+        ////////    // read callback
+        ////////    pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+        ////////    pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timer1_Tick);
+        ////////    pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+        ////////    pedal_serial_read_timer[pedalIdx].Interval = 100; // in miliseconds
+        ////////    pedal_serial_read_timer[pedalIdx].Start();
+        ////////    System.Threading.Thread.Sleep(100);
+        ////////}
+
+        ////////public void closeSerialAndStopReadCallback(uint pedalIdx)
+        ////////{
+        ////////    if (pedal_serial_read_timer[pedalIdx] != null)
+        ////////    {
+        ////////        pedal_serial_read_timer[pedalIdx].Stop();
+        ////////        pedal_serial_read_timer[pedalIdx].Dispose();
+        ////////    }
+        ////////    System.Threading.Thread.Sleep(300);
+        ////////    if (_serialPort[pedalIdx].IsOpen)
+        ////////    {
+        ////////        _serialPort[pedalIdx].DiscardInBuffer();
+        ////////        _serialPort[pedalIdx].DiscardOutBuffer();
+        ////////        _serialPort[pedalIdx].Close();
+
+        ////////    }
+        ////////}
+
+
+        ////////int printCtr = 0;
+        ////////unsafe public void timer1_Tick(object sender, EventArgs e)
+        ////////{
+
+        ////////    // if WPF isn't available, update the WPF handler and skip
+        ////////    if (wpfHandler == null)
+        ////////    {
+        ////////        //SettingsControlDemo wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(this);
+
+        ////////        wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(pluginHandle);
+        ////////        return;
+        ////////    }
+
+        ////////    int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
+        ////////    //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
+
+        ////////    bool pedalStateHasAlreadyBeenUpdated_b = false;
+
+        ////////    // once the pedal has identified, go ahead
+        ////////    if (pedalSelected < 3)
+        ////////    //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+        ////////    {
+
+        ////////        SerialPort sp = _serialPort[pedalSelected];
+
+
+
+        ////////        // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
+
+
+        ////////        //int length = sizeof(DAP_config_st);
+        ////////        //byte[] newBuffer_config = new byte[length];
+
+        ////////        if (sp.IsOpen)
+        ////////        {
+        ////////            int receivedLength = sp.BytesToRead;
+
+        ////////            if (receivedLength > 0)
+        ////////            {
+
+        ////////                string incomingData = sp.ReadExisting();
+
+        ////////                //if the data doesn't end with a stop char this will signal to keep it in _data 
+        ////////                //for appending to the following read of data
+        ////////                bool endsWithStop = wpfHandler.EndsWithStop(incomingData);
+
+        ////////                //each array object will be sent separately to the callback
+        ////////                string[] dataArray = incomingData.Split(wpfHandler.STOPCHAR, StringSplitOptions.None);
+
+        ////////                for (int i = 0; i < dataArray.Length - 1; i++)
+        ////////                {
+        ////////                    string newData = dataArray[i];
+
+        ////////                    //if you are at the last object in the array and this hasn't got a stopchar after
+        ////////                    //it will be saved in _data
+        ////////                    if (!endsWithStop && (i == dataArray.Length - 2))
+        ////////                    {
+        ////////                        wpfHandler._data[pedalSelected] += newData;
+        ////////                    }
+        ////////                    else
+        ////////                    {
+        ////////                        string dataToSend = wpfHandler._data[pedalSelected] + newData;
+        ////////                        wpfHandler._data[pedalSelected] = "";
+
+
+
+        ////////                        // check for pedal state struct
+        ////////                        if ((dataToSend.Length == sizeof(DAP_state_st)))
+        ////////                        {
+
+        ////////                            // transform string into byte
+        ////////                            fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+        ////////                            {
+        ////////                                // create a fixed size buffer
+        ////////                                int length = sizeof(DAP_state_st);
+        ////////                                byte[] newBuffer_state_2 = new byte[length];
+
+        ////////                                // copy the received bytes into byte array
+        ////////                                for (int j = 0; j < length; j++)
+        ////////                                {
+        ////////                                    newBuffer_state_2[j] = p[j];
+        ////////                                }
+
+        ////////                                // parse byte array as config struct
+        ////////                                DAP_state_st pedalState_read_st = wpfHandler.getStateFromBytes(newBuffer_state_2);
+
+        ////////                                // check whether receive struct is plausible
+        ////////                                DAP_state_st* v_state = &pedalState_read_st;
+        ////////                                byte* p_state = (byte*)v_state;
+
+        ////////                                // payload type check
+        ////////                                bool check_payload_state_b = false;
+        ////////                                if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
+        ////////                                {
+        ////////                                    check_payload_state_b = true;
+        ////////                                }
+
+        ////////                                // CRC check
+        ////////                                bool check_crc_state_b = false;
+        ////////                                if (checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
+        ////////                                {
+        ////////                                    check_crc_state_b = true;
+        ////////                                }
+
+        ////////                                if ((check_payload_state_b) && check_crc_state_b)
+        ////////                                {
+
+        ////////                                    if (pedalStateHasAlreadyBeenUpdated_b == false)
+        ////////                                    {
+        ////////                                        wpfHandler.TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+        ////////                                        wpfHandler.TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+        ////////                                        pedalStateHasAlreadyBeenUpdated_b = true;
+
+        ////////                                        wpfHandler.text_point_pos.Opacity = 0;
+        ////////                                        double control_rect_value_max = 65535;
+        ////////                                        double dyy = wpfHandler.canvas.Height / control_rect_value_max;
+        ////////                                        double dxx = wpfHandler.canvas.Width / control_rect_value_max;
+
+
+        ////////                                        Canvas.SetLeft(wpfHandler.rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - wpfHandler.rect_State.Width / 2);
+        ////////                                        Canvas.SetTop(wpfHandler.rect_State, wpfHandler.canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - wpfHandler.rect_State.Height / 2);
+        ////////                                    }
+
+
+        ////////                                    continue;
+        ////////                                }
+        ////////                            }
+        ////////                        }
+
+
+        ////////                        // decode into config struct
+        ////////                        if ((wpfHandler.waiting_for_pedal_config[pedalSelected]) && (dataToSend.Length == sizeof(DAP_config_st)))
+        ////////                        {
+        ////////                            DAP_config_st tmp;
+
+
+        ////////                            // transform string into byte
+        ////////                            fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+        ////////                            {
+        ////////                                // create a fixed size buffer
+        ////////                                int length = sizeof(DAP_config_st);
+        ////////                                byte[] newBuffer_config_2 = new byte[length];
+
+        ////////                                // copy the received bytes into byte array
+        ////////                                for (int j = 0; j < length; j++)
+        ////////                                {
+        ////////                                    newBuffer_config_2[j] = p[j];
+        ////////                                }
+
+        ////////                                // parse byte array as config struct
+        ////////                                DAP_config_st pedalConfig_read_st = wpfHandler.getConfigFromBytes(newBuffer_config_2);
+
+        ////////                                // check whether receive struct is plausible
+        ////////                                DAP_config_st* v_config = &pedalConfig_read_st;
+        ////////                                byte* p_config = (byte*)v_config;
+
+        ////////                                // payload type check
+        ////////                                bool check_payload_config_b = false;
+        ////////                                if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+        ////////                                {
+        ////////                                    check_payload_config_b = true;
+        ////////                                }
+
+        ////////                                // CRC check
+        ////////                                bool check_crc_config_b = false;
+        ////////                                if (checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+        ////////                                {
+        ////////                                    check_crc_config_b = true;
+        ////////                                }
+
+        ////////                                if ((check_payload_config_b) && check_crc_config_b)
+        ////////                                {
+        ////////                                    wpfHandler.waiting_for_pedal_config[pedalSelected] = false;
+        ////////                                    wpfHandler.dap_config_st[pedalSelected] = pedalConfig_read_st;
+        ////////                                    wpfHandler.updateTheGuiFromConfig();
+
+        ////////                                    continue;
+        ////////                                }
+        ////////                                else
+        ////////                                {
+        ////////                                    wpfHandler.TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+        ////////                                    wpfHandler.TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+        ////////                                }
+        ////////                            }
+
+        ////////                        }
+        ////////                        //else
+        ////////                        //{
+
+
+        ////////                        // When too many messages are received, only print every Nth message
+
+        ////////                        // When only a few messages are received, make the counter greater than N thus every message is printed
+        ////////                        if (dataArray.Length < 10)
+        ////////                        {
+        ////////                            printCtr = 600;
+        ////////                        }
+
+        ////////                        if (printCtr++ > 200)
+        ////////                        {
+        ////////                            printCtr = 0;
+        ////////                            wpfHandler.TextBox_serialMonitor.Text += dataToSend + "\n";
+        ////////                            wpfHandler.TextBox_serialMonitor.ScrollToEnd();
+        ////////                        }
+
+        ////////                        //}
+
+
+        ////////                    }
+
+        ////////                    try
+        ////////                    {
+        ////////                        while (wpfHandler.TextBox_serialMonitor.LineCount > 30)
+        ////////                        {
+        ////////                            wpfHandler.TextBox_serialMonitor.Text = wpfHandler.TextBox_serialMonitor.Text.Remove(0, wpfHandler.TextBox_serialMonitor.GetLineLength(0));
+        ////////                        }
+        ////////                    }
+        ////////                    catch { }
+
+
+
+
+
+
+
+        ////////                    //limits the data stored to 1000 to avoid using up all the memory in case of 
+        ////////                    //failure to register callback or include stopchar
+
+        ////////                    if (wpfHandler._data[pedalSelected].Length > 1000)
+        ////////                    {
+        ////////                        wpfHandler._data[pedalSelected] = "";
+        ////////                    }
+
+
+        ////////                }
+
+        ////////                // obtain data and check whether it is from known payload type or just debug info
+
+        ////////            }
+
+        ////////        }
+        ////////    }
+        ////////}
+
+
 
         /// <summary>
         /// Returns the settings control, return null if no settings control is required
@@ -568,14 +862,55 @@ namespace User.PluginSdkDemo
         /// <returns></returns>
         public System.Windows.Controls.Control GetWPFSettingsControl(PluginManager pluginManager)
         {
+
             return new SettingsControlDemo(this);
         }
+
+
+        /// <summary>
+        /// Called at plugin manager stop, close/dispose anything needed here !
+        /// Plugins are rebuilt at game change
+        /// </summary>
+        /// <param name="pluginManager"></param>
+        public void End(PluginManager pluginManager)
+        {           
+            // Save settings
+            this.SaveCommonSettings("GeneralSettings", Settings);
+
+            // close serial communication
+            if (wpfHandle != null)
+            {
+
+                try
+                {
+                    //wpfHandle.joystick.Release();
+                    //wpfHandle.joystick.Dispose();
+                    wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    
+                }
+                catch (Exception caughtEx)
+                { 
+                }
+                
+
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+                    wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
+                }
+            }
+            
+        }
+
+
 
         public bool PortExists(string portName)
         {
             string[] portNames = SerialPort.GetPortNames();
             return Array.Exists(portNames, name => name.Equals(portName, StringComparison.OrdinalIgnoreCase));
         }
+
+
+
 
 
         /// <summary>
@@ -585,6 +920,9 @@ namespace User.PluginSdkDemo
         /// <param name="pluginManager"></param>
         public void Init(PluginManager pluginManager)
         {
+
+            pluginHandle = pluginManager;
+        
             SimHub.Logging.Current.Info("Starting DIY active pedal plugin");
 
             // Load settings
@@ -618,92 +956,84 @@ namespace User.PluginSdkDemo
 
 
 
+            // get WPF handler
+            //wpfHandler = (SettingsControlDemo)GetWPFSettingsControl(pluginManager);
 
-
-
-            // prepare serial port interfaces
-            for (uint pedalIdx = 0; pedalIdx<3; pedalIdx++)
-			{
-				if (_serialPort[pedalIdx].IsOpen)
-				{
-					_serialPort[pedalIdx].Close();
-				}
-				
-				_serialPort[pedalIdx].Handshake = Handshake.None;
-                _serialPort[pedalIdx].Parity = Parity.None;
-                //_serialPort[pedalIdx].StopBits = StopBits.None;
-
-
-                _serialPort[pedalIdx].ReadTimeout = 2000;
-				_serialPort[pedalIdx].WriteTimeout = 500;
-
-                // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
-                _serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
-
-                _serialPort[pedalIdx].DtrEnable = false;
-
-                try
+            //if (wpfHandler.)
+            {
+                // prepare serial port interfaces
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-                    _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
-                }
-                catch (Exception caughtEx)
-                {
-                }
+                    if (_serialPort[pedalIdx].IsOpen)
+                    {
+                        System.Threading.Thread.Sleep(300);
+                    }
 
-                //try connect back to com port
-                if (Settings.auto_connect_flag == 1)
-                {
 
-                    if (Settings.connect_status[pedalIdx] == 1)
+                    try
                     {
                         _serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
-                        //SerialPort.GetPortNames
-                        if (PortExists(_serialPort[pedalIdx].PortName))
+                    }
+                    catch (Exception caughtEx)
+                    {
+                    }
+
+                    //try connect back to com port
+                    if (Settings.auto_connect_flag == 1)
+                    {
+
+                        if (Settings.connect_status[pedalIdx] == 1)
                         {
-                            if (_serialPort[pedalIdx].IsOpen == false)
+                            //_serialPort[pedalIdx].PortName = Settings.selectedComPortNames[pedalIdx];
+                            //SerialPort.GetPortNames
+                            if (PortExists(_serialPort[pedalIdx].PortName))
                             {
-                                try
+                                if (_serialPort[pedalIdx].IsOpen == false)
                                 {
-                                    _serialPort[pedalIdx].Open();
+                                    //if (wpfHandle != null)
+                                    //{
+                                    //    wpfHandle.openSerialAndAddReadCallback(pedalIdx);
+                                    //}
 
-                                    //TextBox_debugOutput.Text = "Serialport open";
-                                    //ConnectToPedal.IsChecked = true;
-
-                                    try
-                                    {
-                                        while (_serialPort[pedalIdx].BytesToRead > 0)
-                                        {
-                                            string message = _serialPort[pedalIdx].ReadLine();
-                                        }
-                                    }
-                                    catch (TimeoutException) { }
-
+                                    connectSerialPort[pedalIdx] = true;
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    //TextBox_debugOutput.Text = ex.Message;
+                                    //if (wpfHandle != null)
+                                    //{
+                                    //    wpfHandle.closeSerialAndStopReadCallback(pedalIdx);
+                                    //}
                                     //ConnectToPedal.IsChecked = false;
+                                    //TextBox_debugOutput.Text = "Serialport already open, close it";
+                                    Settings.connect_status[pedalIdx] = 0;
+                                    connectSerialPort[pedalIdx] = false;
                                 }
+
 
                             }
                             else
                             {
-                                _serialPort[pedalIdx].Close();
-                                //ConnectToPedal.IsChecked = false;
-                                //TextBox_debugOutput.Text = "Serialport already open, close it";
+                                Settings.connect_status[pedalIdx] = 0;
+                                connectSerialPort[pedalIdx] = false;
                             }
                         }
+                        else
+                        {
+                            Settings.connect_status[pedalIdx] = 0;
+                            connectSerialPort[pedalIdx] = false;
+                        }
+
                     }
-                    else
-                    {
-                        Settings.connect_status[pedalIdx] = 0;
-                    }
+
                 }
 
             }
 
+            
+            
+            
 
-
+         
 
 
             //// check if Json config files are present, otherwise create new ones
@@ -753,6 +1083,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.absFrequency = 5;
             dap_config_initial_st.payloadPedalConfig_.absAmplitude = 100;
             dap_config_initial_st.payloadPedalConfig_.absPattern = 0;
+            dap_config_initial_st.payloadPedalConfig_.absForceOrTarvelBit = 0;
             dap_config_initial_st.payloadPedalConfig_.lengthPedal_AC = 150;
             dap_config_initial_st.payloadPedalConfig_.horPos_AB = 215;
             dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;
@@ -762,6 +1093,11 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;
             dap_config_initial_st.payloadPedalConfig_.RPM_min_freq = 10;
             dap_config_initial_st.payloadPedalConfig_.RPM_AMP = 5;
+            dap_config_initial_st.payloadPedalConfig_.BP_trigger_value = 50;
+            dap_config_initial_st.payloadPedalConfig_.BP_amp = 1;
+            dap_config_initial_st.payloadPedalConfig_.BP_freq = 15;
+            dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
+
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
@@ -782,6 +1118,8 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.PID_p_gain = 0.3f;
             dap_config_initial_st.payloadPedalConfig_.PID_i_gain = 50.0f;
             dap_config_initial_st.payloadPedalConfig_.PID_d_gain = 0.0f;
+            dap_config_initial_st.payloadPedalConfig_.PID_feedforward_gain = 0.0f;
+            
 
             dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 0;
 
@@ -790,6 +1128,12 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+
+
+            
+
+
         }
     }
 }

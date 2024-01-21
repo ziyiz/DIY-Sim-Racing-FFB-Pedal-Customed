@@ -7,7 +7,7 @@
 #define DEBUG_INFO_0_LOADCELL_READING 4
 #define DEBUG_INFO_0_SERVO_READINGS 8
 #define DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS 16
-
+#define DEBUG_INFO_0_STATE_INFO_STRUCT 32
 
 bool resetServoEncoder = true;
 bool isv57LifeSignal_b = false;
@@ -50,6 +50,7 @@ bool splineDebug_b = false;
 #include "ABSOscillation.h"
 ABSOscillation absOscillation;
 RPMOscillation RPMOscillation;
+BitePointOscillation BitePointOscillation;
 #define ABS_OSCILLATION
 
 
@@ -57,7 +58,7 @@ RPMOscillation RPMOscillation;
 #include "DiyActivePedal_types.h"
 DAP_config_st dap_config_st;
 DAP_calculationVariables_st dap_calculationVariables_st;
-
+DAP_state_st dap_state_st;
 
 
 
@@ -341,7 +342,7 @@ void setup()
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
                     &Task2,      /* Task handle to keep track of created task */
-                    0);          /* pin task to core 1 */
+                    1);          /* pin task to core 1 */
   delay(500);
 
   xTaskCreatePinnedToCore(
@@ -352,7 +353,7 @@ void setup()
                     NULL,      
                     1,         
                     &Task2,    
-                    1);     
+                    0);     
   delay(500);
 
   #ifdef ISV_COMMUNICATION
@@ -365,7 +366,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task2,    
-                      1);     
+                      0);     
     delay(500);
 #endif
 
@@ -533,10 +534,13 @@ void pedalUpdateTask( void * pvParameters )
       // compute pedal oscillation, when ABS is active
     float absForceOffset_fl32 = 0.0f;
 
+    float absForceOffset = 0;
+    float absPosOffset = 0;
     #ifdef ABS_OSCILLATION
-      absForceOffset_fl32 = absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern);
+      absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
       RPMOscillation.trigger();
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
+      BitePointOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
 
     // compute the pedal incline angle 
@@ -609,11 +613,16 @@ void pedalUpdateTask( void * pvParameters )
       filteredReading += forceAbsOffset;
     #endif*/
 
+
+    //Add effect by force
+    float effect_force=absForceOffset+ BitePointOscillation.BitePoint_Force_offset;
+
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
     //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset_fl32);
+    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset);
+    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force);
     
 
 
@@ -637,13 +646,33 @@ void pedalUpdateTask( void * pvParameters )
       
 
 
-    
+    // clip target position to configured target interval with RPM effect movement in the endstop
+    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax);
 
   
-    //Adding RPM effect
+    //Adding effects
     Position_Next +=RPMOscillation.RPM_position_offset;
-    // clip target position to configured target interval with RPM effect movement in the endstop
-    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax+RPMOscillation.RPM_position_offset);
+    Position_Next +=absPosOffset;
+    Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
+    
+    
+    //bitepoint trigger
+
+    int32_t BP_trigger_value=dap_config_st.payLoadPedalConfig_.BP_trigger_value;
+    int32_t BP_trigger_min=(BP_trigger_value-4);
+    int32_t BP_trigger_max=(BP_trigger_value+4);
+    int32_t Position_check=100*((Position_Next-dap_calculationVariables_st.stepperPosMin) / dap_calculationVariables_st.stepperPosRange);
+    //Serial.println(Position_check);
+    if(dap_config_st.payLoadPedalConfig_.BP_trigger==1)
+    {
+      if(Position_check > BP_trigger_min)
+      {
+        if(Position_check < BP_trigger_max)
+        {
+          BitePointOscillation.trigger();
+        }
+      }
+    }
 
     // if pedal in min position, recalibrate position 
     #ifdef ISV_COMMUNICATION
@@ -703,17 +732,41 @@ void pedalUpdateTask( void * pvParameters )
     #endif
 
 
+    float normalizedPedalReading_fl32 = constrain((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Range, 0, 1);
+
     // simulate ABS trigger 
     if(dap_config_st.payLoadPedalConfig_.Simulate_ABS_trigger==1)
     {
-      int32_t ABS_trigger_value=dap_config_st.payLoadPedalConfig_.Simulate_ABS_value*100;
-      if(joystickNormalizedToInt32 > ABS_trigger_value)
+      int32_t ABS_trigger_value=dap_config_st.payLoadPedalConfig_.Simulate_ABS_value;
+      if( (normalizedPedalReading_fl32*100) > ABS_trigger_value)
       {
         absOscillation.trigger();
       }
     }
 
-    
+
+
+    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) )
+    {
+      printCycleCounter++;
+
+      if (printCycleCounter >= 10)
+      {
+        printCycleCounter = 0;
+        dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
+        dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
+        dap_state_st.payloadPedalState_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
+        dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
+        dap_state_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
+        dap_state_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_st.payLoadHeader_)), sizeof(dap_state_st.payLoadHeader_) + sizeof(dap_state_st.payloadPedalState_));
+
+        DAP_state_st * dap_state_st_local_ptr;
+        dap_state_st_local_ptr = &dap_state_st;
+        Serial.write((char*)dap_state_st_local_ptr, sizeof(DAP_state_st));
+        Serial.print("\r\n");
+      }
+      
+    }
 
     #ifdef PRINT_USED_STACK_SIZE
       unsigned int temp2 = uxTaskGetStackHighWaterMark(nullptr);
@@ -962,6 +1015,7 @@ int64_t timeDiff = 0;
 
 
 uint64_t print_cycle_counter_u64 = 0;
+uint64_t lifeline_cycle_counter_u64 = 0;
 void servoCommunicationTask( void * pvParameters )
 {
   
@@ -973,10 +1027,19 @@ void servoCommunicationTask( void * pvParameters )
       timerServoCommunication.Bump();
     }
 
+    // check if servo communication is still there every N cycles
+    if ( (lifeline_cycle_counter_u64 % 2000) == 0 )
+    {
+      isv57LifeSignal_b = isv57.checkCommunication();
+      lifeline_cycle_counter_u64 = 0;
+    } 
+    
+
+    delay(20);
     if (isv57LifeSignal_b)
     {
 
-        delay(20);
+        
         //isv57.readServoStates();
         
 
@@ -1102,6 +1165,7 @@ void servoCommunicationTask( void * pvParameters )
     }
     else
     {
+      Serial.println("Servo communication lost!");
       delay(1000);
     }
 

@@ -5,6 +5,7 @@
 
 static const long ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static const long BP_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static int RPM_VALUE_LAST = 0;
 
 class ABSOscillation {
@@ -23,12 +24,12 @@ public:
     _timeLastTriggerMillis = millis();
   }
   
-  float forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern) {
+  void forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t absPattern, uint8_t absForceOrTarvelBit, float * absForceOffset, float * absPosOffset) {
 
 
     long timeNowMillis = millis();
     float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
-    float absForceOffset = 0;
+    float absForceOffset_local = 0;
 
     if (timeSinceTrigger > ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS)
     {
@@ -40,31 +41,56 @@ public:
       _absTimeMillis += timeNowMillis - _lastCallTimeMillis;
       float absTimeSeconds = _absTimeMillis / 1000.0f;
 
+      // abs amplitude
+      float absAmp_fl32 = 0;
+      switch (absForceOrTarvelBit) {
+        case 0:
+          absAmp_fl32 = calcVars_st->absAmplitude;
+          break;
+        case 1:
+          absAmp_fl32 = calcVars_st->stepperPosRange * calcVars_st->absAmplitude / 100.;
+          break;
+        default:
+          break;
+      }
+
+
+      
       switch (absPattern) {
         case 0:
           // sine wave pattern
-          absForceOffset = calcVars_st->absAmplitude * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
+          absForceOffset_local =  absAmp_fl32 * sin(2 * PI * calcVars_st->absFrequency * absTimeSeconds);
           break;
         case 1:
           // sawtooth pattern
           if (calcVars_st->absFrequency > 0)
           {
-            absForceOffset = calcVars_st->absAmplitude * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
+            absForceOffset_local = absAmp_fl32 * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
           }
           break;
         default:
           break;
       }
       
-
+      switch (absForceOrTarvelBit) {
+        case 0:
+          *absForceOffset = absForceOffset_local;
+          *absPosOffset = 0;
+          break;
+        case 1:
+          *absForceOffset = 0;
+          *absPosOffset = absForceOffset_local;
+          break;
+        default:
+          break;
+      }
       
     }
 
     _lastCallTimeMillis = timeNowMillis;
 
-    return absForceOffset;
+    return;
     
-
   }
 };
 
@@ -123,6 +149,58 @@ public:
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
     RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
+    //return RPMForceOffset;
+    
+
+  }
+};
+
+class BitePointOscillation {
+private:
+  long _timeLastTriggerMillis;
+  long _BiteTimeMillis;
+  long _lastCallTimeMillis = 0;
+  
+
+public:
+  BitePointOscillation()
+    : _timeLastTriggerMillis(0)
+  {}
+  //float RPM_value =0;
+  float BitePoint_Force_offset = 0;
+public:
+  void trigger() {
+    _timeLastTriggerMillis = millis();
+  }
+  
+  void forceOffset(DAP_calculationVariables_st* calcVars_st) {
+
+
+    long timeNowMillis = millis();
+    float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
+    float BitePointForceOffset = 0;
+    float BP_freq = calcVars_st->BP_freq;
+    //float BP_freq = 15;
+    float BP_amp = calcVars_st->BP_amp;
+    //float BP_amp = 2;
+
+    if (timeSinceTrigger > BP_ACTIVE_TIME_PER_TRIGGER_MILLIS)
+    {
+      _BiteTimeMillis = 0;
+      BitePointForceOffset = 0;
+    }
+    else
+    {
+      _BiteTimeMillis += timeNowMillis - _lastCallTimeMillis;
+      float BPTimeSeconds = _BiteTimeMillis / 1000.0f;
+
+      //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
+      BitePointForceOffset = BP_amp * sin( 2*PI* BP_freq* BPTimeSeconds);
+    }
+    BitePoint_Force_offset=BitePointForceOffset;
+    _lastCallTimeMillis = timeNowMillis;
+    //RPM_VALUE_LAST=RPMForceOffset;
+    
     //return RPMForceOffset;
     
 
