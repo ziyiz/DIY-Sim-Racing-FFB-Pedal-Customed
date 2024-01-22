@@ -2003,17 +2003,11 @@ namespace User.PluginSdkDemo
 
                                             }
 
-                                            
 
-                                            // GUI update
-                                            if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
+
+                                            if  (indexOfSelectedPedal_u == pedalSelected)
                                             {
-                                                //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                                //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
-                                                //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
-                                                //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
-
-                                                if (false)
+                                                if (true)
                                                 {
                                                     // Specify the path to the file
                                                     string filePath = "C:\\Users\\chris\\Downloads\\output.txt";
@@ -2032,7 +2026,17 @@ namespace User.PluginSdkDemo
                                                         writer.Write("\n");
                                                     }
                                                 }
-                                                
+                                            }
+
+                                            // GUI update
+                                            if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
+                                            {
+                                                //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                                //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                                //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+                                                //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+
+                                                                                             
 
                                                 pedalStateHasAlreadyBeenUpdated_b = true;
 

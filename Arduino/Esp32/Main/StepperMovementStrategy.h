@@ -80,7 +80,8 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
     pidWasInitialized = true;
     myPID.SetSampleTimeUs(PUT_TARGET_CYCLE_TIME_IN_US);
-    myPID.SetOutputLimits(-1.0,0.0);
+    //myPID.SetOutputLimits(-1.0,0.0);
+    myPID.SetOutputLimits(-0.5,0.5);
 
     myPID.SetTunings(config_st->payLoadPedalConfig_.PID_p_gain, config_st->payLoadPedalConfig_.PID_i_gain, config_st->payLoadPedalConfig_.PID_d_gain);
   }
@@ -155,8 +156,8 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //Setpoint = (loadCellReadingKg_clip - calc_st.Force_Min) / calc_st.Force_Range;
   //Input = (loadCellTargetKg - calc_st.Force_Min) / calc_st.Force_Range; 
 
-  Setpoint = (loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
-  Input = (loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
+  Input = (loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
+  Setpoint = (loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
 
   // compute PID output
   myPID.Compute();
@@ -166,7 +167,12 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //int32_t posStepperNew = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
   //posStepperNew += calc_st->stepperPosMin;
 
-  float posStepperNew_fl32 = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
+  //float posStepperNew_fl32 = -1.0 * Output * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);//stepper->getTravelSteps();
+  //posStepperNew_fl32 += calc_st->stepperPosMin;
+
+
+  float posStepperNew_fl32 = stepperPosFraction + Output;
+  posStepperNew_fl32 *= (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
   posStepperNew_fl32 += calc_st->stepperPosMin;
 
   // add feedforward gain
