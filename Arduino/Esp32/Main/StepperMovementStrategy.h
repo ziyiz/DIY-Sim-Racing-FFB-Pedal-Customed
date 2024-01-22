@@ -81,13 +81,14 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     pidWasInitialized = true;
     myPID.SetSampleTimeUs(PUT_TARGET_CYCLE_TIME_IN_US);
     //myPID.SetOutputLimits(-1.0,0.0);
-    myPID.SetOutputLimits(-0.5,0.5);
+    myPID.SetOutputLimits(-0.1,0.1);
 
     myPID.SetTunings(config_st->payLoadPedalConfig_.PID_p_gain, config_st->payLoadPedalConfig_.PID_i_gain, config_st->payLoadPedalConfig_.PID_d_gain);
   }
 
 
-  float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction);
+  float stepperPosFraction_constrained = constrain(stepperPosFraction, 0, 1); // constrain within limits of the spline
+  float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction_constrained);
   loadCellTargetKg -=absForceOffset_fl32;
   // clip to min & max force to prevent Ki to overflow
   float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
@@ -113,7 +114,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   if (control_strategy_u8 == 1) // dynamic PID parameters depending on force curve gradient
   {
-    float gradient_orig_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction, true); // determine gradient to modify the PID gain. The steeper the gradient, the less gain should be used
+    float gradient_orig_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction_constrained, true); // determine gradient to modify the PID gain. The steeper the gradient, the less gain should be used
 
     // normalize gradient
     float gradient_fl32 = gradient_orig_fl32;

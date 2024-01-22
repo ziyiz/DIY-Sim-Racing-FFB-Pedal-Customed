@@ -85,6 +85,10 @@ namespace User.PluginSdkDemo
         //public VirtualJoystick joystick;
         internal vJoyInterfaceWrap.vJoy joystick;
 
+
+        public bool[] dumpPedalToResponseFile = new bool[3];
+
+
         // read config from JSON on startup
         //ReadStructFromJson();
 
@@ -281,6 +285,9 @@ namespace User.PluginSdkDemo
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
+                dumpPedalToResponseFile[pedalIdx] = false;
+
+
                 dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
                 dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
 
@@ -364,6 +371,7 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             text_min_force.Foreground = btn_update.Background;
             text_max_force.Foreground = btn_update.Background;
@@ -2007,10 +2015,10 @@ namespace User.PluginSdkDemo
 
                                             if  (indexOfSelectedPedal_u == pedalSelected)
                                             {
-                                                if (true)
+                                                if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
                                                 {
                                                     // Specify the path to the file
-                                                    string filePath = "C:\\Users\\chris\\Downloads\\output.txt";
+                                                    string filePath = "C:\\Users\\chris\\Downloads\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
                                                     // Use StreamWriter to write to the file
                                                     using (StreamWriter writer = new StreamWriter(filePath, true))
                                                     {
@@ -2501,7 +2509,17 @@ namespace User.PluginSdkDemo
             updateTheGuiFromConfig();
 
         }
-        
+
+        private void dump_pedal_response_to_file_checked(object sender, RoutedEventArgs e)
+        {
+            dumpPedalToResponseFile[indexOfSelectedPedal_u] = true;
+        }
+
+        private void dump_pedal_response_to_file_unchecked(object sender, RoutedEventArgs e)
+        {
+            dumpPedalToResponseFile[indexOfSelectedPedal_u] = false;
+        }
+
 
 
         private void Simulate_ABS_check_Checked(object sender, RoutedEventArgs e)
@@ -3041,6 +3059,7 @@ namespace User.PluginSdkDemo
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Opacity = 1;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
@@ -3066,6 +3085,7 @@ namespace User.PluginSdkDemo
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;

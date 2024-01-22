@@ -756,7 +756,7 @@ void pedalUpdateTask( void * pvParameters )
       {
         printCycleCounter = 0;
         dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
-        dap_state_st.payloadPedalState_.pedalPosition_u16 = stepperPosFraction * 65535;
+        dap_state_st.payloadPedalState_.pedalPosition_u16 = constrain(stepperPosFraction, 0, 1) * 65535;
         dap_state_st.payloadPedalState_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
 
         if(semaphore_readServoValues!=NULL)
