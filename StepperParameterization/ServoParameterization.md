@@ -9,8 +9,12 @@ Sec. 5.7, feedforward gain<br>
 Sec. 5.10, vibration suppression
 
 
-## Communication protocoll
-# Decoding
+# Communication protocoll
+
+## Hardware setup
+Insert description and image of the servo snd logic analyzer here. 
+
+## Decoding
 The communication protocoll between the iSV57 and the Stepperonline application is partly decoded. It was done be sniffing the traffic on the debug port with a logic analyzer. The logic analyzer settings were as follows:
 
 "Async Serial" protocoll  
