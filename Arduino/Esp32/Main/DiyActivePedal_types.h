@@ -99,7 +99,7 @@ struct payloadPedalConfig {
   float PID_p_gain;
   float PID_i_gain;
   float PID_d_gain;
-  float PID_feedforward_gain;
+  float PID_velocity_feedforward_gain;
 
   uint8_t control_strategy_b;
 

@@ -511,7 +511,7 @@
             IsSnapToTickEnabled="False" Height="25" Margin="0,3,0,0"
             />
                 <TextBlock x:Name="text_debug_feedforward" 
-                    Text="Feedforward-gain:" 
+                    Text="Velocity-feedforward-gain:" 
                     Width="252" 
                     Foreground="White" Height="19"/>
                 <Slider x:Name="PID_tuning_Feedforward_gain_slider" 
@@ -520,9 +520,9 @@
                     AutoToolTipPlacement="TopLeft" 
                     AutoToolTipPrecision="2"
                     Minimum="0"
-                    Maximum="1"
+                    Maximum="20"
                     TickPlacement="BottomRight"
-                    TickFrequency="0.1" RenderTransformOrigin="0.496,0.827"
+                    TickFrequency="2" RenderTransformOrigin="0.496,0.827"
                     Value="0.0"
                     IsSnapToTickEnabled="False" 
                     SmallChange="0.05" Height="52"
