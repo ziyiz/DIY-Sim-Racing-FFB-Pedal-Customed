@@ -23,6 +23,7 @@ QuickPID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd,  /* OPTIONS */
                myPID.Action::direct);                   /* direct, reverse */
 bool pidWasInitialized = false;
 
+#define PID_OUTPUT_LIMIT_FL32 0.5f
 
 /**********************************************************************************************/
 /*                                                                                            */
@@ -81,7 +82,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     pidWasInitialized = true;
     myPID.SetSampleTimeUs(PUT_TARGET_CYCLE_TIME_IN_US);
     //myPID.SetOutputLimits(-1.0,0.0);
-    myPID.SetOutputLimits(-0.1,0.1); // allow the PID to only change the position a certain amount per cycle
+    myPID.SetOutputLimits(-PID_OUTPUT_LIMIT_FL32, PID_OUTPUT_LIMIT_FL32); // allow the PID to only change the position a certain amount per cycle
 
     myPID.SetTunings(config_st->payLoadPedalConfig_.PID_p_gain, config_st->payLoadPedalConfig_.PID_i_gain, config_st->payLoadPedalConfig_.PID_d_gain);
   }
@@ -89,6 +90,24 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   // clamp the stepper position to prevent problems with the spline 
   float stepperPosFraction_constrained = constrain(stepperPosFraction, 0, 1);
+
+  // constrain the output to the correct positioning interval to prevent PID windup 
+  float pos_output_limit_fl32 = 1.0 - stepperPosFraction_constrained;
+  float neg_output_limit_fl32 = stepperPosFraction_constrained;
+  if (pos_output_limit_fl32 < PID_OUTPUT_LIMIT_FL32)
+  {
+    myPID.SetOutputLimits(-PID_OUTPUT_LIMIT_FL32, pos_output_limit_fl32);
+  }
+  else if (neg_output_limit_fl32 < PID_OUTPUT_LIMIT_FL32)
+  {
+    myPID.SetOutputLimits(-neg_output_limit_fl32, PID_OUTPUT_LIMIT_FL32);
+  }
+  else
+  {
+    myPID.SetOutputLimits(-PID_OUTPUT_LIMIT_FL32, PID_OUTPUT_LIMIT_FL32);
+  }
+
+  
 
   // read target force at spline position
   float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction_constrained);
@@ -132,13 +151,16 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //	https://github.com/pronenewbits/Arduino_Constrained_MPC_Library
 
 
-  Input = (loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
+  Input = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
   Setpoint = (loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
 
   // compute PID output
   myPID.Compute();
 
   // integrate the position update
+  // The setpoint comes from the force curve. The input comes from the loadcell. When the loadcell reading is below the force curve, the difference becomes positive. 
+  // Thus, the stepper has to move towards the foot to increase the loadcell reading.
+  // Since the QuickPID has some filtering applied on the input, both variables are changed for performance reasons.
   float posStepperNew_fl32 = stepperPosFraction + Output;
   posStepperNew_fl32 *= (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
   posStepperNew_fl32 += calc_st->stepperPosMin;
