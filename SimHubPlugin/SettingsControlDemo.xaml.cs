@@ -396,6 +396,27 @@ namespace User.PluginSdkDemo
             Line_H_damping.Stroke = btn_update.Background;
             text_damping.Foreground = btn_update.Background;
             rect_damping.Fill = btn_update.Background;
+            
+            text_Pgain_text.Foreground = btn_update.Background;
+            Line_H_Pgain.Stroke = btn_update.Background;
+            text_Pgain.Foreground = btn_update.Background;
+            rect_Pgain.Fill = btn_update.Background;
+
+            text_Igain_text.Foreground = btn_update.Background;
+            Line_H_Igain.Stroke = btn_update.Background;
+            text_Igain.Foreground = btn_update.Background;
+            rect_Igain.Fill = btn_update.Background;
+
+            text_Dgain_text.Foreground = btn_update.Background;
+            Line_H_Dgain.Stroke = btn_update.Background;
+            text_Dgain.Foreground = btn_update.Background;
+            rect_Dgain.Fill = btn_update.Background;
+
+            text_VFgain_text.Foreground = btn_update.Background;
+            Line_H_VFgain.Stroke = btn_update.Background;
+            text_VFgain.Foreground = btn_update.Background;
+            rect_VFgain.Fill = btn_update.Background;
+
             Line_H_ABS.Stroke = btn_update.Background;
             text_ABS.Foreground = btn_update.Background;
             rect_ABS.Fill = btn_update.Background;
@@ -438,6 +459,9 @@ namespace User.PluginSdkDemo
             text_bite_freq_text.Foreground = btn_update.Background;
             Line_H_bite_amp.Stroke = btn_update.Background;
             Line_H_bite_freq.Stroke = btn_update.Background;
+            
+
+            
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -1021,6 +1045,40 @@ namespace User.PluginSdkDemo
             text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
             Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
             Canvas.SetTop(text_bite_amp, 5);
+
+            //Pgain slider
+            double value_max = 2;
+            dx = canvas_horz_Pgain.Width / value_max;
+            Canvas.SetLeft(rect_Pgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain * dx);
+            text_Pgain.Text =""+Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain,2); 
+            Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
+            Canvas.SetTop(text_Pgain, 5);
+
+            //Igain slider
+
+            value_max = 500;
+            dx = canvas_horz_Igain.Width / value_max;
+            Canvas.SetLeft(rect_Igain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain * dx);
+            text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
+            Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
+            Canvas.SetTop(text_Igain, 5);
+
+            //Dgain slider
+            value_max = 0.01;
+            dx = canvas_horz_Dgain.Width / value_max;
+            Canvas.SetLeft(rect_Dgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain * dx);
+            text_Dgain.Text = "" +Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain,4);
+            Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
+            Canvas.SetTop(text_Dgain, 5);
+
+            //VF gain slider
+            value_max = 20;
+            dx = canvas_horz_VFgain.Width / value_max;
+            Canvas.SetLeft(rect_VFgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain * dx);
+            text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
+            Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
+            Canvas.SetTop(text_VFgain, 5);
+
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -3014,7 +3072,78 @@ namespace User.PluginSdkDemo
                     Canvas.SetTop(text_bite_freq, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
+                //Pgain
+                if (rectangle.Name == "rect_Pgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 2;
+                    double x = e.GetPosition(canvas_horz_Pgain).X - offset.X;
+                    double dx = canvas_horz_Pgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)actual_x;
+                    text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 4);
+                    Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
+                    Canvas.SetTop(text_Pgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
 
+                if (rectangle.Name == "rect_Igain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 500;
+                    double x = e.GetPosition(canvas_horz_Igain).X - offset.X;
+                    double dx = canvas_horz_Igain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)actual_x;
+                    text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 4);
+                    Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
+                    Canvas.SetTop(text_Igain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+                if (rectangle.Name == "rect_Dgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 0.01;
+                    double x = e.GetPosition(canvas_horz_Dgain).X - offset.X;
+                    double dx = canvas_horz_Dgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)actual_x;
+                    text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
+                    Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
+                    Canvas.SetTop(text_Dgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+                if (rectangle.Name == "rect_VFgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 20;
+                    double x = e.GetPosition(canvas_horz_VFgain).X - offset.X;
+                    double dx = canvas_horz_VFgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)actual_x;
+                    text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 2);
+                    Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
+                    Canvas.SetTop(text_VFgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
 
             }
         }
