@@ -353,18 +353,9 @@ namespace User.PluginSdkDemo
             }
             // debug mode invisiable
             text_debug_flag.Opacity = 0;
-            text_debug_PID_para.Opacity = 0;
-            text_debug_dgain.Opacity = 0;
-            text_debug_igain.Opacity = 0;
-            text_debug_pgain.Opacity = 0;
-            text_debug_feedforward.Opacity = 0;
             text_serial.Opacity = 0;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
-            PID_tuning_D_gain_slider.Opacity = 0;
-            PID_tuning_I_gain_slider.Opacity = 0;
-            PID_tuning_P_gain_slider.Opacity = 0;
-            PID_tuning_Feedforward_gain_slider.Opacity= 0;
             textBox_debug_Flag_0.Opacity = 0;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
@@ -802,10 +793,6 @@ namespace User.PluginSdkDemo
         {
             // update the sliders
 
-            PID_tuning_P_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
-            PID_tuning_I_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
-            PID_tuning_D_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
-            PID_tuning_Feedforward_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain;
 
             info_label.Content = "Connection State:\nDAP Version:";
             string info_text;
@@ -3179,17 +3166,8 @@ namespace User.PluginSdkDemo
         {
 
             text_debug_flag.Opacity = 1;
-            text_debug_PID_para.Opacity = 1;
-            text_debug_dgain.Opacity = 1;
-            text_debug_igain.Opacity = 1;
-            text_debug_pgain.Opacity = 1;
-            text_debug_feedforward.Opacity = 1;
             text_serial.Opacity = 1;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
-            PID_tuning_D_gain_slider.Opacity = 1;
-            PID_tuning_I_gain_slider.Opacity = 1;
-            PID_tuning_P_gain_slider.Opacity= 1;
-            PID_tuning_Feedforward_gain_slider.Opacity = 1;
             textBox_debug_Flag_0.Opacity = 1;
             //btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
@@ -3205,17 +3183,8 @@ namespace User.PluginSdkDemo
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             text_debug_flag.Opacity = 0;
-            text_debug_PID_para.Opacity = 0;
-            text_debug_dgain.Opacity = 0;
-            text_debug_igain.Opacity = 0;
-            text_debug_pgain.Opacity = 0;
-            text_debug_feedforward.Opacity = 0;
             text_serial.Opacity = 0;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            PID_tuning_D_gain_slider.Opacity = 0;
-            PID_tuning_I_gain_slider.Opacity = 0;
-            PID_tuning_P_gain_slider.Opacity = 0;
-            PID_tuning_Feedforward_gain_slider.Opacity = 0;
             textBox_debug_Flag_0.Opacity = 0;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
