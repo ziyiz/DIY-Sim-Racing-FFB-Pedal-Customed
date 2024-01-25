@@ -55,7 +55,6 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
           0.0,  1.0};
 
   _K.B = {1.0, 
-  
           0.0};
 
   float K_Q_11 = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION * 0.5f * delta_t_pow3;

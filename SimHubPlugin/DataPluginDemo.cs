@@ -20,13 +20,14 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 120;
+    public const uint pedalConfigPayload_version = 121;
 
 
     // pyload types
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
-    public const uint pedalStatePayload_type = 120;
+    public const uint pedalStateBasicPayload_type = 120;
+    public const uint pedalStateExtendedPayload_type = 130;
 }
 
 
@@ -52,15 +53,24 @@ public struct payloadPedalAction
     public byte RPM_u8;
 };
 
-public struct payloadPedalState
+public struct payloadPedalState_Basic
 {
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
 
+};
+
+public struct payloadPedalState_Extended
+{
+    public UInt16 pedalForce_raw_u16;
+    public UInt16 pedalForce_filtered_u16;
+    public Int16 forceVel_est_i16;
+
     // register values from servo
     public Int16 servoPosition_i16;
     public Int16 servoPositionTarget_i16;
+    public Int16 servo_voltage_0p1V_i16;
 };
 
 public struct payloadPedalConfig
@@ -173,13 +183,19 @@ public struct DAP_config_st
     public payloadFooter payloadFooter_;
 }
 
-public struct DAP_state_st
+public struct DAP_state_basic_st
 {
     public payloadHeader payloadHeader_;
-    public payloadPedalState payloadPedalState_;
+    public payloadPedalState_Basic payloadPedalBasicState_;
     public payloadFooter payloadFooter_;
 }
 
+public struct DAP_state_extended_st
+{
+    public payloadHeader payloadHeader_;
+    public payloadPedalState_Extended payloadPedalExtendedState_;
+    public payloadFooter payloadFooter_;
+}
 
 
 namespace User.PluginSdkDemo

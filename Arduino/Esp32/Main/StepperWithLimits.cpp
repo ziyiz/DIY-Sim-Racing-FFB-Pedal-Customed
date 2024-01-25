@@ -224,13 +224,17 @@ int8_t StepperWithLimits::moveTo(int32_t position, bool blocking) {
   return _stepper->moveTo(position, blocking);
 }
 
-int32_t StepperWithLimits::getCurrentPositionSteps() const {
+int32_t StepperWithLimits::getCurrentPositionFromMin() const {
   return _stepper->getCurrentPosition() - _posMin;
+}
+
+int32_t StepperWithLimits::getCurrentPosition() const {
+  return _stepper->getCurrentPosition();
 }
 
 
 double StepperWithLimits::getCurrentPositionFraction() const {
-  return double(getCurrentPositionSteps()) / getTravelSteps();
+  return double(getCurrentPositionFromMin()) / getTravelSteps();
 }
 
 double StepperWithLimits::getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const {
@@ -267,7 +271,7 @@ bool StepperWithLimits::isAtMinPos()
 {
 
   bool isNotRunning = !_stepper->isRunning();
-  bool isAtMinPos = getCurrentPositionSteps() == 0;
+  bool isAtMinPos = getCurrentPositionFromMin() == 0;
 
   return isAtMinPos && isNotRunning;
 }

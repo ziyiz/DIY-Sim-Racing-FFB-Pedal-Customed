@@ -7,7 +7,8 @@
 #define DEBUG_INFO_0_LOADCELL_READING 4
 #define DEBUG_INFO_0_SERVO_READINGS 8
 #define DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS 16
-#define DEBUG_INFO_0_STATE_INFO_STRUCT 32
+#define DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT 32
+#define DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT 64
 
 bool resetServoEncoder = true;
 bool isv57LifeSignal_b = false;
@@ -58,8 +59,8 @@ BitePointOscillation BitePointOscillation;
 #include "DiyActivePedal_types.h"
 DAP_config_st dap_config_st;
 DAP_calculationVariables_st dap_calculationVariables_st;
-DAP_state_st dap_state_st;
-
+DAP_state_basic_st dap_state_basic_st;
+DAP_state_extended_st dap_state_extended_st;
 
 
 #include "CycleTimer.h"
@@ -430,7 +431,7 @@ unsigned long cycleTimeLastCall = micros();
 unsigned long minCyclesForFirToInit = 1000;
 unsigned long firCycleIncrementer = 0;
 
-
+float filteredReading_exp_filter = 0;
 unsigned long printCycleCounter = 0;
 
 
@@ -575,7 +576,9 @@ void pedalUpdateTask( void * pvParameters )
     float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
     float changeVelocity = kalman->changeVelocity();
 
-
+    /*float alpha_exp_filter = 0.98;
+    float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
+    filteredReading = filteredReading_exp_filter;*/
 
     // Apply FIR notch filter to reduce force oscillation caused by ABS
     //#define APPLY_FIR_FILTER
@@ -621,18 +624,15 @@ void pedalUpdateTask( void * pvParameters )
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
-    //double stepperPosFraction2 = stepper->getCurrentPositionFractionFromExternalPos( -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()) );
-    //int32_t Position_Next = MoveByInterpolatedStrategy(filteredReading, stepperPosFraction, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
-    //int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, absForceOffset);
     int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
-    
+    //int32_t Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
 
 
     //#define DEBUG_STEPPER_POS
     if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STEPPER_POS) 
     {
       static RTDebugOutput<int32_t, 5> rtDebugFilter({ "ESP_pos", "ESP_tar_pos", "ISV_pos", "frac1"});
-      rtDebugFilter.offerData({ stepper->getCurrentPositionSteps(), Position_Next, -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()), (int32_t)(stepperPosFraction * 10000.)});
+      rtDebugFilter.offerData({ stepper->getCurrentPositionFromMin(), Position_Next, -(int32_t)(isv57.servo_pos_given_p + isv57.servo_pos_error_p - isv57.getZeroPos()), (int32_t)(stepperPosFraction * 10000.)});
     }
 
     
@@ -693,7 +693,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
     // get current stepper position right before sheduling a new move
-    //int32_t stepperPosCurrent = stepper->getCurrentPositionSteps();
+    //int32_t stepperPosCurrent = stepper->getCurrentPositionFromMin();
     //int32_t stepperPosCurrent = stepper->getTargetPositionSteps();
     //int32_t movement = abs(stepperPosCurrent - Position_Next);
     //if (movement > MIN_STEPS)
@@ -748,21 +748,45 @@ void pedalUpdateTask( void * pvParameters )
 
 
 
-    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_INFO_STRUCT) )
+    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT) )
     {
       printCycleCounter++;
 
       if (printCycleCounter >= 2)
       {
         printCycleCounter = 0;
-        dap_state_st.payloadPedalState_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
-        dap_state_st.payloadPedalState_.pedalPosition_u16 = constrain(stepperPosFraction, 0, 1) * 65535;
-        dap_state_st.payloadPedalState_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
+        dap_state_basic_st.payloadPedalState_Basic_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
+        dap_state_basic_st.payloadPedalState_Basic_.pedalPosition_u16 = constrain(stepperPosFraction, 0, 1) * 65535;
+        dap_state_basic_st.payloadPedalState_Basic_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
+
+        dap_state_basic_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_BASIC;
+        dap_state_basic_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
+        dap_state_basic_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_basic_st.payLoadHeader_)), sizeof(dap_state_basic_st.payLoadHeader_) + sizeof(dap_state_basic_st.payloadPedalState_Basic_));
+
+        DAP_state_basic_st * dap_state_basic_st_local_ptr;
+        dap_state_basic_st_local_ptr = &dap_state_basic_st;
+        Serial.write((char*)dap_state_basic_st_local_ptr, sizeof(DAP_state_basic_st));
+        Serial.print("\r\n");
+      }
+    }
+
+
+    if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT) )
+    {
+      //printCycleCounter++;
+
+      //if (printCycleCounter >= 2)
+      {
+        printCycleCounter = 0;
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_u16 =  (uint16_t)constrain(loadcellReading * 200, 0, 65000);
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_u16 =  (uint16_t)constrain(filteredReading * 200, 0, 65000);
+        dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_i16 =  (uint16_t)constrain(changeVelocity * 100, -32000, 32000);
 
         if(semaphore_readServoValues!=NULL)
         {
           if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
-            dap_state_st.payloadPedalState_.servoPosition_i16 = servoPos_i16;
+            dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = servoPos_i16;
+            dap_state_extended_st.payloadPedalState_Extended_.servo_voltage_0p1V =  isv57.servo_voltage_0p1V;
             xSemaphoreGive(semaphore_readServoValues);
           }
         }
@@ -771,20 +795,20 @@ void pedalUpdateTask( void * pvParameters )
           semaphore_readServoValues = xSemaphoreCreateMutex();
         }
 
-        dap_state_st.payloadPedalState_.servoPositionTarget_i16 = stepper->getCurrentPositionSteps();
+        dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPositionFromMin();
 
         
-        dap_state_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE;
-        dap_state_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
-        dap_state_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_st.payLoadHeader_)), sizeof(dap_state_st.payLoadHeader_) + sizeof(dap_state_st.payloadPedalState_));
+        dap_state_extended_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_EXTENDED;
+        dap_state_extended_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
+        dap_state_extended_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_extended_st.payLoadHeader_)), sizeof(dap_state_extended_st.payLoadHeader_) + sizeof(dap_state_extended_st.payloadPedalState_Extended_));
 
-        DAP_state_st * dap_state_st_local_ptr;
-        dap_state_st_local_ptr = &dap_state_st;
-        Serial.write((char*)dap_state_st_local_ptr, sizeof(DAP_state_st));
+        DAP_state_extended_st * dap_state_extended_st_local_ptr;
+        dap_state_extended_st_local_ptr = &dap_state_extended_st;
+        Serial.write((char*)dap_state_extended_st_local_ptr, sizeof(DAP_state_extended_st));
         Serial.print("\r\n");
       }
-      
     }
+
 
     #ifdef PRINT_USED_STACK_SIZE
       unsigned int temp2 = uxTaskGetStackHighWaterMark(nullptr);

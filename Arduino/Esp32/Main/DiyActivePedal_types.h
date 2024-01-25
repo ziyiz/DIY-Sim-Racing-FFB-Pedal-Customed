@@ -2,13 +2,14 @@
 
 #include <stdint.h>
 
+// define the payload revision
+#define DAP_VERSION_CONFIG 121
 
-#define DAP_VERSION_CONFIG 120
-
-
+// define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
 #define DAP_PAYLOAD_TYPE_ACTION 110
-#define DAP_PAYLOAD_TYPE_STATE 120
+#define DAP_PAYLOAD_TYPE_STATE_BASIC 120
+#define DAP_PAYLOAD_TYPE_STATE_EXTENDED 130
 
 struct payloadHeader {
   
@@ -31,14 +32,23 @@ struct payloadPedalAction {
   uint8_t RPM_u8;
 };
 
-struct payloadPedalState {
+
+struct payloadPedalState_Basic {
   uint16_t pedalPosition_u16;
   uint16_t pedalForce_u16;
   uint16_t joystickOutput_u16;
+};
+
+struct payloadPedalState_Extended {
+
+  uint16_t pedalForce_raw_u16;
+  uint16_t pedalForce_filtered_u16;
+  int16_t forceVel_est_i16;
 
   // register values from servo
   int16_t servoPosition_i16;
   int16_t servoPositionTarget_i16;
+  int16_t servo_voltage_0p1V;
 };
 
 struct payloadPedalConfig {
@@ -135,9 +145,15 @@ struct DAP_actions_st {
   payloadFooter payloadFooter_; 
 };
 
-struct DAP_state_st {
+struct DAP_state_basic_st {
   payloadHeader payLoadHeader_;
-  payloadPedalState payloadPedalState_;
+  payloadPedalState_Basic payloadPedalState_Basic_;
+  payloadFooter payloadFooter_; 
+};
+
+struct DAP_state_extended_st {
+  payloadHeader payLoadHeader_;
+  payloadPedalState_Extended payloadPedalState_Extended_;
   payloadFooter payloadFooter_; 
 };
 

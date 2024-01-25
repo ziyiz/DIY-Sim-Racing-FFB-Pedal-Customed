@@ -26,6 +26,7 @@
 #define reg_add_position_command_velocity_rpm 0x0049 // checked
 #define reg_add_velocity_current_given_percent 0x0080 // checked
 #define reg_add_velocity_current_feedback_percent 0x0081 // checked
+#define reg_add_voltage_0p1V 0x0140 // checked
 
 #define ref_cyclic_read_0 0x01F3
 #define ref_cyclic_read_1 0x01F4
@@ -62,6 +63,7 @@ class isv57communication {
     int16_t servo_pos_given_p = 0;
     int16_t servo_pos_error_p = 0;
     int16_t servo_current_percent = 0;
+    int16_t servo_voltage_0p1V = 0;
 
   private:
     // declare variables

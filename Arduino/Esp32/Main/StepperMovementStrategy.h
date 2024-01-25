@@ -92,8 +92,8 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   float stepperPosFraction_constrained = constrain(stepperPosFraction, 0, 1);
 
   // constrain the output to the correct positioning interval to prevent PID windup 
-  float pos_output_limit_fl32 = 1.0 - stepperPosFraction_constrained;
-  float neg_output_limit_fl32 = stepperPosFraction_constrained;
+  float neg_output_limit_fl32 = 1.0 - stepperPosFraction_constrained;
+  float pos_output_limit_fl32 = stepperPosFraction_constrained;
   if (pos_output_limit_fl32 < PID_OUTPUT_LIMIT_FL32)
   {
     myPID.SetOutputLimits(-PID_OUTPUT_LIMIT_FL32, pos_output_limit_fl32);
@@ -136,9 +136,16 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     }
     gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);
 
-    myPID.SetTunings(gain_modifier_fl32 * Kp, gain_modifier_fl32 * Ki, Kd);
+    myPID.SetTunings(gain_modifier_fl32 * Kp, gain_modifier_fl32 * Ki, gain_modifier_fl32 * Kd);
   }
-    
+  else
+  {
+    myPID.SetTunings(Kp, Ki, Kd);
+  }
+
+
+
+ 
 
 
   
@@ -151,8 +158,8 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //	https://github.com/pronenewbits/Arduino_Constrained_MPC_Library
 
 
-  Input = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
-  Setpoint = (loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
+  Input = ( loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
+  Setpoint = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
 
   // compute PID output
   myPID.Compute();
@@ -161,7 +168,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   // The setpoint comes from the force curve. The input comes from the loadcell. When the loadcell reading is below the force curve, the difference becomes positive. 
   // Thus, the stepper has to move towards the foot to increase the loadcell reading.
   // Since the QuickPID has some filtering applied on the input, both variables are changed for performance reasons.
-  float posStepperNew_fl32 = stepperPosFraction + Output;
+  float posStepperNew_fl32 = stepperPosFraction - Output;
   posStepperNew_fl32 *= (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
   posStepperNew_fl32 += calc_st->stepperPosMin;
 
@@ -186,6 +193,86 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
+
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st) {
+  
+  float stepperPosFraction = stepper->getCurrentPositionFraction();
+  
+  // clamp the stepper position to prevent problems with the spline 
+  float stepperPosFraction_constrained = stepperPosFraction;//constrain(stepperPosFraction, 0, 1);
+
+  // read target force at spline position
+  float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction_constrained);
+
+  // clip to min & max force to prevent Ki to overflow
+  float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
+  float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
+
+  
+  float loadCellErrorKg = loadCellReadingKg_clip - loadCellTargetKg_clip;
+
+  // how many mm movement to order if 1kg of error force is detected
+  // this can be tuned for responsiveness vs oscillation
+  float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
+  float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
+  float move_mm_per_kg = config_st->payLoadPedalConfig_.PID_p_gain;
+  float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+
+  // square the error to smooth minor variations
+  float loadCellErrorMultipler = loadCellErrorKg;
+
+
+
+  
+  if (loadCellErrorKg < 0.0) {
+    loadCellErrorMultipler = sq(max(-1.0f, loadCellErrorKg) / min(1.0f, loadCellTargetKg)) * -1.0;
+  } else if (loadCellErrorKg < 1.0) {
+    loadCellErrorMultipler = sq(loadCellErrorKg);
+  }
+
+  float posStepperChange_fl32 = loadCellErrorMultipler * MOVE_STEPS_FOR_1KG;
+  int32_t posStepperChange_i32 = posStepperChange_fl32;
+  int32_t posStepper = stepper->getCurrentPosition();
+  int32_t posStepperNew = posStepper + posStepperChange_i32;
+
+  bool overshoot = false;
+  do {   // check for overshoot
+    float stepperPosFractionNew = stepperPosFraction + (posStepperChange_fl32 / (float)stepper->getTravelSteps());
+    float loadCellTargetKgAtPosNew = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFractionNew);
+
+    overshoot = 
+      (loadCellTargetKg < loadCellReadingKg && loadCellReadingKg < loadCellTargetKgAtPosNew) ||
+      (loadCellTargetKg > loadCellReadingKg && loadCellReadingKg > loadCellTargetKgAtPosNew);
+
+    if (overshoot) {
+      int32_t corrected = (posStepper + posStepperNew) / 2;
+      if (corrected == posStepperNew) {
+        overshoot = false;
+      } else {
+        posStepperNew = corrected;   // and check again
+      }
+    }
+  } while (overshoot);
+
+  // clamp target position to range
+  posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
+
+
+  if (0)
+  {
+    Serial.print(loadCellErrorKg);
+    Serial.print(", ");
+    Serial.print(posStepper);
+    Serial.print(", ");
+    Serial.print(posStepperChange_fl32);
+    Serial.print(", ");
+    Serial.print(posStepperNew);
+    Serial.println("");
+  }
+
+
+  return posStepperNew;
+}
 
 
 int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32) 
@@ -289,7 +376,7 @@ int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperW
 void measureStepResponse(StepperWithLimits* stepper, const DAP_calculationVariables_st* calc_st, const DAP_config_st* config_st, const LoadCell_ADS1256* loadcell)
 {
 
-  int32_t currentPos = stepper->getCurrentPositionSteps();
+  int32_t currentPos = stepper->getCurrentPositionFromMin();
   int32_t minPos = currentPos - dap_calculationVariables_st.stepperPosRange * 0.05;
   int32_t maxPos = currentPos + dap_calculationVariables_st.stepperPosRange * 0.05;
 

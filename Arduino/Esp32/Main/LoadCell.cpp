@@ -121,7 +121,7 @@ void LoadCell_ADS1256::estimateVariance() {
   if (varEstimate < LOADCELL_VARIANCE_MIN) { 
     varEstimate = LOADCELL_VARIANCE_MIN;
   }
-  varEstimate *= 9;
+  varEstimate *= 9; // The variance is 1*sigma --> to make it 3*sigma, we have to multiply by 3*3
 
   _varianceEstimate = varEstimate;
 

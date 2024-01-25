@@ -536,17 +536,17 @@ namespace User.PluginSdkDemo
         }
 
 
-        public DAP_state_st getStateFromBytes(byte[] myBuffer)
+        public DAP_state_basic_st getStateFromBytes(byte[] myBuffer)
         {
-            DAP_state_st aux;
+            DAP_state_basic_st aux;
 
             // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
-            int size = Marshal.SizeOf(typeof(DAP_state_st));
+            int size = Marshal.SizeOf(typeof(DAP_state_basic_st));
             IntPtr ptr = Marshal.AllocHGlobal(size);
 
             Marshal.Copy(myBuffer, 0, ptr, size);
 
-            aux = (DAP_state_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_st));
+            aux = (DAP_state_basic_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_basic_st));
             Marshal.FreeHGlobal(ptr);
 
             return aux;
@@ -2005,14 +2005,14 @@ namespace User.PluginSdkDemo
 
 
                                 // check for pedal state struct
-                                if ((dataToSend.Length == sizeof(DAP_state_st)))
+                                if ((dataToSend.Length == sizeof(DAP_state_basic_st)))
                                 {
 
                                     // transform string into byte
                                     fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
                                     {
                                         // create a fixed size buffer
-                                        int length = sizeof(DAP_state_st);
+                                        int length = sizeof(DAP_state_basic_st);
                                         byte[] newBuffer_state_2 = new byte[length];
 
                                         // copy the received bytes into byte array
@@ -2022,22 +2022,22 @@ namespace User.PluginSdkDemo
                                         }
 
                                         // parse byte array as config struct
-                                        DAP_state_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
+                                        DAP_state_basic_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
 
                                         // check whether receive struct is plausible
-                                        DAP_state_st* v_state = &pedalState_read_st;
+                                        DAP_state_basic_st* v_state = &pedalState_read_st;
                                         byte* p_state = (byte*)v_state;
 
                                         // payload type check
                                         bool check_payload_state_b = false;
-                                        if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
+                                        if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStateBasicPayload_type)
                                         {
                                             check_payload_state_b = true;
                                         }
 
                                         // CRC check
                                         bool check_crc_state_b = false;
-                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
+                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Basic)) == pedalState_read_st.payloadFooter_.checkSum)
                                         {
                                             check_crc_state_b = true;
                                         }
@@ -2053,15 +2053,15 @@ namespace User.PluginSdkDemo
 
                                                     case 0:
                                                         //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);	// HID_USAGES Enums
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);	// HID_USAGES Enums
                                                         break;
                                                     case 1:
                                                         //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);	// HID_USAGES Enums
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);	// HID_USAGES Enums
                                                         break;
                                                     case 2:
                                                         //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);	// HID_USAGES Enums
+                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);	// HID_USAGES Enums
                                                         break;
                                                     default:
                                                         break;
@@ -2083,13 +2083,21 @@ namespace User.PluginSdkDemo
                                                         // Write the content to the file
                                                         writeCntr++;
                                                         writer.Write(writeCntr);
+                                                        //writer.Write(", ");
+                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_raw_u16);
+                                                        //writer.Write(", ");
+                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_filtered_u16);
+                                                        //writer.Write(", ");
+                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.forceVel_est_i16);
                                                         writer.Write(", ");
-                                                        writer.Write(pedalState_read_st.payloadPedalState_.pedalForce_u16);
+                                                        writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16);
+                                                        //writer.Write(", ");
+                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.servoPositionTarget_i16);
                                                         writer.Write(", ");
-                                                        writer.Write(pedalState_read_st.payloadPedalState_.servoPositionTarget_i16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_read_st.payloadPedalState_.servoPosition_i16);
-                                                        writer.Write("\n");
+                                                        writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16);
+                                                        //writer.Write(", ");
+                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.servo_voltage_0p1V_i16);
+                                                        //writer.Write("\n");
                                                     }
                                                 }
                                             }
@@ -2113,18 +2121,18 @@ namespace User.PluginSdkDemo
 
                                                 if (debug_flag)
                                                 {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
+                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                                    Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
                                                     
                                                     Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
                                                     Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
-                                                    text_state.Text = Math.Round( pedalState_read_st.payloadPedalState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
+                                                    text_state.Text = Math.Round( pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
 
                                                 }
                                                 else
                                                 {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    int round_x = (int)(100 * pedalState_read_st.payloadPedalState_.pedalPosition_u16 / control_rect_value_max)-1;
+                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                                    int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max)-1;
                                                     int x_showed = round_x + 1;
                                                     round_x = Math.Max(0, Math.Min(round_x, 99));
                                                     Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
@@ -2145,7 +2153,7 @@ namespace User.PluginSdkDemo
                                 // decode into config struct
                                 if ((waiting_for_pedal_config[pedalSelected]) && (dataToSend.Length == sizeof(DAP_config_st)))
                                 {
-                                    DAP_config_st tmp;
+                                    //DAP_config_st tmp;
 
 
                                     // transform string into byte
