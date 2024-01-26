@@ -361,7 +361,7 @@ namespace User.PluginSdkDemo
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
+            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             text_min_force.Foreground = btn_update.Background;
@@ -3173,7 +3173,7 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
+            btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Opacity = 1;
             //text_state.Visibility = Visibility.Hidden;
@@ -3190,7 +3190,7 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
+            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Opacity = 0;
             //text_state.Visibility = Visibility.Visible;
@@ -3456,6 +3456,68 @@ namespace User.PluginSdkDemo
             text_BP.Visibility = Visibility.Hidden;
             rect_BP_Control.Visibility = Visibility.Hidden;
             checkbox_enable_bite_point.Content = "Bite Point Vibration Disabled";
+
+
+        }
+
+        private void btn_reset_default_Click(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = 35;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = 90;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 20;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 40;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 60;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = 5;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = 20;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_AC = 150;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.horPos_AB = 215;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.verPos_AB = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_CB = 200;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = 40;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = 10;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = 30;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value = 50;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = 1;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = 15;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = 100;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = 0.3f;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = 50.0f;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = 0.0f;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 0;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = 150;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+            updateTheGuiFromConfig();
+
 
 
         }

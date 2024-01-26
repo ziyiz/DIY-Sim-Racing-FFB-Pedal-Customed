@@ -451,7 +451,7 @@
                 <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <styles:SHButtonPrimary x:Name="btn_pedal_disconnect" Click="DisconnectToPedal_click" Width="160"  Content="Disconnect from Pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
+                <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <!--<styles:SHButtonPrimary x:Name="dump_pedal_response_to_file" Click="dump_pedal_response_to_file_click" Width="160"  Content="Dump pedal resonse to file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" FontSize="8" />-->
                 <CheckBox x:Name="dump_pedal_response_to_file" Width="156" Height="34" Content="Dump pedal resonse to file" Foreground="White" Checked="dump_pedal_response_to_file_checked" Unchecked="dump_pedal_response_to_file_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
 
