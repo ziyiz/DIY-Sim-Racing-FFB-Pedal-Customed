@@ -238,7 +238,7 @@ double StepperWithLimits::getCurrentPositionFraction() const {
 }
 
 double StepperWithLimits::getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const {
-  return double(extPos_i32) / getTravelSteps();
+  return (double(extPos_i32) - _posMin)/ getTravelSteps();
 }
 
 int32_t StepperWithLimits::getTargetPositionSteps() const {

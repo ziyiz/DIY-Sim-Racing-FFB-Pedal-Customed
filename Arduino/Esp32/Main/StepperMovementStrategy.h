@@ -196,30 +196,36 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st) {
   
-    
-    // Find the intersection of two lines#
-    // 1st line beeing the kg/steps controll loop line: y1 = m1 * x + b1
-    // 2nd line beeing the derivative of the force curve spline: y2 = m2 * x * b2
-    // solve for x while y1 = y2 gives the intersection of the line
-    // x = ( b2 - b1 ) / ( m1 - m2)
-    
-    // where x is = x_0 + delta_x
-    
-    float stepperPos = stepper->getCurrentPosition();
-    float stepperPosFraction = stepper->getCurrentPositionFraction();
-    
+  // Find the intersection of two lines
+  // 1st line beeing the kg/steps controll loop line: y1 = m1 * x + b1
+  // 2nd line beeing the derivative of the force curve spline: y2 = m2 * x * b2
+  // solve for x while y1 = y2 gives the intersection of the line
+  // x = ( b2 - b1 ) / ( m1 - m2)
+  
+  // where x is = x_0 + delta_x
+  
+  float stepperPos = stepper->getCurrentPosition();
+  float stepperPos_initial = stepperPos;
+
+  // Find the intersections of the force curve and the foot model via Newtons-method
+  #define MAX_NUMBER_OF_NEWTON_STEPS 5
+  for (uint8_t iterationIdx = 0; iterationIdx < MAX_NUMBER_OF_NEWTON_STEPS; iterationIdx++)
+  {
+    //float stepperPosFraction = stepper->getCurrentPositionFraction();
+    float stepperPosFraction = stepper->getCurrentPositionFractionFromExternalPos( stepperPos );
+  
     // clamp the stepper position to prevent problems with the spline
     float x_0 = constrain(stepperPosFraction, 0, 1);
     
+    // get force and force gradient of force vs travel curve
     float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, x_0);
     float gradient_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, false);
-    
     
     // how many mm movement to order if 1kg of error force is detected
     // this can be tuned for responsiveness vs oscillation
     float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
-    float move_mm_per_kg = 5.0 * config_st->payLoadPedalConfig_.PID_p_gain;
+    float move_mm_per_kg = 0.5 * config_st->payLoadPedalConfig_.PID_p_gain;
     float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
     
     float m1 = -1000;
@@ -230,121 +236,19 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     
     float m2 = gradient_force_curve_fl32;
     
-    // b = intersection with y-axis
-    // y = m1 * x  + b
-    // with x = 0
-    // --> b = y - m1 * x
-    float b1 = loadCellReadingKg - m1 * stepperPos;
-    float b2 = loadCellTargetKg - m2 * stepperPos;
-    
-    float nom = b2 - b1;
+    // Newton update
     float denom = m1 - m2;
-    
-    float x_new = stepperPos;
-    if (fabs(denom) > 0)
+    if ( fabs(denom) > 0 )
     {
-        x_new = ( nom ) / ( denom );
+      stepperPos -= ( loadCellReadingKg - loadCellTargetKg) / ( denom );
     }
-    
-    int32_t posStepperNew = x_new;
-    
-    
-    
-    
-  if (0)
-  {
-    Serial.print(b1);
-    Serial.print(", ");
-    Serial.print(b2);
-    Serial.print(", ");
-    Serial.print(m1);
-    Serial.print(", ");
-    Serial.print(m2);
-    Serial.print(", ");
-    Serial.print(stepperPos);
-    Serial.print(", ");
-    Serial.print(posStepperNew);
-    Serial.println("");
   }
-
     
-    
- 
-    
-    
-    
-  /*
-  float stepperPosFraction = stepper->getCurrentPositionFraction();
-  
-  // clamp the stepper position to prevent problems with the spline 
-  float stepperPosFraction_constrained = stepperPosFraction;//constrain(stepperPosFraction, 0, 1);
-
-  // read target force at spline position
-  float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction_constrained);
-
-  // clip to min & max force to prevent Ki to overflow
-  float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
-  float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
-
-  
-  float loadCellErrorKg = loadCellReadingKg_clip - loadCellTargetKg_clip;
-
-  
-
-  // square the error to smooth minor variations
-  float loadCellErrorMultipler = loadCellErrorKg;
-
-
-
-  
-  if (loadCellErrorKg < 0.0) {
-    loadCellErrorMultipler = sq(max(-1.0f, loadCellErrorKg) / min(1.0f, loadCellTargetKg)) * -1.0;
-  } else if (loadCellErrorKg < 1.0) {
-    loadCellErrorMultipler = sq(loadCellErrorKg);
-  }
-
-  float posStepperChange_fl32 = loadCellErrorMultipler * MOVE_STEPS_FOR_1KG;
-  int32_t posStepperChange_i32 = posStepperChange_fl32;
-  int32_t posStepper = stepper->getCurrentPosition();
-  int32_t posStepperNew = posStepper + posStepperChange_i32;
-
-  bool overshoot = false;
-  do {   // check for overshoot
-    float stepperPosFractionNew = stepperPosFraction + (posStepperChange_fl32 / (float)stepper->getTravelSteps());
-    float loadCellTargetKgAtPosNew = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFractionNew);
-
-    overshoot = 
-      (loadCellTargetKg < loadCellReadingKg && loadCellReadingKg < loadCellTargetKgAtPosNew) ||
-      (loadCellTargetKg > loadCellReadingKg && loadCellReadingKg > loadCellTargetKgAtPosNew);
-
-    if (overshoot) {
-      int32_t corrected = (posStepper + posStepperNew) / 2;
-      if (corrected == posStepperNew) {
-        overshoot = false;
-      } else {
-        posStepperNew = corrected;   // and check again
-      }
-    }
-  } while (overshoot);
-   
-   */
+  float deltaMax = 0.5 * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
+  int32_t posStepperNew = constrain(stepperPos, stepperPos_initial-deltaMax, stepperPos_initial+deltaMax );
 
   // clamp target position to range
   posStepperNew = constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
-
-
-  /*if (0)
-  {
-    Serial.print(loadCellErrorKg);
-    Serial.print(", ");
-    Serial.print(posStepper);
-    Serial.print(", ");
-    Serial.print(posStepperChange_fl32);
-    Serial.print(", ");
-    Serial.print(posStepperNew);
-    Serial.println("");
-  }*/
-
 
   return posStepperNew;
 }
