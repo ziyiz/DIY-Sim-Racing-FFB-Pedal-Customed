@@ -196,6 +196,63 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st) {
   
+    
+    // Find the intersection of two lines#
+    // 1st line beeing the kg/steps controll loop line: y1 = m1 * x + b1
+    // 2nd line beeing the derivative of the force curve spline: y2 = m2 * x * b2
+    // solve for x while y1 = y2 gives the intersection of the line
+    // x = ( b2 - b1 ) / ( m1 - m2)
+    
+    // where x is = x_0 + delta_x
+    
+    float stepperPos = stepper->getCurrentPosition()
+    float stepperPosFraction = stepper->getCurrentPositionFraction();
+    
+    // clamp the stepper position to prevent problems with the spline
+    float x_0 = constrain(stepperPosFraction, 0, 1);
+    
+    float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, x_0);
+    float gradient_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, false);
+    
+    
+    // how many mm movement to order if 1kg of error force is detected
+    // this can be tuned for responsiveness vs oscillation
+    float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
+    float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
+    float move_mm_per_kg = config_st->payLoadPedalConfig_.PID_p_gain;
+    float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+    
+    float m1 = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
+    float m2 = gradient_force_curve_fl32;
+    
+    // b = intersection with y-axis
+    // y = m1 * x  + b
+    // with x = 0
+    // --> b = y - m1 * x
+    float b1 = loadCellReadingKg - m1 * stepperPos;
+    float b2 = loadCellTargetKg - m2 * stepperPos;
+    
+    float nom = b2 - b1;
+    float denom = m1 - m2;
+    
+    float x_new = stepperPos;
+    if (fabs(denom) > 0)
+    {
+        x_new = ( nom ) / ( denom );
+    }
+    
+    int32_t posStepperNew = x_new;
+    
+    
+    
+    
+    
+    
+ 
+    
+    
+    
+  /*
   float stepperPosFraction = stepper->getCurrentPositionFraction();
   
   // clamp the stepper position to prevent problems with the spline 
@@ -211,12 +268,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   
   float loadCellErrorKg = loadCellReadingKg_clip - loadCellTargetKg_clip;
 
-  // how many mm movement to order if 1kg of error force is detected
-  // this can be tuned for responsiveness vs oscillation
-  float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
-  float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
-  float move_mm_per_kg = config_st->payLoadPedalConfig_.PID_p_gain;
-  float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+  
 
   // square the error to smooth minor variations
   float loadCellErrorMultipler = loadCellErrorKg;
@@ -253,12 +305,14 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       }
     }
   } while (overshoot);
+   
+   */
 
   // clamp target position to range
-  posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
+  posStepperNew = constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
 
 
-  if (0)
+  /*if (0)
   {
     Serial.print(loadCellErrorKg);
     Serial.print(", ");
@@ -268,7 +322,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     Serial.print(", ");
     Serial.print(posStepperNew);
     Serial.println("");
-  }
+  }*/
 
 
   return posStepperNew;
