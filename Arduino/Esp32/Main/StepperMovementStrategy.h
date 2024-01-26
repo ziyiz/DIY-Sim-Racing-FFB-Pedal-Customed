@@ -125,7 +125,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   {
     float gradient_orig_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction_constrained, true); // determine gradient to modify the PID gain. The steeper the gradient, the less gain should be used
 
-    /*// normalize gradient
+    // normalize gradient
     float gradient_fl32 = gradient_orig_fl32;
     float gradient_abs_fl32 = fabs(gradient_fl32);
 
@@ -134,9 +134,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     {
        gain_modifier_fl32 = 1.0 / pow( gradient_abs_fl32 , 1);
     }
-    gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);*/
-
-    float gain_modifier_fl32 = constrain(gradient_orig_fl32, 0.1, 1);
+    gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);
 
     myPID.SetTunings(gain_modifier_fl32 * Kp, gain_modifier_fl32 * Ki, gain_modifier_fl32 * Kd);
   }
@@ -215,6 +213,9 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   
   // get current stepper position
   float stepperPos = stepper->getCurrentPosition();
+
+  // add velocity feedforward
+  stepperPos += changeVelocity * config_st->payLoadPedalConfig_.PID_velocity_feedforward_gain;
 
   // set initial guess
   float stepperPos_initial = stepperPos;
