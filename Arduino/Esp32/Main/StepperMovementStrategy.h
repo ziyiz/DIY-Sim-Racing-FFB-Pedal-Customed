@@ -205,7 +205,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     
     // where x is = x_0 + delta_x
     
-    float stepperPos = stepper->getCurrentPosition()
+    float stepperPos = stepper->getCurrentPosition();
     float stepperPosFraction = stepper->getCurrentPositionFraction();
     
     // clamp the stepper position to prevent problems with the spline
@@ -222,7 +222,12 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float move_mm_per_kg = config_st->payLoadPedalConfig_.PID_p_gain;
     float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
     
-    float m1 = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
+    float m1 = -1000;
+    if (MOVE_STEPS_FOR_1KG > 0)
+    {
+      float m1 = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
+    }
+    
     float m2 = gradient_force_curve_fl32;
     
     // b = intersection with y-axis
@@ -246,6 +251,22 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     
     
     
+  if (1)
+  {
+    Serial.print(b1);
+    Serial.print(", ");
+    Serial.print(b2);
+    Serial.print(", ");
+    Serial.print(m1);
+    Serial.print(", ");
+    Serial.print(m2);
+    Serial.print(", ");
+    Serial.print(stepperPos);
+    Serial.print(", ");
+    Serial.print(posStepperNew);
+    Serial.println("");
+  }
+
     
     
  
