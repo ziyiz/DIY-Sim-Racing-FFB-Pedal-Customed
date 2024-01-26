@@ -125,7 +125,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   {
     float gradient_orig_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction_constrained, true); // determine gradient to modify the PID gain. The steeper the gradient, the less gain should be used
 
-    // normalize gradient
+    /*// normalize gradient
     float gradient_fl32 = gradient_orig_fl32;
     float gradient_abs_fl32 = fabs(gradient_fl32);
 
@@ -134,7 +134,9 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     {
        gain_modifier_fl32 = 1.0 / pow( gradient_abs_fl32 , 1);
     }
-    gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);
+    gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);*/
+
+    float gain_modifier_fl32 = constrain(gradient_orig_fl32, 0.1, 1);
 
     myPID.SetTunings(gain_modifier_fl32 * Kp, gain_modifier_fl32 * Ki, gain_modifier_fl32 * Kd);
   }
@@ -194,17 +196,27 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity) {
   
-  // Find the intersection of two lines
-  // 1st line beeing the kg/steps controll loop line: y1 = m1 * x + b1
-  // 2nd line beeing the derivative of the force curve spline: y2 = m2 * x * b2
-  // solve for x while y1 = y2 gives the intersection of the line
-  // x = ( b2 - b1 ) / ( m1 - m2)
+  /*
+  This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
+  The force resulting from that model is F1 = k1 * x. 
+  To find the servo target position:
+  1) A line with the slope -k1 at the point of the loadcell reading & current position is drawn.
+  2) The intersection with the force-travel curve gives the target position
   
-  // where x is = x_0 + delta_x
+  Since the force-travel curve might be non-linear, Newtons method is used to numerically find the intersection point.
+  f(x_n) = -k1 * x + b - forceCurve(x) = 0
+  x_n+1 = x_n - f(x_n) / f'(x_n)
+  whereas x_n is the servo position at iteration n
+  f(x_n) = -k1 * x + b - forceCurve(x)
+  f'(x_n) = -k1 - d(forceCurve(x)) / dx
+  */
   
+  // get current stepper position
   float stepperPos = stepper->getCurrentPosition();
+
+  // set initial guess
   float stepperPos_initial = stepperPos;
 
   // Find the intersections of the force curve and the foot model via Newtons-method
@@ -220,13 +232,22 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // get force and force gradient of force vs travel curve
     float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, x_0);
     float gradient_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, false);
-    
+
+    // apply effect force offset
+    loadCellTargetKg -=absForceOffset_fl32;
+
     // how many mm movement to order if 1kg of error force is detected
     // this can be tuned for responsiveness vs oscillation
     float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
     float move_mm_per_kg = 0.5 * config_st->payLoadPedalConfig_.PID_p_gain;
     float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+
+    // make stiffness dependent on force curve gradient
+    // less steps per kg --> steeper line
+    float gradient_normalized_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, true);
+    gradient_normalized_force_curve_fl32 = constrain(gradient_normalized_force_curve_fl32, 0.05, 1);
+    MOVE_STEPS_FOR_1KG *= gradient_normalized_force_curve_fl32;
     
     float m1 = -1000;
     if (MOVE_STEPS_FOR_1KG > 0)
@@ -244,6 +265,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     }
   }
     
+  // limit the position update
   float deltaMax = 0.5 * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
   int32_t posStepperNew = constrain(stepperPos, stepperPos_initial-deltaMax, stepperPos_initial+deltaMax );
 

@@ -9,6 +9,7 @@
 #define DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS 16
 #define DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT 32
 #define DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT 64
+#define DEBUG_INFO_0_CONTROL_LOOP_ALGO 128
 
 bool resetServoEncoder = true;
 bool isv57LifeSignal_b = false;
@@ -624,8 +625,18 @@ void pedalUpdateTask( void * pvParameters )
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
-    int32_t Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
-    //int32_t Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st);
+    int32_t Position_Next = 0;
+
+    // select control loop algo
+    if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_CONTROL_LOOP_ALGO) 
+    {
+      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
+    }
+    else
+    {
+      Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
+    }
+    
 
 
     //#define DEBUG_STEPPER_POS
