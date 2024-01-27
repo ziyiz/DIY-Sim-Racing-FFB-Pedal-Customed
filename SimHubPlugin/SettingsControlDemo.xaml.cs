@@ -269,84 +269,79 @@ namespace User.PluginSdkDemo
 
         private bool isDragging = false;
         private Point offset;
-       
+
+        public void DAP_config_set_default(uint pedalIdx)
+        {
+            dumpPedalToResponseFile[pedalIdx] = false;
+            dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+            dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 90;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p040 = 40;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p060 = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p080 = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p100 = 100;
+            dap_config_st[pedalIdx].payloadPedalConfig_.dampingPress = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.dampingPull = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
+            dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
+            dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
+            dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger_value = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_amp = 1;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
+            dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.3f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+        }
 
 
         public SettingsControlDemo()
         {
 
-            
-
-
-
-
-
-
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                dumpPedalToResponseFile[pedalIdx] = false;
 
 
-                dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
-                dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
-                dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 90;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p040 = 40;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p060 = 60;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p080 = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p100 = 100;
-                dap_config_st[pedalIdx].payloadPedalConfig_.dampingPress = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.dampingPull = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
-                dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
-                dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
-                dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger= 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value= 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger_value = 50;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_amp = 1;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
-                dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
-
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.3f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
-
-
+                DAP_config_set_default(pedalIdx);
                 InitializeComponent();
 
                
@@ -450,9 +445,12 @@ namespace User.PluginSdkDemo
             text_bite_freq_text.Foreground = btn_update.Background;
             Line_H_bite_amp.Stroke = btn_update.Background;
             Line_H_bite_freq.Stroke = btn_update.Background;
-            
 
-            
+            Line_G_force_multi.Stroke = btn_update.Background;
+            text_G_force_multi_text.Foreground = btn_update.Background;
+            text_G_multi.Foreground = btn_update.Background;
+            rect_G_force_multi.Fill = btn_update.Background;
+
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -1066,6 +1064,13 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
             Canvas.SetTop(text_VFgain, 5);
 
+            //G force multiplier slider
+            double G_force_multi_max = 100;
+            dx = canvas_horz_G_force_multi.Width / G_force_multi_max;
+            Canvas.SetLeft(rect_G_force_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi);
+            text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
+            Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
+            Canvas.SetTop(text_G_multi, 5);
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -1126,6 +1131,26 @@ namespace User.PluginSdkDemo
                 text_BP.Visibility = Visibility.Hidden;
                 rect_BP_Control.Visibility = Visibility.Hidden;
                 checkbox_enable_bite_point.Content = "Bite Point Vibration Disabled";
+            }
+
+            if (indexOfSelectedPedal_u == 1)
+            {
+                checkbox_enable_G_force.IsEnabled = true;
+                if (Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] == 1)
+                {
+                    checkbox_enable_G_force.IsChecked = true;
+                    checkbox_enable_G_force.Content = "G Force Effect Enabled";
+                }
+                else
+                {
+                    checkbox_enable_G_force.IsChecked = false;
+                    checkbox_enable_G_force.Content = "G Force Effect Disabled";
+                }
+            }
+            else
+            {
+                checkbox_enable_G_force.IsEnabled = false;
+                checkbox_enable_G_force.Content = "G Force Effect Disabled";
             }
 
 
@@ -3140,6 +3165,24 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
+                if (rectangle.Name == "rect_G_force_multi")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_G_force_multi).X - offset.X;
+                    double G_force_max = 100;
+                    double dx = canvas_horz_G_force_multi.Width / G_force_max;
+                    double min_position = 0 * dx;
+                    double max_position = G_force_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = Convert.ToByte(actual_x);
+                    text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
+                    Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
+                    Canvas.SetTop(text_G_multi, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
             }
         }
         private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -3462,62 +3505,21 @@ namespace User.PluginSdkDemo
 
         private void btn_reset_default_Click(object sender, RoutedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = 35;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = 90;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 20;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 40;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 60;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = 5;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = 20;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_AC = 150;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.horPos_AB = 215;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.verPos_AB = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_CB = 200;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = 40;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = 10;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = 30;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value = 50;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = 1;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = 15;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = 100;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = 128;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = 0.3f;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = 50.0f;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = 0.0f;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 0;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = 150;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
-
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+            DAP_config_set_default(indexOfSelectedPedal_u);
             updateTheGuiFromConfig();
+        }
 
+        private void checkbox_enable_G_force_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] = 0;
+            checkbox_enable_G_force.Content = "G Force Effect Disabled";
+
+
+        }
+        private void checkbox_enable_G_force_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] = 1;
+            checkbox_enable_G_force.Content = "G Force Effect Enabled";
 
 
         }
