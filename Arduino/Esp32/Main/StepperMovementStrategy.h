@@ -241,7 +241,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // this can be tuned for responsiveness vs oscillation
     float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
-    float move_mm_per_kg = 0.5 * config_st->payLoadPedalConfig_.PID_p_gain;
+    float move_mm_per_kg = 0.5 * config_st->payLoadPedalConfig_.MPC_0th_order_gain;
     float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
 
     // make stiffness dependent on force curve gradient

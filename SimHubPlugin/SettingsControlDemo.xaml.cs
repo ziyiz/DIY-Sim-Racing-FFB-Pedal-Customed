@@ -825,15 +825,23 @@ namespace User.PluginSdkDemo
             {
                 Simulate_ABS_check.IsChecked = false;
             }
-            // dynamic PID checkbox
+
+
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 0)
+            {
+                ControlStrategy_Sel_1.IsChecked = true;
+            }
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 1)
             {
-                dynamic_PID_checkbox.IsChecked = true;
+                ControlStrategy_Sel_2.IsChecked = true;
             }
-            else
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 2)
             {
-                dynamic_PID_checkbox.IsChecked = false;
+                ControlStrategy_Sel_3.IsChecked = true;
             }
+
+
+
             //set control point position
             text_point_pos.Opacity = 0;
             double control_rect_value_max = 100;
@@ -1063,6 +1071,15 @@ namespace User.PluginSdkDemo
             text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
             Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
             Canvas.SetTop(text_VFgain, 5);
+
+            //MPC 0th order gain slider
+            value_max = 4;
+            dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
+            Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
+            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
+            Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - rect_MPC_0th_order_gain.Width / 2);
+            Canvas.SetTop(text_MPC_0th_order_gain, 5);
+
 
             //G force multiplier slider
             double G_force_multi_max = 100;
@@ -3183,6 +3200,26 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
+
+                //MPC 0th order gain
+                if (rectangle.Name == "rect_MPC_0th_order_gain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 4;
+                    double x = e.GetPosition(canvas_horz_MPC_0th_order_gain).X - offset.X;
+                    double dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
+                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4);
+                    Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
+                    Canvas.SetTop(text_MPC_0th_order_gain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
             }
         }
         private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -3194,16 +3231,6 @@ namespace User.PluginSdkDemo
                 rectangle.ReleaseMouseCapture();
                 text_point_pos.Opacity=0;
             }
-        }
-        private void PID_type_checkbox_Checked(object sender, RoutedEventArgs e)
-        {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = (byte)1;
-            TextBox_debugOutput.Text = "Dynamic PID on";
-        }
-        private void PID_type_checkbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = (byte)0;
-            TextBox_debugOutput.Text = "Dynamic PID off";
         }
         private void Debug_checkbox_Checked(object sender, RoutedEventArgs e)
         {
@@ -3527,9 +3554,26 @@ namespace User.PluginSdkDemo
         // for ocntrol strategy
         private void StrategySel(object sender, RoutedEventArgs e)
         {
+            if (ControlStrategy_Sel_1.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 0;
+            }
+
+            if (ControlStrategy_Sel_2.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 1;
+            }
+
+            if (ControlStrategy_Sel_3.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 2;
+            }
 
         }
 
+
+
+        
 
         /*
 private void GetRectanglePositions()

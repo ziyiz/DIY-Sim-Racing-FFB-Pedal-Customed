@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 122;
+    public const uint pedalConfigPayload_version = 123;
 
 
     // pyload types
@@ -139,6 +139,13 @@ public struct payloadPedalConfig
     public float PID_i_gain;
     public float PID_d_gain;
     public float PID_velocity_feedforward_gain;
+
+    // MPC settings
+    public float MPC_0th_order_gain;
+    public float MPC_1st_order_gain;
+    public float MPC_2nd_order_gain;
+
+
 
     public byte control_strategy_b;
 

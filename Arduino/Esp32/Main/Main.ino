@@ -636,14 +636,17 @@ void pedalUpdateTask( void * pvParameters )
     int32_t Position_Next = 0;
 
     // select control loop algo
-    if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_CONTROL_LOOP_ALGO) 
-    {
-      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
-    }
-    else
+    if (dap_config_st.payLoadPedalConfig_.control_strategy_b <= 1)
     {
       Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
     }
+       
+    if (dap_config_st.payLoadPedalConfig_.control_strategy_b == 2) 
+    {
+      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
+    }
+
+    
     
 
 

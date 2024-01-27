@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 122
+#define DAP_VERSION_CONFIG 123
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -113,6 +113,11 @@ struct payloadPedalConfig {
   float PID_i_gain;
   float PID_d_gain;
   float PID_velocity_feedforward_gain;
+
+  // MPC settings
+  float MPC_0th_order_gain;
+  float MPC_1st_order_gain;
+  float MPC_2nd_order_gain;
 
   uint8_t control_strategy_b;
 

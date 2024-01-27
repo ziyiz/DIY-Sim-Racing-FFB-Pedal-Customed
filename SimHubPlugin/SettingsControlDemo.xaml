@@ -454,7 +454,7 @@
                 <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <!--<styles:SHButtonPrimary x:Name="dump_pedal_response_to_file" Click="dump_pedal_response_to_file_click" Width="160"  Content="Dump pedal resonse to file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" FontSize="8" />-->
-                
+
 
                 <!-- PID sliders -->
             </StackPanel>
@@ -870,7 +870,7 @@
                 </TabItem>
 
 
-            
+
 
 
             </TabControl>
@@ -922,8 +922,7 @@
                                 <Label Content="General Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                                <CheckBox x:Name="dynamic_PID_checkbox" Width="150" Height="34" Content="Dynamic PID control" Foreground="White" Checked="PID_type_checkbox_Checked" Unchecked="PID_type_checkbox_Unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Margin="70,0,0,0" Background="#7F4E4E4E"/>
-                                <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
+                                <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="65,0,0,0" />
                                 <CheckBox x:Name="InvertLoadcellReading_check" Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="34" Width="156"/>
                             </StackPanel>
                             <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
@@ -968,7 +967,7 @@
 
                             </Canvas>
                             <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
-                                
+
                                 <Canvas x:Name="canvas_horz_LC_rating" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="65,0,0,0" >
                                     <Canvas.RenderTransform>
                                         <TransformGroup>
@@ -1051,6 +1050,84 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
+
+
+                <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="100" Height="30" Margin="0,0,0,0" >
+                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        </Border>
+                    </TabItem.Header>
+
+                    <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
+                                <Label Content="Control Strategy:"  FontFamily="Arial Black" FontSize="12" Height="20" Width="119.8" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" UseLayoutRounding="True" Margin="70,0,0,0"  />
+                            </StackPanel>
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="20">
+
+                                <RadioButton x:Name="ControlStrategy_Sel_1" Content="Static PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="70,0,0,0" BorderThickness="0,0,0,0"/>
+                                <RadioButton x:Name="ControlStrategy_Sel_2" Content="Dynamic PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0"/>
+                                <RadioButton x:Name="ControlStrategy_Sel_3" Content="MPC based control" GroupName="StrategySel_options" Checked="StrategySel" Width="125" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" Padding="6,0,0,0"/>
+
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </TabItem>
+
+                <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="100" Height="30" Margin="0,0,0,0" >
+                            <Label Content="Filter"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        </Border>
+                    </TabItem.Header>
+                    <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                            <StackPanel Height="20" Width="540" Orientation="Horizontal">
+                                <Label Content="Denoise Filter" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                            </StackPanel>
+                            <Canvas x:Name="canvas_horz_KF" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,0,0,0" >
+                                <Canvas.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+
+                                </Canvas.RenderTransform>
+                                <TextBlock x:Name="text_KF" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="1" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="20" Text="KF:">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="0"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform></TextBlock>
+                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoise Factor KF" Canvas.Left="0" Margin="140,0,0,0">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="0"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform></TextBlock>
+
+
+                                <Line x:Name="Line_H_KF"
+                                    X1="5" Y1="20"
+                                    X2="405" Y2="20"
+                                    Stroke="#7F87CEFA"
+                                    StrokeThickness="2" />
+                                <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+
+                            </Canvas>
+                        </StackPanel>
+                    </Border>
+                </TabItem>
+
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
@@ -1221,18 +1298,27 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
+
+
+
+
+
+
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Filter"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="MPC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
+
+
                     <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
                         <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
-                                <Label Content="Denoise Filter" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                                <Label Content="MPC gain tuning" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
-                            <Canvas x:Name="canvas_horz_KF" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,0,0,0" >
+
+                            <Canvas x:Name="canvas_horz_MPC_0th_order_gain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -1242,7 +1328,7 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_KF" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="1" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="20" Text="KF:">
+                                <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="0th order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1250,8 +1336,9 @@
                                             <RotateTransform Angle="0"/>
                                             <TranslateTransform/>
                                         </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
-                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoise Factor KF" Canvas.Left="0" Margin="140,0,0,0">
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="0th order gain" Width="66" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="170">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1259,43 +1346,24 @@
                                             <RotateTransform Angle="0"/>
                                             <TranslateTransform/>
                                         </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
 
-
-                                <Line x:Name="Line_H_KF"
+                                <Line x:Name="Line_H_MPC_0th_order_gain"
                                     X1="5" Y1="20"
                                     X2="405" Y2="20"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <Rectangle x:Name="rect_MPC_0th_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
                             </Canvas>
+
+
                         </StackPanel>
                     </Border>
+
                 </TabItem>
-                
-                <TabItem Width="100" Height="30" Padding="0,0,0,0">
-                    <TabItem.Header>
-                        <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
-                        </Border>
-                    </TabItem.Header>
-                    
-                    <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
-                                <Label Content="Control Strategy:"  FontFamily="Arial Black" FontSize="12" Height="20" Width="119.8" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" UseLayoutRounding="True" Margin="70,0,0,0"  />
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="20">
-                                
-                                <RadioButton x:Name="ControlStrategy_Sel_1" Content="Static PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="70,0,0,0" BorderThickness="0,0,0,0"/>
-                                <RadioButton x:Name="ControlStrategy_Sel_2" Content="Dynamic PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0"/>
-                                <RadioButton x:Name="ControlStrategy_Sel_3" Content="MPC based control" GroupName="StrategySel_options" Checked="StrategySel" Width="125" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" Padding="6,0,0,0"/>
-                                
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </TabItem>
+
             </TabControl>
 
 
