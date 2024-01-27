@@ -139,7 +139,17 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
   Force_Range = Force_Max - Force_Min;
-  
+  Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
+}
+
+void DAP_calculationVariables_st::dynamic_update()
+{
+  Force_Range = Force_Max - Force_Min;
+}
+
+void DAP_calculationVariables_st::reset_maxforce()
+{
+  Force_Max = Force_Max_default;
 }
 
 void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop) {
@@ -156,4 +166,6 @@ void DAP_calculationVariables_st::updateStiffness() {
   springStiffnesss = Force_Range / stepperPosRange;
   springStiffnesssInv = 1.0 / springStiffnesss;
 }
+
+
 

@@ -53,6 +53,7 @@ bool splineDebug_b = false;
 ABSOscillation absOscillation;
 RPMOscillation RPMOscillation;
 BitePointOscillation BitePointOscillation;
+G_force_effect _G_force_effect;
 #define ABS_OSCILLATION
 
 
@@ -545,7 +546,14 @@ void pedalUpdateTask( void * pvParameters )
       RPMOscillation.trigger();
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
       BitePointOscillation.forceOffset(&dap_calculationVariables_st);
+      _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
     #endif
+
+    //update max force with G force effect
+    dap_calculationVariables_st.reset_maxforce();
+    dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
+    dap_calculationVariables_st.dynamic_update();
+    dap_calculationVariables_st.updateStiffness();
 
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
@@ -986,7 +994,8 @@ void serialCommunicationTask( void * pvParameters )
             }
             //RPM effect
             RPMOscillation.RPM_value=dap_actions_st.payloadPedalAction_.RPM_u8;
-            
+            //G force effect
+            _G_force_effect.G_value=dap_actions_st.payloadPedalAction_.G_value-128;            
             // trigger system identification
             if (dap_actions_st.payloadPedalAction_.startSystemIdentification_u8)
             {
