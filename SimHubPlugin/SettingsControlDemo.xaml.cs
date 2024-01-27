@@ -3524,6 +3524,12 @@ namespace User.PluginSdkDemo
 
         }
 
+        // for ocntrol strategy
+        private void StrategySel(object sender, RoutedEventArgs e)
+        {
+
+        }
+
 
         /*
 private void GetRectanglePositions()
