@@ -158,6 +158,10 @@ static SemaphoreHandle_t semaphore_readServoValues=NULL;
 KalmanFilter* kalman = NULL;
 
 
+#include "SignalFilter_2nd_order.h"
+KalmanFilter_2nd_order* kalman_2nd_order = NULL;
+
+
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         FIR notch filter definitions                                       */
@@ -281,6 +285,9 @@ void setup()
   Serial.print("Given loadcell variance: ");
   Serial.println(loadcell->getVarianceEstimate());
   kalman = new KalmanFilter(loadcell->getVarianceEstimate());
+
+  kalman_2nd_order = new KalmanFilter_2nd_order(1);
+  
 
 
   // setup FIR filter
@@ -585,6 +592,20 @@ void pedalUpdateTask( void * pvParameters )
     float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
     float changeVelocity = kalman->changeVelocity();
 
+
+    // Do position state estimate
+    float stepper_pos_filtered_fl32 = kalman_2nd_order->filteredValue(stepper->getCurrentPosition(), 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+    float stepper_vel_filtered_fl32 = kalman_2nd_order->changeVelocity();
+    float stepper_accel_filtered_fl32 = kalman_2nd_order->changeAccel();
+
+
+    /*Serial.print(stepper->getCurrentPosition());
+    Serial.print(",   ");
+    Serial.print(stepper_pos_filtered_fl32);
+    Serial.print(",   ");
+    Serial.print(stepper_vel_filtered_fl32);
+    Serial.println("   ");*/
+
     /*float alpha_exp_filter = 0.98;
     float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
     filteredReading = filteredReading_exp_filter;*/
@@ -643,7 +664,7 @@ void pedalUpdateTask( void * pvParameters )
        
     if (dap_config_st.payLoadPedalConfig_.control_strategy_b == 2) 
     {
-      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity);
+      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32);
     }
 
     
@@ -736,8 +757,8 @@ void pedalUpdateTask( void * pvParameters )
         }
         else
         {
-          joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
-          //joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
         }
         
         xSemaphoreGive(semaphore_updateJoystick);

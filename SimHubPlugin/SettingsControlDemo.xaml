@@ -18,6 +18,7 @@
 
             <!-- Define the GUI grid -->
             <Grid.RowDefinitions>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="277"/>
                 <RowDefinition Height="227"/>
@@ -38,7 +39,7 @@
             </Grid.ColumnDefinitions>
             <!-- -->
             <!-- Define the tabs to select the pedal -->
-            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1">
                 <TabItem x:Name="tabPedalSelection_clutch" Header="Clutch" FontFamily="Yu Gothic UI Semibold" Height="39" HorizontalAlignment="Left" Width="90" />
                 <TabItem x:Name="tabPedalSelection_brake" Header="Brake" FontFamily="Yu Gothic UI Semibold"/>
                 <TabItem x:Name="tabPedalSelection_accelerator" Header="Accelerator" FontFamily="Yu Gothic UI Semibold"/>
@@ -47,7 +48,7 @@
 
 
             <!-- serial port selection -->
-            <TextBlock Text="Serial port selection:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="500,0,0,0"  Grid.Row="1" Grid.Column="0" Width="180" />
+            <TextBlock Text="Serial port selection:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="240,0,0,0"  Grid.Row="2" Grid.Column="1" Width="180" />
 
             <!-- serial connection -->
             <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
@@ -69,8 +70,8 @@
                 Grid.Row="0" 
                 Grid.Column="2" 
                 Width="160" 
-                Foreground="White"/>
-            <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Column="2" Grid.Row="0" Grid.RowSpan="9" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="400" Height="100" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#7F252525" />
+                Foreground="White" Grid.RowSpan="2"/>
+            <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="400" Height="100" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#7F252525" />
 
 
             <!-- Serial communication debug textbox -->
@@ -78,11 +79,11 @@
             VerticalAlignment="Top" 
             Margin="5,79,0,0" 
             Text="Serial monitor:" 
-            Grid.Row="1" 
+            Grid.Row="2" 
             Grid.Column="2" 
             Width="160" 
             Foreground="White"/>
-            <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
+            <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
 
             <!--<styles:SHButtonPrimary x:Name="btn_serial" Click="SerialMonitorRead_click" HorizontalAlignment="Left" Grid.Row="2"  Grid.Column="2" Width="102" Margin="88,42,0,27" FontSize="6" Grid.RowSpan="2" >Serial monitor update</styles:SHButtonPrimary>-->
 
@@ -157,8 +158,8 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,237,0,0" Grid.Row="6" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2"/>
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="7" Grid.ColumnSpan="2" Grid.Row="1">
+            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,237,0,0" Grid.Row="7" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2"/>
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.Row="2">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
                     <TextBlock 
@@ -406,7 +407,7 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <StackPanel HorizontalAlignment="Left" Height="600" Grid.Row="1" VerticalAlignment="Top" Width="250" Grid.RowSpan="8" Margin="5,0,0,0">
+            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="250" Grid.RowSpan="3">
                 <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <Label x:Name="info_label" Content="" Height="80" Width="120" FontFamily="Segoe UI"/>
                     <Label x:Name="info_label_2" Content="Label" Height="80" Width="110" FontFamily="Segoe UI Light"/>
@@ -439,7 +440,7 @@
                 Width="120"
                 Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="3" VerticalAlignment="Top" Width="250" Grid.RowSpan="3">
+            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="250" Grid.RowSpan="3">
                 <!-- PID sliders -->
 
                 <TextBlock x:Name="text_debug_flag" 
@@ -458,7 +459,7 @@
 
                 <!-- PID sliders -->
             </StackPanel>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.RowSpan="2" Grid.Row="2" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -874,7 +875,7 @@
 
 
             </TabControl>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.RowSpan="2" Grid.Row="3" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -1052,28 +1053,6 @@
                 </TabItem>
 
 
-                <TabItem Width="100" Height="30" Padding="0,0,0,0">
-                    <TabItem.Header>
-                        <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
-                        </Border>
-                    </TabItem.Header>
-
-                    <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
-                                <Label Content="Control Strategy:"  FontFamily="Arial Black" FontSize="12" Height="20" Width="119.8" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" UseLayoutRounding="True" Margin="70,0,0,0"  />
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="20">
-
-                                <RadioButton x:Name="ControlStrategy_Sel_1" Content="Static PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="70,0,0,0" BorderThickness="0,0,0,0"/>
-                                <RadioButton x:Name="ControlStrategy_Sel_2" Content="Dynamic PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0"/>
-                                <RadioButton x:Name="ControlStrategy_Sel_3" Content="MPC based control" GroupName="StrategySel_options" Checked="StrategySel" Width="125" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" Padding="6,0,0,0"/>
-
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </TabItem>
 
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
@@ -1127,6 +1106,31 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
+
+                <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="100" Height="30" Margin="0,0,0,0" >
+                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        </Border>
+                    </TabItem.Header>
+
+                    <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
+                                <Label Content="Control Strategy:"  FontFamily="Arial Black" FontSize="12" Height="20" Width="119.8" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" UseLayoutRounding="True" Margin="70,0,0,0"  />
+                            </StackPanel>
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="20">
+
+                                <RadioButton x:Name="ControlStrategy_Sel_1" Content="Static PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="70,0,0,0" BorderThickness="0,0,0,0"/>
+                                <RadioButton x:Name="ControlStrategy_Sel_2" Content="Dynamic PID" GroupName="StrategySel_options" Checked="StrategySel" Width="100" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0"/>
+                                <RadioButton x:Name="ControlStrategy_Sel_3" Content="MPC based control" GroupName="StrategySel_options" Checked="StrategySel" Width="125" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" Padding="6,0,0,0"/>
+
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </TabItem>
+
+                
 
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
@@ -1355,6 +1359,48 @@
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
                                 <Rectangle x:Name="rect_MPC_0th_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+
+                            </Canvas>
+
+
+
+                            <Canvas x:Name="canvas_horz_MPC_1st_order_gain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
+                                <Canvas.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+
+                                </Canvas.RenderTransform>
+                                <TextBlock x:Name="text_MPC_1st_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="1st order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="0"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                                <TextBlock x:Name="text_MPC_1st_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="1st order gain" Width="66" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="170">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="0"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+
+                                <Line x:Name="Line_H_MPC_1st_order_gain"
+                                    X1="5" Y1="20"
+                                    X2="405" Y2="20"
+                                    Stroke="#7F87CEFA"
+                                    StrokeThickness="2" />
+                                <Rectangle x:Name="rect_MPC_1st_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
                             </Canvas>
 

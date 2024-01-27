@@ -43,6 +43,7 @@ using log4net.Plugin;
 using vJoyInterfaceWrap;
 //using vJoy.Wrapper;
 using System.Runtime;
+using SimHub.Plugins.DataPlugins.ShakeItV3.Settings;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -323,7 +324,9 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.MPC_0th_order_gain = 1.0f;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 2;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
 
@@ -536,6 +539,22 @@ namespace User.PluginSdkDemo
             Marshal.Copy(myBuffer, 0, ptr, size);
 
             aux = (DAP_state_basic_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_basic_st));
+            Marshal.FreeHGlobal(ptr);
+
+            return aux;
+        }
+
+        public DAP_state_extended_st getStateExtFromBytes(byte[] myBuffer)
+        {
+            DAP_state_extended_st aux;
+
+            // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
+            int size = Marshal.SizeOf(typeof(DAP_state_extended_st));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(myBuffer, 0, ptr, size);
+
+            aux = (DAP_state_extended_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_extended_st));
             Marshal.FreeHGlobal(ptr);
 
             return aux;
@@ -1079,6 +1098,15 @@ namespace User.PluginSdkDemo
             text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
             Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - rect_MPC_0th_order_gain.Width / 2);
             Canvas.SetTop(text_MPC_0th_order_gain, 5);
+
+
+            //MPC 1st order gain slider
+            value_max = 0.01;
+            dx = canvas_horz_MPC_1st_order_gain.Width / (2 * value_max);
+            Canvas.SetLeft(rect_MPC_1st_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain * dx - value_max);
+            text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2);
+            Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - rect_MPC_1st_order_gain.Width / 2);
+            Canvas.SetTop(text_MPC_1st_order_gain, 5);
 
 
             //G force multiplier slider
@@ -2100,7 +2128,7 @@ namespace User.PluginSdkDemo
 
 
 
-                                            if  (indexOfSelectedPedal_u == pedalSelected)
+                                            /*if  (indexOfSelectedPedal_u == pedalSelected)
                                             {
                                                 if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
                                                 {
@@ -2129,7 +2157,7 @@ namespace User.PluginSdkDemo
                                                         //writer.Write("\n");
                                                     }
                                                 }
-                                            }
+                                            }*/
 
                                             // GUI update
                                             if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
@@ -2177,6 +2205,96 @@ namespace User.PluginSdkDemo
                                         }
                                     }
                                 }
+
+
+
+
+
+
+
+                                // check for pedal state struct
+                                if ((dataToSend.Length == sizeof(DAP_state_extended_st)))
+                                {
+
+                                    // transform string into byte
+                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+                                    {
+                                        // create a fixed size buffer
+                                        int length = sizeof(DAP_state_extended_st);
+                                        byte[] newBuffer_state_2 = new byte[length];
+
+                                        // copy the received bytes into byte array
+                                        for (int j = 0; j < length; j++)
+                                        {
+                                            newBuffer_state_2[j] = p[j];
+                                        }
+
+                                        // parse byte array as config struct
+                                        DAP_state_extended_st pedalState_ext_read_st = getStateExtFromBytes(newBuffer_state_2);
+
+                                        // check whether receive struct is plausible
+                                        DAP_state_extended_st* v_state = &pedalState_ext_read_st;
+                                        byte* p_state = (byte*)v_state;
+
+                                        // payload type check
+                                        bool check_payload_state_b = false;
+                                        if (pedalState_ext_read_st.payloadHeader_.payloadType == Constants.pedalStateExtendedPayload_type)
+                                        {
+                                            check_payload_state_b = true;
+                                        }
+
+                                        // CRC check
+                                        bool check_crc_state_b = false;
+                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Extended)) == pedalState_ext_read_st.payloadFooter_.checkSum)
+                                        {
+                                            check_crc_state_b = true;
+                                        }
+
+                                        if ((check_payload_state_b) && check_crc_state_b)
+                                        {
+
+                                        
+
+
+                                            if (indexOfSelectedPedal_u == pedalSelected)
+                                            {
+                                                if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
+                                                {
+                                                    // Specify the path to the file
+                                                    string currentDirectory = Directory.GetCurrentDirectory();
+                                                    string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
+
+                                                    // Use StreamWriter to write to the file
+                                                    using (StreamWriter writer = new StreamWriter(filePath, true))
+                                                    {
+                                                        // Write the content to the file
+                                                        writeCntr++;
+                                                        writer.Write(writeCntr);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPosition_i16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPositionTarget_i16);
+                                                        writer.Write(", ");
+                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
+                                                        writer.Write("\n");
+                                                    }
+                                                }
+                                            }
+
+                                            
+
+
+                                            continue;
+                                        }
+                                    }
+                                }
+
+
+
 
 
                                 // decode into config struct
@@ -3217,6 +3335,28 @@ namespace User.PluginSdkDemo
                     text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4);
                     Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
                     Canvas.SetTop(text_MPC_0th_order_gain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+
+
+                //MPC 1st order gain
+                if (rectangle.Name == "rect_MPC_1st_order_gain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 0.01;
+                    double x = e.GetPosition(canvas_horz_MPC_1st_order_gain).X - offset.X;
+                    double dx = canvas_horz_MPC_1st_order_gain.Width / (2*value_max);
+                    double min_position = 0 * dx;
+                    double max_position = value_max * 2 * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    actual_x -= value_max;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)actual_x;
+                    text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 4);
+                    Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - text_MPC_1st_order_gain.Width / 2);
+                    Canvas.SetTop(text_MPC_1st_order_gain, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
 

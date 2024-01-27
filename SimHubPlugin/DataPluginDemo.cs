@@ -1147,9 +1147,10 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.PID_i_gain = 50.0f;
             dap_config_initial_st.payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_initial_st.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
-            
 
-            dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 0;
+            dap_config_initial_st.payloadPedalConfig_.MPC_0th_order_gain = 1.0f;
+
+            dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 2;
 
             dap_config_initial_st.payloadPedalConfig_.loadcell_rating = 150;
 

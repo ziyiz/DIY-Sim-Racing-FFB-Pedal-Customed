@@ -194,7 +194,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32) {
   
   /*
   This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
@@ -216,6 +216,12 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
   // add velocity feedforward
   stepperPos += changeVelocity * config_st->payLoadPedalConfig_.PID_velocity_feedforward_gain;
+
+  // motion corrected loadcell reading
+  float loadCellReadingKg_corrected = loadCellReadingKg;
+  //loadCellReadingKg_corrected += config_st->payLoadPedalConfig_.MPC_1st_order_gain * stepper_vel_filtered_fl32 / STEPS_PER_MOTOR_REVOLUTION / 10;// + stepper_accel_filtered_fl32;
+  //loadCellReadingKg_corrected += config_st->payLoadPedalConfig_.MPC_1st_order_gain * stepper_accel_filtered_fl32 / STEPS_PER_MOTOR_REVOLUTION / 10;// + stepper_accel_filtered_fl32;
+
 
   // set initial guess
   float stepperPos_initial = stepperPos;
@@ -262,7 +268,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float denom = m1 - m2;
     if ( fabs(denom) > 0 )
     {
-      stepperPos -= ( loadCellReadingKg - loadCellTargetKg) / ( denom );
+      stepperPos -= ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
     }
   }
     
