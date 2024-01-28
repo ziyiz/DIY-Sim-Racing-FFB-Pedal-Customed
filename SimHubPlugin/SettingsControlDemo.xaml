@@ -1447,8 +1447,6 @@
 
             </TabControl>
 
-
-
         </Grid>
     </ScrollViewer>
 </UserControl>

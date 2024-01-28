@@ -44,6 +44,7 @@ using vJoyInterfaceWrap;
 //using vJoy.Wrapper;
 using System.Runtime;
 using SimHub.Plugins.DataPlugins.ShakeItV3.Settings;
+using System.Windows.Media.Effects;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -88,6 +89,10 @@ namespace User.PluginSdkDemo
 
 
         public bool[] dumpPedalToResponseFile = new bool[3];
+
+        private SolidColorBrush defaultcolor;
+        private SolidColorBrush lightcolor;
+        
 
 
         // read config from JSON on startup
@@ -351,11 +356,11 @@ namespace User.PluginSdkDemo
                
             }
             // debug mode invisiable
-            text_debug_flag.Opacity = 0;
-            text_serial.Opacity = 0;
+            text_debug_flag.Visibility = Visibility.Hidden;
+            text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Opacity = 0;
-            textBox_debug_Flag_0.Opacity = 0;
+            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
@@ -363,113 +368,127 @@ namespace User.PluginSdkDemo
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
-            text_min_force.Foreground = btn_update.Background;
-            text_max_force.Foreground = btn_update.Background;
-            text_max_pos.Foreground = btn_update.Background;
-            text_min_pos.Foreground = btn_update.Background;
-            text_position.Foreground = btn_update.Background;
-            rect0.Fill = btn_update.Background;
-            rect1.Fill = btn_update.Background;
-            rect2.Fill = btn_update.Background;
-            rect3.Fill = btn_update.Background;
-            rect4.Fill = btn_update.Background;
-            rect5.Fill = btn_update.Background;
-            rect6.Fill = btn_update.Background;
-            rect7.Fill = btn_update.Background;
-            rect8.Fill = btn_update.Background;
-            rect9.Fill = btn_update.Background;
-            Line_V_force.Stroke = btn_update.Background;
-            Line_H_pos.Stroke = btn_update.Background;
-            Polyline_BrakeForceCurve.Stroke = btn_update.Background;
-
-            text_damping_text.Foreground = btn_update.Background;
-            Line_H_damping.Stroke = btn_update.Background;
-            text_damping.Foreground = btn_update.Background;
-            rect_damping.Fill = btn_update.Background;
+            SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
             
-            text_Pgain_text.Foreground = btn_update.Background;
-            Line_H_Pgain.Stroke = btn_update.Background;
-            text_Pgain.Foreground = btn_update.Background;
-            rect_Pgain.Fill = btn_update.Background;
+            Color color = Color.FromArgb(150, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            Color color_2 = Color.FromArgb(200, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            Color color_3 = Color.FromArgb(255, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            SolidColorBrush Line_fill= new SolidColorBrush(color_2);
+            //SolidColorBrush rect_fill = new SolidColorBrush(color);
+            defaultcolor= new SolidColorBrush(color);
+            lightcolor= new SolidColorBrush(color_3);
 
-            text_Igain_text.Foreground = btn_update.Background;
-            Line_H_Igain.Stroke = btn_update.Background;
-            text_Igain.Foreground = btn_update.Background;
-            rect_Igain.Fill = btn_update.Background;
+            text_min_force.Foreground = Line_fill;
+            text_max_force.Foreground = Line_fill;
+            text_max_pos.Foreground = Line_fill;
+            text_min_pos.Foreground = Line_fill;
+            text_position.Foreground = Line_fill;
+            rect0.Fill = defaultcolor;
+            rect1.Fill = defaultcolor;
+            rect2.Fill = defaultcolor;
+            rect3.Fill = defaultcolor;
+            rect4.Fill = defaultcolor;
+            rect5.Fill = defaultcolor;
+            rect6.Fill = defaultcolor;
+            rect7.Fill = defaultcolor;
+            rect8.Fill = defaultcolor;
+            rect9.Fill = defaultcolor;
+            Line_V_force.Stroke = Line_fill;
+            Line_H_pos.Stroke = Line_fill;
+            //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
+            Polyline_BrakeForceCurve.Stroke = Line_fill;
+            text_damping_text.Foreground = Line_fill;
+            Line_H_damping.Stroke = Line_fill;
+            text_damping.Foreground = Line_fill;
+            rect_damping.Fill = defaultcolor;
 
-            text_Dgain_text.Foreground = btn_update.Background;
-            Line_H_Dgain.Stroke = btn_update.Background;
-            text_Dgain.Foreground = btn_update.Background;
-            rect_Dgain.Fill = btn_update.Background;
+            text_Pgain_text.Foreground = Line_fill;
+            Line_H_Pgain.Stroke = Line_fill;
+            text_Pgain.Foreground = Line_fill;
+            rect_Pgain.Fill = defaultcolor;
 
-            text_VFgain_text.Foreground = btn_update.Background;
-            Line_H_VFgain.Stroke = btn_update.Background;
-            text_VFgain.Foreground = btn_update.Background;
-            rect_VFgain.Fill = btn_update.Background;
+            text_Igain_text.Foreground = Line_fill;
+            Line_H_Igain.Stroke = Line_fill;
+            text_Igain.Foreground = Line_fill;
+            rect_Igain.Fill = defaultcolor;
 
-            Line_H_ABS.Stroke = btn_update.Background;
-            text_ABS.Foreground = btn_update.Background;
-            rect_ABS.Fill = btn_update.Background;
-            text_ABS_text.Foreground = btn_update.Background;
-            Line_H_ABS_freq.Stroke = btn_update.Background;
-            text_ABS_freq.Foreground = btn_update.Background;
-            rect_ABS_freq.Fill = btn_update.Background;
-            text_ABS_freq_text.Foreground = btn_update.Background;
-            Line_H_max_game.Stroke = btn_update.Background;
-            text_max_game.Foreground = btn_update.Background;
-            text_max_game_text.Foreground = btn_update.Background;
-            rect_max_game.Fill = btn_update.Background;
+            text_Dgain_text.Foreground = Line_fill;
+            Line_H_Dgain.Stroke = Line_fill;
+            text_Dgain.Foreground = Line_fill;
+            rect_Dgain.Fill = defaultcolor;
 
-            Line_H_KF.Stroke = btn_update.Background;
-            text_KF.Foreground = btn_update.Background;
-            rect_KF.Fill = btn_update.Background;
-            text_KF_text.Foreground = btn_update.Background;
-            Line_H_LC_rating.Stroke = btn_update.Background;
-            text_LC_rating.Foreground = btn_update.Background;
-            text_LC_rating_text.Foreground = btn_update.Background;
-            rect_LC_rating.Fill = btn_update.Background;
+            text_VFgain_text.Foreground = Line_fill;
+            Line_H_VFgain.Stroke = Line_fill;
+            text_VFgain.Foreground = Line_fill;
+            rect_VFgain.Fill = defaultcolor;
 
-            text_RPM_freq_min.Foreground = btn_update.Background;
-            text_RPM_freq_max.Foreground = btn_update.Background;
-            text_RPM_AMP.Foreground = btn_update.Background;
-            Line_H_RPM_AMP.Stroke = btn_update.Background;
-            rect_RPM_AMP.Fill = btn_update.Background;
-            text_RPM_AMP_text.Foreground = btn_update.Background;
+            Line_H_ABS.Stroke = Line_fill;
+            text_ABS.Foreground = Line_fill;
+            rect_ABS.Fill = defaultcolor;
+            text_ABS_text.Foreground = Line_fill;
+            Line_H_ABS_freq.Stroke = Line_fill;
+            text_ABS_freq.Foreground = Line_fill;
+            rect_ABS_freq.Fill = defaultcolor;
+            text_ABS_freq_text.Foreground = Line_fill;
+            Line_H_max_game.Stroke = Line_fill;
+            text_max_game.Foreground = Line_fill;
+            text_max_game_text.Foreground = Line_fill;
+            rect_max_game.Fill = defaultcolor;
 
-            Line_H_RPM_freq.Stroke = btn_update.Background;
-            rect_RPM_max.Fill = btn_update.Background;
-            rect_RPM_min.Fill = btn_update.Background;
-            text_RPM_freq_text.Foreground = btn_update.Background;
+            Line_H_KF.Stroke = Line_fill;
+            text_KF.Foreground = Line_fill;
+            rect_KF.Fill = defaultcolor;
+            text_KF_text.Foreground = Line_fill;
+            Line_H_LC_rating.Stroke = Line_fill;
+            text_LC_rating.Foreground = Line_fill;
+            text_LC_rating_text.Foreground = Line_fill;
+            rect_LC_rating.Fill = defaultcolor;
 
-            text_bite_amp.Foreground = btn_update.Background;
-            text_bite_freq.Foreground = btn_update.Background;
-            rect_bite_amp.Fill = btn_update.Background;
-            rect_bite_freq.Fill = btn_update.Background;
-            text_bite_amp_text.Foreground = btn_update.Background;
-            text_bite_freq_text.Foreground = btn_update.Background;
-            Line_H_bite_amp.Stroke = btn_update.Background;
-            Line_H_bite_freq.Stroke = btn_update.Background;
+            text_RPM_freq_min.Foreground = Line_fill;
+            text_RPM_freq_max.Foreground = Line_fill;
+            text_RPM_AMP.Foreground = Line_fill;
+            Line_H_RPM_AMP.Stroke = Line_fill;
+            rect_RPM_AMP.Fill = defaultcolor;
+            text_RPM_AMP_text.Foreground =          
 
-            Line_G_force_multi.Stroke = btn_update.Background;
-            text_G_force_multi_text.Foreground = btn_update.Background;
-            text_G_multi.Foreground = btn_update.Background;
-            rect_G_force_multi.Fill = btn_update.Background;
+            Line_H_RPM_freq.Stroke = Line_fill;
+            rect_RPM_max.Fill = Line_fill;
+            rect_RPM_min.Fill = defaultcolor;
+            text_RPM_freq_text.Foreground = Line_fill;
 
-            Line_G_force_window.Stroke = btn_update.Background;
-            text_G_force_window_text.Foreground = btn_update.Background;
-            text_G_window.Foreground = btn_update.Background;
-            rect_G_force_window.Fill = btn_update.Background;
+            text_bite_amp.Foreground = Line_fill;
+            text_bite_freq.Foreground =         
+            rect_bite_amp.Fill = defaultcolor;
+            rect_bite_freq.Fill = defaultcolor;
+            text_bite_amp_text.Foreground = Line_fill;
+            text_bite_freq_text.Foreground = Line_fill;
+            Line_H_bite_amp.Stroke = Line_fill;
+            Line_H_bite_freq.Stroke = Line_fill;
 
-            text_MPC_0th_order_gain.Foreground= btn_update.Background;
-            text_MPC_0th_order_gain_text.Foreground = btn_update.Background;
-            Line_H_MPC_0th_order_gain.Stroke= btn_update.Background;
-            rect_MPC_0th_order_gain.Fill= btn_update.Background;
+            Line_G_force_multi.Stroke = Line_fill;
+            text_G_force_multi_text.Foreground = Line_fill;
+            text_G_multi.Foreground = Line_fill;
+            rect_G_force_multi.Fill = defaultcolor;
 
-            text_MPC_1st_order_gain.Foreground = btn_update.Background;
-            text_MPC_1st_order_gain_text.Foreground = btn_update.Background;
-            Line_H_MPC_1st_order_gain.Stroke = btn_update.Background;
-            rect_MPC_1st_order_gain.Fill = btn_update.Background;
-            
+            Line_G_force_window.Stroke = Line_fill;
+            text_G_force_window_text.Foreground = Line_fill;
+            text_G_window.Foreground = Line_fill;
+            rect_G_force_window.Fill = defaultcolor;
+
+            text_MPC_0th_order_gain.Foreground= Line_fill;
+            text_MPC_0th_order_gain_text.Foreground = Line_fill;
+            Line_H_MPC_0th_order_gain.Stroke= Line_fill;
+            rect_MPC_0th_order_gain.Fill= defaultcolor;
+
+            text_MPC_1st_order_gain.Foreground = Line_fill;
+            text_MPC_1st_order_gain_text.Foreground = Line_fill;
+            Line_H_MPC_1st_order_gain.Stroke = Line_fill;
+            rect_MPC_1st_order_gain.Fill = defaultcolor;
+
+
+
+
+
 
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
@@ -920,14 +939,14 @@ namespace User.PluginSdkDemo
             text_SABS.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger == 1)
             {
-                rect_SABS.Opacity = 1;
-                rect_SABS_Control.Opacity = 1;
-                text_SABS.Opacity = 1;
+                rect_SABS.Visibility = Visibility.Visible;
+                rect_SABS_Control.Visibility = Visibility.Visible;
+                text_SABS.Visibility = Visibility.Visible;
             }
             else {
-                rect_SABS.Opacity = 0;
-                rect_SABS_Control.Opacity = 0;
-                text_SABS.Opacity = 0;
+                rect_SABS.Visibility = Visibility.Hidden;
+                rect_SABS_Control.Visibility = Visibility.Hidden;
+                text_SABS.Visibility = Visibility.Hidden;
             }
             //set for travel slider;
             double dx = (canvas_horz_slider.Width-10) / 100;
@@ -2776,18 +2795,18 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 1;
             TextBox_debugOutput.Text = "simulateABS: on";
-            rect_SABS.Opacity = 1;
-            rect_SABS_Control.Opacity = 1;
-            text_SABS.Opacity = 1;
+            rect_SABS.Visibility = Visibility.Visible;
+            rect_SABS_Control.Visibility = Visibility.Visible;
+            text_SABS.Visibility = Visibility.Visible;
 
         }
         private void Simulate_ABS_check_Unchecked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 0;
             TextBox_debugOutput.Text = "simulateABS: off";
-            rect_SABS.Opacity = 0;
-            rect_SABS_Control.Opacity = 0;
-            text_SABS.Opacity = 0;
+            rect_SABS.Visibility = Visibility.Hidden;
+            rect_SABS_Control.Visibility = Visibility.Hidden;
+            text_SABS.Visibility = Visibility.Hidden;
 
         }
 
@@ -2809,6 +2828,41 @@ namespace User.PluginSdkDemo
             var rectangle = sender as Rectangle;
             offset = e.GetPosition(rectangle);
             rectangle.CaptureMouse();
+            //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
+            //Color light = Color.FromArgb(255, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //Color middle_light= Color.FromArgb(235, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //Color dark = Color.FromArgb(100, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //
+            /*
+            RadialGradientBrush myRadialGradientBrush = new RadialGradientBrush();
+            myRadialGradientBrush.GradientOrigin = new Point(0.5, 0.5);
+            myRadialGradientBrush.Center = new Point(0.5, 0.5);
+            myRadialGradientBrush.RadiusX = 0.5;
+            myRadialGradientBrush.RadiusY = 0.5;
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(light, 0.0));
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(middle_light, 0.75));
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(dark, 1.0));
+            */
+            //
+            //rectangle.Fill = new SolidColorBrush(light);
+            //rectangle.Fill = myRadialGradientBrush;
+            //Color light = Color.FromArgb(128, 128, 128, 128);
+            if(rectangle.Name != "rect_SABS_Control" & rectangle.Name != "rect_BP_Control")
+            {
+                var dropShadowEffect = new DropShadowEffect
+                {
+                    ShadowDepth = 0,
+                    BlurRadius = 15,
+                    Color = Colors.White,
+                    Opacity = 1
+                };
+                rectangle.Fill = lightcolor;
+                rectangle.Effect = dropShadowEffect;
+            }
+
         }
 
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
@@ -2865,7 +2919,7 @@ namespace User.PluginSdkDemo
                     text_point_pos.Text = "Travel:100%";
                     text_point_pos.Text += "\nForce: " + (int)y_actual + "%";
                 }
-                text_point_pos.Opacity = 1;
+                text_point_pos.Visibility = Visibility.Visible; ;
 
                 Update_BrakeForceCurve();
 
@@ -3425,39 +3479,56 @@ namespace User.PluginSdkDemo
                 isDragging = false;
                 rectangle.ReleaseMouseCapture();
                 text_point_pos.Opacity=0;
+                //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
+                //Color color = Color.FromArgb(150, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+                //rectangle.Fill = btn_update.Background;
+                if (rectangle.Name != "rect_SABS_Control" & rectangle.Name != "rect_BP_Control")
+                {
+                    var dropShadowEffect = new DropShadowEffect
+                    {
+                        ShadowDepth = 0,
+                        BlurRadius = 20,
+                        Color = Colors.White,
+                        Opacity = 0
+                    };
+                    rectangle.Fill = defaultcolor;
+                    rectangle.Effect = dropShadowEffect;
+                }
+
+                //rectangle.Fill = new SolidColorBrush(color);
             }
         }
         private void Debug_checkbox_Checked(object sender, RoutedEventArgs e)
         {
 
-            text_debug_flag.Opacity = 1;
-            text_serial.Opacity = 1;
+            text_debug_flag.Visibility = Visibility.Visible; 
+            text_serial.Visibility = Visibility.Visible;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
-            textBox_debug_Flag_0.Opacity = 1;
+            textBox_debug_Flag_0.Visibility = Visibility.Visible;
             //btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
-            InvertLoadcellReading_check.Opacity = 1;
+            InvertLoadcellReading_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            text_debug_flag.Opacity = 0;
-            text_serial.Opacity = 0;
+            text_debug_flag.Visibility = Visibility.Hidden; ;
+            text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            textBox_debug_Flag_0.Opacity = 0;
+            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Opacity = 0;
+            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
         }
