@@ -43,6 +43,13 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.RPM_max_freq = 40;
   payLoadPedalConfig_.RPM_min_freq = 10;
   payLoadPedalConfig_.RPM_AMP = 5;
+  payLoadPedalConfig_.BP_trigger_value =50;
+  payLoadPedalConfig_.BP_amp=1;
+  payLoadPedalConfig_.BP_freq=15;
+  payLoadPedalConfig_.BP_trigger=0;
+  payLoadPedalConfig_.G_multi = 50;
+  payLoadPedalConfig_.G_window=60;
+
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;
@@ -58,7 +65,12 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.PID_p_gain = 0.3;
   payLoadPedalConfig_.PID_i_gain = 50.0;
   payLoadPedalConfig_.PID_d_gain = 0.0;
-  payLoadPedalConfig_.PID_feedforward_gain = 0.0;
+  payLoadPedalConfig_.PID_velocity_feedforward_gain = 0.0;
+
+
+  payLoadPedalConfig_.MPC_0th_order_gain = 1.0;
+  payLoadPedalConfig_.MPC_1st_order_gain = 0.0;
+  payLoadPedalConfig_.MPC_2nd_order_gain = 0.0;
 
   payLoadPedalConfig_.control_strategy_b = 0;
 
@@ -139,7 +151,17 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
   Force_Range = Force_Max - Force_Min;
-  
+  Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
+}
+
+void DAP_calculationVariables_st::dynamic_update()
+{
+  Force_Range = Force_Max - Force_Min;
+}
+
+void DAP_calculationVariables_st::reset_maxforce()
+{
+  Force_Max = Force_Max_default;
 }
 
 void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop) {
@@ -156,4 +178,6 @@ void DAP_calculationVariables_st::updateStiffness() {
   springStiffnesss = Force_Range / stepperPosRange;
   springStiffnesssInv = 1.0 / springStiffnesss;
 }
+
+
 

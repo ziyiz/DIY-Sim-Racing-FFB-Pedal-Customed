@@ -43,6 +43,11 @@ using log4net.Plugin;
 using vJoyInterfaceWrap;
 //using vJoy.Wrapper;
 using System.Runtime;
+using SimHub.Plugins.DataPlugins.ShakeItV3.Settings;
+using System.Windows.Media.Effects;
+using System.Diagnostics;
+using System.Collections;
+using System.Linq;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -84,6 +89,14 @@ namespace User.PluginSdkDemo
 
         //public VirtualJoystick joystick;
         internal vJoyInterfaceWrap.vJoy joystick;
+
+
+        public bool[] dumpPedalToResponseFile = new bool[3];
+
+        private SolidColorBrush defaultcolor;
+        private SolidColorBrush lightcolor;
+        
+
 
         // read config from JSON on startup
         //ReadStructFromJson();
@@ -265,171 +278,223 @@ namespace User.PluginSdkDemo
 
         private bool isDragging = false;
         private Point offset;
-       
+
+        public void DAP_config_set_default(uint pedalIdx)
+        {
+            dumpPedalToResponseFile[pedalIdx] = false;
+            dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+            dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 90;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p040 = 40;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p060 = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p080 = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p100 = 100;
+            dap_config_st[pedalIdx].payloadPedalConfig_.dampingPress = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.dampingPull = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
+            dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
+            dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
+            dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value = 80;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
+            dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger_value = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_amp = 1;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
+            dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
+            dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.3f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.MPC_0th_order_gain = 1.0f;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 2;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+        }
 
 
         public SettingsControlDemo()
         {
 
-            
-
-
-
-
-
-
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
-                dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
-                dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 90;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p040 = 40;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p060 = 60;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p080 = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p100 = 100;
-                dap_config_st[pedalIdx].payloadPedalConfig_.dampingPress = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.dampingPull = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absFrequency = 5;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
-                dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
-                dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
-                dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger= 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value= 80;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_min_freq = 10;
-                dap_config_st[pedalIdx].payloadPedalConfig_.RPM_AMP = 30;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger_value = 50;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_amp = 1;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
-                dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
-                dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
-                dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_3 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_a_4 = 0;
-
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_0 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_1 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_2 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.3f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
-                dap_config_st[pedalIdx].payloadPedalConfig_.PID_feedforward_gain = 0.0f;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.loadcell_rating = 150;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
-
-                dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
 
 
+                DAP_config_set_default(pedalIdx);
                 InitializeComponent();
 
                
             }
             // debug mode invisiable
-            text_debug_flag.Opacity = 0;
-            text_debug_PID_para.Opacity = 0;
-            text_debug_dgain.Opacity = 0;
-            text_debug_igain.Opacity = 0;
-            text_debug_pgain.Opacity = 0;
-            text_debug_feedforward.Opacity = 0;
-            text_serial.Opacity = 0;
+            text_debug_flag.Visibility = Visibility.Hidden;
+            text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Opacity = 0;
-            PID_tuning_D_gain_slider.Opacity = 0;
-            PID_tuning_I_gain_slider.Opacity = 0;
-            PID_tuning_P_gain_slider.Opacity = 0;
-            PID_tuning_Feedforward_gain_slider.Opacity= 0;
-            textBox_debug_Flag_0.Opacity = 0;
+            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
+            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
-            text_min_force.Foreground = btn_update.Background;
-            text_max_force.Foreground = btn_update.Background;
-            text_max_pos.Foreground = btn_update.Background;
-            text_min_pos.Foreground = btn_update.Background;
-            text_position.Foreground = btn_update.Background;
-            rect0.Fill = btn_update.Background;
-            rect1.Fill = btn_update.Background;
-            rect2.Fill = btn_update.Background;
-            rect3.Fill = btn_update.Background;
-            rect4.Fill = btn_update.Background;
-            rect5.Fill = btn_update.Background;
-            rect6.Fill = btn_update.Background;
-            rect7.Fill = btn_update.Background;
-            rect8.Fill = btn_update.Background;
-            rect9.Fill = btn_update.Background;
-            Line_V_force.Stroke = btn_update.Background;
-            Line_H_pos.Stroke = btn_update.Background;
-            Polyline_BrakeForceCurve.Stroke = btn_update.Background;
+            SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
+            
+            Color color = Color.FromArgb(150, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            Color color_2 = Color.FromArgb(200, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            Color color_3 = Color.FromArgb(255, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            SolidColorBrush Line_fill= new SolidColorBrush(color_2);
+            //SolidColorBrush rect_fill = new SolidColorBrush(color);
+            defaultcolor= new SolidColorBrush(color);
+            lightcolor= new SolidColorBrush(color_3);
 
-            text_damping_text.Foreground = btn_update.Background;
-            Line_H_damping.Stroke = btn_update.Background;
-            text_damping.Foreground = btn_update.Background;
-            rect_damping.Fill = btn_update.Background;
-            Line_H_ABS.Stroke = btn_update.Background;
-            text_ABS.Foreground = btn_update.Background;
-            rect_ABS.Fill = btn_update.Background;
-            text_ABS_text.Foreground = btn_update.Background;
-            Line_H_ABS_freq.Stroke = btn_update.Background;
-            text_ABS_freq.Foreground = btn_update.Background;
-            rect_ABS_freq.Fill = btn_update.Background;
-            text_ABS_freq_text.Foreground = btn_update.Background;
-            Line_H_max_game.Stroke = btn_update.Background;
-            text_max_game.Foreground = btn_update.Background;
-            text_max_game_text.Foreground = btn_update.Background;
-            rect_max_game.Fill = btn_update.Background;
+            text_min_force.Foreground = Line_fill;
+            text_max_force.Foreground = Line_fill;
+            text_max_pos.Foreground = Line_fill;
+            text_min_pos.Foreground = Line_fill;
+            text_position.Foreground = Line_fill;
+            rect0.Fill = defaultcolor;
+            rect1.Fill = defaultcolor;
+            rect2.Fill = defaultcolor;
+            rect3.Fill = defaultcolor;
+            rect4.Fill = defaultcolor;
+            rect5.Fill = defaultcolor;
+            rect6.Fill = defaultcolor;
+            rect7.Fill = defaultcolor;
+            rect8.Fill = defaultcolor;
+            rect9.Fill = defaultcolor;
+            Line_V_force.Stroke = Line_fill;
+            Line_H_pos.Stroke = Line_fill;
+            //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
+            Polyline_BrakeForceCurve.Stroke = Line_fill;
+            text_damping_text.Foreground = Line_fill;
+            Line_H_damping.Stroke = Line_fill;
+            text_damping.Foreground = Line_fill;
+            rect_damping.Fill = defaultcolor;
 
-            Line_H_KF.Stroke = btn_update.Background;
-            text_KF.Foreground = btn_update.Background;
-            rect_KF.Fill = btn_update.Background;
-            text_KF_text.Foreground = btn_update.Background;
-            Line_H_LC_rating.Stroke = btn_update.Background;
-            text_LC_rating.Foreground = btn_update.Background;
-            text_LC_rating_text.Foreground = btn_update.Background;
-            rect_LC_rating.Fill = btn_update.Background;
+            text_Pgain_text.Foreground = Line_fill;
+            Line_H_Pgain.Stroke = Line_fill;
+            text_Pgain.Foreground = Line_fill;
+            rect_Pgain.Fill = defaultcolor;
 
-            text_RPM_freq_min.Foreground = btn_update.Background;
-            text_RPM_freq_max.Foreground = btn_update.Background;
-            text_RPM_AMP.Foreground = btn_update.Background;
-            Line_H_RPM_AMP.Stroke = btn_update.Background;
-            rect_RPM_AMP.Fill = btn_update.Background;
-            text_RPM_AMP_text.Foreground = btn_update.Background;
+            text_Igain_text.Foreground = Line_fill;
+            Line_H_Igain.Stroke = Line_fill;
+            text_Igain.Foreground = Line_fill;
+            rect_Igain.Fill = defaultcolor;
 
-            Line_H_RPM_freq.Stroke = btn_update.Background;
-            rect_RPM_max.Fill = btn_update.Background;
-            rect_RPM_min.Fill = btn_update.Background;
-            text_RPM_freq_text.Foreground = btn_update.Background;
+            text_Dgain_text.Foreground = Line_fill;
+            Line_H_Dgain.Stroke = Line_fill;
+            text_Dgain.Foreground = Line_fill;
+            rect_Dgain.Fill = defaultcolor;
 
-            text_bite_amp.Foreground = btn_update.Background;
-            text_bite_freq.Foreground = btn_update.Background;
-            rect_bite_amp.Fill = btn_update.Background;
-            rect_bite_freq.Fill = btn_update.Background;
-            text_bite_amp_text.Foreground = btn_update.Background;
-            text_bite_freq_text.Foreground = btn_update.Background;
-            Line_H_bite_amp.Stroke = btn_update.Background;
-            Line_H_bite_freq.Stroke = btn_update.Background;
+            text_VFgain_text.Foreground = Line_fill;
+            Line_H_VFgain.Stroke = Line_fill;
+            text_VFgain.Foreground = Line_fill;
+            rect_VFgain.Fill = defaultcolor;
+
+            Line_H_ABS.Stroke = Line_fill;
+            text_ABS.Foreground = Line_fill;
+            rect_ABS.Fill = defaultcolor;
+            text_ABS_text.Foreground = Line_fill;
+            Line_H_ABS_freq.Stroke = Line_fill;
+            text_ABS_freq.Foreground = Line_fill;
+            rect_ABS_freq.Fill = defaultcolor;
+            text_ABS_freq_text.Foreground = Line_fill;
+            Line_H_max_game.Stroke = Line_fill;
+            text_max_game.Foreground = Line_fill;
+            text_max_game_text.Foreground = Line_fill;
+            rect_max_game.Fill = defaultcolor;
+
+            Line_H_KF.Stroke = Line_fill;
+            text_KF.Foreground = Line_fill;
+            rect_KF.Fill = defaultcolor;
+            text_KF_text.Foreground = Line_fill;
+            Line_H_LC_rating.Stroke = Line_fill;
+            text_LC_rating.Foreground = Line_fill;
+            text_LC_rating_text.Foreground = Line_fill;
+            rect_LC_rating.Fill = defaultcolor;
+
+            text_RPM_freq_min.Foreground = Line_fill;
+            text_RPM_freq_max.Foreground = Line_fill;
+            text_RPM_AMP.Foreground = Line_fill;
+            Line_H_RPM_AMP.Stroke = Line_fill;
+            rect_RPM_AMP.Fill = defaultcolor;
+            text_RPM_AMP_text.Foreground =          
+
+            Line_H_RPM_freq.Stroke = Line_fill;
+            rect_RPM_max.Fill = Line_fill;
+            rect_RPM_min.Fill = defaultcolor;
+            text_RPM_freq_text.Foreground = Line_fill;
+
+            text_bite_amp.Foreground = Line_fill;
+            text_bite_freq.Foreground =         
+            rect_bite_amp.Fill = defaultcolor;
+            rect_bite_freq.Fill = defaultcolor;
+            text_bite_amp_text.Foreground = Line_fill;
+            text_bite_freq_text.Foreground = Line_fill;
+            Line_H_bite_amp.Stroke = Line_fill;
+            Line_H_bite_freq.Stroke = Line_fill;
+
+            Line_G_force_multi.Stroke = Line_fill;
+            text_G_force_multi_text.Foreground = Line_fill;
+            text_G_multi.Foreground = Line_fill;
+            rect_G_force_multi.Fill = defaultcolor;
+
+            Line_G_force_window.Stroke = Line_fill;
+            text_G_force_window_text.Foreground = Line_fill;
+            text_G_window.Foreground = Line_fill;
+            rect_G_force_window.Fill = defaultcolor;
+
+            text_MPC_0th_order_gain.Foreground= Line_fill;
+            text_MPC_0th_order_gain_text.Foreground = Line_fill;
+            Line_H_MPC_0th_order_gain.Stroke= Line_fill;
+            rect_MPC_0th_order_gain.Fill= defaultcolor;
+
+            //text_MPC_1st_order_gain.Foreground = Line_fill;
+            //text_MPC_1st_order_gain_text.Foreground = Line_fill;
+            //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
+            //rect_MPC_1st_order_gain.Fill = defaultcolor;
+
+
+
+
+
+
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -504,17 +569,33 @@ namespace User.PluginSdkDemo
         }
 
 
-        public DAP_state_st getStateFromBytes(byte[] myBuffer)
+        public DAP_state_basic_st getStateFromBytes(byte[] myBuffer)
         {
-            DAP_state_st aux;
+            DAP_state_basic_st aux;
 
             // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
-            int size = Marshal.SizeOf(typeof(DAP_state_st));
+            int size = Marshal.SizeOf(typeof(DAP_state_basic_st));
             IntPtr ptr = Marshal.AllocHGlobal(size);
 
             Marshal.Copy(myBuffer, 0, ptr, size);
 
-            aux = (DAP_state_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_st));
+            aux = (DAP_state_basic_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_basic_st));
+            Marshal.FreeHGlobal(ptr);
+
+            return aux;
+        }
+
+        public DAP_state_extended_st getStateExtFromBytes(byte[] myBuffer)
+        {
+            DAP_state_extended_st aux;
+
+            // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
+            int size = Marshal.SizeOf(typeof(DAP_state_extended_st));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(myBuffer, 0, ptr, size);
+
+            aux = (DAP_state_extended_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_extended_st));
             Marshal.FreeHGlobal(ptr);
 
             return aux;
@@ -770,10 +851,6 @@ namespace User.PluginSdkDemo
         {
             // update the sliders
 
-            PID_tuning_P_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
-            PID_tuning_I_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
-            PID_tuning_D_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
-            PID_tuning_Feedforward_gain_slider.Value = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_feedforward_gain;
 
             info_label.Content = "Connection State:\nDAP Version:";
             string info_text;
@@ -808,15 +885,23 @@ namespace User.PluginSdkDemo
             {
                 Simulate_ABS_check.IsChecked = false;
             }
-            // dynamic PID checkbox
+
+
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 0)
+            {
+                ControlStrategy_Sel_1.IsChecked = true;
+            }
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 1)
             {
-                dynamic_PID_checkbox.IsChecked = true;
+                ControlStrategy_Sel_2.IsChecked = true;
             }
-            else
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b == 2)
             {
-                dynamic_PID_checkbox.IsChecked = false;
+                ControlStrategy_Sel_3.IsChecked = true;
             }
+
+
+
             //set control point position
             text_point_pos.Opacity = 0;
             double control_rect_value_max = 100;
@@ -845,7 +930,7 @@ namespace User.PluginSdkDemo
             }
             Canvas.SetTop(rect_State, canvas.Height - rect_State.Height / 2);
             Canvas.SetLeft(rect_State, -rect_State.Width / 2);
-            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
             text_state.Text = "0%";
             //set for ABS slider
@@ -859,14 +944,14 @@ namespace User.PluginSdkDemo
             text_SABS.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger == 1)
             {
-                rect_SABS.Opacity = 1;
-                rect_SABS_Control.Opacity = 1;
-                text_SABS.Opacity = 1;
+                rect_SABS.Visibility = Visibility.Visible;
+                rect_SABS_Control.Visibility = Visibility.Visible;
+                text_SABS.Visibility = Visibility.Visible;
             }
             else {
-                rect_SABS.Opacity = 0;
-                rect_SABS_Control.Opacity = 0;
-                text_SABS.Opacity = 0;
+                rect_SABS.Visibility = Visibility.Hidden;
+                rect_SABS_Control.Visibility = Visibility.Hidden;
+                text_SABS.Visibility = Visibility.Hidden;
             }
             //set for travel slider;
             double dx = (canvas_horz_slider.Width-10) / 100;
@@ -959,6 +1044,15 @@ namespace User.PluginSdkDemo
             {
             }
 
+            // spindle pitch
+            try
+            {
+                SpindlePitch.SelectedIndex = (byte)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+
 
             //max game output slider
             double max_game_max = 100;
@@ -1013,6 +1107,73 @@ namespace User.PluginSdkDemo
             text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
             Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
             Canvas.SetTop(text_bite_amp, 5);
+
+            //Pgain slider
+            double value_max = 2;
+            dx = canvas_horz_Pgain.Width / value_max;
+            Canvas.SetLeft(rect_Pgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain * dx);
+            text_Pgain.Text =""+Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain,2); 
+            Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
+            Canvas.SetTop(text_Pgain, 5);
+
+            //Igain slider
+
+            value_max = 500;
+            dx = canvas_horz_Igain.Width / value_max;
+            Canvas.SetLeft(rect_Igain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain * dx);
+            text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
+            Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
+            Canvas.SetTop(text_Igain, 5);
+
+            //Dgain slider
+            value_max = 0.01;
+            dx = canvas_horz_Dgain.Width / value_max;
+            Canvas.SetLeft(rect_Dgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain * dx);
+            text_Dgain.Text = "" +Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain,4);
+            Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
+            Canvas.SetTop(text_Dgain, 5);
+
+            //VF gain slider
+            value_max = 20;
+            dx = canvas_horz_VFgain.Width / value_max;
+            Canvas.SetLeft(rect_VFgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain * dx);
+            text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
+            Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
+            Canvas.SetTop(text_VFgain, 5);
+
+            //MPC 0th order gain slider
+            value_max = 4;
+            dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
+            Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
+            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "mm/kg";
+            Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - rect_MPC_0th_order_gain.Width / 2);
+            Canvas.SetTop(text_MPC_0th_order_gain, 5);
+
+
+            ////MPC 1st order gain slider
+            //value_max = 0.01;
+            //dx = canvas_horz_MPC_1st_order_gain.Width / (2 * value_max);
+            //Canvas.SetLeft(rect_MPC_1st_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain * dx - value_max);
+            //text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2);
+            //Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - rect_MPC_1st_order_gain.Width / 2);
+            //Canvas.SetTop(text_MPC_1st_order_gain, 5);
+
+
+            //G force multiplier slider
+            double G_force_multi_max = 100;
+            dx = canvas_horz_G_force_multi.Width / G_force_multi_max;
+            Canvas.SetLeft(rect_G_force_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi);
+            text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
+            Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
+            Canvas.SetTop(text_G_multi, 5);
+
+            //G force window slider
+            value_max = 100;
+            dx = canvas_horz_G_force_window.Width / value_max;
+            Canvas.SetLeft(rect_G_force_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window);
+            text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
+            Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
+            Canvas.SetTop(text_G_window, 5);
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -1073,6 +1234,38 @@ namespace User.PluginSdkDemo
                 text_BP.Visibility = Visibility.Hidden;
                 rect_BP_Control.Visibility = Visibility.Hidden;
                 checkbox_enable_bite_point.Content = "Bite Point Vibration Disabled";
+            }
+
+            if (indexOfSelectedPedal_u == 1)
+            {
+                checkbox_enable_G_force.IsEnabled = true;
+                if (Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] == 1)
+                {
+                    checkbox_enable_G_force.IsChecked = true;
+                    checkbox_enable_G_force.Content = "G Force Effect Enabled";
+                }
+                else
+                {
+                    checkbox_enable_G_force.IsChecked = false;
+                    checkbox_enable_G_force.Content = "G Force Effect Disabled";
+                }
+            }
+            else
+            {
+                checkbox_enable_G_force.IsEnabled = false;
+                checkbox_enable_G_force.IsChecked = false;
+                checkbox_enable_G_force.Content = "G Force Effect Disabled";
+            }
+
+            if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
+            {
+                Serial_port_text.Text = "Serial Port connected";
+                Serial_port_text.Visibility= Visibility.Visible;
+
+            }
+            else
+            {
+                Serial_port_text.Visibility = Visibility.Hidden;
             }
 
 
@@ -1261,7 +1454,7 @@ namespace User.PluginSdkDemo
 
         public void PID_tuning_Feedforward_gain_changed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_feedforward_gain = (float)e.NewValue;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)e.NewValue;
         }
 
 
@@ -1880,6 +2073,48 @@ namespace User.PluginSdkDemo
             }
         }
 
+        Int64 writeCntr = 0;
+
+        int[] timeCntr = { 0, 0, 0};
+
+        double[] timeCollector = { 0, 0, 0 };
+
+
+        static List<int> FindAllOccurrences(byte[] source, byte[] sequence, int maxLength)
+        {
+            List<int> indices = new List<int>();
+
+            int len = source.Length - sequence.Length;
+            if (len > maxLength)
+            {
+                len = maxLength;
+            }
+
+            for (int i = 0; i <= len; i++)
+            {
+                bool found = true;
+                for (int j = 0; j < sequence.Length; j++)
+                {
+                    if (source[i + j] != sequence[j])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    indices.Add(i); // Sequence found, add index to the list
+                }
+            }
+
+            return indices;
+        }
+
+
+        int[] appendedBufferOffset = { 0, 0, 0 };
+
+        static int bufferSize = 100000;
+        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
 
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
@@ -1895,6 +2130,16 @@ namespace User.PluginSdkDemo
             //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
 
+
+
+                // Create a Stopwatch instance
+                Stopwatch stopwatch = new Stopwatch();
+
+                // Start the stopwatch
+                stopwatch.Start();
+
+
+
                 SerialPort sp = Plugin._serialPort[pedalSelected];
 
 
@@ -1903,7 +2148,9 @@ namespace User.PluginSdkDemo
 
 
                 //int length = sizeof(DAP_config_st);
-                //byte[] newBuffer_config = new byte[length];
+                
+
+
 
                 if (sp.IsOpen)
                 {
@@ -1912,252 +2159,365 @@ namespace User.PluginSdkDemo
                     if (receivedLength > 0)
                     {
 
-                        string incomingData = sp.ReadExisting();
 
-                        //if the data doesn't end with a stop char this will signal to keep it in _data 
-                        //for appending to the following read of data
-                        bool endsWithStop = EndsWithStop(incomingData);
+                        timeCntr[pedalSelected] += 1;
 
-                        //each array object will be sent separately to the callback
-                        string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
 
-                        for (int i = 0; i < dataArray.Length - 1; i++)
+                        // determine byte sequence which is defined as message end --> crlf
+                        byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
+
+                        // check if buffer is large enough otherwise discard in buffer and set offset to 0
+                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength) )
                         {
-                            string newData = dataArray[i];
+                            sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
+                        }
+                        else
+                        {
+                            sp.DiscardInBuffer();
+                            appendedBufferOffset[pedalSelected] = 0;
+                        }
 
-                            //if you are at the last object in the array and this hasn't got a stopchar after
-                            //it will be saved in _data
-                            if (!endsWithStop && (i == dataArray.Length - 2))
+
+                        // calculate current buffer length
+                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+
+
+                        // copy to local buffer
+                        byte[] localBuffer = new byte[currentBufferLength];
+                        Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
+
+
+                        // find all occurences of crlf as they indicate message end
+                        List<int> indices = FindAllOccurrences(localBuffer, byteToFind, currentBufferLength);
+
+
+                        
+
+                        // Destination array
+                        byte[] destinationArray = new byte[1000];
+
+                        // copy the last not finished buffer element to begining of next cycles buffer
+                        // and determine buffer offset
+                        if (indices.Count > 0)
+                        {
+                            // If at least one crlf was detected, check whether it arrieved at the last bytes
+                            int lastElement = indices.Last<int>();
+                            int remainingMessageLength = currentBufferLength - (lastElement + 2);
+                            if (remainingMessageLength >= 0)
                             {
-                                _data[pedalSelected] += newData;
+                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
+
+                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement+2, buffer_appended[pedalSelected], 0, remainingMessageLength);
                             }
-                            else
+                        }
+                        else
+                        {
+                            appendedBufferOffset[pedalSelected] += receivedLength;
+                        }
+
+
+
+
+
+                        int srcBufferOffset = 0;
+                        // decode every message
+                        foreach (int number in indices)
+                        {
+                            // computes the length of bytes to read
+                            int destBuffLength = number - srcBufferOffset;
+                            if (destBuffLength > 1000)
                             {
-                                string dataToSend = _data[pedalSelected] + newData;
-                                _data[pedalSelected] = "";
+                                continue;
+                            }
+
+
+                            // copy bytes to subarray
+                            Buffer.BlockCopy(localBuffer, srcBufferOffset, destinationArray, 0, destBuffLength);
+
+                            // update src buffer offset
+                            srcBufferOffset = number + 2;
 
 
 
-                                // check for pedal state struct
-                                if ((dataToSend.Length == sizeof(DAP_state_st)))
+                            // check for pedal state struct
+                            if ((destBuffLength == sizeof(DAP_state_basic_st)))
+                            {
+
+                                // parse byte array as config struct
+                                DAP_state_basic_st pedalState_read_st = getStateFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_state_basic_st* v_state = &pedalState_read_st;
+                                byte* p_state = (byte*)v_state;
+
+                                // payload type check
+                                bool check_payload_state_b = false;
+                                if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStateBasicPayload_type)
                                 {
-
-                                    // transform string into byte
-                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
-                                    {
-                                        // create a fixed size buffer
-                                        int length = sizeof(DAP_state_st);
-                                        byte[] newBuffer_state_2 = new byte[length];
-
-                                        // copy the received bytes into byte array
-                                        for (int j = 0; j < length; j++)
-                                        {
-                                            newBuffer_state_2[j] = p[j];
-                                        }
-
-                                        // parse byte array as config struct
-                                        DAP_state_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
-
-                                        // check whether receive struct is plausible
-                                        DAP_state_st* v_state = &pedalState_read_st;
-                                        byte* p_state = (byte*)v_state;
-
-                                        // payload type check
-                                        bool check_payload_state_b = false;
-                                        if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStatePayload_type)
-                                        {
-                                            check_payload_state_b = true;
-                                        }
-
-                                        // CRC check
-                                        bool check_crc_state_b = false;
-                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState)) == pedalState_read_st.payloadFooter_.checkSum)
-                                        {
-                                            check_crc_state_b = true;
-                                        }
-
-                                        if ((check_payload_state_b) && check_crc_state_b)
-                                        {
-
-                                            // write vJoy data
-                                            if(Plugin.Settings.vjoy_output_flag==1)
-                                            {
-                                                switch (pedalSelected)
-                                                {
-
-                                                    case 0:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);	// HID_USAGES Enums
-                                                        break;
-                                                    case 1:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);	// HID_USAGES Enums
-                                                        break;
-                                                    case 2:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);	// HID_USAGES Enums
-                                                        break;
-                                                    default:
-                                                        break;
-                                                }
-
-                                            }
-
-                                            
-
-                                            // GUI update
-                                            if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
-                                            {
-                                                //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                                //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
-                                                pedalStateHasAlreadyBeenUpdated_b = true;
-
-                                                text_point_pos.Opacity = 0;
-                                                double control_rect_value_max = 65535;
-                                                double dyy = canvas.Height / control_rect_value_max;
-                                                double dxx = canvas.Width / control_rect_value_max;
-
-                                                if (debug_flag)
-                                                {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalState_.pedalForce_u16 - rect_State.Height / 2);
-                                                    
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
-                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
-                                                    text_state.Text = Math.Round( pedalState_read_st.payloadPedalState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
-
-                                                }
-                                                else
-                                                {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    int round_x = (int)(100 * pedalState_read_st.payloadPedalState_.pedalPosition_u16 / control_rect_value_max)-1;
-                                                    int x_showed = round_x + 1;
-                                                    round_x = Math.Max(0, Math.Min(round_x, 99));
-                                                    Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
-                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
-                                                    text_state.Text = x_showed + "%";
-                                                }
-
-                                            }
-
-
-                                            continue;
-                                        }
-                                    }
+                                    check_payload_state_b = true;
                                 }
 
-
-                                // decode into config struct
-                                if ((waiting_for_pedal_config[pedalSelected]) && (dataToSend.Length == sizeof(DAP_config_st)))
+                                // CRC check
+                                bool check_crc_state_b = false;
+                                if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Basic)) == pedalState_read_st.payloadFooter_.checkSum)
                                 {
-                                    DAP_config_st tmp;
+                                    check_crc_state_b = true;
+                                }
 
+                                if ((check_payload_state_b) && check_crc_state_b)
+                                {
 
-                                    // transform string into byte
-                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+                                    // write vJoy data
+                                    if (Plugin.Settings.vjoy_output_flag == 1)
                                     {
-                                        // create a fixed size buffer
-                                        int length = sizeof(DAP_config_st);
-                                        byte[] newBuffer_config_2 = new byte[length];
-
-                                        // copy the received bytes into byte array
-                                        for (int j = 0; j < length; j++)
+                                        switch (pedalSelected)
                                         {
-                                            newBuffer_config_2[j] = p[j];
+
+                                            case 0:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
+                                                break;
+                                            case 1:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
+                                                break;
+                                            case 2:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                                break;
+                                            default:
+                                                break;
                                         }
 
-                                        // parse byte array as config struct
-                                        DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+                                    }
 
-                                        // check whether receive struct is plausible
-                                        DAP_config_st* v_config = &pedalConfig_read_st;
-                                        byte* p_config = (byte*)v_config;
 
-                                        // payload type check
-                                        bool check_payload_config_b = false;
-                                        if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+
+                                    // GUI update
+                                    if ((pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected))
+                                    {
+                                        //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                        //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                        //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+                                        //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+
+
+
+                                        pedalStateHasAlreadyBeenUpdated_b = true;
+
+                                        text_point_pos.Opacity = 0;
+                                        double control_rect_value_max = 65535;
+                                        double dyy = canvas.Height / control_rect_value_max;
+                                        double dxx = canvas.Width / control_rect_value_max;
+
+                                        if (debug_flag)
                                         {
-                                            check_payload_config_b = true;
-                                        }
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
 
-                                        // CRC check
-                                        bool check_crc_config_b = false;
-                                        if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
-                                        {
-                                            check_crc_config_b = true;
-                                        }
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
+                                            Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                            text_state.Text = Math.Round(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
 
-                                        if ((check_payload_config_b) && check_crc_config_b)
-                                        {
-                                            waiting_for_pedal_config[pedalSelected] = false;
-                                            dap_config_st[pedalSelected] = pedalConfig_read_st;
-                                            updateTheGuiFromConfig();
-
-                                            continue;
                                         }
                                         else
                                         {
-                                            TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
-                                            TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
+                                            int x_showed = round_x + 1;
+                                            round_x = Math.Max(0, Math.Min(round_x, 99));
+                                            Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
+                                            Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                            text_state.Text = x_showed + "%";
+                                        }
+
+                                    }
+
+
+                                    continue;
+                                }
+
+                            }
+
+
+
+
+
+
+                            // check for pedal extended state struct
+                            if ((destBuffLength == sizeof(DAP_state_extended_st)))
+                            {
+
+                                // parse byte array as config struct
+                                DAP_state_extended_st pedalState_ext_read_st = getStateExtFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_state_extended_st* v_state = &pedalState_ext_read_st;
+                                byte* p_state = (byte*)v_state;
+
+                                // payload type check
+                                bool check_payload_state_b = false;
+                                if (pedalState_ext_read_st.payloadHeader_.payloadType == Constants.pedalStateExtendedPayload_type)
+                                {
+                                    check_payload_state_b = true;
+                                }
+
+                                // CRC check
+                                bool check_crc_state_b = false;
+                                if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Extended)) == pedalState_ext_read_st.payloadFooter_.checkSum)
+                                {
+                                    check_crc_state_b = true;
+                                }
+
+                                if ((check_payload_state_b) && check_crc_state_b)
+                                {
+
+
+
+
+                                    if (indexOfSelectedPedal_u == pedalSelected)
+                                    {
+                                        if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
+                                        {
+                                            // Specify the path to the file
+                                            string currentDirectory = Directory.GetCurrentDirectory();
+                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
+
+                                            // Use StreamWriter to write to the file
+                                            using (StreamWriter writer = new StreamWriter(filePath, true))
+                                            {
+                                                // Write the content to the file
+                                                writeCntr++;
+                                                writer.Write(writeCntr);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.timeInMs_u32);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPosition_i16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPositionTarget_i16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
+                                                writer.Write("\n");
+                                            }
                                         }
                                     }
 
+
+
+
+                                    continue;
                                 }
-                                //else
-                                //{
-
-
-                                // When too many messages are received, only print every Nth message
-
-                                // When only a few messages are received, make the counter greater than N thus every message is printed
-                                if (dataArray.Length < 10)
-                                {
-                                    printCtr = 600;
-                                }
-
-                                if (printCtr++ > 200)
-                                {
-                                    printCtr = 0;
-                                    TextBox_serialMonitor.Text += dataToSend + "\n";
-                                    TextBox_serialMonitor.ScrollToEnd();
-                                }
-
-                                //}
-
-
                             }
 
-                            try
+
+
+
+
+
+
+
+                            // decode into config struct
+                            if ((waiting_for_pedal_config[pedalSelected]) && (destBuffLength == sizeof(DAP_config_st)))
                             {
-                                while (TextBox_serialMonitor.LineCount > 30)
+
+                                // parse byte array as config struct
+                                DAP_config_st pedalConfig_read_st = getConfigFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_config_st* v_config = &pedalConfig_read_st;
+                                byte* p_config = (byte*)v_config;
+
+                                // payload type check
+                                bool check_payload_config_b = false;
+                                if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
                                 {
-                                    TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
+                                    check_payload_config_b = true;
                                 }
+
+                                // CRC check
+                                bool check_crc_config_b = false;
+                                if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                                {
+                                    check_crc_config_b = true;
+                                }
+
+                                if ((check_payload_config_b) && check_crc_config_b)
+                                {
+                                    waiting_for_pedal_config[pedalSelected] = false;
+                                    dap_config_st[pedalSelected] = pedalConfig_read_st;
+                                    updateTheGuiFromConfig();
+
+                                    continue;
+                                }
+                                else
+                                {
+                                    TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                    TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                }
+
                             }
-                            catch { }
+
+
+                            // If non known array datatype was received, assume a text message was received and print it
+                            byte[] destinationArray_sub = new byte[destBuffLength];
+                            Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
+                            string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
+
+                            TextBox_serialMonitor.Text += resultString + "\n";
+                            TextBox_serialMonitor.ScrollToEnd();
 
 
 
 
+                            // When only a few messages are received, make the counter greater than N thus every message is printed
+                            //if (destBuffLength < 100)
+                            //{
+                            //    printCtr = 600;
+                            //}
+
+                            //if (printCtr++ > 200)
+                            //{
+                            //    printCtr = 0;
+                            //    TextBox_serialMonitor.Text += dataToSend + "\n";
+                            //    TextBox_serialMonitor.ScrollToEnd();
+                            //}
 
 
 
-                            //limits the data stored to 1000 to avoid using up all the memory in case of 
-                            //failure to register callback or include stopchar
-
-                            if (_data[pedalSelected].Length > 1000)
-                            {
-                                _data[pedalSelected] = "";
-                            }
 
 
                         }
 
-                        // obtain data and check whether it is from known payload type or just debug info
 
+
+
+
+
+                        // Stop the stopwatch
+                        stopwatch.Stop();
+
+                        // Get the elapsed time
+                        TimeSpan elapsedTime = stopwatch.Elapsed;
+
+                        timeCollector[pedalSelected] += elapsedTime.TotalMilliseconds;
+
+                        if (timeCntr[pedalSelected] >= 50)
+                        {
+
+
+                            double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
+                            TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
+
+                            timeCntr[pedalSelected] = 0;
+                            timeCollector[pedalSelected] = 0;
+                        }
                     }
-
+                    
                 }
             }
         }
@@ -2297,7 +2657,22 @@ namespace User.PluginSdkDemo
 
 
 
-        
+
+        public void SpindlePitchChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = (byte)SpindlePitch.SelectedIndex;
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+        }
+
+
+
 
 
 
@@ -2473,25 +2848,35 @@ namespace User.PluginSdkDemo
             updateTheGuiFromConfig();
 
         }
-        
+
+        private void dump_pedal_response_to_file_checked(object sender, RoutedEventArgs e)
+        {
+            dumpPedalToResponseFile[indexOfSelectedPedal_u] = true;
+        }
+
+        private void dump_pedal_response_to_file_unchecked(object sender, RoutedEventArgs e)
+        {
+            dumpPedalToResponseFile[indexOfSelectedPedal_u] = false;
+        }
+
 
 
         private void Simulate_ABS_check_Checked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 1;
             TextBox_debugOutput.Text = "simulateABS: on";
-            rect_SABS.Opacity = 1;
-            rect_SABS_Control.Opacity = 1;
-            text_SABS.Opacity = 1;
+            rect_SABS.Visibility = Visibility.Visible;
+            rect_SABS_Control.Visibility = Visibility.Visible;
+            text_SABS.Visibility = Visibility.Visible;
 
         }
         private void Simulate_ABS_check_Unchecked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger = 0;
             TextBox_debugOutput.Text = "simulateABS: off";
-            rect_SABS.Opacity = 0;
-            rect_SABS_Control.Opacity = 0;
-            text_SABS.Opacity = 0;
+            rect_SABS.Visibility = Visibility.Hidden;
+            rect_SABS_Control.Visibility = Visibility.Hidden;
+            text_SABS.Visibility = Visibility.Hidden;
 
         }
 
@@ -2513,6 +2898,41 @@ namespace User.PluginSdkDemo
             var rectangle = sender as Rectangle;
             offset = e.GetPosition(rectangle);
             rectangle.CaptureMouse();
+            //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
+            //Color light = Color.FromArgb(255, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //Color middle_light= Color.FromArgb(235, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //Color dark = Color.FromArgb(100, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+            //
+            /*
+            RadialGradientBrush myRadialGradientBrush = new RadialGradientBrush();
+            myRadialGradientBrush.GradientOrigin = new Point(0.5, 0.5);
+            myRadialGradientBrush.Center = new Point(0.5, 0.5);
+            myRadialGradientBrush.RadiusX = 0.5;
+            myRadialGradientBrush.RadiusY = 0.5;
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(light, 0.0));
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(middle_light, 0.75));
+            myRadialGradientBrush.GradientStops.Add(
+                new GradientStop(dark, 1.0));
+            */
+            //
+            //rectangle.Fill = new SolidColorBrush(light);
+            //rectangle.Fill = myRadialGradientBrush;
+            //Color light = Color.FromArgb(128, 128, 128, 128);
+            if(rectangle.Name != "rect_SABS_Control" & rectangle.Name != "rect_BP_Control")
+            {
+                var dropShadowEffect = new DropShadowEffect
+                {
+                    ShadowDepth = 0,
+                    BlurRadius = 15,
+                    Color = Colors.White,
+                    Opacity = 1
+                };
+                rectangle.Fill = lightcolor;
+                rectangle.Effect = dropShadowEffect;
+            }
+
         }
 
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
@@ -2569,7 +2989,7 @@ namespace User.PluginSdkDemo
                     text_point_pos.Text = "Travel:100%";
                     text_point_pos.Text += "\nForce: " + (int)y_actual + "%";
                 }
-                text_point_pos.Opacity = 1;
+                text_point_pos.Visibility = Visibility.Visible; ;
 
                 Update_BrakeForceCurve();
 
@@ -2968,7 +3388,156 @@ namespace User.PluginSdkDemo
                     Canvas.SetTop(text_bite_freq, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
+                //Pgain
+                if (rectangle.Name == "rect_Pgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 2;
+                    double x = e.GetPosition(canvas_horz_Pgain).X - offset.X;
+                    double dx = canvas_horz_Pgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)actual_x;
+                    text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 4);
+                    Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
+                    Canvas.SetTop(text_Pgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
 
+                if (rectangle.Name == "rect_Igain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 500;
+                    double x = e.GetPosition(canvas_horz_Igain).X - offset.X;
+                    double dx = canvas_horz_Igain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)actual_x;
+                    text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 4);
+                    Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
+                    Canvas.SetTop(text_Igain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+                if (rectangle.Name == "rect_Dgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 0.01;
+                    double x = e.GetPosition(canvas_horz_Dgain).X - offset.X;
+                    double dx = canvas_horz_Dgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)actual_x;
+                    text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
+                    Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
+                    Canvas.SetTop(text_Dgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+                if (rectangle.Name == "rect_VFgain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 20;
+                    double x = e.GetPosition(canvas_horz_VFgain).X - offset.X;
+                    double dx = canvas_horz_VFgain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)actual_x;
+                    text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 2);
+                    Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
+                    Canvas.SetTop(text_VFgain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+                if (rectangle.Name == "rect_G_force_multi")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_G_force_multi).X - offset.X;
+                    double G_force_max = 100;
+                    double dx = canvas_horz_G_force_multi.Width / G_force_max;
+                    double min_position = 0 * dx;
+                    double max_position = G_force_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = Convert.ToByte(actual_x);
+                    text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
+                    Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
+                    Canvas.SetTop(text_G_multi, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                //G_force window
+                if (rectangle.Name == "rect_G_force_window")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_G_force_window).X - offset.X;
+                    double G_window_max = 100;
+                    double dx = canvas_horz_G_force_multi.Width / G_window_max;
+                    double min_position = 10 * dx;
+                    double max_position = G_window_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = Convert.ToByte(actual_x);
+                    text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
+                    Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
+                    Canvas.SetTop(text_G_window, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+
+                //MPC 0th order gain
+                if (rectangle.Name == "rect_MPC_0th_order_gain")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double value_max = 4;
+                    double x = e.GetPosition(canvas_horz_MPC_0th_order_gain).X - offset.X;
+                    double dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
+                    double min_position = 0 * dx;
+                    double max_position = value_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
+                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4) + "mm/kg";
+                    Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
+                    Canvas.SetTop(text_MPC_0th_order_gain, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
+
+
+                ////MPC 1st order gain
+                //if (rectangle.Name == "rect_MPC_1st_order_gain")
+                //{
+                //    // Ensure the rectangle stays within the canvas
+                //    double value_max = 0.01;
+                //    double x = e.GetPosition(canvas_horz_MPC_1st_order_gain).X - offset.X;
+                //    double dx = canvas_horz_MPC_1st_order_gain.Width / (2*value_max);
+                //    double min_position = 0 * dx;
+                //    double max_position = value_max * 2 * dx;
+                //    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                //    x = Math.Max(min_position, Math.Min(x, max_position));
+                //    double actual_x = x / dx;
+                //    actual_x -= value_max;
+                //    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)actual_x;
+                //    text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 4);
+                //    Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - text_MPC_1st_order_gain.Width / 2);
+                //    Canvas.SetTop(text_MPC_1st_order_gain, 5);
+                //    Canvas.SetLeft(rectangle, x);
+                //}
 
             }
         }
@@ -2980,65 +3549,56 @@ namespace User.PluginSdkDemo
                 isDragging = false;
                 rectangle.ReleaseMouseCapture();
                 text_point_pos.Opacity=0;
+                //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
+                //Color color = Color.FromArgb(150, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
+                //rectangle.Fill = btn_update.Background;
+                if (rectangle.Name != "rect_SABS_Control" & rectangle.Name != "rect_BP_Control")
+                {
+                    var dropShadowEffect = new DropShadowEffect
+                    {
+                        ShadowDepth = 0,
+                        BlurRadius = 20,
+                        Color = Colors.White,
+                        Opacity = 0
+                    };
+                    rectangle.Fill = defaultcolor;
+                    rectangle.Effect = dropShadowEffect;
+                }
+
+                //rectangle.Fill = new SolidColorBrush(color);
             }
-        }
-        private void PID_type_checkbox_Checked(object sender, RoutedEventArgs e)
-        {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = (byte)1;
-            TextBox_debugOutput.Text = "Dynamic PID on";
-        }
-        private void PID_type_checkbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = (byte)0;
-            TextBox_debugOutput.Text = "Dynamic PID off";
         }
         private void Debug_checkbox_Checked(object sender, RoutedEventArgs e)
         {
 
-            text_debug_flag.Opacity = 1;
-            text_debug_PID_para.Opacity = 1;
-            text_debug_dgain.Opacity = 1;
-            text_debug_igain.Opacity = 1;
-            text_debug_pgain.Opacity = 1;
-            text_debug_feedforward.Opacity = 1;
-            text_serial.Opacity = 1;
+            text_debug_flag.Visibility = Visibility.Visible; 
+            text_serial.Visibility = Visibility.Visible;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
-            PID_tuning_D_gain_slider.Opacity = 1;
-            PID_tuning_I_gain_slider.Opacity = 1;
-            PID_tuning_P_gain_slider.Opacity= 1;
-            PID_tuning_Feedforward_gain_slider.Opacity = 1;
-            textBox_debug_Flag_0.Opacity = 1;
+            textBox_debug_Flag_0.Visibility = Visibility.Visible;
             //btn_serial.Visibility = System.Windows.Visibility.Visible;
             btn_system_id.Visibility = System.Windows.Visibility.Visible;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Visible;
-            InvertLoadcellReading_check.Opacity = 1;
+            btn_reset_default.Visibility = System.Windows.Visibility.Visible;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
+            InvertLoadcellReading_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            text_debug_flag.Opacity = 0;
-            text_debug_PID_para.Opacity = 0;
-            text_debug_dgain.Opacity = 0;
-            text_debug_igain.Opacity = 0;
-            text_debug_pgain.Opacity = 0;
-            text_debug_feedforward.Opacity = 0;
-            text_serial.Opacity = 0;
+            text_debug_flag.Visibility = Visibility.Hidden; ;
+            text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            PID_tuning_D_gain_slider.Opacity = 0;
-            PID_tuning_I_gain_slider.Opacity = 0;
-            PID_tuning_P_gain_slider.Opacity = 0;
-            PID_tuning_Feedforward_gain_slider.Opacity = 0;
-            textBox_debug_Flag_0.Opacity = 0;
+            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
-            btn_pedal_disconnect.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Opacity = 0;
+            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
+            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
+            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
         }
@@ -3306,6 +3866,50 @@ namespace User.PluginSdkDemo
 
         }
 
+        private void btn_reset_default_Click(object sender, RoutedEventArgs e)
+        {
+            DAP_config_set_default(indexOfSelectedPedal_u);
+            updateTheGuiFromConfig();
+        }
+
+        private void checkbox_enable_G_force_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] = 0;
+            checkbox_enable_G_force.Content = "G Force Effect Disabled";
+
+
+        }
+        private void checkbox_enable_G_force_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.G_force_enable_flag[indexOfSelectedPedal_u] = 1;
+            checkbox_enable_G_force.Content = "G Force Effect Enabled";
+
+
+        }
+
+        // for ocntrol strategy
+        private void StrategySel(object sender, RoutedEventArgs e)
+        {
+            if (ControlStrategy_Sel_1.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 0;
+            }
+
+            if (ControlStrategy_Sel_2.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 1;
+            }
+
+            if (ControlStrategy_Sel_3.IsChecked == true)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = 2;
+            }
+
+        }
+
+
+
+        
 
         /*
 private void GetRectanglePositions()

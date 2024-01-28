@@ -2,13 +2,14 @@
 
 #include <stdint.h>
 
+// define the payload revision
+#define DAP_VERSION_CONFIG 126
 
-#define DAP_VERSION_CONFIG 119
-
-
+// define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
 #define DAP_PAYLOAD_TYPE_ACTION 110
-#define DAP_PAYLOAD_TYPE_STATE 120
+#define DAP_PAYLOAD_TYPE_STATE_BASIC 120
+#define DAP_PAYLOAD_TYPE_STATE_EXTENDED 130
 
 struct payloadHeader {
   
@@ -29,12 +30,27 @@ struct payloadPedalAction {
   uint8_t startSystemIdentification_u8;
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
+  uint8_t G_value;
 };
 
-struct payloadPedalState {
+
+struct payloadPedalState_Basic {
   uint16_t pedalPosition_u16;
   uint16_t pedalForce_u16;
   uint16_t joystickOutput_u16;
+};
+
+struct payloadPedalState_Extended {
+
+  unsigned long timeInMs_u32; 
+  uint16_t pedalForce_raw_u16;
+  uint16_t pedalForce_filtered_u16;
+  int16_t forceVel_est_i16;
+
+  // register values from servo
+  int16_t servoPosition_i16;
+  int16_t servoPositionTarget_i16;
+  int16_t servo_voltage_0p1V;
 };
 
 struct payloadPedalConfig {
@@ -86,7 +102,10 @@ struct payloadPedalConfig {
   uint8_t BP_amp;
   uint8_t BP_freq;
   uint8_t BP_trigger;
-  
+    //G force effect
+  uint8_t G_multi;
+  uint8_t G_window;
+
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
@@ -95,7 +114,12 @@ struct payloadPedalConfig {
   float PID_p_gain;
   float PID_i_gain;
   float PID_d_gain;
-  float PID_feedforward_gain;
+  float PID_velocity_feedforward_gain;
+
+  // MPC settings
+  float MPC_0th_order_gain;
+  float MPC_1st_order_gain;
+  float MPC_2nd_order_gain;
 
   uint8_t control_strategy_b;
 
@@ -117,6 +141,9 @@ struct payloadPedalConfig {
   // invert loadcell sign
   uint8_t invertLoadcellReading_u8;
 
+  // spindle pitch in mm/rev
+  uint8_t spindlePitch_mmPerRev_u8;
+
 };
 
 struct payloadFooter {
@@ -131,9 +158,15 @@ struct DAP_actions_st {
   payloadFooter payloadFooter_; 
 };
 
-struct DAP_state_st {
+struct DAP_state_basic_st {
   payloadHeader payLoadHeader_;
-  payloadPedalState payloadPedalState_;
+  payloadPedalState_Basic payloadPedalState_Basic_;
+  payloadFooter payloadFooter_; 
+};
+
+struct DAP_state_extended_st {
+  payloadHeader payLoadHeader_;
+  payloadPedalState_Extended payloadPedalState_Extended_;
   payloadFooter payloadFooter_; 
 };
 
@@ -177,8 +210,11 @@ struct DAP_calculationVariables_st
   float BP_amp;
   float BP_freq;
   float dampingPress;
+  float Force_Max_default;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);
   void updateStiffness();
+  void dynamic_update();
+  void reset_maxforce();
 };

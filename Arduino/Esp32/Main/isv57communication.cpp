@@ -23,11 +23,11 @@ void isv57communication::setupServoStateReading() {
   // tell the modbus slave, which registers will be read cyclicly
   modbus.holdingRegisterWrite(slaveId, 0x0191, reg_add_position_given_p);
   delay(50);
-  modbus.holdingRegisterWrite(slaveId, 0x0192, reg_add_position_error_p);
+  modbus.holdingRegisterWrite(slaveId, 0x0192, reg_add_velocity_current_feedback_percent);
   delay(50);
-  modbus.holdingRegisterWrite(slaveId, 0x0193, reg_add_velocity_current_feedback_percent);
+  modbus.holdingRegisterWrite(slaveId, 0x0193, reg_add_position_error_p);
   delay(50);
-  modbus.holdingRegisterWrite(slaveId, 0x0194, reg_add_velocity_current_given_percent);
+  modbus.holdingRegisterWrite(slaveId, 0x0194, reg_add_voltage_0p1V);
   delay(50);
 
 
@@ -146,34 +146,41 @@ int16_t isv57communication::getZeroPos()
 void isv57communication::readServoStates() {
 
   // read the four registers simultaneously
-  if(modbus.requestFrom(slaveId, 0x03, ref_cyclic_read_0,  8) > 0)
+  int8_t numberOfRegistersToRead_u8 = 4;
+  int bytesReceived_i = modbus.requestFrom(slaveId, 0x03, ref_cyclic_read_0, numberOfRegistersToRead_u8);
+  if(bytesReceived_i == (numberOfRegistersToRead_u8*2))
   {
     modbus.RxRaw(raw,  len);
-    for (uint8_t regIdx = 0; regIdx < 4; regIdx++)
+    for (uint8_t regIdx = 0; regIdx < numberOfRegistersToRead_u8; regIdx++)
     { 
       regArray[regIdx] = modbus.uint16(regIdx);
     }
+
+    // write to public variables
+    servo_pos_given_p = regArray[0];
+    servo_current_percent = regArray[1];
+    servo_pos_error_p = regArray[2];
+    servo_voltage_0p1V = regArray[3];
   }
+  //Serial.print("Bytes :");
+  //Serial.println(bytesReceived_i);
   
-  // write to public variables
-  servo_pos_given_p = regArray[0];
-  servo_pos_error_p = regArray[1];
-  servo_current_percent = regArray[2];
+  
   
   // print registers
   if (0)
   {
     Serial.print("Pos_given:");
-    Serial.print(regArray[0]);
+    Serial.print(servo_pos_given_p);
 
     Serial.print(",Pos_error:");
-    Serial.print(regArray[1]);
+    Serial.print(servo_pos_error_p);
 
     Serial.print(",Cur_given:");
-    Serial.print(regArray[2]);
+    Serial.print(servo_current_percent);
 
-    Serial.print(",Cur_fb:");
-    Serial.print(regArray[3]);
+    Serial.print(",Voltage:");
+    Serial.print(servo_voltage_0p1V);
 
     Serial.println(" "); 
   }

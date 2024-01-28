@@ -34,7 +34,8 @@ public:
   void printStates();
 
 public:
-  int32_t getCurrentPositionSteps() const;
+  int32_t getCurrentPositionFromMin() const;
+  int32_t getCurrentPosition() const;
   double getCurrentPositionFraction() const;
   double getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const;
   int32_t getTargetPositionSteps() const;

@@ -10,7 +10,7 @@
 // a = 300 / delta_t^2
 // adjust model noise here s = 0.5 * a * delta_t^2 --> a = 2 * s / delta_t^2
 //static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 2.0f * 1000.0f / 0.05f/ 0.05f );
-static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 2.0f * 10.0f / 0.05f/ 0.05f );
+static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 2.0f * 4.0f / 0.1f/ 0.1f );
 
 
 KalmanFilter::KalmanFilter(float varianceEstimate)
@@ -40,7 +40,7 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   unsigned long currentTime = micros();
   unsigned long elapsedTime = currentTime - _timeLastObservation;
   float modelNoiseScaling_fl32 = modelNoiseScaling_u8;
-  modelNoiseScaling_fl32 /= 128.0;
+  modelNoiseScaling_fl32 /= 255.0;
 
   if (elapsedTime < 1) { elapsedTime=1; }
   _timeLastObservation = currentTime;
@@ -55,7 +55,6 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
           0.0,  1.0};
 
   _K.B = {1.0, 
-  
           0.0};
 
   float K_Q_11 = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION * 0.5f * delta_t_pow3;

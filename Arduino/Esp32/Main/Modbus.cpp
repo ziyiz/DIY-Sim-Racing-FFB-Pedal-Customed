@@ -254,17 +254,26 @@ int Modbus::requestFrom(int slaveId, int type, int address,int nb)
           }
         }
         else if(found == 1){
-        // Serial.print("Len: ");
-        //  Serial.println(rx,DEC);
-         rawRx[0] = txout[0];
-         rawRx[1] = txout[1];
-         rawRx[2] = rx;
+          
+         rawRx[0] = txout[0]; // Slave ID
+         rawRx[1] = txout[1]; // Function code
+         rawRx[2] = rx; // Bytes count to follow + 2 Byte CRC
          lenRx = 3;
          found = 2;
         } 
         else if(found == 2)
         {
          this->rawRx[lenRx++] =  rx;
+
+         // the receive message looks like this
+         // Byte 1: SalveId e.g. 0x3F
+         // Byte 2: Function code e.g. 0x03
+         // Byte 3: Bytes to read e.g. m=8 to read 4 consecutive registers
+         // Byte 4-(N-2): Register values
+         // Byte N-1: CRC MSB
+         // Byte N: CRC LSB
+
+         // The total message length is thus N = 5+m
          if(lenRx >= rawRx[2] + 5) { break; }
         }
         

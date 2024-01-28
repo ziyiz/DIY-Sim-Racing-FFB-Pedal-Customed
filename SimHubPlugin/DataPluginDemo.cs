@@ -20,13 +20,14 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 119;
+    public const uint pedalConfigPayload_version = 126;
 
 
     // pyload types
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
-    public const uint pedalStatePayload_type = 120;
+    public const uint pedalStateBasicPayload_type = 120;
+    public const uint pedalStateExtendedPayload_type = 130;
 }
 
 
@@ -50,13 +51,28 @@ public struct payloadPedalAction
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
+    public byte G_value;
 };
 
-public struct payloadPedalState
+public struct payloadPedalState_Basic
 {
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
+
+};
+
+public struct payloadPedalState_Extended
+{
+    public UInt32 timeInMs_u32;
+    public UInt16 pedalForce_raw_u16;
+    public UInt16 pedalForce_filtered_u16;
+    public Int16 forceVel_est_i16;
+
+    // register values from servo
+    public Int16 servoPosition_i16;
+    public Int16 servoPositionTarget_i16;
+    public Int16 servo_voltage_0p1V_i16;
 };
 
 public struct payloadPedalConfig
@@ -105,6 +121,8 @@ public struct payloadPedalConfig
     public byte BP_amp;
     public byte BP_freq;
     public byte BP_trigger;
+    public byte G_multi;
+    public byte G_window;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -122,7 +140,14 @@ public struct payloadPedalConfig
     public float PID_p_gain;
     public float PID_i_gain;
     public float PID_d_gain;
-    public float PID_feedforward_gain;
+    public float PID_velocity_feedforward_gain;
+
+    // MPC settings
+    public float MPC_0th_order_gain;
+    public float MPC_1st_order_gain;
+    public float MPC_2nd_order_gain;
+
+
 
     public byte control_strategy_b;
 
@@ -142,6 +167,9 @@ public struct payloadPedalConfig
 
     // invert loadcell sign
     public byte invertLoadcellReading_u8;
+
+    // spindle pitch in mm/rev
+    public byte spindlePitch_mmPerRev_u8;
 
 
 }
@@ -169,13 +197,19 @@ public struct DAP_config_st
     public payloadFooter payloadFooter_;
 }
 
-public struct DAP_state_st
+public struct DAP_state_basic_st
 {
     public payloadHeader payloadHeader_;
-    public payloadPedalState payloadPedalState_;
+    public payloadPedalState_Basic payloadPedalBasicState_;
     public payloadFooter payloadFooter_;
 }
 
+public struct DAP_state_extended_st
+{
+    public payloadHeader payloadHeader_;
+    public payloadPedalState_Extended payloadPedalExtendedState_;
+    public payloadFooter payloadFooter_;
+}
 
 
 namespace User.PluginSdkDemo
@@ -191,6 +225,7 @@ namespace User.PluginSdkDemo
         public bool sendAbsSignal = false;
 		public DAP_config_st dap_config_initial_st;
         public byte rpm_last_value = 0 ;
+        public double g_force_last_value = 128;
         public byte game_running_index = 0 ;
         public uint testValue = 0;
 
@@ -200,6 +235,11 @@ namespace User.PluginSdkDemo
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
         DateTime absTrigger_lastTime = DateTime.Now;
+
+        //G force timer
+        DateTime GTrigger_currentTime = DateTime.Now;
+        DateTime GTrigger_lastTime = DateTime.Now;
+
         //// payload revisiom
         //public uint pedalConfigPayload_version = 110;
 
@@ -295,6 +335,7 @@ namespace User.PluginSdkDemo
             bool sendTcSignal_local_b = false;
             double RPM_value =0;
             double RPM_MAX = 0;
+            double _G_force = 128;
 
             //for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             //{
@@ -330,18 +371,30 @@ namespace User.PluginSdkDemo
                     {
                         RPM_MAX = data.NewData.CarSettings_MaxRPM;
                     }
+
                     RPM_value = (data.NewData.Rpms / RPM_MAX*100);
+                    
+                    if (data.NewData.GlobalAccelerationG != 0)
+                    {
+                        _G_force = -1 * data.NewData.GlobalAccelerationG + 128;
+                    }
+                    else
+                    {
+                        _G_force = 128;
+                    }
                     game_running_index = 1;
 
                 }
                 else
                 {
-                    RPM_value = 0;                
+                    RPM_value = 0;
+                    _G_force = 128;
                 }
             }
             else
             {
                 RPM_value = 0;
+                _G_force = 128;
             }
 			
 
@@ -363,6 +416,7 @@ namespace User.PluginSdkDemo
 
 
 
+
             bool update_flag = false;
 
             if (data.GameRunning)
@@ -378,6 +432,15 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                        if (Settings.G_force_enable_flag[pedalIdx] == 1)
+                        {
+                            tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
+                        }
+                        else
+                        {
+                            tmp.payloadPedalAction_.G_value = 128;
+                        }
+                        
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
                             if (Math.Abs(RPM_value - rpm_last_value) >10)
@@ -385,6 +448,35 @@ namespace User.PluginSdkDemo
                                 tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
                                 update_flag = true;
                                 rpm_last_value = (Byte)RPM_value;
+                            }
+                        }
+
+                        //G force effect only effect on brake
+                        if (pedalIdx == 1)
+                        {
+
+                            GTrigger_currentTime = DateTime.Now;
+                            TimeSpan diff_G = GTrigger_currentTime - GTrigger_lastTime;
+                            int millisceonds_G = (int)diff_G.TotalMilliseconds;
+                            if (millisceonds <= 10)
+                            {
+                                _G_force = g_force_last_value;
+                            }
+                            else
+                            {
+                                GTrigger_lastTime = DateTime.Now;
+                            }
+                            if (Settings.G_force_enable_flag[pedalIdx] == 1)
+                            {
+                                //double value_check_g = 1 - _G_force / ((double)g_force_last_value);
+                                double value_check_g = (_G_force - (double)g_force_last_value);
+                                if (Math.Abs(value_check_g) > 2)
+                                {
+                                    tmp.payloadPedalAction_.G_value = (Byte)_G_force;
+                                    update_flag = true;
+                                    g_force_last_value = (Byte)_G_force;
+                                }
+
                             }
                         }
 
@@ -434,56 +526,7 @@ namespace User.PluginSdkDemo
                         }
                     }
                 }
-                /*
-                // Send TC trigger signal via serial
-                if (_serialPort[2].IsOpen)
-                {
-                    DAP_action_st tmp;
-
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                    tmp.payloadPedalAction_.RPM_u8 = rpm_last_value;
-
-                    if ((RPM_value - rpm_last_value > 10) || (RPM_value - rpm_last_value < -10))
-                    {
-                        tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
-                        update_flag = true;
-                        rpm_last_value = (Byte)RPM_value;
-                    }
-                    if (sendTcSignal_local_b)
-                    {
-                        // compute checksum
-
-                        tmp.payloadPedalAction_.triggerAbs_u8 = 1;
-                        update_flag = true;
-
-                    }
-                    if (update_flag)
-                    {
-                        DAP_action_st* v = &tmp;
-                        byte* p = (byte*)v;
-                        tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-
-
-                        int length = sizeof(DAP_action_st);
-                        byte[] newBuffer = new byte[length];
-                        newBuffer = getBytes_Action(tmp);
-
-
-                        // clear inbuffer 
-                        _serialPort[2].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
-                        rpm_last_value = (Byte)RPM_value;
-                    }
-
-
-
-                }
-                */
-
+                
             }
             else
             {
@@ -495,6 +538,7 @@ namespace User.PluginSdkDemo
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                     tmp.payloadPedalAction_.RPM_u8 = 0;
+                    tmp.payloadPedalAction_.G_value = 128;
                     rpm_last_value = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
@@ -526,6 +570,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                 tmp.payloadPedalAction_.triggerAbs_u8 = 1;
                 tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -1097,7 +1142,8 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.BP_amp = 1;
             dap_config_initial_st.payloadPedalConfig_.BP_freq = 15;
             dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
-
+            dap_config_initial_st.payloadPedalConfig_.G_multi = 50;
+            dap_config_initial_st.payloadPedalConfig_.G_window = 60;
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
@@ -1118,10 +1164,11 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.PID_p_gain = 0.3f;
             dap_config_initial_st.payloadPedalConfig_.PID_i_gain = 50.0f;
             dap_config_initial_st.payloadPedalConfig_.PID_d_gain = 0.0f;
-            dap_config_initial_st.payloadPedalConfig_.PID_feedforward_gain = 0.0f;
-            
+            dap_config_initial_st.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 0;
+            dap_config_initial_st.payloadPedalConfig_.MPC_0th_order_gain = 1.0f;
+
+            dap_config_initial_st.payloadPedalConfig_.control_strategy_b = 2;
 
             dap_config_initial_st.payloadPedalConfig_.loadcell_rating = 150;
 
@@ -1129,9 +1176,12 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.invertLoadcellReading_u8 = 0;
 
+            dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
 
 
-            
+
+
+
 
 
         }
