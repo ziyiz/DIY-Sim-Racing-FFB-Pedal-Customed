@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 123
+#define DAP_VERSION_CONFIG 124
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -103,6 +103,7 @@ struct payloadPedalConfig {
   uint8_t BP_trigger;
     //G force effect
   uint8_t G_multi;
+  uint8_t G_window;
 
   // cubic spline parameters
   float cubic_spline_param_a_array[5];

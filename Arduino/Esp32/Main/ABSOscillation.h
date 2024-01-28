@@ -215,14 +215,14 @@ class MovingAverageFilter
 public:
   //construct without coefs
   MovingAverageFilter(unsigned int newDataPointsCount);
-
+  int dataPointsCount;
   float process(float in);
   
 
 private:
   float values[MAX_DATA_POINTS];
   int k; // k stores the index of the current array read to create a circular memory through the array
-  int dataPointsCount;
+  
   float out;
   int i; // just a loop counter
 };
@@ -256,7 +256,7 @@ float MovingAverageFilter::process(float in)
   return out / dataPointsCount;
 }
 
-MovingAverageFilter movingAverageFilter(60);
+MovingAverageFilter movingAverageFilter(100);
 // G force effect
 class G_force_effect
 {

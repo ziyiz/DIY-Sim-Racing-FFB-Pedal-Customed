@@ -557,6 +557,7 @@ void pedalUpdateTask( void * pvParameters )
     #endif
 
     //update max force with G force effect
+    movingAverageFilter.dataPointsCount=dap_config_st.payLoadPedalConfig_.G_window;
     dap_calculationVariables_st.reset_maxforce();
     dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
     dap_calculationVariables_st.dynamic_update();
@@ -747,6 +748,9 @@ void pedalUpdateTask( void * pvParameters )
     
 
     // compute controller output
+    dap_calculationVariables_st.reset_maxforce();
+    dap_calculationVariables_st.dynamic_update();
+    dap_calculationVariables_st.updateStiffness();
     if(semaphore_updateJoystick!=NULL)
     {
       if(xSemaphoreTake(semaphore_updateJoystick, (TickType_t)1)==pdTRUE) {
@@ -758,6 +762,7 @@ void pedalUpdateTask( void * pvParameters )
         else
         {
           //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          
           joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
         }
         

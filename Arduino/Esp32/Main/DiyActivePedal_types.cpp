@@ -43,6 +43,13 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.RPM_max_freq = 40;
   payLoadPedalConfig_.RPM_min_freq = 10;
   payLoadPedalConfig_.RPM_AMP = 5;
+  payLoadPedalConfig_.BP_trigger_value =50;
+  payLoadPedalConfig_.BP_amp=1;
+  payLoadPedalConfig_.BP_freq=15;
+  payLoadPedalConfig_.BP_trigger=0;
+  payLoadPedalConfig_.G_multi = 50;
+  payLoadPedalConfig_.G_window=60;
+
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;
