@@ -46,6 +46,8 @@ using System.Runtime;
 using SimHub.Plugins.DataPlugins.ShakeItV3.Settings;
 using System.Windows.Media.Effects;
 using System.Diagnostics;
+using System.Collections;
+using System.Linq;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -2077,6 +2079,43 @@ namespace User.PluginSdkDemo
 
         double[] timeCollector = { 0, 0, 0 };
 
+
+        static List<int> FindAllOccurrences(byte[] source, byte[] sequence, int maxLength)
+        {
+            List<int> indices = new List<int>();
+
+            int len = source.Length - sequence.Length;
+            if (len > maxLength)
+            {
+                len = maxLength;
+            }
+
+            for (int i = 0; i <= len; i++)
+            {
+                bool found = true;
+                for (int j = 0; j < sequence.Length; j++)
+                {
+                    if (source[i + j] != sequence[j])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    indices.Add(i); // Sequence found, add index to the list
+                }
+            }
+
+            return indices;
+        }
+
+
+        int[] appendedBufferOffset = { 0, 0, 0 };
+
+        static int bufferSize = 100000;
+        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
+
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
@@ -2109,7 +2148,9 @@ namespace User.PluginSdkDemo
 
 
                 //int length = sizeof(DAP_config_st);
-                //byte[] newBuffer_config = new byte[length];
+                
+
+
 
                 if (sp.IsOpen)
                 {
@@ -2121,398 +2162,366 @@ namespace User.PluginSdkDemo
 
                         timeCntr[pedalSelected] += 1;
 
-                        string incomingData = sp.ReadExisting();
 
-                        //if the data doesn't end with a stop char this will signal to keep it in _data 
-                        //for appending to the following read of data
-                        bool endsWithStop = EndsWithStop(incomingData);
 
-                        //each array object will be sent separately to the callback
-                        string[] dataArray = incomingData.Split(STOPCHAR, StringSplitOptions.None);
+                        // Create a Stopwatch instance
+                        Stopwatch stopwatch2 = new Stopwatch();
 
-                        for (int i = 0; i < dataArray.Length - 1; i++)
+                        // Start the stopwatch
+                        stopwatch2.Start();
+
+                        byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
+
+                        //byte[] buffer = new byte[receivedLength + ];
+                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength) )
                         {
-                            string newData = dataArray[i];
+                            sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
+                        }
+                        else
+                        {
+                            sp.DiscardInBuffer();
+                            appendedBufferOffset[pedalSelected] = 0;
+                        }
 
-                            //if you are at the last object in the array and this hasn't got a stopchar after
-                            //it will be saved in _data
-                            if (!endsWithStop && (i == dataArray.Length - 2))
+
+                        // copy to appended buffer
+                        //Buffer.BlockCopy(buffer, 0, buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
+
+                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+                        List<int> indices = FindAllOccurrences(buffer_appended[pedalSelected], byteToFind, currentBufferLength);
+
+
+                        int srcBufferOffset = 0;
+
+                        // Destination array
+                        byte[] destinationArray = new byte[1000];
+
+                        // copy the last not finished buffer element to begining of next cycles buffer
+                        if (indices.Count > 0)
+                        {
+                            // If at least one crlf was detected, check whether it arrieved at the last bytes
+                            int lastElement = indices.Last<int>();
+                            int remainingMessageLength = currentBufferLength - (lastElement + 2);
+                            if (remainingMessageLength >= 0)
                             {
-                                _data[pedalSelected] += newData;
+                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
                             }
-                            else
+
+                        }
+                        else
+                        {
+                            appendedBufferOffset[pedalSelected] += receivedLength;
+                        }
+
+                        
+
+
+                        //Buffer.BlockCopy(buffer, srcBufferOffset, destinationArray, 0, destBuffLength);
+
+                        // decode every message
+                        foreach (int number in indices)
+                        {
+                            // computes the length of bytes to read
+                            int destBuffLength = number - srcBufferOffset;
+                            if (destBuffLength > 1000)
                             {
-                                string dataToSend = _data[pedalSelected] + newData;
-                                _data[pedalSelected] = "";
+                                continue;
+                            }
+
+
+                            // copy bytes to subarray
+                            Buffer.BlockCopy(buffer_appended[pedalSelected], srcBufferOffset, destinationArray, 0, destBuffLength);
+
+                            // update src buffer offset
+                            srcBufferOffset = number + 2;
 
 
 
-                                // check for pedal state struct
-                                if ((dataToSend.Length == sizeof(DAP_state_basic_st)))
+                            // check for pedal state struct
+                            if ((destBuffLength == sizeof(DAP_state_basic_st)))
+                            {
+
+                                // parse byte array as config struct
+                                DAP_state_basic_st pedalState_read_st = getStateFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_state_basic_st* v_state = &pedalState_read_st;
+                                byte* p_state = (byte*)v_state;
+
+                                // payload type check
+                                bool check_payload_state_b = false;
+                                if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStateBasicPayload_type)
                                 {
-
-                                    // transform string into byte
-                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
-                                    {
-                                        // create a fixed size buffer
-                                        int length = sizeof(DAP_state_basic_st);
-                                        byte[] newBuffer_state_2 = new byte[length];
-
-                                        // copy the received bytes into byte array
-                                        for (int j = 0; j < length; j++)
-                                        {
-                                            newBuffer_state_2[j] = p[j];
-                                        }
-
-                                        // parse byte array as config struct
-                                        DAP_state_basic_st pedalState_read_st = getStateFromBytes(newBuffer_state_2);
-
-                                        // check whether receive struct is plausible
-                                        DAP_state_basic_st* v_state = &pedalState_read_st;
-                                        byte* p_state = (byte*)v_state;
-
-                                        // payload type check
-                                        bool check_payload_state_b = false;
-                                        if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStateBasicPayload_type)
-                                        {
-                                            check_payload_state_b = true;
-                                        }
-
-                                        // CRC check
-                                        bool check_crc_state_b = false;
-                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Basic)) == pedalState_read_st.payloadFooter_.checkSum)
-                                        {
-                                            check_crc_state_b = true;
-                                        }
-
-                                        if ((check_payload_state_b) && check_crc_state_b)
-                                        {
-
-                                            // write vJoy data
-                                            if(Plugin.Settings.vjoy_output_flag==1)
-                                            {
-                                                switch (pedalSelected)
-                                                {
-
-                                                    case 0:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);	// HID_USAGES Enums
-                                                        break;
-                                                    case 1:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);	// HID_USAGES Enums
-                                                        break;
-                                                    case 2:
-                                                        //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
-                                                        joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);	// HID_USAGES Enums
-                                                        break;
-                                                    default:
-                                                        break;
-                                                }
-
-                                            }
-
-
-
-                                            /*if  (indexOfSelectedPedal_u == pedalSelected)
-                                            {
-                                                if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
-                                                {
-                                                    // Specify the path to the file
-                                                    string filePath = "C:\\Users\\chris\\Downloads\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
-                                                    // Use StreamWriter to write to the file
-                                                    using (StreamWriter writer = new StreamWriter(filePath, true))
-                                                    {
-                                                        // Write the content to the file
-                                                        writeCntr++;
-                                                        writer.Write(writeCntr);
-                                                        //writer.Write(", ");
-                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_raw_u16);
-                                                        //writer.Write(", ");
-                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_filtered_u16);
-                                                        //writer.Write(", ");
-                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.forceVel_est_i16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16);
-                                                        //writer.Write(", ");
-                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.servoPositionTarget_i16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16);
-                                                        //writer.Write(", ");
-                                                        //writer.Write(pedalState_read_st.payloadPedalBasicState_.servo_voltage_0p1V_i16);
-                                                        //writer.Write("\n");
-                                                    }
-                                                }
-                                            }*/
-
-                                            // GUI update
-                                            if ( (pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected) )
-                                            {
-                                                //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
-                                                //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
-                                                //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
-                                                //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
-
-                                                                                             
-
-                                                pedalStateHasAlreadyBeenUpdated_b = true;
-
-                                                text_point_pos.Opacity = 0;
-                                                double control_rect_value_max = 65535;
-                                                double dyy = canvas.Height / control_rect_value_max;
-                                                double dxx = canvas.Width / control_rect_value_max;
-
-                                                if (debug_flag)
-                                                {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
-                                                    
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
-                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
-                                                    text_state.Text = Math.Round( pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
-
-                                                }
-                                                else
-                                                {
-                                                    Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
-                                                    int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max)-1;
-                                                    int x_showed = round_x + 1;
-                                                    round_x = Math.Max(0, Math.Min(round_x, 99));
-                                                    Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
-                                                    Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
-                                                    text_state.Text = x_showed + "%";
-                                                }
-
-                                            }
-
-
-                                            continue;
-                                        }
-                                    }
+                                    check_payload_state_b = true;
                                 }
 
-
-
-
-
-
-
-                                // check for pedal state struct
-                                if ((dataToSend.Length == sizeof(DAP_state_extended_st)))
+                                // CRC check
+                                bool check_crc_state_b = false;
+                                if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Basic)) == pedalState_read_st.payloadFooter_.checkSum)
                                 {
-
-                                    // transform string into byte
-                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
-                                    {
-                                        // create a fixed size buffer
-                                        int length = sizeof(DAP_state_extended_st);
-                                        byte[] newBuffer_state_2 = new byte[length];
-
-                                        // copy the received bytes into byte array
-                                        for (int j = 0; j < length; j++)
-                                        {
-                                            newBuffer_state_2[j] = p[j];
-                                        }
-
-                                        // parse byte array as config struct
-                                        DAP_state_extended_st pedalState_ext_read_st = getStateExtFromBytes(newBuffer_state_2);
-
-                                        // check whether receive struct is plausible
-                                        DAP_state_extended_st* v_state = &pedalState_ext_read_st;
-                                        byte* p_state = (byte*)v_state;
-
-                                        // payload type check
-                                        bool check_payload_state_b = false;
-                                        if (pedalState_ext_read_st.payloadHeader_.payloadType == Constants.pedalStateExtendedPayload_type)
-                                        {
-                                            check_payload_state_b = true;
-                                        }
-
-                                        // CRC check
-                                        bool check_crc_state_b = false;
-                                        if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Extended)) == pedalState_ext_read_st.payloadFooter_.checkSum)
-                                        {
-                                            check_crc_state_b = true;
-                                        }
-
-                                        if ((check_payload_state_b) && check_crc_state_b)
-                                        {
-
-                                        
-
-
-                                            if (indexOfSelectedPedal_u == pedalSelected)
-                                            {
-                                                if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
-                                                {
-                                                    // Specify the path to the file
-                                                    string currentDirectory = Directory.GetCurrentDirectory();
-                                                    string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
-
-                                                    // Use StreamWriter to write to the file
-                                                    using (StreamWriter writer = new StreamWriter(filePath, true))
-                                                    {
-                                                        // Write the content to the file
-                                                        writeCntr++;
-                                                        writer.Write(writeCntr);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPosition_i16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPositionTarget_i16);
-                                                        writer.Write(", ");
-                                                        writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
-                                                        writer.Write("\n");
-                                                    }
-                                                }
-                                            }
-
-                                            
-
-
-                                            continue;
-                                        }
-                                    }
+                                    check_crc_state_b = true;
                                 }
 
-
-
-
-
-                                // decode into config struct
-                                if ((waiting_for_pedal_config[pedalSelected]) && (dataToSend.Length == sizeof(DAP_config_st)))
+                                if ((check_payload_state_b) && check_crc_state_b)
                                 {
-                                    //DAP_config_st tmp;
 
-
-                                    // transform string into byte
-                                    fixed (byte* p = System.Text.Encoding.GetEncoding(28591).GetBytes(dataToSend))
+                                    // write vJoy data
+                                    if (Plugin.Settings.vjoy_output_flag == 1)
                                     {
-                                        // create a fixed size buffer
-                                        int length = sizeof(DAP_config_st);
-                                        byte[] newBuffer_config_2 = new byte[length];
-
-                                        // copy the received bytes into byte array
-                                        for (int j = 0; j < length; j++)
+                                        switch (pedalSelected)
                                         {
-                                            newBuffer_config_2[j] = p[j];
+
+                                            case 0:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
+                                                break;
+                                            case 1:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
+                                                break;
+                                            case 2:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                                break;
+                                            default:
+                                                break;
                                         }
 
-                                        // parse byte array as config struct
-                                        DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+                                    }
 
-                                        // check whether receive struct is plausible
-                                        DAP_config_st* v_config = &pedalConfig_read_st;
-                                        byte* p_config = (byte*)v_config;
 
-                                        // payload type check
-                                        bool check_payload_config_b = false;
-                                        if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+
+                                    // GUI update
+                                    if ((pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected))
+                                    {
+                                        //TextBox_debugOutput.Text = "Pedal pos: " + pedalState_read_st.payloadPedalState_.pedalPosition_u16;
+                                        //TextBox_debugOutput.Text += "Pedal force: " + pedalState_read_st.payloadPedalState_.pedalForce_u16;
+                                        //TextBox_debugOutput.Text += ",  Servo pos targe: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+                                        //TextBox_debugOutput.Text += ",  Servo pos: " + pedalState_read_st.payloadPedalState_.servoPosition_i16;
+
+
+
+                                        pedalStateHasAlreadyBeenUpdated_b = true;
+
+                                        text_point_pos.Opacity = 0;
+                                        double control_rect_value_max = 65535;
+                                        double dyy = canvas.Height / control_rect_value_max;
+                                        double dxx = canvas.Width / control_rect_value_max;
+
+                                        if (debug_flag)
                                         {
-                                            check_payload_config_b = true;
-                                        }
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
 
-                                        // CRC check
-                                        bool check_crc_config_b = false;
-                                        if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
-                                        {
-                                            check_crc_config_b = true;
-                                        }
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
+                                            Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                            text_state.Text = Math.Round(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
 
-                                        if ((check_payload_config_b) && check_crc_config_b)
-                                        {
-                                            waiting_for_pedal_config[pedalSelected] = false;
-                                            dap_config_st[pedalSelected] = pedalConfig_read_st;
-                                            updateTheGuiFromConfig();
-
-                                            continue;
                                         }
                                         else
                                         {
-                                            TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
-                                            TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
+                                            int x_showed = round_x + 1;
+                                            round_x = Math.Max(0, Math.Min(round_x, 99));
+                                            Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
+                                            Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
+                                            text_state.Text = x_showed + "%";
+                                        }
+
+                                    }
+
+
+                                    continue;
+                                }
+
+                            }
+
+
+
+
+
+
+                            // check for pedal extended state struct
+                            if ((destBuffLength == sizeof(DAP_state_extended_st)))
+                            {
+
+                                // parse byte array as config struct
+                                DAP_state_extended_st pedalState_ext_read_st = getStateExtFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_state_extended_st* v_state = &pedalState_ext_read_st;
+                                byte* p_state = (byte*)v_state;
+
+                                // payload type check
+                                bool check_payload_state_b = false;
+                                if (pedalState_ext_read_st.payloadHeader_.payloadType == Constants.pedalStateExtendedPayload_type)
+                                {
+                                    check_payload_state_b = true;
+                                }
+
+                                // CRC check
+                                bool check_crc_state_b = false;
+                                if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Extended)) == pedalState_ext_read_st.payloadFooter_.checkSum)
+                                {
+                                    check_crc_state_b = true;
+                                }
+
+                                if ((check_payload_state_b) && check_crc_state_b)
+                                {
+
+
+
+
+                                    if (indexOfSelectedPedal_u == pedalSelected)
+                                    {
+                                        if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
+                                        {
+                                            // Specify the path to the file
+                                            string currentDirectory = Directory.GetCurrentDirectory();
+                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
+
+                                            // Use StreamWriter to write to the file
+                                            using (StreamWriter writer = new StreamWriter(filePath, true))
+                                            {
+                                                // Write the content to the file
+                                                writeCntr++;
+                                                writer.Write(writeCntr);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPosition_i16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPositionTarget_i16);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
+                                                writer.Write("\n");
+                                            }
                                         }
                                     }
 
+
+
+
+                                    continue;
                                 }
-                                //else
-                                //{
-
-
-                                // When too many messages are received, only print every Nth message
-
-                                // When only a few messages are received, make the counter greater than N thus every message is printed
-                                if (dataArray.Length < 100)
-                                {
-                                    printCtr = 600;
-                                }
-
-                                if (printCtr++ > 200)
-                                {
-                                    printCtr = 0;
-                                    TextBox_serialMonitor.Text += dataToSend + "\n";
-                                    TextBox_serialMonitor.ScrollToEnd();
-                                }
-
-                                //}
-
-
                             }
 
-                            try
+
+
+
+
+
+
+
+                            // decode into config struct
+                            if ((waiting_for_pedal_config[pedalSelected]) && (destBuffLength == sizeof(DAP_config_st)))
                             {
-                                while (TextBox_serialMonitor.LineCount > 30)
+
+                                // parse byte array as config struct
+                                DAP_config_st pedalConfig_read_st = getConfigFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_config_st* v_config = &pedalConfig_read_st;
+                                byte* p_config = (byte*)v_config;
+
+                                // payload type check
+                                bool check_payload_config_b = false;
+                                if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
                                 {
-                                    TextBox_serialMonitor.Text = TextBox_serialMonitor.Text.Remove(0, TextBox_serialMonitor.GetLineLength(0));
+                                    check_payload_config_b = true;
                                 }
+
+                                // CRC check
+                                bool check_crc_config_b = false;
+                                if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                                {
+                                    check_crc_config_b = true;
+                                }
+
+                                if ((check_payload_config_b) && check_crc_config_b)
+                                {
+                                    waiting_for_pedal_config[pedalSelected] = false;
+                                    dap_config_st[pedalSelected] = pedalConfig_read_st;
+                                    updateTheGuiFromConfig();
+
+                                    continue;
+                                }
+                                else
+                                {
+                                    TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                    TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                }
+
                             }
-                            catch { }
+
+
+                            // If non known array datatype was received, assume a text message was received and print it
+                            byte[] destinationArray_sub = new byte[destBuffLength];
+                            Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
+                            string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
+
+                            TextBox_serialMonitor.Text += resultString + "\n";
+                            TextBox_serialMonitor.ScrollToEnd();
 
 
 
 
+                            // When only a few messages are received, make the counter greater than N thus every message is printed
+                            //if (destBuffLength < 100)
+                            //{
+                            //    printCtr = 600;
+                            //}
+
+                            //if (printCtr++ > 200)
+                            //{
+                            //    printCtr = 0;
+                            //    TextBox_serialMonitor.Text += dataToSend + "\n";
+                            //    TextBox_serialMonitor.ScrollToEnd();
+                            //}
 
 
 
-                            //limits the data stored to 1000 to avoid using up all the memory in case of 
-                            //failure to register callback or include stopchar
-
-                            if (_data[pedalSelected].Length > 5000)
-                            {
-                                _data[pedalSelected] = "";
-                            }
 
 
                         }
 
-                        // obtain data and check whether it is from known payload type or just debug info
 
+                        // Stop the stopwatch
+                        stopwatch2.Stop();
+
+                        // Get the elapsed time
+                        TimeSpan elapsedTime2 = stopwatch2.Elapsed;
+
+
+
+
+
+
+
+
+                        // Stop the stopwatch
+                        stopwatch.Stop();
+
+                        // Get the elapsed time
+                        TimeSpan elapsedTime = stopwatch.Elapsed;
+
+                        timeCollector[pedalSelected] += elapsedTime.TotalMilliseconds;
+
+                        if (timeCntr[pedalSelected] >= 50)
+                        {
+
+
+                            double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
+                            TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
+
+                            timeCntr[pedalSelected] = 0;
+                            timeCollector[pedalSelected] = 0;
+                        }
                     }
-
-
-                    // Stop the stopwatch
-                    stopwatch.Stop();
-
-                    // Get the elapsed time
-                    TimeSpan elapsedTime = stopwatch.Elapsed;
-
-                    timeCollector[pedalSelected] += elapsedTime.TotalMilliseconds;
-
-                    if (timeCntr[pedalSelected] >= 50)
-                    {
-                        
-                        
-                        double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
-                        TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
-
-                        timeCntr[pedalSelected] = 0;
-                        timeCollector[pedalSelected] = 0;
-                    }
-
                     
                 }
             }
