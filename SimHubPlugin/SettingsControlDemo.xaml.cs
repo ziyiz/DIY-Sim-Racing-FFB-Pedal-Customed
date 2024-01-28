@@ -45,6 +45,7 @@ using vJoyInterfaceWrap;
 using System.Runtime;
 using SimHub.Plugins.DataPlugins.ShakeItV3.Settings;
 using System.Windows.Media.Effects;
+using System.Diagnostics;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -339,6 +340,8 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
         }
 
 
@@ -480,10 +483,10 @@ namespace User.PluginSdkDemo
             Line_H_MPC_0th_order_gain.Stroke= Line_fill;
             rect_MPC_0th_order_gain.Fill= defaultcolor;
 
-            text_MPC_1st_order_gain.Foreground = Line_fill;
-            text_MPC_1st_order_gain_text.Foreground = Line_fill;
-            Line_H_MPC_1st_order_gain.Stroke = Line_fill;
-            rect_MPC_1st_order_gain.Fill = defaultcolor;
+            //text_MPC_1st_order_gain.Foreground = Line_fill;
+            //text_MPC_1st_order_gain_text.Foreground = Line_fill;
+            //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
+            //rect_MPC_1st_order_gain.Fill = defaultcolor;
 
 
 
@@ -1039,6 +1042,15 @@ namespace User.PluginSdkDemo
             {
             }
 
+            // spindle pitch
+            try
+            {
+                SpindlePitch.SelectedIndex = (byte)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+
 
             //max game output slider
             double max_game_max = 100;
@@ -1131,18 +1143,18 @@ namespace User.PluginSdkDemo
             value_max = 4;
             dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
             Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
-            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
+            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "mm/kg";
             Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - rect_MPC_0th_order_gain.Width / 2);
             Canvas.SetTop(text_MPC_0th_order_gain, 5);
 
 
-            //MPC 1st order gain slider
-            value_max = 0.01;
-            dx = canvas_horz_MPC_1st_order_gain.Width / (2 * value_max);
-            Canvas.SetLeft(rect_MPC_1st_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain * dx - value_max);
-            text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2);
-            Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - rect_MPC_1st_order_gain.Width / 2);
-            Canvas.SetTop(text_MPC_1st_order_gain, 5);
+            ////MPC 1st order gain slider
+            //value_max = 0.01;
+            //dx = canvas_horz_MPC_1st_order_gain.Width / (2 * value_max);
+            //Canvas.SetLeft(rect_MPC_1st_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain * dx - value_max);
+            //text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2);
+            //Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - rect_MPC_1st_order_gain.Width / 2);
+            //Canvas.SetTop(text_MPC_1st_order_gain, 5);
 
 
             //G force multiplier slider
@@ -2060,6 +2072,11 @@ namespace User.PluginSdkDemo
         }
 
         Int64 writeCntr = 0;
+
+        int[] timeCntr = { 0, 0, 0};
+
+        double[] timeCollector = { 0, 0, 0 };
+
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
@@ -2073,6 +2090,16 @@ namespace User.PluginSdkDemo
             if (pedalSelected < 3)
             //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
+
+
+
+                // Create a Stopwatch instance
+                Stopwatch stopwatch = new Stopwatch();
+
+                // Start the stopwatch
+                stopwatch.Start();
+
+
 
                 SerialPort sp = Plugin._serialPort[pedalSelected];
 
@@ -2090,6 +2117,9 @@ namespace User.PluginSdkDemo
 
                     if (receivedLength > 0)
                     {
+
+
+                        timeCntr[pedalSelected] += 1;
 
                         string incomingData = sp.ReadExisting();
 
@@ -2463,6 +2493,27 @@ namespace User.PluginSdkDemo
 
                     }
 
+
+                    // Stop the stopwatch
+                    stopwatch.Stop();
+
+                    // Get the elapsed time
+                    TimeSpan elapsedTime = stopwatch.Elapsed;
+
+                    timeCollector[pedalSelected] += elapsedTime.TotalMilliseconds;
+
+                    if (timeCntr[pedalSelected] >= 50)
+                    {
+                        
+                        
+                        double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
+                        TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
+
+                        timeCntr[pedalSelected] = 0;
+                        timeCollector[pedalSelected] = 0;
+                    }
+
+                    
                 }
             }
         }
@@ -2602,7 +2653,22 @@ namespace User.PluginSdkDemo
 
 
 
-        
+
+        public void SpindlePitchChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = (byte)SpindlePitch.SelectedIndex;
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+        }
+
+
+
 
 
 
@@ -3441,7 +3507,7 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
-                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4);
+                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4) + "mm/kg";
                     Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
                     Canvas.SetTop(text_MPC_0th_order_gain, 5);
                     Canvas.SetLeft(rectangle, x);
@@ -3449,25 +3515,25 @@ namespace User.PluginSdkDemo
 
 
 
-                //MPC 1st order gain
-                if (rectangle.Name == "rect_MPC_1st_order_gain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 0.01;
-                    double x = e.GetPosition(canvas_horz_MPC_1st_order_gain).X - offset.X;
-                    double dx = canvas_horz_MPC_1st_order_gain.Width / (2*value_max);
-                    double min_position = 0 * dx;
-                    double max_position = value_max * 2 * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    actual_x -= value_max;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)actual_x;
-                    text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 4);
-                    Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - text_MPC_1st_order_gain.Width / 2);
-                    Canvas.SetTop(text_MPC_1st_order_gain, 5);
-                    Canvas.SetLeft(rectangle, x);
-                }
+                ////MPC 1st order gain
+                //if (rectangle.Name == "rect_MPC_1st_order_gain")
+                //{
+                //    // Ensure the rectangle stays within the canvas
+                //    double value_max = 0.01;
+                //    double x = e.GetPosition(canvas_horz_MPC_1st_order_gain).X - offset.X;
+                //    double dx = canvas_horz_MPC_1st_order_gain.Width / (2*value_max);
+                //    double min_position = 0 * dx;
+                //    double max_position = value_max * 2 * dx;
+                //    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                //    x = Math.Max(min_position, Math.Min(x, max_position));
+                //    double actual_x = x / dx;
+                //    actual_x -= value_max;
+                //    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)actual_x;
+                //    text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 4);
+                //    Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - text_MPC_1st_order_gain.Width / 2);
+                //    Canvas.SetTop(text_MPC_1st_order_gain, 5);
+                //    Canvas.SetLeft(rectangle, x);
+                //}
 
             }
         }

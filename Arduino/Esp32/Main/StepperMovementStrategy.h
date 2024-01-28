@@ -245,10 +245,16 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
     // how many mm movement to order if 1kg of error force is detected
     // this can be tuned for responsiveness vs oscillation
-    float mm_per_motor_rev = 10;//TRAVEL_PER_ROTATION_IN_MM;
+    float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
-    float move_mm_per_kg = 0.5 * config_st->payLoadPedalConfig_.MPC_0th_order_gain;
-    float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+    float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+
+    float MOVE_STEPS_FOR_1KG = 0;
+    if (mm_per_motor_rev>0)
+    {
+      MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+    }
+    
 
     // make stiffness dependent on force curve gradient
     // less steps per kg --> steeper line

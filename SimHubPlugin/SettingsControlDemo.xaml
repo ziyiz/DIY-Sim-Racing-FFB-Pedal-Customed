@@ -21,9 +21,9 @@
                 <RowDefinition Height="0"/>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="277"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" MinHeight="226"/>
                 <RowDefinition Height="227"/>
-                <RowDefinition Height="165"/>
+                <RowDefinition Height="161"/>
                 <RowDefinition Height="165"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="300"/>
@@ -39,7 +39,7 @@
             </Grid.ColumnDefinitions>
             <!-- -->
             <!-- Define the tabs to select the pedal -->
-            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1">
+            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Height="46">
                 <TabItem x:Name="tabPedalSelection_clutch" Header="Clutch" FontFamily="Yu Gothic UI Semibold" Height="39" HorizontalAlignment="Left" Width="90" />
                 <TabItem x:Name="tabPedalSelection_brake" Header="Brake" FontFamily="Yu Gothic UI Semibold"/>
                 <TabItem x:Name="tabPedalSelection_accelerator" Header="Accelerator" FontFamily="Yu Gothic UI Semibold"/>
@@ -47,7 +47,7 @@
 
 
 
-            
+
             <!-- serial connection -->
             <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
 
@@ -68,7 +68,7 @@
                 Grid.Row="0" 
                 Grid.Column="2" 
                 Width="160" 
-                Foreground="White" Grid.RowSpan="2"/>
+                Foreground="White" Grid.RowSpan="2" Height="16"/>
             <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="400" Height="100" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#7F252525" />
 
 
@@ -80,7 +80,7 @@
             Grid.Row="2" 
             Grid.Column="2" 
             Width="160" 
-            Foreground="White"/>
+            Foreground="White" Height="16"/>
             <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
 
             <!--<styles:SHButtonPrimary x:Name="btn_serial" Click="SerialMonitorRead_click" HorizontalAlignment="Left" Grid.Row="2"  Grid.Column="2" Width="102" Margin="88,42,0,27" FontSize="6" Grid.RowSpan="2" >Serial monitor update</styles:SHButtonPrimary>-->
@@ -139,7 +139,7 @@
                    Grid.Row="9" 
                    Grid.Column="0" 
                    Width="120" 
-                   Foreground="White"/>
+                   Foreground="White" Height="16"/>
 
 
 
@@ -448,7 +448,7 @@
 
                 <!-- PID sliders -->
             </StackPanel>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -910,7 +910,7 @@
 
 
             </TabControl>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -960,7 +960,26 @@
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="65,0,0,0" />
                                 <CheckBox x:Name="InvertLoadcellReading_check" Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="34" Width="156"/>
+
+                                <Label Content="Spindle pitch in mm/rev:" Height="20" Width="110" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="0"/>
+                                <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="30" Height="10" FontSize="10" SelectedIndex="5" Margin="10,0,0,0">
+                                    <ComboBoxItem Content="0"/>
+                                    <ComboBoxItem Content="1"/>
+                                    <ComboBoxItem Content="2"/>
+                                    <ComboBoxItem Content="3"/>
+                                    <ComboBoxItem Content="4"/>
+                                    <ComboBoxItem Content="5"/>
+                                    <ComboBoxItem Content="6"/>
+                                    <ComboBoxItem Content="7"/>
+                                    <ComboBoxItem Content="8"/>
+                                    <ComboBoxItem Content="9"/>
+                                    <ComboBoxItem Content="10"/>
+                                </ComboBox>
+
                             </StackPanel>
+
+
+
                             <Canvas x:Name="canvas_horz_damping" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
                                     <TransformGroup>
@@ -1001,7 +1020,10 @@
                 StrokeThickness="2" />
                                 <Rectangle x:Name="rect_damping" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
+
                             </Canvas>
+
+
                             <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
 
                                 <Canvas x:Name="canvas_horz_LC_rating" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="65,0,0,0" >
@@ -1043,6 +1065,10 @@
                                         </TextBlock.RenderTransform></TextBlock>
 
                                 </Canvas>
+
+
+
+
                                 <Canvas x:Name="canvas_horz_max_game" Height="40" Width="100" Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="50,0,0,0" >
                                     <Canvas.RenderTransform>
                                         <TransformGroup>
@@ -1082,6 +1108,9 @@
                                         </TextBlock.RenderTransform><Run Language="zh-tw" Text="Max Game Output"/></TextBlock>
 
                                 </Canvas>
+
+
+
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -1165,7 +1194,7 @@
                     </Border>
                 </TabItem>
 
-                
+
 
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
@@ -1367,7 +1396,7 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="0th order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
+                                <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Foot spring stiffness (inv):" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1377,7 +1406,7 @@
                                         </TransformGroup>
                                     </TextBlock.RenderTransform>
                                 </TextBlock>
-                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="0th order gain" Width="66" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="170">
+                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Foot spring stiffness (inv)" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="31" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="142">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1409,7 +1438,7 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_MPC_1st_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="1st order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
+                                <!--<TextBlock x:Name="text_MPC_1st_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="1st order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1428,14 +1457,14 @@
                                             <TranslateTransform/>
                                         </TransformGroup>
                                     </TextBlock.RenderTransform>
-                                </TextBlock>
+                                </TextBlock>-->
 
-                                <Line x:Name="Line_H_MPC_1st_order_gain"
+                                <!--<Line x:Name="Line_H_MPC_1st_order_gain"
                                     X1="5" Y1="20"
                                     X2="405" Y2="20"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_MPC_1st_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <Rectangle x:Name="rect_MPC_1st_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>-->
 
                             </Canvas>
 
