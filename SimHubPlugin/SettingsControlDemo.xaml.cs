@@ -2163,16 +2163,10 @@ namespace User.PluginSdkDemo
                         timeCntr[pedalSelected] += 1;
 
 
-
-                        // Create a Stopwatch instance
-                        Stopwatch stopwatch2 = new Stopwatch();
-
-                        // Start the stopwatch
-                        stopwatch2.Start();
-
+                        // determine byte sequence which is defined as message end --> crlf
                         byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
 
-                        //byte[] buffer = new byte[receivedLength + ];
+                        // check if buffer is large enough otherwise discard in buffer and set offset to 0
                         if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength) )
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
@@ -2184,19 +2178,26 @@ namespace User.PluginSdkDemo
                         }
 
 
-                        // copy to appended buffer
-                        //Buffer.BlockCopy(buffer, 0, buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
-
+                        // calculate current buffer length
                         int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
-                        List<int> indices = FindAllOccurrences(buffer_appended[pedalSelected], byteToFind, currentBufferLength);
 
 
-                        int srcBufferOffset = 0;
+                        // copy to local buffer
+                        byte[] localBuffer = new byte[currentBufferLength];
+                        Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
+
+
+                        // find all occurences of crlf as they indicate message end
+                        List<int> indices = FindAllOccurrences(localBuffer, byteToFind, currentBufferLength);
+
+
+                        
 
                         // Destination array
                         byte[] destinationArray = new byte[1000];
 
                         // copy the last not finished buffer element to begining of next cycles buffer
+                        // and determine buffer offset
                         if (indices.Count > 0)
                         {
                             // If at least one crlf was detected, check whether it arrieved at the last bytes
@@ -2205,19 +2206,20 @@ namespace User.PluginSdkDemo
                             if (remainingMessageLength >= 0)
                             {
                                 appendedBufferOffset[pedalSelected] = remainingMessageLength;
-                            }
 
+                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement+2, buffer_appended[pedalSelected], 0, remainingMessageLength);
+                            }
                         }
                         else
                         {
                             appendedBufferOffset[pedalSelected] += receivedLength;
                         }
 
-                        
 
 
-                        //Buffer.BlockCopy(buffer, srcBufferOffset, destinationArray, 0, destBuffLength);
 
+
+                        int srcBufferOffset = 0;
                         // decode every message
                         foreach (int number in indices)
                         {
@@ -2230,7 +2232,7 @@ namespace User.PluginSdkDemo
 
 
                             // copy bytes to subarray
-                            Buffer.BlockCopy(buffer_appended[pedalSelected], srcBufferOffset, destinationArray, 0, destBuffLength);
+                            Buffer.BlockCopy(localBuffer, srcBufferOffset, destinationArray, 0, destBuffLength);
 
                             // update src buffer offset
                             srcBufferOffset = number + 2;
@@ -2389,6 +2391,8 @@ namespace User.PluginSdkDemo
                                                 writeCntr++;
                                                 writer.Write(writeCntr);
                                                 writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.timeInMs_u32);
+                                                writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
                                                 writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
@@ -2488,15 +2492,6 @@ namespace User.PluginSdkDemo
 
 
                         }
-
-
-                        // Stop the stopwatch
-                        stopwatch2.Stop();
-
-                        // Get the elapsed time
-                        TimeSpan elapsedTime2 = stopwatch2.Elapsed;
-
-
 
 
 

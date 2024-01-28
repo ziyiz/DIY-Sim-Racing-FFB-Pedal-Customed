@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 125;
+    public const uint pedalConfigPayload_version = 126;
 
 
     // pyload types
@@ -64,6 +64,7 @@ public struct payloadPedalState_Basic
 
 public struct payloadPedalState_Extended
 {
+    public UInt32 timeInMs_u32;
     public UInt16 pedalForce_raw_u16;
     public UInt16 pedalForce_filtered_u16;
     public Int16 forceVel_est_i16;

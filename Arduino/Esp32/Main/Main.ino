@@ -826,6 +826,7 @@ void pedalUpdateTask( void * pvParameters )
       //if (printCycleCounter >= 2)
       {
         printCycleCounter = 0;
+        dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
         dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_u16 =  (uint16_t)constrain(loadcellReading * 200, 0, 65000);
         dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_u16 =  (uint16_t)constrain(filteredReading * 200, 0, 65000);
         dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_i16 =  (uint16_t)constrain(changeVelocity * 100, -32000, 32000);
