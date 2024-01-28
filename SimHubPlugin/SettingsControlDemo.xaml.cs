@@ -305,6 +305,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
@@ -453,6 +454,22 @@ namespace User.PluginSdkDemo
             text_G_force_multi_text.Foreground = btn_update.Background;
             text_G_multi.Foreground = btn_update.Background;
             rect_G_force_multi.Fill = btn_update.Background;
+
+            Line_G_force_window.Stroke = btn_update.Background;
+            text_G_force_window_text.Foreground = btn_update.Background;
+            text_G_window.Foreground = btn_update.Background;
+            rect_G_force_window.Fill = btn_update.Background;
+
+            text_MPC_0th_order_gain.Foreground= btn_update.Background;
+            text_MPC_0th_order_gain_text.Foreground = btn_update.Background;
+            Line_H_MPC_0th_order_gain.Stroke= btn_update.Background;
+            rect_MPC_0th_order_gain.Fill= btn_update.Background;
+
+            text_MPC_1st_order_gain.Foreground = btn_update.Background;
+            text_MPC_1st_order_gain_text.Foreground = btn_update.Background;
+            Line_H_MPC_1st_order_gain.Stroke = btn_update.Background;
+            rect_MPC_1st_order_gain.Fill = btn_update.Background;
+            
 
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
@@ -889,7 +906,7 @@ namespace User.PluginSdkDemo
             }
             Canvas.SetTop(rect_State, canvas.Height - rect_State.Height / 2);
             Canvas.SetLeft(rect_State, -rect_State.Width / 2);
-            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
             text_state.Text = "0%";
             //set for ABS slider
@@ -1117,6 +1134,14 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
             Canvas.SetTop(text_G_multi, 5);
 
+            //G force window slider
+            value_max = 100;
+            dx = canvas_horz_G_force_window.Width / value_max;
+            Canvas.SetLeft(rect_G_force_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window);
+            text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
+            Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
+            Canvas.SetTop(text_G_window, 5);
+
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
             try
@@ -1195,7 +1220,19 @@ namespace User.PluginSdkDemo
             else
             {
                 checkbox_enable_G_force.IsEnabled = false;
+                checkbox_enable_G_force.IsChecked = false;
                 checkbox_enable_G_force.Content = "G Force Effect Disabled";
+            }
+
+            if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
+            {
+                Serial_port_text.Text = "Serial Port connected";
+                Serial_port_text.Visibility= Visibility.Visible;
+
+            }
+            else
+            {
+                Serial_port_text.Visibility = Visibility.Hidden;
             }
 
 
@@ -2181,7 +2218,7 @@ namespace User.PluginSdkDemo
                                                     Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
                                                     Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
                                                     
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                                     Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                                     text_state.Text = Math.Round( pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
 
@@ -2193,7 +2230,7 @@ namespace User.PluginSdkDemo
                                                     int x_showed = round_x + 1;
                                                     round_x = Math.Max(0, Math.Min(round_x, 99));
                                                     Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height/2);
-                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) + rect_State.Width);
+                                                    Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                                     Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                                     text_state.Text = x_showed + "%";
                                                 }
@@ -3315,6 +3352,24 @@ namespace User.PluginSdkDemo
                     text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
                     Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
                     Canvas.SetTop(text_G_multi, 5);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                //G_force window
+                if (rectangle.Name == "rect_G_force_window")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_G_force_window).X - offset.X;
+                    double G_window_max = 100;
+                    double dx = canvas_horz_G_force_multi.Width / G_window_max;
+                    double min_position = 10 * dx;
+                    double max_position = G_window_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = Convert.ToByte(actual_x);
+                    text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
+                    Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
+                    Canvas.SetTop(text_G_window, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
 

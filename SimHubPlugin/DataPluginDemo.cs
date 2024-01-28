@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 123;
+    public const uint pedalConfigPayload_version = 124;
 
 
     // pyload types
@@ -121,6 +121,7 @@ public struct payloadPedalConfig
     public byte BP_freq;
     public byte BP_trigger;
     public byte G_multi;
+    public byte G_window;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -366,7 +367,9 @@ namespace User.PluginSdkDemo
                     {
                         RPM_MAX = data.NewData.CarSettings_MaxRPM;
                     }
+
                     RPM_value = (data.NewData.Rpms / RPM_MAX*100);
+                    
                     if (data.NewData.GlobalAccelerationG != 0)
                     {
                         _G_force = -1 * data.NewData.GlobalAccelerationG + 128;
@@ -407,17 +410,7 @@ namespace User.PluginSdkDemo
                 absTrigger_lastTime = DateTime.Now;
             }
 
-            GTrigger_currentTime = DateTime.Now;
-            TimeSpan diff_G = GTrigger_currentTime - GTrigger_lastTime;
-            int millisceonds_G = (int)diff_G.TotalMilliseconds;
-            if (millisceonds <= 10)
-            {
-                _G_force = g_force_last_value;
-            }
-            else
-            {
-                GTrigger_lastTime = DateTime.Now;
-            }
+
 
 
             bool update_flag = false;
@@ -435,7 +428,15 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
-                        tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
+                        if (Settings.G_force_enable_flag[pedalIdx] == 1)
+                        {
+                            tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
+                        }
+                        else
+                        {
+                            tmp.payloadPedalAction_.G_value = 128;
+                        }
+                        
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
                             if (Math.Abs(RPM_value - rpm_last_value) >10)
@@ -449,6 +450,18 @@ namespace User.PluginSdkDemo
                         //G force effect only effect on brake
                         if (pedalIdx == 1)
                         {
+
+                            GTrigger_currentTime = DateTime.Now;
+                            TimeSpan diff_G = GTrigger_currentTime - GTrigger_lastTime;
+                            int millisceonds_G = (int)diff_G.TotalMilliseconds;
+                            if (millisceonds <= 10)
+                            {
+                                _G_force = g_force_last_value;
+                            }
+                            else
+                            {
+                                GTrigger_lastTime = DateTime.Now;
+                            }
                             if (Settings.G_force_enable_flag[pedalIdx] == 1)
                             {
                                 //double value_check_g = 1 - _G_force / ((double)g_force_last_value);
@@ -1126,6 +1139,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.BP_freq = 15;
             dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
             dap_config_initial_st.payloadPedalConfig_.G_multi = 50;
+            dap_config_initial_st.payloadPedalConfig_.G_window = 60;
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
