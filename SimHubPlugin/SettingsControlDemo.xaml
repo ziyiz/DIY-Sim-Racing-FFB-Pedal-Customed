@@ -21,14 +21,12 @@
                 <RowDefinition Height="0"/>
                 <RowDefinition Height="46"/>
                 <RowDefinition Height="277"/>
-                <RowDefinition Height="Auto" MinHeight="226"/>
                 <RowDefinition Height="227"/>
-                <RowDefinition Height="161"/>
-                <RowDefinition Height="165"/>
+                <RowDefinition Height="227"/>
+                <RowDefinition Height="227"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="300"/>
                 <RowDefinition Height="300"/>
-
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -81,7 +79,7 @@
             Grid.Column="2" 
             Width="160" 
             Foreground="White" Height="16"/>
-            <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
+            <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
 
             <!--<styles:SHButtonPrimary x:Name="btn_serial" Click="SerialMonitorRead_click" HorizontalAlignment="Left" Grid.Row="2"  Grid.Column="2" Width="102" Margin="88,42,0,27" FontSize="6" Grid.RowSpan="2" >Serial monitor update</styles:SHButtonPrimary>-->
 
@@ -136,7 +134,7 @@
             <TextBlock HorizontalAlignment="Left" 
                    VerticalAlignment="Top" 
                    Margin="5,0,0,0" 
-                   Grid.Row="9" 
+                   Grid.Row="10" 
                    Grid.Column="0" 
                    Width="120" 
                    Foreground="White" Height="16"/>
@@ -156,7 +154,7 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,237,0,0" Grid.Row="7" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2"/>
+            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,237,0,0" Grid.Row="8" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2"/>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.Row="2">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
@@ -396,7 +394,7 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="250" Grid.RowSpan="3">
+            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="250" Grid.RowSpan="4">
                 <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <Label x:Name="info_label" Content="" Height="80" Width="120" FontFamily="Segoe UI"/>
                     <Label x:Name="info_label_2" Content="Label" Height="80" Width="110" FontFamily="Segoe UI Light"/>
@@ -406,9 +404,7 @@
       Width="135"
       ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
                     <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
-                    <CheckBox x:Name="ConnectToPedal"
-      Width="30"
-      Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
+                    <CheckBox x:Name="ConnectToPedal" Width="30" Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
                 </StackPanel>
                 <styles:SHButtonPrimary x:Name="btn_pedal_connect" Click="ConnectToPedal_click" Width="160"  Height="28" Content="Connect to Pedal" HorizontalAlignment="Left" Margin="0,4,0,0"  />
                 <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="28" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,4,0,0" />
@@ -417,19 +413,22 @@
                 <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open Config file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                 <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
                 <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Left"/>
-                <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect after initialized" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" HorizontalAlignment="Left" Margin="0,4,0,0"/>
-                <CheckBox x:Name="checkbox_pedal_read" Content="Reading config from pedal when connected" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="0,4,0,0" HorizontalAlignment="Left"/>
-                <CheckBox x:Name="Vjoy_out_check" Content="vJoy Output" Height="20" Width="100" Checked="Vjoy_out_check_Checked" Unchecked="Vjoy_out_check_Unchecked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,4,0,0" FontSize="10"/>
-                <StackPanel Height="15" Width="80" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,4,0,0">
-                    <Button x:Name="btn_plus"  Click="vjoy_plus_click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                    <Label x:Name="Label_vjoy_order" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                    <Button x:Name="btn_minus"  Click="vjoy_minus_click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                </StackPanel>
-                <CheckBox x:Name="Debug_check"
-                Width="120"
-                Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Left"/>
+                <Border Background="#7F4E4E4E" Height="140" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Left" Margin="0,5,0,0" >
+                    <StackPanel HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="160">
+                        <Label Content="Plugin Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
+                        <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" HorizontalAlignment="Left" Margin="5,4,0,0"/>
+                        <CheckBox x:Name="checkbox_pedal_read" Content="Auto Read Config" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="5,4,0,0" HorizontalAlignment="Left"/>
+                        <CheckBox x:Name="Vjoy_out_check" Content="vJoy Output" Height="20" Width="100" Checked="Vjoy_out_check_Checked" Unchecked="Vjoy_out_check_Unchecked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,4,0,0" FontSize="10"/>
+                        <StackPanel Height="15" Width="80" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,4,0,0">
+                            <Button x:Name="btn_plus"  Click="vjoy_plus_click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
+                            <Label x:Name="Label_vjoy_order" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                            <Button x:Name="btn_minus"  Click="vjoy_minus_click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
+                        </StackPanel>
+                        <CheckBox x:Name="Debug_check" Width="120" Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="5,4,0,0" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="250" Grid.RowSpan="3">
+            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="250" Grid.RowSpan="3" Margin="0,20,0,0">
                 <!-- PID sliders -->
 
                 <TextBlock x:Name="text_debug_flag" 
@@ -910,7 +909,7 @@
 
 
             </TabControl>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,2,0,0" Grid.RowSpan="2">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -1169,7 +1168,7 @@
 
                             </Canvas>
                         </StackPanel>
-                        
+
                     </Border>
                 </TabItem>
 

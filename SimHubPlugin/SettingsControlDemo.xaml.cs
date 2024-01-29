@@ -2087,35 +2087,40 @@ namespace User.PluginSdkDemo
 
                         if (Plugin.Settings.connect_flag[pedalIdx] == 1)
                         {
-                            if (Plugin.Settings.connect_status[pedalIdx] == 0)
+                            if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                             {
-                                if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+                                if (Plugin._serialPort[pedalIdx].IsOpen == false)
                                 {
-                                    if (Plugin._serialPort[pedalIdx].IsOpen == false)
+                                    if (Plugin.Settings.connect_status[pedalIdx] == 0)
                                     {
-                                        if (Plugin.Settings.connect_status[pedalIdx] == 0)
+                                        openSerialAndAddReadCallback(pedalIdx);
+                                        
+                                        if (Plugin.Settings.reading_config == 1)
                                         {
-                                            openSerialAndAddReadCallback(pedalIdx);
-                                            if (Plugin.Settings.reading_config == 1)
-                                            {
-                                                Reading_config_auto(pedalIdx);
-                                            }
-
+                                            Reading_config_auto(pedalIdx);
                                         }
 
                                     }
-                                }
-                                else
-                                {
-                                    Plugin.connectSerialPort[pedalIdx] = false;
-                                    Plugin.Settings.connect_status[pedalIdx] = 0;
+
                                 }
                             }
+                            else
+                            {
+                                Plugin.connectSerialPort[pedalIdx] = false;
+                                Plugin.Settings.connect_status[pedalIdx] = 0;
+                            }
+
+
+
 
                         }
                     }
 
                 }
+            }
+            if (count_timmer_count > 200)
+            {
+                count_timmer_count = 3 ;
             }
 
         }
