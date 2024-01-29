@@ -2097,18 +2097,17 @@ namespace User.PluginSdkDemo
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);
-                                        updateTheGuiFromConfig();
+                                        
 
                                     }
-
-
-
-                                }
+                                    updateTheGuiFromConfig();
+                             }
                             }
                             else
                             {
                                 Plugin.connectSerialPort[pedalIdx] = false;
                                 Plugin.Settings.connect_status[pedalIdx] = 0;
+                                updateTheGuiFromConfig();
                             }
 
 
