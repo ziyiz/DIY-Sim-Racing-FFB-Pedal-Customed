@@ -958,11 +958,8 @@
                                 <Label Content="General Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                                <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="65,0,0,0" />
-                                <CheckBox x:Name="InvertLoadcellReading_check" Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="34" Width="156"/>
-
-                                <Label Content="Spindle pitch in mm/rev:" Height="20" Width="110" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="0"/>
-                                <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="30" Height="10" FontSize="10" SelectedIndex="5" Margin="10,0,0,0">
+                                <Label Content="Spindle pitch in mm/rev:" Height="20" Width="115" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
+                                <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="50" Height="20" FontSize="10" SelectedIndex="5" Margin="3,0,0,0" HorizontalAlignment="Left" MinHeight="20">
                                     <ComboBoxItem Content="0"/>
                                     <ComboBoxItem Content="1"/>
                                     <ComboBoxItem Content="2"/>
@@ -1112,6 +1109,10 @@
 
 
                             </StackPanel>
+                            <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
+                                <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="70,0,0,0" />
+                                <CheckBox x:Name="InvertLoadcellReading_check" Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="30" Width="135"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </TabItem>
@@ -1168,6 +1169,7 @@
 
                             </Canvas>
                         </StackPanel>
+                        
                     </Border>
                 </TabItem>
 

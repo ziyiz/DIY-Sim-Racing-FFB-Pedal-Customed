@@ -81,6 +81,7 @@ namespace User.PluginSdkDemo
 
         public bool[] waiting_for_pedal_config = new bool[3];
         public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
+        public System.Windows.Forms.Timer connect_timer;
         //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
         int printCtr = 0;
 
@@ -798,7 +799,20 @@ namespace User.PluginSdkDemo
                 checkbox_auto_connect.IsChecked = false;
             }
 
+            //auto connection with timmer
+            if (connect_timer != null)
+            {
+                connect_timer.Dispose();
+                connect_timer.Stop();
+            }
 
+            connect_timer = new System.Windows.Forms.Timer();
+            connect_timer.Tick += new EventHandler(connection_timmer_tick);            
+            connect_timer.Interval = 10000; // in miliseconds
+            connect_timer.Start();
+            System.Threading.Thread.Sleep(50);
+
+            /*
             // autoconnect serial
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
@@ -824,6 +838,9 @@ namespace User.PluginSdkDemo
 
                 }
             }
+            */
+
+
             //vjoy initialized
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
@@ -903,7 +920,7 @@ namespace User.PluginSdkDemo
 
 
             //set control point position
-            text_point_pos.Opacity = 0;
+            text_point_pos.Visibility = Visibility.Hidden;
             double control_rect_value_max = 100;
             double dyy = canvas.Height / control_rect_value_max;
             Canvas.SetTop(rect0, canvas.Height-dyy*dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 - rect0.Height / 2);
@@ -2033,6 +2050,7 @@ namespace User.PluginSdkDemo
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
                     Plugin._serialPort[pedalIdx].Open();
+                    Plugin.Settings.connect_status[pedalIdx] = 1;
                     // read callback
                     pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
                     pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
@@ -2055,6 +2073,52 @@ namespace User.PluginSdkDemo
 
 
         }
+        private uint count_timmer_count = 0;
+        public void connection_timmer_tick(object sender, EventArgs e)
+        {
+            count_timmer_count++;
+            if(count_timmer_count>2)
+            {
+                if (Plugin.Settings.auto_connect_flag == 1)
+                {
+                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                    {
+
+
+                        if (Plugin.Settings.connect_flag[pedalIdx] == 1)
+                        {
+                            if (Plugin.Settings.connect_status[pedalIdx] == 0)
+                            {
+                                if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+                                {
+                                    if (Plugin._serialPort[pedalIdx].IsOpen == false)
+                                    {
+                                        if (Plugin.Settings.connect_status[pedalIdx] == 0)
+                                        {
+                                            openSerialAndAddReadCallback(pedalIdx);
+                                            if (Plugin.Settings.reading_config == 1)
+                                            {
+                                                Reading_config_auto(pedalIdx);
+                                            }
+
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    Plugin.connectSerialPort[pedalIdx] = false;
+                                    Plugin.Settings.connect_status[pedalIdx] = 0;
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+        }
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
@@ -2063,6 +2127,8 @@ namespace User.PluginSdkDemo
                 pedal_serial_read_timer[pedalIdx].Stop();
                 pedal_serial_read_timer[pedalIdx].Dispose();
             }
+            connect_timer.Dispose();
+            connect_timer.Stop();
             System.Threading.Thread.Sleep(300);
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
@@ -2305,7 +2371,7 @@ namespace User.PluginSdkDemo
 
                                         pedalStateHasAlreadyBeenUpdated_b = true;
 
-                                        text_point_pos.Opacity = 0;
+                                        text_point_pos.Visibility= Visibility.Hidden;
                                         double control_rect_value_max = 65535;
                                         double dyy = canvas.Height / control_rect_value_max;
                                         double dxx = canvas.Width / control_rect_value_max;
@@ -2532,7 +2598,7 @@ namespace User.PluginSdkDemo
         unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
         {
 
-
+            Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 1;
             if (ConnectToPedal.IsChecked == false)
             {
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == false)
@@ -2832,7 +2898,7 @@ namespace User.PluginSdkDemo
         {
 
             closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
-
+            Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
 
             if (ConnectToPedal.IsChecked == true)
             {
@@ -2957,6 +3023,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = Convert.ToByte(y_actual);
                     text_point_pos.Text = "Travel:0%";
                     text_point_pos.Text += "\nForce: "+(int)y_actual+"%";
+                    
                 }
                 if (rectangle.Name == "rect1")
                 {
@@ -3548,7 +3615,7 @@ namespace User.PluginSdkDemo
                 var rectangle = sender as Rectangle;
                 isDragging = false;
                 rectangle.ReleaseMouseCapture();
-                text_point_pos.Opacity=0;
+                text_point_pos.Visibility = Visibility.Hidden;
                 //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
                 //Color color = Color.FromArgb(150, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
                 //rectangle.Fill = btn_update.Background;
