@@ -30,7 +30,7 @@
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="175"/>
                 <ColumnDefinition Width="600"/>
                 <ColumnDefinition Width="740"/>
 
@@ -394,27 +394,30 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="250" Grid.RowSpan="4">
-                <StackPanel Height="80" Width="240" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Label x:Name="info_label" Content="" Height="80" Width="120" FontFamily="Segoe UI"/>
-                    <Label x:Name="info_label_2" Content="Label" Height="80" Width="110" FontFamily="Segoe UI Light"/>
-                </StackPanel>
-                <StackPanel Height="30" Width="250" Orientation="Horizontal">
-                    <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged"
-      Width="135"
-      ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
-                    <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
-                    <CheckBox x:Name="ConnectToPedal" Width="30" Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
-                </StackPanel>
-                <styles:SHButtonPrimary x:Name="btn_pedal_connect" Click="ConnectToPedal_click" Width="160"  Height="28" Content="Connect to Pedal" HorizontalAlignment="Left" Margin="0,4,0,0"  />
-                <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="28" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,4,0,0" />
-                <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="28" Content="Send config to pedal &gt;&gt;" HorizontalAlignment="Left" Margin="0,4,0,0" Padding="0,6,0,6" />
-                <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="28" Content="Read config from pedal &lt;&lt;" Margin="0,4,0,0" HorizontalAlignment="Left" Padding="0,6,0,6" />
-                <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open Config file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Left"/>
-                <Border Background="#7F4E4E4E" Height="140" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Left" Margin="0,5,0,0" >
-                    <StackPanel HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="160">
+            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
+
+                <Border Background="#7F4E4E4E" Height="312" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
+                    <StackPanel HorizontalAlignment="Center" Height="306" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
+                        <StackPanel Height="80" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Label x:Name="info_label" Content="" Height="80" Width="80" FontFamily="Segoe UI" HorizontalAlignment="Right"/>
+                            <Label x:Name="info_label_2" Content="Label" Height="80" Width="80" FontFamily="Segoe UI Light"/>
+                        </StackPanel>
+                        <StackPanel Height="30" Width="250" Orientation="Horizontal">
+                            <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged" Width="135" ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
+                            <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
+                            <CheckBox x:Name="ConnectToPedal" Width="30" Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <styles:SHButtonPrimary x:Name="btn_pedal_connect" Click="ConnectToPedal_click" Width="160"  Height="28" Content="Connect to Pedal" HorizontalAlignment="Left" Margin="0,5,0,0"  />
+                        <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="28" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,4,0,0" />
+                        <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="28" Content="Send config to pedal &gt;&gt;" HorizontalAlignment="Left" Margin="0,4,0,0" Padding="0,6,0,6" />
+                        <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="28" Content="Read config from pedal &lt;&lt;" Margin="0,4,0,0" HorizontalAlignment="Left" Padding="0,6,0,6" />
+                        <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open Config file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                        <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+                <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="60" FontSize="10" Background="#FF252525" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                <Border Background="#7F4E4E4E" Height="140" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Left" Margin="0,5,0,0" >
+                    <StackPanel HorizontalAlignment="Center" Height="140" VerticalAlignment="Top" Width="168">
                         <Label Content="Plugin Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                         <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" HorizontalAlignment="Left" Margin="5,4,0,0"/>
                         <CheckBox x:Name="checkbox_pedal_read" Content="Auto Read Config" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="5,4,0,0" HorizontalAlignment="Left"/>
@@ -428,7 +431,7 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="250" Grid.RowSpan="3" Margin="0,20,0,0">
+            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3" Margin="0,20,0,0">
                 <!-- PID sliders -->
 
                 <TextBlock x:Name="text_debug_flag" 

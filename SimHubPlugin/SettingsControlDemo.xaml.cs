@@ -808,7 +808,7 @@ namespace User.PluginSdkDemo
 
             connect_timer = new System.Windows.Forms.Timer();
             connect_timer.Tick += new EventHandler(connection_timmer_tick);            
-            connect_timer.Interval = 10000; // in miliseconds
+            connect_timer.Interval = 5000; // in miliseconds try connect every 5s
             connect_timer.Start();
             System.Threading.Thread.Sleep(50);
 
@@ -869,7 +869,7 @@ namespace User.PluginSdkDemo
             // update the sliders
 
 
-            info_label.Content = "Connection State:\nDAP Version:";
+            info_label.Content = "State:\nDAP Version:";
             string info_text;
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
@@ -880,10 +880,10 @@ namespace User.PluginSdkDemo
                 info_text = "Waiting";
             }
             info_text += "\n" + Constants.pedalConfigPayload_version;
-            if ((bool)TestAbs_check.IsChecked)
+            /*if ((bool)TestAbs_check.IsChecked)
             {
                 info_text += "\nABS/TC Testing";
-            }
+            }*/
             info_label_2.Content = info_text;
 
 
@@ -2091,16 +2091,17 @@ namespace User.PluginSdkDemo
                             {
                                 if (Plugin._serialPort[pedalIdx].IsOpen == false)
                                 {
-                                    if (Plugin.Settings.connect_status[pedalIdx] == 0)
+
+                                    openSerialAndAddReadCallback(pedalIdx);
+
+                                    if (Plugin.Settings.reading_config == 1)
                                     {
-                                        openSerialAndAddReadCallback(pedalIdx);
-                                        
-                                        if (Plugin.Settings.reading_config == 1)
-                                        {
-                                            Reading_config_auto(pedalIdx);
-                                        }
+                                        Reading_config_auto(pedalIdx);
+                                        updateTheGuiFromConfig();
 
                                     }
+
+
 
                                 }
                             }
