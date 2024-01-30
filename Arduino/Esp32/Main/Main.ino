@@ -827,15 +827,17 @@ void pedalUpdateTask( void * pvParameters )
       {
         printCycleCounter = 0;
         dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
-        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_u16 =  (uint16_t)constrain(loadcellReading * 200, 0, 65000);
-        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_u16 =  (uint16_t)constrain(filteredReading * 200, 0, 65000);
-        dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_i16 =  (uint16_t)constrain(changeVelocity * 100, -32000, 32000);
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_fl32 =  loadcellReading;;
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_fl32 =  filteredReading;
+        dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_fl32 =  changeVelocity;
 
         if(semaphore_readServoValues!=NULL)
         {
           if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
             dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = servoPos_i16;
             dap_state_extended_st.payloadPedalState_Extended_.servo_voltage_0p1V =  isv57.servo_voltage_0p1V;
+            dap_state_extended_st.payloadPedalState_Extended_.servo_current_percent_i16 = isv57.servo_current_percent;
+            
             xSemaphoreGive(semaphore_readServoValues);
           }
         }
