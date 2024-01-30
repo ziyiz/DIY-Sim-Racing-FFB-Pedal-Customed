@@ -363,16 +363,33 @@ namespace User.PluginSdkDemo
                     {
                         sendTcSignal_local_b = true;
                     }
-                    if (data.NewData.CarSettings_MaxRPM == 0)
+                    //fill the RPM value
+                    if (Settings.RPM_effect_type == 0)
                     {
-                        RPM_MAX = 10000;
+                        if (data.NewData.CarSettings_MaxRPM == 0)
+                        {
+                            RPM_MAX = 10000;
+                        }
+                        else
+                        {
+                            RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                        }
+
+                        RPM_value = (data.NewData.Rpms / RPM_MAX * 100);
                     }
                     else
                     {
-                        RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                        if (data.NewData.MaxSpeedKmh == 0)
+                        {
+                            RPM_MAX = 300;
+                        }
+                        else
+                        { 
+                            RPM_MAX= data.NewData.MaxSpeedKmh;
+                        }
+                        RPM_value = (data.NewData.SpeedKmh / RPM_MAX * 100);
                     }
 
-                    RPM_value = (data.NewData.Rpms / RPM_MAX*100);
                     
                     if (data.NewData.GlobalAccelerationG != 0)
                     {
@@ -441,14 +458,17 @@ namespace User.PluginSdkDemo
                             tmp.payloadPedalAction_.G_value = 128;
                         }
                         
+                        
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
-                            if (Math.Abs(RPM_value - rpm_last_value) >10)
+
+                            if (Math.Abs(RPM_value - rpm_last_value) > 10)
                             {
                                 tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
                                 update_flag = true;
                                 rpm_last_value = (Byte)RPM_value;
                             }
+
                         }
 
                         //G force effect only effect on brake

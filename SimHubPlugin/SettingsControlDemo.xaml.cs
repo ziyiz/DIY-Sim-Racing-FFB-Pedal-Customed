@@ -877,7 +877,15 @@ namespace User.PluginSdkDemo
             }
             else
             {
-                info_text = "Waiting";
+                if (Plugin.Settings.auto_connect_flag == 1)
+                {
+                    info_text = "Connecting..";
+                }
+                else
+                {
+                    info_text = "Waiting...";
+                }
+                
             }
             info_text += "\n" + Constants.pedalConfigPayload_version;
             /*if ((bool)TestAbs_check.IsChecked)
@@ -1219,12 +1227,12 @@ namespace User.PluginSdkDemo
             if (Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] == 1)
             {
                 checkbox_enable_RPM.IsChecked = true;
-                checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+                checkbox_enable_RPM.Content = "Effect Enabled";
             }
             else
             {
                 checkbox_enable_RPM.IsChecked = false;
-                checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+                checkbox_enable_RPM.Content = "Effect Disabled";
             }
 
             if (Plugin.Settings.ABS_enable_flag[indexOfSelectedPedal_u] == 1)
@@ -1285,10 +1293,19 @@ namespace User.PluginSdkDemo
                 Serial_port_text.Visibility = Visibility.Hidden;
             }
 
+            if (Plugin.Settings.RPM_effect_type == 0)
+            {
+                RPMeffecttype_Sel_1.IsChecked = true;
+            }
+            else
+            {
+                RPMeffecttype_Sel_2.IsChecked = true;
+            }
 
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+
             //try
             //{
             //    //ComboBox_JsonFileSelected.SelectedItem = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
@@ -2091,7 +2108,7 @@ namespace User.PluginSdkDemo
                             {
                                 if (Plugin._serialPort[pedalIdx].IsOpen == false)
                                 {
-
+                                    UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
 
                                     if (Plugin.Settings.reading_config == 1)
@@ -3731,13 +3748,13 @@ namespace User.PluginSdkDemo
         private void checkbox_enable_RPM_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 1;
-            checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+            checkbox_enable_RPM.Content = "Effect Enabled";
         }
 
         private void checkbox_enable_RPM_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 0;
-            checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+            checkbox_enable_RPM.Content = "Effect Disabled";
         }
 
         private void Vjoy_out_check_Checked(object sender, RoutedEventArgs e)
@@ -3978,10 +3995,24 @@ namespace User.PluginSdkDemo
             }
 
         }
+        // RPM effect select
+        private void RPMeffecttype_Sel_1_Checked(object sender, RoutedEventArgs e)
+        {
+            if (RPMeffecttype_Sel_1.IsChecked == true)
+            {
+                Plugin.Settings.RPM_effect_type = 0;
+                //TextBox_debugOutput.Text = "" + Plugin.Settings.RPM_effect_type;
+            }
+            if (RPMeffecttype_Sel_2.IsChecked == true)
+            {
+                Plugin.Settings.RPM_effect_type = 1;
+                //TextBox_debugOutput.Text = "" + Plugin.Settings.RPM_effect_type;
+            }
+        }
 
 
 
-        
+
 
         /*
 private void GetRectanglePositions()
