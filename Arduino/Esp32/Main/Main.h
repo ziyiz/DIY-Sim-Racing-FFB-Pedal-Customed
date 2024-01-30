@@ -131,6 +131,8 @@
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 27 //17
+  #define ISV57_RXPIN 26 // 16
 
   #define Using_analog_output
 
@@ -158,6 +160,36 @@
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 27 //17
+  #define ISV57_RXPIN 26 // 16
+
+#endif
+
+
+
+
+// Speedcrafters PCB V1.4
+#if PCB_VERSION == 5
+  // ADC defines
+  #define PIN_DRDY 19// 19 --> DRDY
+  #define PIN_RST  5 // X --> X
+  #define PIN_SCK 15 // 16 -->SCLK
+  #define PIN_MISO 18 // 18 --> DOUT
+  #define PIN_MOSI 13 // 17 --> DIN
+  #define PIN_CS 21 // 21 --> CS
+
+  // stepper pins
+  #define dirPinStepper    22
+  #define stepPinStepper   23
+  
+  // endstop pins
+  #define minPin 35
+  #define maxPin 34
+
+  // level shifter is present on this PCB design
+  #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 26 //17
+  #define ISV57_RXPIN 27 // 16
 
 #endif
 
