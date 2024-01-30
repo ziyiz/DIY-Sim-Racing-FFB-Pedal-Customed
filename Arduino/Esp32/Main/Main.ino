@@ -1109,8 +1109,7 @@ int64_t timeDiff = 0;
 
 
 uint64_t print_cycle_counter_u64 = 0;
-uint64_t lifeline_cycle_counter_u64 = 0;
-unsigned long cycleTimeLastCall_lifelineCheck = micros();
+unsigned long cycleTimeLastCall_lifelineCheck = 0;//micros();
 void servoCommunicationTask( void * pvParameters )
 {
   
@@ -1130,7 +1129,6 @@ void servoCommunicationTask( void * pvParameters )
       cycleTimeLastCall_lifelineCheck = now;
 
       isv57LifeSignal_b = isv57.checkCommunication();
-      lifeline_cycle_counter_u64 = 0;
       //Serial.println("Lifeline check");
     }
 

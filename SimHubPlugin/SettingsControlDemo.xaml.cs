@@ -2472,7 +2472,27 @@ namespace User.PluginSdkDemo
                                             string currentDirectory = Directory.GetCurrentDirectory();
                                             string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
 
-                                            // Use StreamWriter to write to the file
+
+                                            // write header
+                                            if (!File.Exists(filePath))
+                                            {
+                                                using (StreamWriter writer = new StreamWriter(filePath, true))
+                                                {
+                                                    // Write the content to the file
+                                                    writer.Write("cycleCtr, ");
+                                                    writer.Write("time_InMs, ");
+                                                    writer.Write("forceRaw_InKg, ");
+                                                    writer.Write("forceFiltered_InKg, ");
+                                                    writer.Write("forceVelocity_InKgPerSec, ");
+                                                    writer.Write("servoPos_InSteps, ");
+                                                    writer.Write("servoPosEsp_InSteps, ");
+                                                    writer.Write("servoCurrent_InPercent, ");
+                                                    writer.Write("servoVoltage_InV");
+                                                    writer.Write("\n");
+                                                }
+
+                                            }
+                                                // Use StreamWriter to write to the file
                                             using (StreamWriter writer = new StreamWriter(filePath, true))
                                             {
                                                 // Write the content to the file
@@ -2493,7 +2513,7 @@ namespace User.PluginSdkDemo
                                                 writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_current_percent_i16);
                                                 writer.Write(", ");
-                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
+                                                writer.Write( ((float)pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16) / 10.0);
                                                 writer.Write("\n");
                                             }
                                         }

@@ -119,12 +119,14 @@ void isv57communication::sendTunedServoParameters() {
 
 bool isv57communication::checkCommunication()
 {
-  if(modbus.requestFrom(slaveId, 0x03, 0x0000,  2) > 0)
+  if(modbus.requestFrom(slaveId, 0x03, 0x0000, 2) > 0)
   {
+    //Serial.println("Lifeline check: true");
     return true;
   }
   else
   {
+    //Serial.println("Lifeline check: false");
     return false;
   }
 }
