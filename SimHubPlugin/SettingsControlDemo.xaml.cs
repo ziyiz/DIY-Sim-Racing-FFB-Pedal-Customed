@@ -2310,6 +2310,34 @@ namespace User.PluginSdkDemo
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
+            //action here 
+            if (Plugin.slotA_flag == 1)
+            {
+                ChangeslotA();
+                Plugin.slotA_flag = 0;
+            }
+
+            if (Plugin.slotB_flag == 1)
+            {
+                ChangeslotB();
+                Plugin.slotB_flag = 0;
+            }
+            if (Plugin.slotC_flag == 1)
+            {
+                ChangeslotC();
+                Plugin.slotC_flag = 0;
+            }
+            if (Plugin.slotD_flag == 1)
+            {
+                ChangeslotD();
+                Plugin.slotD_flag = 0;
+            }
+            if (Plugin.sendconfig_flag == 1)
+            {
+                Sendconfigtopedal_shortcut();
+                Plugin.sendconfig_flag = 0;
+            }
+
 
             int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
             //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
@@ -2784,6 +2812,7 @@ namespace User.PluginSdkDemo
                     ConnectToPedal.IsChecked = false;
                     TextBox_debugOutput.Text = "Serialport already open, close it";
                     Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                    Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
                     Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
                     btn_pedal_connect.Content = "Connect To Pedal";
                 }
@@ -2795,6 +2824,7 @@ namespace User.PluginSdkDemo
                 TextBox_debugOutput.Text = "Serialport close";
                 Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
                 Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
                 btn_pedal_connect.Content = "Connect To Pedal";
 
             }
@@ -2919,7 +2949,7 @@ namespace User.PluginSdkDemo
 
 
                     string filePath = openFileDialog.FileName;
-                    TextBox_debugOutput.Text =  Button.Name; 
+                    //TextBox_debugOutput.Text =  Button.Name; 
                     if (Button.Name == "Reading_clutch")
                     {
 
@@ -2949,6 +2979,38 @@ namespace User.PluginSdkDemo
             }
         }
 
+        public void Clear_slot(object sender, EventArgs e)
+        {
+            var Button = sender as SHButtonPrimary;
+            if (Button.Name == "Clear_clutch")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 0] = "";
+                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
+                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Clutch_file_check.IsChecked = false;
+
+            }
+            if (Button.Name == "Clear_brake")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 1] = "";
+                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Brake_file_check.IsChecked = false;
+
+            }
+            if (Button.Name == "Clear_gas")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 2] = "";
+                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Gas_file_check.IsChecked = false;
+
+            }
+            //updateTheGuiFromConfig();
+        }
         void Parsefile(uint profile_index)
         {
             // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization

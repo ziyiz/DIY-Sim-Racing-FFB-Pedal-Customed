@@ -229,7 +229,11 @@ namespace User.PluginSdkDemo
         public double g_force_last_value = 128;
         public byte game_running_index = 0 ;
         public uint testValue = 0;
-
+        public uint slotA_flag = 0;
+        public uint slotB_flag = 0;
+        public uint slotC_flag = 0;
+        public uint slotD_flag = 0;
+        public uint sendconfig_flag = 0;
         public SettingsControlDemo wpfHandle;
 
 
@@ -347,7 +351,6 @@ namespace User.PluginSdkDemo
             //        settings.TextBox_debugOutput.Text = "Test";
             //    }
             //}
-
 
 
             // Send ABS signal when triggered by the game
@@ -1000,7 +1003,7 @@ namespace User.PluginSdkDemo
             // Declare an event
             this.AddEvent("SpeedWarning");
 
-
+            
             // Declare an action which can be called
             this.AddAction("IncrementSpeedWarning",(a, b) =>
             {
@@ -1014,28 +1017,35 @@ namespace User.PluginSdkDemo
                 Settings.SpeedWarningLevel--;
             });
 
+
             this.AddAction("ChangeSlotA", (a, b) =>
             {
-                wpfHandle.ChangeslotA();
+                //wpfHandle.ChangeslotA();
+                slotA_flag =1;
+                SimHub.Logging.Current.Info("SlotA");
             });
 
             this.AddAction("ChangeSlotB", (a, b) =>
             {
-                wpfHandle.ChangeslotB();
+                slotB_flag=1;
+                SimHub.Logging.Current.Info("SlotB");
             });
 
             this.AddAction("ChangeSlotC", (a, b) =>
             {
-                wpfHandle.ChangeslotC();
+                slotC_flag=1;
+                SimHub.Logging.Current.Info("SlotC");
             });
 
             this.AddAction("ChangeSlotD", (a, b) =>
             {
-                wpfHandle.ChangeslotD();
+                slotD_flag=1;
+                SimHub.Logging.Current.Info("SlotD");
             });
             this.AddAction("SendConfigToPedal", (a, b) =>
             {
-                wpfHandle.Sendconfigtopedal_shortcut();
+                sendconfig_flag =1;
+                SimHub.Logging.Current.Info("SendConfig");
             });
 
             //Settings.selectedJsonIndexLast[0]
@@ -1066,7 +1076,7 @@ namespace User.PluginSdkDemo
                     catch (Exception caughtEx)
                     {
                     }
-
+                    
                     //try connect back to com port
                     if (Settings.auto_connect_flag == 1)
                     {
@@ -1094,7 +1104,7 @@ namespace User.PluginSdkDemo
                                     //}
                                     //ConnectToPedal.IsChecked = false;
                                     //TextBox_debugOutput.Text = "Serialport already open, close it";
-                                    Settings.connect_status[pedalIdx] = 0;
+                                    //Settings.connect_status[pedalIdx] = 0;
                                     connectSerialPort[pedalIdx] = false;
                                 }
 
@@ -1102,17 +1112,18 @@ namespace User.PluginSdkDemo
                             }
                             else
                             {
-                                Settings.connect_status[pedalIdx] = 0;
+                                //Settings.connect_status[pedalIdx] = 0;
                                 connectSerialPort[pedalIdx] = false;
                             }
                         }
                         else
                         {
-                            Settings.connect_status[pedalIdx] = 0;
+                            //Settings.connect_status[pedalIdx] = 0;
                             connectSerialPort[pedalIdx] = false;
                         }
 
                     }
+                    
 
                 }
 
