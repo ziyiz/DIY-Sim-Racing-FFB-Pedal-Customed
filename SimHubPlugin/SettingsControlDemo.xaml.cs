@@ -1338,7 +1338,7 @@ namespace User.PluginSdkDemo
             }
 
 
-
+            TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
             InvertMotorDir_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 == 1;
@@ -2171,7 +2171,7 @@ namespace User.PluginSdkDemo
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-
+                Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
                     Plugin._serialPort[pedalIdx].Open();
@@ -2202,7 +2202,7 @@ namespace User.PluginSdkDemo
         public void connection_timmer_tick(object sender, EventArgs e)
         {
             count_timmer_count++;
-            if (count_timmer_count > 2)
+            if (count_timmer_count > 1)
             {
                 if (Plugin.Settings.auto_connect_flag == 1)
                 {
@@ -2216,7 +2216,7 @@ namespace User.PluginSdkDemo
                             {
                                 if (Plugin._serialPort[pedalIdx].IsOpen == false)
                                 {
-                                    UpdateSerialPortList_click();
+                                    //UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
 
                                     if (Plugin.Settings.reading_config == 1)
@@ -2245,7 +2245,7 @@ namespace User.PluginSdkDemo
             }
             if (count_timmer_count > 200)
             {
-                count_timmer_count = 3;
+                count_timmer_count = 2;
             }
 
         }
