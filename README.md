@@ -99,7 +99,7 @@ Here is an image of the assembled PCB:
 
 
 A graph of the voltage fluctuations introduced by generative current flow from the servo can be seen here:
-<img src="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Images/servo_voltage_fluctuation.png" height="200">
+<img src="Images/servo_voltage_fluctuation.png" height="200">
 
 Without the capacitor these fluctuations would be much higher eventually triggering the servos overvoltage protection.
 
