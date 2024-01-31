@@ -343,6 +343,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
         }
@@ -366,6 +367,7 @@ namespace User.PluginSdkDemo
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
@@ -1339,6 +1341,9 @@ namespace User.PluginSdkDemo
 
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
+            InvertMotorDir_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 == 1;
+
+            
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
 
             //try
@@ -3973,6 +3978,7 @@ namespace User.PluginSdkDemo
             btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Visibility = Visibility.Visible;
+            InvertMotorDir_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             
@@ -3990,6 +3996,7 @@ namespace User.PluginSdkDemo
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            InvertMotorDir_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
         }
@@ -4013,6 +4020,16 @@ namespace User.PluginSdkDemo
         private void InvertLoadcellReading_unchecked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+        }
+
+
+        private void InvertMotorDir_checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 = 1;
+        }
+        private void InvertMotorDir_unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 = 0;
         }
 
 

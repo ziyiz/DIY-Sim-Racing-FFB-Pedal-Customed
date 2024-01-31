@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 127;
+    public const uint pedalConfigPayload_version = 128;
 
 
     // pyload types
@@ -168,6 +168,9 @@ public struct payloadPedalConfig
 
     // invert loadcell sign
     public byte invertLoadcellReading_u8;
+
+    // invert motor direction
+    public byte invertMotorDirection_u8;
 
     // spindle pitch in mm/rev
     public byte spindlePitch_mmPerRev_u8;
@@ -1230,6 +1233,8 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+            dap_config_initial_st.payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
 

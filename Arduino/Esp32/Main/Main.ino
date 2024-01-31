@@ -254,8 +254,8 @@ void setup()
 
 
 
-
-  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin);
+  bool invMotorDir = dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 > 0;
+  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin, invMotorDir);
   loadcell = new LoadCell_ADS1256();
 
   loadcell->setLoadcellRating(dap_config_st.payLoadPedalConfig_.loadcell_rating);
@@ -1239,7 +1239,7 @@ void servoCommunicationTask( void * pvParameters )
 
 
         // invert the compensation wrt the motor direction
-        if (MOTOR_INVERT_MOTOR_DIR)
+        if (dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 == 1)
         {
           servo_offset_compensation_steps_local_i32 *= -1;
         }

@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 127
+#define DAP_VERSION_CONFIG 128
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -141,6 +141,9 @@ struct payloadPedalConfig {
 
   // invert loadcell sign
   uint8_t invertLoadcellReading_u8;
+
+  // invert motor direction
+  uint8_t invertMotorDirection_u8;
 
   // spindle pitch in mm/rev
   uint8_t spindlePitch_mmPerRev_u8;

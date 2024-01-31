@@ -85,6 +85,8 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
   payLoadPedalConfig_.invertLoadcellReading_u8 = 0;
+
+  payLoadPedalConfig_.invertMotorDirection_u8 = 0;
 }
 
 

@@ -1230,6 +1230,7 @@
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <CheckBox x:Name="JoystickOutput_check" Width="156" Height="34" Content="Joystick output from travel" Foreground="White" Checked="JoystickOutput_checked" Unchecked="JoystickOutput_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="70,0,0,0" />
                                 <CheckBox x:Name="InvertLoadcellReading_check" Content="Reverse loadcell reading" Foreground="White" Checked="InvertLoadcellReading_checked" Unchecked="InvertLoadcellReading_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="30" Width="135"/>
+                                <CheckBox x:Name="InvertMotorDir_check" Content="Reverse motor direction" Foreground="White" Checked="InvertMotorDir_checked" Unchecked="InvertMotorDir_unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Height="30" Width="135"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>

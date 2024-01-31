@@ -25,7 +25,7 @@ FastAccelStepperEngine& stepperEngine() {
 
 
 
-StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint8_t pinMin, uint8_t pinMax)
+StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint8_t pinMin, uint8_t pinMax, bool invertMotorDir_b)
   : _pinMin(pinMin), _pinMax(pinMax)
   , _limitMin(0),    _limitMax(0)
   , _posMin(0),      _posMax(0)
@@ -42,7 +42,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 
   // Stepper Parameters
   if (_stepper) {
-    _stepper->setDirectionPin(pinDirection, MOTOR_INVERT_MOTOR_DIR);
+    _stepper->setDirectionPin(pinDirection, invertMotorDir_b);
     _stepper->setAutoEnable(true);
     _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED);            // steps/s
     _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);  // steps/s²
