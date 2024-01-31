@@ -1014,6 +1014,29 @@ namespace User.PluginSdkDemo
                 Settings.SpeedWarningLevel--;
             });
 
+            this.AddAction("ChangeSlotA", (a, b) =>
+            {
+                wpfHandle.ChangeslotA();
+            });
+
+            this.AddAction("ChangeSlotB", (a, b) =>
+            {
+                wpfHandle.ChangeslotB();
+            });
+
+            this.AddAction("ChangeSlotC", (a, b) =>
+            {
+                wpfHandle.ChangeslotC();
+            });
+
+            this.AddAction("ChangeSlotD", (a, b) =>
+            {
+                wpfHandle.ChangeslotD();
+            });
+            this.AddAction("SendConfigToPedal", (a, b) =>
+            {
+                wpfHandle.Sendconfigtopedal_shortcut();
+            });
 
             //Settings.selectedJsonIndexLast[0]
             SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");
@@ -1199,6 +1222,7 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
 
+            
 
 
 
