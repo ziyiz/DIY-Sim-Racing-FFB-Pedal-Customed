@@ -38,10 +38,60 @@
             </Grid.ColumnDefinitions>
             <!-- -->
             <!-- Define the tabs to select the pedal -->
-            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="400" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Height="46">
-                <TabItem x:Name="tabPedalSelection_clutch" Header="Clutch" FontFamily="Yu Gothic UI Semibold" Height="39" HorizontalAlignment="Left" Width="90" />
-                <TabItem x:Name="tabPedalSelection_brake" Header="Brake" FontFamily="Yu Gothic UI Semibold"/>
-                <TabItem x:Name="tabPedalSelection_accelerator" Header="Accelerator" FontFamily="Yu Gothic UI Semibold"/>
+            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="500" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Height="46" Margin="3,0,0,0">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <!--The four values of CornerRadius represent the four corners of the TabItem.-->
+                                    <Border Name="Border" BorderThickness="0,0,0,0" BorderBrush="Gainsboro" CornerRadius="5,5,5,5" Margin="0,0,2,0">
+                                        <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Left" ContentSource="Header" Margin="0,0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#9F4E4E4E" />
+                                            <Setter Property="TextElement.Foreground" Value="#FFFFFFFF" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Border" Property="Background" Value="#1F4E4E4E" />
+                                            <Setter Property="TextElement.Foreground" Value="#7FFFFFFF" />
+                                        </Trigger>
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" SourceName="Border" Value="True"/>
+                                                <Condition Property="IsSelected" Value="False"/>
+                                            </MultiTrigger.Conditions>
+                                            <Setter TargetName="Border" Property="Background" Value="#3C4E4E4E" />
+                                        </MultiTrigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+                <TabItem x:Name="tabPedalSelection_clutch" Width="150" Height="40" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="150" Height="40" Margin="0,0,0,0" >
+                            <Label Content="Clutch"  FontFamily="Arial Black" FontSize="26" Height="40" Width="150" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </Border>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem x:Name="tabPedalSelection_brake" Width="150" Height="40" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="150" Height="40" Margin="0,0,0,0" >
+                            <Label Content="Brake"  FontFamily="Arial Black" FontSize="26" Height="40" Width="150" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </Border>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem x:Name="tabPedalSelection_accelerator" Width="190" Height="40" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="190" Height="40" Margin="0,0,0,0" >
+                            <Label Content="Accelerator"  FontFamily="Arial Black" FontSize="26" Height="40" Width="190" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </Border>
+                    </TabItem.Header>
+                </TabItem>
+                
             </TabControl>
 
 
@@ -402,7 +452,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="#7F4E4E4E" Height="140" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Left" Margin="0,5,0,0" >
+                <Border Background="#7F4E4E4E" Height="140" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Left" Margin="0,3,0,0" >
                     <StackPanel HorizontalAlignment="Center" Height="140" VerticalAlignment="Top" Width="168">
                         <Label Content="Plugin Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                         <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" HorizontalAlignment="Left" Margin="5,4,0,0"/>
@@ -417,25 +467,24 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Height="400" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3" Margin="0,20,0,0">
-                <!-- PID sliders -->
-
-                <TextBlock x:Name="text_debug_flag" 
-                   Text="Debug flags 0:" 
-                   Width="120" 
-                   Foreground="White" Height="15" HorizontalAlignment="Left"/>
-                <TextBox x:Name="textBox_debug_Flag_0" Width="100" Height="30"  
-                PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="NumericTextBox_TextChanged" Margin="0,3,0,0" HorizontalAlignment="Left"/>
-                <CheckBox x:Name="dump_pedal_response_to_file" Width="156" Height="34" Content="Dump pedal resonse to file" Foreground="White" Checked="dump_pedal_response_to_file_checked" Unchecked="dump_pedal_response_to_file_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Left" Background="#7F4E4E4E"/>
-                <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" />
-                <!--<styles:SHButtonPrimary x:Name="dump_pedal_response_to_file" Click="dump_pedal_response_to_file_click" Width="160"  Content="Dump pedal resonse to file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" FontSize="8" />-->
+            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="205" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,19,0,0" Grid.Row="4" Grid.RowSpan="3" VerticalAlignment="Top" >
+                <StackPanel HorizontalAlignment="Left" Height="205" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
+                    <Label x:Name="debug_label_text" Content="Debug Area" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
+                    <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="Debug flag 0:" Height="20" Width="60" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
+                        <TextBox x:Name="textBox_debug_Flag_0" Width="40" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="NumericTextBox_TextChanged" Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8"/>
+                    </StackPanel>
+                    <CheckBox x:Name="dump_pedal_response_to_file" Width="156" Height="30" Content="Dump Pedal Resonse" Foreground="White" Checked="dump_pedal_response_to_file_checked" Unchecked="dump_pedal_response_to_file_unchecked" IsChecked="False" FontSize="10" HorizontalAlignment="Center" Background="#7F4E4E4E" FontFamily="Arial"/>
+                    <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                    <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                    <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                    <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                    <!--<styles:SHButtonPrimary x:Name="dump_pedal_response_to_file" Click="dump_pedal_response_to_file_click" Width="160"  Content="Dump pedal resonse to file" Height="28" Margin="0,4,0,0" HorizontalAlignment="Left" FontSize="8" />-->
 
 
-                <!-- PID sliders -->
-            </StackPanel>
+                    <!-- PID sliders -->
+                </StackPanel>
+            </Border>
             <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
