@@ -31,8 +31,9 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="175"/>
-                <ColumnDefinition Width="600"/>
-                <ColumnDefinition Width="740"/>
+                <ColumnDefinition Width="545"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="440"/>
 
             </Grid.ColumnDefinitions>
             <!-- -->
@@ -59,28 +60,10 @@
 
 
             <!--  debug textbox -->
-            <TextBlock HorizontalAlignment="Left" 
-                VerticalAlignment="Top" 
-                Margin="5,0,0,0" 
-                Text="Debug info:" 
-                Grid.Row="0" 
-                Grid.Column="2" 
-                Width="160" 
-                Foreground="White" Grid.RowSpan="2" Height="16"/>
-            <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="400" Height="100" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#7F252525" />
-
+            
 
             <!-- Serial communication debug textbox -->
-            <TextBlock x:Name="text_serial" HorizontalAlignment="Left" 
-            VerticalAlignment="Top" 
-            Margin="5,79,0,0" 
-            Text="Serial monitor:" 
-            Grid.Row="2" 
-            Grid.Column="2" 
-            Width="160" 
-            Foreground="White" Height="16"/>
-            <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Margin="0,100,0,0" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="500" AutomationProperties.Name="TextBox3" Background="#7F252525" BorderBrush="#00CCCCCC" />
-
+            
             <!--<styles:SHButtonPrimary x:Name="btn_serial" Click="SerialMonitorRead_click" HorizontalAlignment="Left" Grid.Row="2"  Grid.Column="2" Width="102" Margin="88,42,0,27" FontSize="6" Grid.RowSpan="2" >Serial monitor update</styles:SHButtonPrimary>-->
 
 
@@ -1596,7 +1579,21 @@
                 </TabItem>
 
             </TabControl>
+            
+            <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="2" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
+                    <Label Content="Debug Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                    <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="296" Height="50" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" Margin="5,0,0,0" />
 
+                </StackPanel>
+            </Border>
+            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="637" BorderThickness="0,0,0,0" Grid.Row="2" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
+                <StackPanel HorizontalAlignment="Center" Height="632" VerticalAlignment="Top" Width="296">
+                    <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                    <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="602" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
+
+                </StackPanel>
+            </Border>
         </Grid>
     </ScrollViewer>
 </UserControl>

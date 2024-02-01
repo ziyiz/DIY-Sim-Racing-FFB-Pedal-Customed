@@ -369,6 +369,7 @@ namespace User.PluginSdkDemo
             InvertLoadcellReading_check.Visibility = Visibility.Hidden;
             InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
+            Border_serial_monitor.Visibility=Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
@@ -3973,7 +3974,8 @@ namespace User.PluginSdkDemo
             InvertMotorDir_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
-            
+            Border_serial_monitor.Visibility = Visibility.Visible;
+
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -3991,6 +3993,7 @@ namespace User.PluginSdkDemo
             InvertMotorDir_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
+            Border_serial_monitor.Visibility = Visibility.Hidden;
         }
 
 
