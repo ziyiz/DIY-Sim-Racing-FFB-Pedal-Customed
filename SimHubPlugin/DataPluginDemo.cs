@@ -232,12 +232,18 @@ namespace User.PluginSdkDemo
         public double g_force_last_value = 128;
         public byte game_running_index = 0 ;
         public uint testValue = 0;
+        public uint[] profile_flag = new uint[4] { 0,0,0,0};
+        public uint[] select_button_flag = new uint[2] { 0, 0, };// define the up and down selection
         public uint slotA_flag = 0;
         public uint slotB_flag = 0;
         public uint slotC_flag = 0;
         public uint slotD_flag = 0;
         public uint sendconfig_flag = 0;
         public SettingsControlDemo wpfHandle;
+        public uint in_game_flag = 0; // check current game is off or pause
+        public string current_profile = "NA" ;
+        public uint profile_index = 0;
+        public uint profile_update_flag = 0;
 
 
         // ABS trigger timer
@@ -344,7 +350,14 @@ namespace User.PluginSdkDemo
             double RPM_value =0;
             double RPM_MAX = 0;
             double _G_force = 128;
-
+            if (data.GamePaused | (!data.GameRunning))
+            {
+                in_game_flag = 0;
+            }
+            else 
+            {
+                in_game_flag = 1;
+            }
             //for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             //{
             //    if (_serialPort[pedalIdx].IsOpen)
@@ -621,7 +634,7 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
-
+            this.AttachDelegate("CurrentProfile", () => current_profile);
         }
 
 
@@ -957,7 +970,11 @@ namespace User.PluginSdkDemo
                 {
                     //wpfHandle.joystick.Release();
                     //wpfHandle.joystick.Dispose();
-                    wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    if (wpfHandle.joystick != null)
+                    {
+                        wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    }
+                    
                     
                 }
                 catch (Exception caughtEx)
@@ -1004,10 +1021,11 @@ namespace User.PluginSdkDemo
             this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
 
             // Declare an event
-            this.AddEvent("SpeedWarning");
-
+            //this.AddEvent("SpeedWarning");
+            
             
             // Declare an action which can be called
+            /*
             this.AddAction("IncrementSpeedWarning",(a, b) =>
             {
                 Settings.SpeedWarningLevel++;
@@ -1020,36 +1038,76 @@ namespace User.PluginSdkDemo
                 Settings.SpeedWarningLevel--;
             });
 
+            */
+
 
             this.AddAction("ChangeSlotA", (a, b) =>
             {
-                //wpfHandle.ChangeslotA();
-                slotA_flag =1;
+                profile_index = 0;
+                profile_update_flag = 1;
                 SimHub.Logging.Current.Info("SlotA");
+                current_profile = "Slot A";
             });
 
             this.AddAction("ChangeSlotB", (a, b) =>
             {
-                slotB_flag=1;
+                
+                profile_index = 1;
+                profile_update_flag = 1;
                 SimHub.Logging.Current.Info("SlotB");
+                current_profile = "Slot B";
             });
 
             this.AddAction("ChangeSlotC", (a, b) =>
             {
-                slotC_flag=1;
+                profile_index = 2;
+                profile_update_flag = 1;
                 SimHub.Logging.Current.Info("SlotC");
+                current_profile = "Slot C";
             });
 
             this.AddAction("ChangeSlotD", (a, b) =>
             {
-                slotD_flag=1;
+                profile_index = 3;
+                profile_update_flag = 1;
                 SimHub.Logging.Current.Info("SlotD");
+                current_profile = "Slot D";
             });
             this.AddAction("SendConfigToPedal", (a, b) =>
             {
                 sendconfig_flag =1;
                 SimHub.Logging.Current.Info("SendConfig");
             });
+
+            this.AddAction("PreviousProfile", (a, b) =>
+            {
+                if (profile_index == 0)
+                {
+                    profile_index=3;
+                }
+                else
+                {
+                    profile_index--;
+                }
+                
+
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("PreviousProfile");
+            });
+
+            this.AddAction("NextProfile", (a, b) =>
+            {
+                profile_index++;
+                if (profile_index > 3)
+                {
+                    profile_index = 0;
+                }
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("NextProfile");
+            });
+
+            
+
 
             //Settings.selectedJsonIndexLast[0]
             SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");

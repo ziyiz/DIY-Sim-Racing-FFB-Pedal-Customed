@@ -1338,7 +1338,7 @@ namespace User.PluginSdkDemo
             }
 
 
-            TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
+            //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
             InvertMotorDir_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 == 1;
@@ -2201,6 +2201,12 @@ namespace User.PluginSdkDemo
         private uint count_timmer_count = 0;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
+            if (Plugin.profile_update_flag == 1)
+            {
+                Profile_change(Plugin.profile_index);
+                Plugin.profile_update_flag = 0;
+            }
+
             count_timmer_count++;
             if (count_timmer_count > 1)
             {
@@ -2316,27 +2322,13 @@ namespace User.PluginSdkDemo
         {
 
             //action here 
-            if (Plugin.slotA_flag == 1)
+
+            if (Plugin.profile_update_flag == 1)
             {
-                ChangeslotA();
-                Plugin.slotA_flag = 0;
+                Profile_change(Plugin.profile_index);
+                Plugin.profile_update_flag = 0;
             }
 
-            if (Plugin.slotB_flag == 1)
-            {
-                ChangeslotB();
-                Plugin.slotB_flag = 0;
-            }
-            if (Plugin.slotC_flag == 1)
-            {
-                ChangeslotC();
-                Plugin.slotC_flag = 0;
-            }
-            if (Plugin.slotD_flag == 1)
-            {
-                ChangeslotD();
-                Plugin.slotD_flag = 0;
-            }
             if (Plugin.sendconfig_flag == 1)
             {
                 Sendconfigtopedal_shortcut();
@@ -4375,34 +4367,34 @@ namespace User.PluginSdkDemo
             }
         }
 
-        public void ChangeslotA()
+        public void Profile_change(uint profile_index)
         {
-            profile_select = 0;
-            ProfileTab.SelectedIndex = (int)profile_select;
+            profile_select = profile_index;
+            ProfileTab.SelectedIndex = (int)profile_index;
             //if (Plugin.Settings.file_enable[profile_select])
-            Parsefile(profile_select);
+            Parsefile(profile_index);
+            string tmp;
+            switch (profile_index)
+            {
+                case 0:
+                    tmp = "Profile A";
+                    break;
+                case 1:
+                    tmp = "Profile B";
+                    break;
+                case 2:
+                    tmp = "Profile C";
+                    break;
+                case 3:
+                    tmp = "Profile D";
+                    break;
+                default:
+                    tmp = "No Profile";
+                    break;
+            }
+            Plugin.current_profile = tmp;
         }
-        public void ChangeslotB()
-        {
-            profile_select = 1;
-            ProfileTab.SelectedIndex = (int)profile_select;
-            //if (Plugin.Settings.file_enable[profile_select])
-            Parsefile(profile_select);
-        }
-        public void ChangeslotC()
-        {
-            profile_select = 2;
-            ProfileTab.SelectedIndex = (int)profile_select;
-            //if (Plugin.Settings.file_enable[profile_select])
-            Parsefile(profile_select);
-        }
-        public void ChangeslotD()
-        {
-            profile_select = 3;
-            ProfileTab.SelectedIndex = (int)profile_select;
-            //if (Plugin.Settings.file_enable[profile_select])
-            Parsefile(profile_select);
-        }
+       
 
 
 

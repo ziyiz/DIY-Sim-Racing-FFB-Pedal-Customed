@@ -3,13 +3,7 @@
     /// <summary>
     /// Settings class, make sure it can be correctly serialized using JSON.net
     /// </summary>
-    public class pedal_file_path
-    {
-        
-        public string[] file_path =  { "NA","NA","NA"}; 
-        public uint[] file_enable = new uint[3] { 0, 0, 0, };
-        
-    }
+
     public class DataPluginDemoSettings
     {
         public int SpeedWarningLevel = 100;
@@ -30,7 +24,7 @@
         public uint vjoy_order = 1;
         public string[,] pedal_file_string = new string[4, 3] { { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" } };
         public int[,] file_enable = new int[4, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-        //public pedal_file_path[] pedal_file_string=new pedal_file_path[4];
+        
         
     }
         
