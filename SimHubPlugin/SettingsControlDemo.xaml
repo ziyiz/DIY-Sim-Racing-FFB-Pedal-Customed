@@ -14,7 +14,7 @@
 
     <!-- Define the GUI interface, common for all pedals -->
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-        <Grid RenderTransformOrigin="0.497,0.499">
+        <Grid RenderTransformOrigin="0,0">
 
             <!-- Define the GUI grid -->
             <Grid.RowDefinitions>
@@ -187,7 +187,6 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <Border BorderThickness="1" Grid.Column="2" HorizontalAlignment="Left" Height="120" Margin="10,237,0,0" Grid.Row="8" VerticalAlignment="Top" Width="500" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.RowSpan="2"/>
             <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.Row="2">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
@@ -456,14 +455,14 @@
                     <StackPanel HorizontalAlignment="Center" Height="140" VerticalAlignment="Top" Width="168">
                         <Label Content="Plugin Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                         <CheckBox x:Name="checkbox_auto_connect" Content="Auto connect" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="160" Height="20" HorizontalAlignment="Left" Margin="5,4,0,0"/>
-                        <CheckBox x:Name="checkbox_pedal_read" Content="Auto Read Config" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="225" Height="20" Margin="5,4,0,0" HorizontalAlignment="Left"/>
+                        <CheckBox x:Name="checkbox_pedal_read" Content="Auto Read Config" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" IsChecked="False" FontSize="10" Width="120" Height="20" Margin="5,4,0,0" HorizontalAlignment="Left"/>
                         <CheckBox x:Name="Vjoy_out_check" Content="vJoy Output" Height="20" Width="100" Checked="Vjoy_out_check_Checked" Unchecked="Vjoy_out_check_Unchecked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,4,0,0" FontSize="10"/>
                         <StackPanel Height="15" Width="80" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,4,0,0">
                             <Button x:Name="btn_plus"  Click="vjoy_plus_click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
                             <Label x:Name="Label_vjoy_order" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                             <Button x:Name="btn_minus"  Click="vjoy_minus_click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
                         </StackPanel>
-                        <CheckBox x:Name="Debug_check" Width="120" Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="5,4,0,0" HorizontalAlignment="Left"/>
+                        <CheckBox x:Name="Debug_check" Width="120" Height="20" Content="Debug Mode" Foreground="White" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Margin="5,4,0,0" HorizontalAlignment="Left" ToolTip="Some opttions were hidden..."/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -526,7 +525,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="ABS/TC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                            <Label Content="ABS/TC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of the ABS/TC effect "  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
@@ -552,7 +551,7 @@
                                     <ComboBoxItem Content="Force"/>
                                     <ComboBoxItem Content="Travel"/>
                                 </ComboBox>
-                                <CheckBox x:Name="Simulate_ABS_check" Width="210" Height="34" Content="Simulate ABS for non-supported game" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="20,0,0,0"/>
+                                <CheckBox x:Name="Simulate_ABS_check" Width="100" Height="30" Content="Simulate ABS" Foreground="White" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Background="#7F4E4E4E" Margin="20,0,0,0" ToolTip="the effect will trigger by the setup force range."/>
                             </StackPanel>
                             <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
@@ -640,7 +639,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Engine/Speed"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="-1,0,0,0"  />
+                            <Label Content="Engine/Speed"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="-1,0,0,0" ToolTip="Parameter of Engine or Speed rumble"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
@@ -759,7 +758,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Bite Point"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                            <Label Content="Bite Point"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of Bite point vibration"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
@@ -856,7 +855,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="G-Force"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="G-Force"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter of G force effect"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
@@ -953,7 +952,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Profiles"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="-1,0,0,0"  />
+                            <Label Content="Profiles"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="-1,0,0,0" ToolTip="Bind profiles for pedal and change in the fly"  />
                         </Border>
                     </TabItem.Header>
                     <StackPanel HorizontalAlignment="Left" Height="122" VerticalAlignment="Top" Width="542" Grid.Column="1" Grid.Row="5" Orientation="Horizontal" Margin="-2,3,0,0">
@@ -1096,7 +1095,7 @@
                         </Setter>
                     </Style>
                 </TabControl.Resources>
-                <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                <TabItem Width="100" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
                             <Label Content="General"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
@@ -1108,9 +1107,9 @@
                                 <Label Content="General Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Content="Spindle pitch in mm/rev:" Height="20" Width="115" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
-                                <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="50" Height="20" FontSize="10" SelectedIndex="5" Margin="3,0,0,0" HorizontalAlignment="Left" MinHeight="20">
-                                    <ComboBoxItem Content="0"/>
+                                <Label Content="Pitch:" Height="20" Width="30" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0" FontFamily="Arial"/>
+                                <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="50" Height="20" FontSize="10" SelectedIndex="5" Margin="3,0,0,0" HorizontalAlignment="Left" MinHeight="20" ToolTip="Spindle Pitch in mm/rev">
+                                    <ComboBoxItem Content="0" ToolTip="Spindle Pitch in mm/rev"/>
                                     <ComboBoxItem Content="1"/>
                                     <ComboBoxItem Content="2"/>
                                     <ComboBoxItem Content="3"/>
@@ -1273,7 +1272,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Filter"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="Filter"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Filter used in pedal"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
@@ -1327,7 +1326,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="Control"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Control stretegy for Pedal"  />
                         </Border>
                     </TabItem.Header>
 
@@ -1352,7 +1351,7 @@
                 <TabItem Width="100" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="100" Height="30" Margin="0,0,0,0" >
-                            <Label Content="PID"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="PID"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="PID control tuning was here"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >

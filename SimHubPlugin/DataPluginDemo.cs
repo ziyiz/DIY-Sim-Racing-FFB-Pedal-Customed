@@ -221,7 +221,7 @@ namespace User.PluginSdkDemo
     [PluginDescription("My plugin description")]
     [PluginAuthor("OpenSource")]
     [PluginName("DIY active pedal plugin")]
-    public class DataPluginDemo : IPlugin, IDataPlugin, IWPFSettingsV2
+    public class DIYFFBPedal : IPlugin, IDataPlugin, IWPFSettingsV2
     {
 
         public PluginManager pluginHandle;// = this;
@@ -294,6 +294,7 @@ namespace User.PluginSdkDemo
         /// <summary>
         /// Gets a short plugin title to show in left menu. Return null if you want to use the title as defined in PluginName attribute.
         /// </summary>
+        //public string LeftMenuTitle => "FFB Pedal Dashboard";
         public string LeftMenuTitle => "DIY FFB Pedal";
 
         /// <summary>

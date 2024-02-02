@@ -72,7 +72,7 @@ namespace User.PluginSdkDemo
 
         public uint indexOfSelectedPedal_u = 1;
         public uint profile_select = 0;
-        public DataPluginDemo Plugin { get; }
+        public DIYFFBPedal Plugin { get; }
 
 
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
@@ -632,7 +632,7 @@ namespace User.PluginSdkDemo
         //}
 
 
-        public SettingsControlDemo(DataPluginDemo plugin) : this()
+        public SettingsControlDemo(DIYFFBPedal plugin) : this()
         {
             this.Plugin = plugin;
             plugin.testValue = 1;
@@ -642,7 +642,7 @@ namespace User.PluginSdkDemo
             UpdateSerialPortList_click();
             //closeSerialAndStopReadCallback(1);
 
-
+             
 
             // check if Json config files are present, otherwise create new ones
             //for (int jsonIndex = 0; jsonIndex < ComboBox_JsonFileSelected.Items.Count; jsonIndex++)
@@ -4333,6 +4333,7 @@ namespace User.PluginSdkDemo
         private void TabControl_file_path(object sender, SelectionChangedEventArgs e)
         {
             profile_select = (uint)ProfileTab.SelectedIndex;
+            Plugin.profile_index = profile_select;
             //Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
             // update the sliders & serial port selection accordingly
             updateTheGuiFromConfig();
