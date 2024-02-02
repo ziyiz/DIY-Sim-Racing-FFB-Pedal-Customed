@@ -19,14 +19,14 @@
             <!-- Define the GUI grid -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="0"/>
-                <RowDefinition Height="46"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="8"/>
                 <RowDefinition Height="277"/>
                 <RowDefinition Height="227"/>
                 <RowDefinition Height="227"/>
                 <RowDefinition Height="227"/>
-                <RowDefinition Height="300"/>
-                <RowDefinition Height="300"/>
-                <RowDefinition Height="300"/>
+                <RowDefinition Height="227"/>
+
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -38,7 +38,7 @@
             </Grid.ColumnDefinitions>
             <!-- -->
             <!-- Define the tabs to select the pedal -->
-            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="500" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Height="46" Margin="3,0,0,0">
+            <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="500" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Height="40" Margin="3,0,0,0">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -94,7 +94,18 @@
                 
             </TabControl>
 
+            <Canvas x:Name="canvas_Header_Tab" Height="6" Width="1025" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
 
+                </Canvas.RenderTransform>
+                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="1022" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+            </Canvas>
 
 
             <!-- serial connection -->
@@ -164,13 +175,7 @@
 
 
 
-            <TextBlock HorizontalAlignment="Left" 
-                   VerticalAlignment="Top" 
-                   Margin="5,0,0,0" 
-                   Grid.Row="10" 
-                   Grid.Column="0" 
-                   Width="120" 
-                   Foreground="White" Height="16"/>
+
 
 
 
@@ -187,7 +192,7 @@
             <ComboBoxItem>DiyPedalConfig_accelerator_2</ComboBoxItem>
             <ComboBoxItem>DiyPedalConfig_accelerator_3</ComboBoxItem>
         </ComboBox>-->
-            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.Row="2">
+            <Border BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Grid.Row="3">
                 <StackPanel HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="600">
                     <!-- Travel vs Force curve adjustment sliders -->
                     <TextBlock 
@@ -426,7 +431,7 @@
                     </Canvas>
                 </StackPanel>
             </Border>
-            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="2" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
+            <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="3" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
 
                 <Border Background="#7F4E4E4E" Height="376" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
                     <StackPanel HorizontalAlignment="Center" Height="366" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
@@ -466,7 +471,7 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="205" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,19,0,0" Grid.Row="4" Grid.RowSpan="3" VerticalAlignment="Top" >
+            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="205" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,19,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
                 <StackPanel HorizontalAlignment="Left" Height="205" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
                     <Label x:Name="debug_label_text" Content="Debug Area" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                     <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -484,7 +489,7 @@
                     <!-- PID sliders -->
                 </StackPanel>
             </Border>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="5" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -540,7 +545,7 @@
                                     <ComboBoxItem Content="Sinewave"/>
                                     <ComboBoxItem Content="Sawtooth"/>
                                 </ComboBox>
-                                <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                                <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0" ToolTip="CLick for testing ABS/TC, click again to cancel"/>
                                 <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left"/>
 
 
@@ -685,7 +690,7 @@
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
                                 <Rectangle x:Name="rect_RPM_AMP" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_RPM_AMP_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="28" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="RPM AMP " HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <TextBlock x:Name="text_RPM_AMP_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="28" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="RPM AMP " HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="150">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -739,7 +744,7 @@
 
                                 <Rectangle x:Name="rect_RPM_min" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="0" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                                 <Rectangle x:Name="rect_RPM_max" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_RPM_freq_text" Text="RPM Effect Frequency" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150.2" Height="10" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <TextBlock x:Name="text_RPM_freq_text" Text="RPM Effect Frequency" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" Height="10" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1059,7 +1064,7 @@
 
 
             </TabControl>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="3" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,2,0,0" Grid.RowSpan="2">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,2,0,0" Grid.RowSpan="2">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -1315,7 +1320,7 @@
                                     X2="405" Y2="20"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Smaller value make the pedal smooth but slow response, larger value make the pedal quick response but more noise."/>
 
                             </Canvas>
                         </StackPanel>
@@ -1628,14 +1633,14 @@
 
             </TabControl>
             
-            <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="2" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
                     <Label Content="Debug Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
                     <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="296" Height="50" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" Margin="5,0,0,0" />
 
                 </StackPanel>
             </Border>
-            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="637" BorderThickness="0,0,0,0" Grid.Row="2" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
+            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="637" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
                 <StackPanel HorizontalAlignment="Center" Height="632" VerticalAlignment="Top" Width="296">
                     <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
                     <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="602" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
