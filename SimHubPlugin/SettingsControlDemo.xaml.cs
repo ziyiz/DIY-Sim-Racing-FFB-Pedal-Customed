@@ -72,7 +72,7 @@ namespace User.PluginSdkDemo
 
         public uint indexOfSelectedPedal_u = 1;
         public uint profile_select = 0;
-        public DIYFFBPedal Plugin { get; }
+        public DIY_FFB_Pedal Plugin { get; }
 
 
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
@@ -632,7 +632,7 @@ namespace User.PluginSdkDemo
         //}
 
 
-        public SettingsControlDemo(DIYFFBPedal plugin) : this()
+        public SettingsControlDemo(DIY_FFB_Pedal plugin) : this()
         {
             this.Plugin = plugin;
             plugin.testValue = 1;
@@ -2174,7 +2174,25 @@ namespace User.PluginSdkDemo
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-                Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
+                if (Plugin.Settings.auto_connect_flag == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
+                {
+                    if (Plugin.Settings.autoconnectComPortNames[pedalIdx] == "NA")
+                    {
+                        Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                    }
+                    else
+                    {
+                        Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
+                        Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin.Settings.selectedComPortNames[pedalIdx];
+                    }
+                    
+                }
+                else
+                {
+                    Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
+                    Plugin.Settings.autoconnectComPortNames[pedalIdx]= Plugin.Settings.selectedComPortNames[pedalIdx];
+                }
+                
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
                     Plugin._serialPort[pedalIdx].Open();
@@ -2227,7 +2245,7 @@ namespace User.PluginSdkDemo
                                 {
                                     //UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
-
+                                    //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);

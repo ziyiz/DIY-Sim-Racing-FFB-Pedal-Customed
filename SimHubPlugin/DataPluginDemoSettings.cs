@@ -9,6 +9,7 @@
         public int SpeedWarningLevel = 100;
         public int[] selectedJsonIndexLast = new int[3] { 0, 3, 6 };
         public string[] selectedComPortNames = { "COM1", "COM1", "COM1" };
+        public string[] autoconnectComPortNames = { "NA", "NA", "NA" };
         public string[] selectedJsonFileNames = { "1", "2", "3" };
         public int reading_config = 0;
         public int[] connect_status = new int[3] { 0, 0, 0 };
