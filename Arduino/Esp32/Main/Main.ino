@@ -590,14 +590,31 @@ void pedalUpdateTask( void * pvParameters )
     }
 
     // Do the loadcell signal filtering
-    float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
-    float changeVelocity = kalman->changeVelocity();
+    float filteredReading = 0;
+    float changeVelocity = 0;
+
+    // const velocity model denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 0)
+    {
+      filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      changeVelocity = kalman->changeVelocity();
+    }
+
+    // const acceleration model denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 1)
+    {
+      filteredReading = kalman_2nd_order->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      changeVelocity = kalman->changeVelocity();
+    }
+    
+
+    
 
 
     // Do position state estimate
-    float stepper_pos_filtered_fl32 = kalman_2nd_order->filteredValue(stepper->getCurrentPosition(), 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
-    float stepper_vel_filtered_fl32 = kalman_2nd_order->changeVelocity();
-    float stepper_accel_filtered_fl32 = kalman_2nd_order->changeAccel();
+    float stepper_pos_filtered_fl32 = 0;//kalman_2nd_order->filteredValue(stepper->getCurrentPosition(), 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+    float stepper_vel_filtered_fl32 = 0;//kalman_2nd_order->changeVelocity();
+    float stepper_accel_filtered_fl32 = 0;//kalman_2nd_order->changeAccel();
 
 
     /*Serial.print(stepper->getCurrentPosition());

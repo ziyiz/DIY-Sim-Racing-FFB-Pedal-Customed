@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 128;
+    public const uint pedalConfigPayload_version = 129;
 
 
     // pyload types
@@ -156,6 +156,7 @@ public struct payloadPedalConfig
 
     // Kalman filter model noise
     public byte kf_modelNoise;
+    public byte kf_modelOrder;
 
     // debug flags, sued to enable debug output
     public byte debug_flags_0;
@@ -1264,6 +1265,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_initial_st.payloadPedalConfig_.kf_modelOrder = 0;
             dap_config_initial_st.payloadPedalConfig_.debug_flags_0 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.cubic_spline_param_a_0 = 0;

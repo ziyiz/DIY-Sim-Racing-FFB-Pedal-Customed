@@ -10,7 +10,9 @@
 // a = 300 / delta_t^2
 // adjust model noise here s = 1/6 * j * delta_t^3 --> j = 6 * s / delta_t^3
 //static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 2.0f * 1000.0f / 0.05f/ 0.05f );
-static const float KF_MODEL_NOISE_FORCE_ACCELERATION = 180 * 1e6;//( 2.0f * 4.0f / 0.1f/ 0.1f );
+static const float KF_MODEL_NOISE_FORCE_JERK = 10000 * ( 2.0f * 4.0f / 0.1f/ 0.1f );
+
+//static const float KF_MODEL_NOISE_FORCE_ACCELERATION = 180 * 1e6;//( 2.0f * 4.0f / 0.1f/ 0.1f );
 
 
 KalmanFilter_2nd_order::KalmanFilter_2nd_order(float varianceEstimate)
@@ -62,17 +64,17 @@ float KalmanFilter_2nd_order::filteredValue(float observation, float command, ui
           0.0,
           0.0};
 
-  float Q11 = KF_MODEL_NOISE_FORCE_ACCELERATION * (1. / 6. * delta_t * delta_t * delta_t) * (1. / 6. * delta_t * delta_t * delta_t);
-  float Q12 = KF_MODEL_NOISE_FORCE_ACCELERATION * (1. / 6. * delta_t * delta_t * delta_t) * (1. / 2. * delta_t * delta_t);
-  float Q13 = KF_MODEL_NOISE_FORCE_ACCELERATION * (1. / 6. * delta_t * delta_t * delta_t) * (delta_t);
+  float Q11 = KF_MODEL_NOISE_FORCE_JERK * (1. / 6. * delta_t * delta_t * delta_t) * (1. / 6. * delta_t * delta_t * delta_t);
+  float Q12 = KF_MODEL_NOISE_FORCE_JERK * (1. / 6. * delta_t * delta_t * delta_t) * (1. / 2. * delta_t * delta_t);
+  float Q13 = KF_MODEL_NOISE_FORCE_JERK * (1. / 6. * delta_t * delta_t * delta_t) * (delta_t);
 
   float Q21 = Q12;
-  float Q22 = KF_MODEL_NOISE_FORCE_ACCELERATION * (1. / 2. * delta_t * delta_t) * (1. / 2. * delta_t * delta_t);
-  float Q23 = KF_MODEL_NOISE_FORCE_ACCELERATION * (1. / 2. * delta_t * delta_t) * (delta_t);
+  float Q22 = KF_MODEL_NOISE_FORCE_JERK * (1. / 2. * delta_t * delta_t) * (1. / 2. * delta_t * delta_t);
+  float Q23 = KF_MODEL_NOISE_FORCE_JERK * (1. / 2. * delta_t * delta_t) * (delta_t);
 
   float Q31 = Q13;
   float Q32 = Q23;
-  float Q33 = KF_MODEL_NOISE_FORCE_ACCELERATION * (delta_t) * (delta_t);
+  float Q33 = KF_MODEL_NOISE_FORCE_JERK * (delta_t) * (delta_t);
 
   _K.Q = {  Q11, Q12, Q12,
             Q21, Q21, Q21,

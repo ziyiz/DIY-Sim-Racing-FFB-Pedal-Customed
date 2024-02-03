@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 128
+#define DAP_VERSION_CONFIG 129
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -129,6 +129,7 @@ struct payloadPedalConfig {
 
   // Kalman filter model noise
   uint8_t kf_modelNoise;
+  uint8_t kf_modelOrder;
 
   // debug flags, sued to enable debug output
   uint8_t debug_flags_0;

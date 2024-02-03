@@ -317,6 +317,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelOrder = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
@@ -1101,6 +1102,17 @@ namespace User.PluginSdkDemo
             text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
             Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
             Canvas.SetTop(text_KF, 5);
+
+
+            // Filter type
+            try
+            {
+                KF_filter_order.SelectedIndex = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelOrder;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+
             //LC rating slider
 
             double LC_max = 510;
@@ -2921,7 +2933,18 @@ namespace User.PluginSdkDemo
         }
 
 
-
+        public void KF_filter_order_changed(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelOrder = (byte)KF_filter_order.SelectedIndex;
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+        }
 
         public void SpindlePitchChanged(object sender, SelectionChangedEventArgs e)
         {

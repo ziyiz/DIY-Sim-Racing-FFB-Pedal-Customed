@@ -90,7 +90,7 @@
                         </Border>
                     </TabItem.Header>
                 </TabItem>
-                
+
             </TabControl>
 
             <Canvas x:Name="canvas_Header_Tab" Height="6" Width="1025" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
@@ -120,10 +120,10 @@
 
 
             <!--  debug textbox -->
-            
+
 
             <!-- Serial communication debug textbox -->
-            
+
             <!--<styles:SHButtonPrimary x:Name="btn_serial" Click="SerialMonitorRead_click" HorizontalAlignment="Left" Grid.Row="2"  Grid.Column="2" Width="102" Margin="88,42,0,27" FontSize="6" Grid.RowSpan="2" >Serial monitor update</styles:SHButtonPrimary>-->
 
 
@@ -1034,7 +1034,7 @@
                                         <Label x:Name="Label_clutch_file" Content="" Height="30" Width="295" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="8"/>
                                         <styles:SHButtonPrimary x:Name="Reading_clutch" Click="Read_for_slot" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                         <styles:SHButtonPrimary x:Name="Clear_clutch" Click="Clear_slot" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
-                                        
+
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="439" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
                                         <CheckBox x:Name="Brake_file_check" Width="20" Height="30" Checked="file_check_Checked" Unchecked="file_check_Unchecked" IsChecked="False" Content="" FontSize="8" Margin="2,0,0,0" IsEnabled="False"/>
@@ -1042,7 +1042,7 @@
                                         <Label x:Name="Label_brake_file" Content="" Height="30" Width="295" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="8"/>
                                         <styles:SHButtonPrimary x:Name="Reading_brake" Click="Read_for_slot" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                         <styles:SHButtonPrimary x:Name="Clear_brake" Click="Clear_slot" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
-                                        
+
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="440" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
                                         <CheckBox x:Name="Gas_file_check" Checked="file_check_Checked" Unchecked="file_check_Unchecked" Width="20" Height="30" IsChecked="False" Content="" FontSize="8" Margin="2,0,0,0" IsEnabled="False"/>
@@ -1050,7 +1050,7 @@
                                         <Label x:Name="Label_gas_file" Content="" Height="30" Width="295" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="8"/>
                                         <styles:SHButtonPrimary x:Name="Reading_gas" Click="Read_for_slot" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                         <styles:SHButtonPrimary x:Name="Clear_gas" Click="Clear_slot" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
-                                        
+
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -1282,8 +1282,19 @@
                     <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
                         <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
-                                <Label Content="Denoise Filter" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
+                                <Label Content="Noise Reduction Filter" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
+
+
+                            <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Content="Kalman Filter Model:" Height="20" Width="104" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
+                                <ComboBox x:Name="KF_filter_order" SelectionChanged="KF_filter_order_changed"   Width="100" Height="10" FontSize="10" SelectedIndex="0" Margin="0,0,0,0">
+                                    <ComboBoxItem Content="const. vel."/>
+                                    <ComboBoxItem Content="const. accel."/>
+                                    <ComboBoxItem Content="NONE"/>
+                                </ComboBox>
+                            </StackPanel>
+
                             <Canvas x:Name="canvas_horz_KF" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
                                     <TransformGroup>
@@ -1303,7 +1314,7 @@
                                             <TranslateTransform/>
                                         </TransformGroup>
                                     </TextBlock.RenderTransform></TextBlock>
-                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoise Factor KF" Canvas.Left="0" Margin="140,0,0,0">
+                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoising Factor" Canvas.Left="0" Margin="140,0,0,0">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -1322,6 +1333,9 @@
                                 <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Smaller value make the pedal smooth but slow response, larger value make the pedal quick response but more noise."/>
 
                             </Canvas>
+
+                            
+
                         </StackPanel>
 
                     </Border>
@@ -1631,7 +1645,7 @@
                 </TabItem>
 
             </TabControl>
-            
+
             <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
                     <Label Content="Debug Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
