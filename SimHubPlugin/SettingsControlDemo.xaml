@@ -1287,8 +1287,8 @@
 
 
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Content="Filter Model:" Height="20" Width="104" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
-                                <ComboBox x:Name="KF_filter_order" SelectionChanged="KF_filter_order_changed"   Width="100" Height="10" FontSize="10" SelectedIndex="0" Margin="0,0,0,0">
+                                <Label Content="Filter Model:" Height="20" Width="60" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
+                                <ComboBox x:Name="KF_filter_order" SelectionChanged="KF_filter_order_changed"   Width="120" Height="10" FontSize="10" SelectedIndex="0" Margin="0,0,0,0">
                                     <ComboBoxItem Content="KF const. vel."/>
                                     <ComboBoxItem Content="KF const. accel."/>
                                     <ComboBoxItem Content="Exponential filter"/>
