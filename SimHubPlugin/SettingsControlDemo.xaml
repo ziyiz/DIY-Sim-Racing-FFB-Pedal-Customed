@@ -1287,10 +1287,11 @@
 
 
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Content="Kalman Filter Model:" Height="20" Width="104" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
+                                <Label Content="Filter Model:" Height="20" Width="104" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
                                 <ComboBox x:Name="KF_filter_order" SelectionChanged="KF_filter_order_changed"   Width="100" Height="10" FontSize="10" SelectedIndex="0" Margin="0,0,0,0">
-                                    <ComboBoxItem Content="const. vel."/>
-                                    <ComboBoxItem Content="const. accel."/>
+                                    <ComboBoxItem Content="KF const. vel."/>
+                                    <ComboBoxItem Content="KF const. accel."/>
+                                    <ComboBoxItem Content="Exponential filter"/>
                                     <ComboBoxItem Content="NONE"/>
                                 </ComboBox>
                             </StackPanel>
@@ -1314,7 +1315,7 @@
                                             <TranslateTransform/>
                                         </TransformGroup>
                                     </TextBlock.RenderTransform></TextBlock>
-                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoising Factor" Canvas.Left="0" Margin="140,0,0,0">
+                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Center" Width="200" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Loadcell Denoising Factor (slow to fast)" Canvas.Left="0" Margin="100,0,0,0">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>

@@ -606,6 +606,15 @@ void pedalUpdateTask( void * pvParameters )
       filteredReading = kalman_2nd_order->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
       changeVelocity = kalman->changeVelocity();
     }
+
+    // exponential denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 2)
+    {
+      float alpha_exp_filter = 1.0f - ( (float)dap_config_st.payLoadPedalConfig_.kf_modelNoise) / 5000.0f;
+      float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
+      filteredReading = filteredReading_exp_filter;
+    }
+
     
 
     
@@ -624,9 +633,7 @@ void pedalUpdateTask( void * pvParameters )
     Serial.print(stepper_vel_filtered_fl32);
     Serial.println("   ");*/
 
-    /*float alpha_exp_filter = 0.98;
-    float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
-    filteredReading = filteredReading_exp_filter;*/
+    
 
     // Apply FIR notch filter to reduce force oscillation caused by ABS
     //#define APPLY_FIR_FILTER
