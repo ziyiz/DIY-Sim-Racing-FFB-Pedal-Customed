@@ -10,7 +10,7 @@
 // a = 300 / delta_t^2
 // adjust model noise here s = 1/6 * j * delta_t^3 --> j = 6 * s / delta_t^3
 //static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 2.0f * 1000.0f / 0.05f/ 0.05f );
-static const float KF_MODEL_NOISE_FORCE_JERK = 5000 * ( 2.0f * 4.0f / 0.1f/ 0.1f );
+static const float KF_MODEL_NOISE_FORCE_JERK = 2000 * ( 2.0f * 4.0f / 0.1f/ 0.1f );
 
 //static const float KF_MODEL_NOISE_FORCE_ACCELERATION = 180 * 1e6;//( 2.0f * 4.0f / 0.1f/ 0.1f );
 
@@ -76,8 +76,8 @@ float KalmanFilter_2nd_order::filteredValue(float observation, float command, ui
   float Q32 = Q23;
   float Q33 = KF_MODEL_NOISE_FORCE_JERK * (delta_t) * (delta_t);
 
-  _K.Q = {  Q11, Q12, Q12,
-            Q21, Q21, Q21,
+  _K.Q = {  Q11, Q12, Q13,
+            Q21, Q22, Q23,
             Q31, Q32, Q33};
 
         
