@@ -172,7 +172,7 @@
 #if PCB_VERSION == 5
   // ADC defines
   #define PIN_DRDY 19// 19 --> DRDY
-  #define PIN_RST  5 // X --> X
+  #define PIN_RST  34 // X --> X
   #define PIN_SCK 15 // 16 -->SCLK
   #define PIN_MISO 18 // 18 --> DOUT
   #define PIN_MOSI 13 // 17 --> DIN
