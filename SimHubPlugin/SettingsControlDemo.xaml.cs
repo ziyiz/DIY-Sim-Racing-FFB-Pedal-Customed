@@ -455,7 +455,7 @@ namespace User.PluginSdkDemo
             text_LC_rating.Foreground = Line_fill;
             text_LC_rating_text.Foreground = Line_fill;
             rect_LC_rating.Fill = defaultcolor;
-
+            textBox_LC_rating.Foreground= Line_fill;
             text_RPM_freq_min.Foreground = Line_fill;
             text_RPM_freq_max.Foreground = Line_fill;
             text_RPM_AMP.Foreground = Line_fill;
@@ -1118,9 +1118,13 @@ namespace User.PluginSdkDemo
             double LC_max = 510;
             dx = canvas_horz_LC_rating.Width / LC_max;
             Canvas.SetLeft(rect_LC_rating, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2);
-            text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "kg";
-            Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
-            Canvas.SetTop(text_LC_rating, 5);
+            //text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "kg";
+            //Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
+            //Canvas.SetTop(text_LC_rating, 5);
+            textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
+            Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
+            Canvas.SetTop(Panel_LC_rating, 5);
+
             //RPM AMP slider
 
             double RPM_AMP_max = 200;
@@ -1550,7 +1554,24 @@ namespace User.PluginSdkDemo
 
 
 
+        private void Control_TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //labelEingabe.Content = "Sie haben '" + textBox_debug_Flag_0.Text + "' eingegeben!";
+            //TextBox_debugOutput.Text = textBox_debug_Flag_0.Text;
+            var textbox = sender as System.Windows.Controls.TextBox;
+            if (textbox.Name == "textBox_LC_rating")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 510))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(result/2);
+                    }
+                }
+            }
+            updateTheGuiFromConfig();
 
+        }
 
 
 
@@ -3741,10 +3762,12 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(actual_x / 2);
-
-                    text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
-                    Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
-                    Canvas.SetTop(text_LC_rating, 5);
+                    textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
+                    //text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
+                    Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
+                    Canvas.SetTop(Panel_LC_rating, 5);
+                    // Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
+                    //Canvas.SetTop(text_LC_rating, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
                 // RPM effect AMP

@@ -1183,15 +1183,6 @@
                                         </TransformGroup>
 
                                     </Canvas.RenderTransform>
-                                    <TextBlock x:Name="text_LC_rating" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="20" Text="LC Rate:">
-                                        <TextBlock.RenderTransform>
-                                            <TransformGroup>
-                                                <ScaleTransform/>
-                                                <SkewTransform/>
-                                                <RotateTransform Angle="0"/>
-                                                <TranslateTransform/>
-                                            </TransformGroup>
-                                        </TextBlock.RenderTransform></TextBlock>
 
 
 
@@ -1210,7 +1201,10 @@
                                                 <TranslateTransform/>
                                             </TransformGroup>
                                         </TextBlock.RenderTransform></TextBlock>
-
+                                    <StackPanel x:Name="Panel_LC_rating" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                        <TextBox x:Name="textBox_LC_rating" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="0,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                        <TextBlock x:Name="text_LC_rating" HorizontalAlignment="Center" VerticalAlignment="Top" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg" Margin="-5,0,0,0" />
+                                    </StackPanel>
                                 </Canvas>
 
 
