@@ -409,7 +409,7 @@ namespace User.PluginSdkDemo
             Line_H_pos.Stroke = Line_fill;
             //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
             Polyline_BrakeForceCurve.Stroke = Line_fill;
-            text_damping_text.Foreground = Line_fill;
+            //text_damping_text.Foreground = Line_fill;
             Line_H_damping.Stroke = Line_fill;
             text_damping.Foreground = Line_fill;
             rect_damping.Fill = defaultcolor;
@@ -444,16 +444,17 @@ namespace User.PluginSdkDemo
             text_ABS_freq_text.Foreground = Line_fill;
             Line_H_max_game.Stroke = Line_fill;
             text_max_game.Foreground = Line_fill;
-            text_max_game_text.Foreground = Line_fill;
+            textbox_max_game.Foreground = Line_fill;
+            //text_max_game_text.Foreground = Line_fill;
             rect_max_game.Fill = defaultcolor;
 
             Line_H_KF.Stroke = Line_fill;
             text_KF.Foreground = Line_fill;
             rect_KF.Fill = defaultcolor;
-            text_KF_text.Foreground = Line_fill;
+            //text_KF_text.Foreground = Line_fill;
             Line_H_LC_rating.Stroke = Line_fill;
             text_LC_rating.Foreground = Line_fill;
-            text_LC_rating_text.Foreground = Line_fill;
+            //text_LC_rating_text.Foreground = Line_fill;
             rect_LC_rating.Fill = defaultcolor;
             textBox_LC_rating.Foreground= Line_fill;
             text_RPM_freq_min.Foreground = Line_fill;
@@ -1033,7 +1034,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_damping, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress);
             text_damping.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
             Canvas.SetLeft(text_damping, Canvas.GetLeft(rect_damping) + rect_damping.Width / 2 - text_damping.Width / 2);
-            Canvas.SetTop(text_damping, 5);
+            Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping) - text_damping.Height);
             //ABS amplitude slider
             double abs_max = 255;
             dx = canvas_horz_ABS.Width / abs_max;
@@ -1092,16 +1093,16 @@ namespace User.PluginSdkDemo
             double max_game_max = 100;
             dx = canvas_horz_max_game.Width / max_game_max;
             Canvas.SetLeft(rect_max_game, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput);
-            text_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
-            Canvas.SetLeft(text_max_game, Canvas.GetLeft(rect_max_game) - text_max_game.Width / 2 + rect_max_game.Width / 2);
-            Canvas.SetTop(text_max_game, 5);
+            textbox_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
+            Canvas.SetLeft(Panel_max_game, Canvas.GetLeft(rect_max_game) + rect_max_game.Width / 2 - Panel_max_game.Width / 2);
+            Canvas.SetTop(Panel_max_game, Canvas.GetTop(rect_max_game) - Panel_max_game.Height);
             //KF SLider
             double KF_max = 255;
             dx = canvas_horz_KF.Width / KF_max;
             Canvas.SetLeft(rect_KF, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise);
             text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
             Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-            Canvas.SetTop(text_KF, 5);
+            Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF) - text_KF.Height);
 
 
             // Filter type
@@ -1123,7 +1124,7 @@ namespace User.PluginSdkDemo
             //Canvas.SetTop(text_LC_rating, 5);
             textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
             Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
-            Canvas.SetTop(Panel_LC_rating, 5);
+            Canvas.SetTop(Panel_LC_rating, Canvas.GetTop(rect_LC_rating)-Panel_LC_rating.Height);
 
             //RPM AMP slider
 
@@ -1566,6 +1567,42 @@ namespace User.PluginSdkDemo
                     if ((result >= 0) && (result <= 510))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(result/2);
+                    }
+                }
+            }
+
+            if (textbox.Name == "text_damping")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 255))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (byte)(result );
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (byte)(result);
+                    }
+                }
+            }
+
+            if (textbox.Name == "textbox_max_game")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = (byte)(result);
+                        
+                    }
+                }
+            }
+
+            if (textbox.Name == "text_KF")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 255))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = (byte)(result);
+
                     }
                 }
             }
@@ -3657,7 +3694,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = Convert.ToByte(actual_x);
                     text_damping.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
                     Canvas.SetLeft(text_damping, Canvas.GetLeft(rect_damping) + rect_damping.Width / 2-text_damping.Width/2);
-                    Canvas.SetTop(text_damping, 5);
+                    Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping)-text_damping.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 // ABS Amplitude
@@ -3724,9 +3761,9 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = Convert.ToByte(actual_x);
 
-                    text_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
-                    Canvas.SetLeft(text_max_game, Canvas.GetLeft(rect_max_game) - text_max_game.Width / 2 + rect_max_game.Width / 2);
-                    Canvas.SetTop(text_max_game, 5);
+                    textbox_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
+                    Canvas.SetLeft(Panel_max_game, Canvas.GetLeft(rect_max_game) + rect_max_game.Width / 2 - Panel_max_game.Width / 2);
+                    Canvas.SetTop(Panel_max_game, Canvas.GetTop(rect_max_game) - Panel_max_game.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //KF Slider
@@ -3746,7 +3783,7 @@ namespace User.PluginSdkDemo
 
                     text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
                     Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-                    Canvas.SetTop(text_KF, 5);
+                    Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF)-text_KF.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //LC rating slider
@@ -3765,7 +3802,7 @@ namespace User.PluginSdkDemo
                     textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
                     //text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
                     Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
-                    Canvas.SetTop(Panel_LC_rating, 5);
+                    Canvas.SetTop(Panel_LC_rating, Canvas.GetTop(rect_LC_rating) - Panel_LC_rating.Height);
                     // Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
                     //Canvas.SetTop(text_LC_rating, 5);
                     Canvas.SetLeft(rectangle, x);
