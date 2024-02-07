@@ -414,22 +414,22 @@ namespace User.PluginSdkDemo
             text_damping.Foreground = Line_fill;
             rect_damping.Fill = defaultcolor;
 
-            text_Pgain_text.Foreground = Line_fill;
+            //text_Pgain_text.Foreground = Line_fill;
             Line_H_Pgain.Stroke = Line_fill;
             text_Pgain.Foreground = Line_fill;
             rect_Pgain.Fill = defaultcolor;
 
-            text_Igain_text.Foreground = Line_fill;
+            //text_Igain_text.Foreground = Line_fill;
             Line_H_Igain.Stroke = Line_fill;
             text_Igain.Foreground = Line_fill;
             rect_Igain.Fill = defaultcolor;
 
-            text_Dgain_text.Foreground = Line_fill;
+            //text_Dgain_text.Foreground = Line_fill;
             Line_H_Dgain.Stroke = Line_fill;
             text_Dgain.Foreground = Line_fill;
             rect_Dgain.Fill = defaultcolor;
 
-            text_VFgain_text.Foreground = Line_fill;
+            //text_VFgain_text.Foreground = Line_fill;
             Line_H_VFgain.Stroke = Line_fill;
             text_VFgain.Foreground = Line_fill;
             rect_VFgain.Fill = defaultcolor;
@@ -489,7 +489,8 @@ namespace User.PluginSdkDemo
             rect_G_force_window.Fill = defaultcolor;
 
             text_MPC_0th_order_gain.Foreground = Line_fill;
-            text_MPC_0th_order_gain_text.Foreground = Line_fill;
+            //text_MPC_0th_order_gain_text.Foreground = Line_fill;
+            textBox_MPC_0th_order_gain.Foreground= Line_fill;
             Line_H_MPC_0th_order_gain.Stroke = Line_fill;
             rect_MPC_0th_order_gain.Fill = defaultcolor;
 
@@ -1164,7 +1165,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_Pgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain * dx);
             text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
             Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-            Canvas.SetTop(text_Pgain, 5);
+            Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
 
             //Igain slider
 
@@ -1173,7 +1174,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_Igain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain * dx);
             text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
             Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-            Canvas.SetTop(text_Igain, 5);
+            Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
 
             //Dgain slider
             value_max = 0.01;
@@ -1181,7 +1182,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_Dgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain * dx);
             text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
             Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-            Canvas.SetTop(text_Dgain, 5);
+            Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
 
             //VF gain slider
             value_max = 20;
@@ -1189,15 +1190,15 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_VFgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain * dx);
             text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
             Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-            Canvas.SetTop(text_VFgain, 5);
+            Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
 
             //MPC 0th order gain slider
             value_max = 4;
             dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
             Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
-            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "mm/kg";
-            Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
-            Canvas.SetTop(text_MPC_0th_order_gain, 5);
+            textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
+            Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
+            Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
 
 
             ////MPC 1st order gain slider
@@ -1606,6 +1607,62 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
+            if (textbox.Name == "text_Pgain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_Igain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 500))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_Dgain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 0.01))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_VFgain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 20))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)(result);
+
+                    }
+                }
+            }
+            
+            if (textbox.Name == "textBox_MPC_0th_order_gain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 4))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)(result);
+
+                    }
+                }
+            }
             updateTheGuiFromConfig();
 
         }
@@ -1634,7 +1691,7 @@ namespace User.PluginSdkDemo
             //}
 
             // Use a regular expression to allow only numeric input
-            Regex regex = new Regex("[^0-9]+");
+            Regex regex = new Regex("^[.][0-9]+$|^[0-9]*[.]{0,1}[0-9]*$");
 
             System.Windows.Controls.TextBox textBox = (System.Windows.Controls.TextBox)sender;
 
@@ -3897,7 +3954,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)actual_x;
                     text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
                     Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-                    Canvas.SetTop(text_Pgain, 5);
+                    Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3915,7 +3972,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)actual_x;
                     text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 1);
                     Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-                    Canvas.SetTop(text_Igain, 5);
+                    Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3933,7 +3990,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)actual_x;
                     text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
                     Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-                    Canvas.SetTop(text_Dgain, 5);
+                    Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3951,7 +4008,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)actual_x;
                     text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 2);
                     Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-                    Canvas.SetTop(text_VFgain, 5);
+                    Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -4005,9 +4062,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
-                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "mm/kg";
-                    Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
-                    Canvas.SetTop(text_MPC_0th_order_gain, 5);
+                    textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) ;
+                    Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
+                    Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
