@@ -566,25 +566,20 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_ABS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="4">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Language="zh-tw" Text="/TC"/><Run Text=" Amplitude"/><Run Text=":"/></TextBlock>
+                                <StackPanel x:Name="Panel_ABS_AMP" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_ABS_AMP" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_ABS" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg" Margin="-3,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_ABS"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_ABS" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_ABS_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Rectangle x:Name="rect_ABS" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_ABS_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -592,7 +587,7 @@
                                             <RotateTransform Angle="0"/>
                                             <TranslateTransform/>
                                         </TransformGroup>
-                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Text="/TC"/><Run Text=" Amplitude"/></TextBlock>
+                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Text="/TC"/><Run Text=" Amplitude:"/></TextBlock>
 
                             </Canvas>
                             <Canvas x:Name="canvas_horz_ABS_freq" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
@@ -605,25 +600,20 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_ABS_freq" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency :">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
+                                <StackPanel x:Name="Panel_ABS_freq" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_ABS_freq" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-6,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_ABS_freq" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Hz" Margin="-5,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_ABS_freq"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_ABS_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_ABS_freq_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="26" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="150" Height="10">
+                                <Rectangle x:Name="rect_ABS_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_ABS_freq_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Text="ABS/TC Frequency:" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="5" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -670,25 +660,20 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_RPM_AMP" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="RPM AMPt: ">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
+                                <StackPanel x:Name="Panel_RPM_AMP" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_RPM_AMP" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_RPM_AMP" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg" Margin="-3,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_RPM_AMP"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_RPM_AMP" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_RPM_AMP_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="28" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="RPM AMP " HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="150">
+                                <Rectangle x:Name="rect_RPM_AMP" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_RPM_AMP_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Height="10" Text="RPM AMP " HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="5">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -711,38 +696,26 @@
                                 </Canvas.RenderTransform>
 
 
-                                <TextBlock x:Name="text_RPM_freq_min" HorizontalAlignment="Left" VerticalAlignment="Top" Text="RPM Min Freq:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="1" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="-20" Height="20">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock x:Name="text_RPM_freq_max" HorizontalAlignment="Left" VerticalAlignment="Top" Text="RPM max freq.:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="372" Height="20">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
+                                <StackPanel x:Name="Panel_RPM_freq_min" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_RPM_freq_min" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-6,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_RPM_freq_min" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Hz" Margin="-5,0,0,0" />
+                                </StackPanel>
+                                <StackPanel x:Name="Panel_RPM_freq_max" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_RPM_freq_max" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-6,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_RPM_freq_max" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Hz" Margin="-5,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_RPM_freq"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
 
-                                <Rectangle x:Name="rect_RPM_min" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="0" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <Rectangle x:Name="rect_RPM_max" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_RPM_freq_text" Text="RPM Effect Frequency" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" Height="10" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Rectangle x:Name="rect_RPM_min" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="0" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <Rectangle x:Name="rect_RPM_max" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H_RPM" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_RPM_freq_text" Text="RPM Effect Frequency:" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -782,25 +755,20 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_bite_amp" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="4">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Language="zh-tw" Text="/TC"/><Run Text=" Amplitude"/><Run Text=":"/></TextBlock>
+                                <StackPanel x:Name="Panel_bite_amp" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_bite_amp" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_bite_amp" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg" Margin="-3,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_bite_amp"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_bite_amp" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_bite_amp_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Bite Point Amplitude">
+                                <Rectangle x:Name="rect_bite_amp" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_bite_amp_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Bite Point Amplitude:" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -821,25 +789,20 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_bite_freq" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="ABS/TC Frequency :">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
+                                <StackPanel x:Name="Panel_bite_freq" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textBox_bite_freq" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-6,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_bite_freq" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="Hz" Margin="-5,0,0,0" />
+                                </StackPanel>
 
 
 
                                 <Line x:Name="Line_H_bite_freq"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_bite_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_bite_freq_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="26                                    " FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Text="Bite Point Frequency" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="150" Height="10">
+                                <Rectangle x:Name="rect_bite_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_bite_freq_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Text="Bite Point Frequency:" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="5" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -879,25 +842,18 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_G_multi" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="4">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Language="zh-tw" Text="/TC"/><Run Text=" Amplitude"/><Run Text=":"/></TextBlock>
-
-
+                                <StackPanel x:Name="Panel_G_multi" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
+                                    <TextBox x:Name="textbox_G_multi" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
+                                    <TextBlock x:Name="text_G_multi" HorizontalAlignment="Center" VerticalAlignment="Center" Width="10" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="%" Margin="-5,0,0,0" />
+                                </StackPanel>
 
                                 <Line x:Name="Line_G_force_multi"
-                                        X1="5" Y1="20"
-                                        X2="405" Y2="20"
+                                        X1="5" Y1="28"
+                                        X2="405" Y2="28"
                                         Stroke="#7F87CEFA"
                                         StrokeThickness="2" />
-                                <Rectangle x:Name="rect_G_force_multi" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_G_force_multi_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" HorizontalAlignment="Left" VerticalAlignment="Top" Text="G Force Multiplier">
+                                <Rectangle x:Name="rect_G_force_multi" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                <TextBlock x:Name="text_G_force_multi_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="G Force Multiplier:" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -918,25 +874,17 @@
                                     </TransformGroup>
 
                                 </Canvas.RenderTransform>
-                                <TextBlock x:Name="text_G_window" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="4">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform><Run Text="ABS"/><Run Language="zh-tw" Text="/TC"/><Run Text=" Amplitude"/><Run Text=":"/></TextBlock>
+                                <TextBox x:Name="text_G_window" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
 
 
 
                                 <Line x:Name="Line_G_force_window"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
+                                    X1="5" Y1="28"
+                                    X2="405" Y2="28"
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
-                                <Rectangle x:Name="rect_G_force_window" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Average Filter Window, smaller value will make the effect sharp and more noise"/>
-                                <TextBlock x:Name="text_G_force_window_text" Width="100" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="150" HorizontalAlignment="Left" VerticalAlignment="Top" Text="G Force Smoothness" Height="10">
+                                <Rectangle x:Name="rect_G_force_window" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Average Filter Window, smaller value will make the effect sharp and more noise"/>
+                                <TextBlock x:Name="text_G_force_window_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="G Force Smoothness:" Height="10">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
