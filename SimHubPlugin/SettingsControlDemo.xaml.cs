@@ -379,6 +379,8 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
+            Label_reverse_LC.Visibility=Visibility.Hidden;
+            Label_reverse_servo.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -4241,6 +4243,8 @@ namespace User.PluginSdkDemo
             Border_serial_monitor.Visibility = Visibility.Visible;
             debug_border.Visibility = Visibility.Visible;
             debug_label_text.Visibility = Visibility.Visible;
+            Label_reverse_LC.Visibility = Visibility.Visible;
+            Label_reverse_servo.Visibility = Visibility.Visible;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4262,6 +4266,8 @@ namespace User.PluginSdkDemo
             Border_serial_monitor.Visibility = Visibility.Hidden;
             debug_border.Visibility = Visibility.Hidden;
             debug_label_text.Visibility = Visibility.Hidden;
+            Label_reverse_LC.Visibility = Visibility.Hidden;
+            Label_reverse_servo.Visibility = Visibility.Hidden;
         }
 
 
@@ -4297,11 +4303,11 @@ namespace User.PluginSdkDemo
 
 
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void CheckBox_Reading_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.reading_config = 1;
         }
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void CheckBox_Reading_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.reading_config = 0;
         }
