@@ -315,6 +315,9 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.WS_amp = 1;
+            dap_config_st[pedalIdx].payloadPedalConfig_.WS_freq = 15;
+            
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelOrder = 0;
@@ -510,7 +513,20 @@ namespace User.PluginSdkDemo
             //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
             //rect_MPC_1st_order_gain.Fill = defaultcolor;
 
-
+            text_WS_amp.Foreground = Line_fill;
+            text_WS_freq.Foreground = Line_fill;
+            text_WS_trigger.Foreground = Line_fill;
+            textBox_WS_amp.Foreground = Line_fill;
+            textBox_WS_freq.Foreground = Line_fill;
+            textbox_WS_trigger.Foreground = Line_fill;
+            rect_WS_amp.Fill = defaultcolor;
+            rect_WS_freq.Fill = defaultcolor;
+            rect_WS_trigger.Fill = defaultcolor;
+            //text_bite_amp_text.Foreground = Line_fill;
+            //text_bite_freq_text.Foreground = Line_fill;
+            Line_H_WS_amp.Stroke = Line_fill;
+            Line_H_WS_freq.Stroke = Line_fill;
+            Line_WS_trigger.Stroke = Line_fill;
 
 
 
@@ -1234,6 +1250,29 @@ namespace User.PluginSdkDemo
             text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
             Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
             Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
+            //wheel slip freq slider
+            value_max = 30;
+            dx = canvas_horz_WS_freq.Width / value_max;
+            Canvas.SetLeft(rect_WS_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq);
+            textBox_WS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "";
+            Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
+            Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
+
+            //wheel slip AMP slider
+            value_max = 200;
+            dx = canvas_horz_WS_amp.Width / value_max;
+            Canvas.SetLeft(rect_WS_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp);
+            textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
+            Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
+            Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
+            //wheel slip trigger slider
+            value_max = 50;
+            dx = canvas_horz_WS_trigger.Width / value_max;
+            Canvas.SetLeft(rect_WS_trigger, dx * Plugin.Settings.WS_trigger);
+            textbox_WS_trigger.Text = (Plugin.Settings.WS_trigger+50)  + "";
+            Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
+            Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
+
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -1368,7 +1407,27 @@ namespace User.PluginSdkDemo
                 Label_gas_file.Content = "";
                 Gas_file_check.IsChecked = false;
             }
+            /*
+            if (Plugin.binding_check == true)
+            {
+                checkbox_enable_wheelslip.IsEnabled = true;
+            }
+            else
+            { 
+                checkbox_enable_wheelslip.IsEnabled= false;
+                Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
 
+            }*/
+            
+            if (Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_enable_wheelslip.IsChecked = true;
+            }
+            else
+            {
+                checkbox_enable_wheelslip.IsChecked = false;
+            }
+            textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
 
             //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
@@ -1618,7 +1677,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "text_Pgain")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 2))
                     {
@@ -1629,7 +1688,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "text_Igain")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 500))
                     {
@@ -1640,7 +1699,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "text_Dgain")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 0.01))
                     {
@@ -1651,7 +1710,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "text_VFgain")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 20))
                     {
@@ -1674,7 +1733,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "textBox_ABS_AMP")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 12.5))
                     {
@@ -1695,11 +1754,13 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "textBox_RPM_AMP")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 2))
                     {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(result * 100);
+                        double tmp = result * 100;
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(tmp);
+
                     }
                 }
             }
@@ -1736,7 +1797,7 @@ namespace User.PluginSdkDemo
             }
             if (textbox.Name == "textBox_bite_amp")
             {
-                if (float.TryParse(textbox.Text, out float result))
+                if (double.TryParse(textbox.Text, out double result))
                 {
                     if ((result >= 0) && (result <= 2))
                     {
@@ -1765,6 +1826,38 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
+            if (textbox.Name == "textBox_WS_freq")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 30))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_WS_amp")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (byte)(result * 100);
+                    }
+                }
+            }
+
+            if (textbox.Name == "textBox_WS_trigger")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        Plugin.Settings.WS_trigger = result - 50;
+                    }
+                }
+            }
+
             updateTheGuiFromConfig();
 
         }
@@ -3974,7 +4067,7 @@ namespace User.PluginSdkDemo
                     // Ensure the rectangle stays within the canvas
                     double x = e.GetPosition(canvas_horz_RPM_AMP).X - offset.X;
                     double RPM_AMP_max = 200;
-                    double dx = (canvas_horz_RPM_AMP.Width -10)/ RPM_AMP_max;
+                    double dx = (canvas_horz_RPM_AMP.Width-10)/ RPM_AMP_max;
                     double min_position = 0 * dx;
                     double max_position = RPM_AMP_max * dx;
 
@@ -3982,7 +4075,7 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(actual_x);
 
-                    textBox_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100 +"";
+                    textBox_RPM_AMP.Text = (((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100) +"";
                     Canvas.SetLeft(Panel_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) + rect_RPM_AMP.Width / 2 - Panel_RPM_AMP.Width / 2);
                     Canvas.SetTop(Panel_RPM_AMP, Canvas.GetTop(rect_RPM_AMP) - Panel_RPM_AMP.Height);                    
                     Canvas.SetLeft(rectangle, x);
@@ -4169,6 +4262,58 @@ namespace User.PluginSdkDemo
                     textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) ;
                     Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
                     Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                //Wheelslip
+                if (rectangle.Name == "rect_WS_amp")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_amp).X - offset.X;
+                    double WS_amp_max = 200;
+                    double dx = canvas_horz_bite_amp.Width / WS_amp_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_amp_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = Convert.ToByte(actual_x);
+                    textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
+                    Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
+                    Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                if (rectangle.Name == "rect_WS_freq")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
+                    double WS_freq_max = 30;
+                    double dx = canvas_horz_bite_freq.Width / WS_freq_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_freq_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = Convert.ToByte(actual_x);
+                    textBox_WS_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq) + "";
+                    Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
+                    Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                if (rectangle.Name == "rect_WS_trigger")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
+                    double WS_trigger_max = 50;
+                    double dx = canvas_horz_bite_freq.Width / WS_trigger_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_trigger_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    Plugin.Settings.WS_trigger = Convert.ToByte(actual_x);
+                    textBox_WS_freq.Text = (Plugin.Settings.WS_trigger+50) + "";
+                    Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
+                    Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -4672,9 +4817,32 @@ namespace User.PluginSdkDemo
             }
             Plugin.current_profile = tmp;
         }
-       
 
+        private void effect_bind_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WSeffect_bind = (string)textBox_wheelslip_effect_string.Text;
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 1;
+            updateTheGuiFromConfig();
+        }
+        private void effect_clear_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WSeffect_bind = "";
+            textBox_wheelslip_effect_string.Text = "";
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
+            updateTheGuiFromConfig();
+        }
 
+        private void checkbox_enable_WS_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 1;
+            //checkbox_enable_RPM.Content = "Effect Enabled";
+        }
+
+        private void checkbox_enable_WS_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
+            //checkbox_enable_RPM.Content = "Effect Disabled";
+        }
 
         /*
 private void GetRectanglePositions()

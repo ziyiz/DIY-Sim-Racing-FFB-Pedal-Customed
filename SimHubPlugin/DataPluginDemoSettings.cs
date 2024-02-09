@@ -20,11 +20,14 @@
         public int[] selectedComPortNamesInt = new int[3] { -1, -1, -1 };
         public int[] ABS_enable_flag = new int[3] { 0, 0, 0 };
         public int[] RPM_enable_flag = new int[3] { 0, 0, 0 };
+        public int[] WS_enable_flag = new int[3] { 0, 0, 0 };
         public int[] G_force_enable_flag = new int[3] { 0, 0, 0 };
         public int vjoy_output_flag = 0;
         public uint vjoy_order = 1;
         public string[,] pedal_file_string = new string[4, 3] { { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" } };
         public int[,] file_enable = new int[4, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+        public string WSeffect_bind = "";
+        public int WS_trigger = 30;
         
         
     }

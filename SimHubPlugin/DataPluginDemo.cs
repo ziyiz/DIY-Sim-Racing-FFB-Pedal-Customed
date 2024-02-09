@@ -20,7 +20,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 129;
+    public const uint pedalConfigPayload_version = 130;
 
 
     // pyload types
@@ -52,6 +52,7 @@ public struct payloadPedalAction
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
     public byte G_value;
+    public byte WS_u8;
 };
 
 public struct payloadPedalState_Basic
@@ -124,6 +125,8 @@ public struct payloadPedalConfig
     public byte BP_trigger;
     public byte G_multi;
     public byte G_window;
+    public byte WS_amp;
+    public byte WS_freq;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -245,6 +248,7 @@ namespace User.PluginSdkDemo
         public string current_profile = "NA" ;
         public uint profile_index = 0;
         public uint profile_update_flag = 0;
+        public bool binding_check=false;
 
 
         // ABS trigger timer
@@ -352,6 +356,25 @@ namespace User.PluginSdkDemo
             double RPM_value =0;
             double RPM_MAX = 0;
             double _G_force = 128;
+            byte WS_value = 0;
+            bool WS_flag = false;
+
+            //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(), (float)(pluginManager.GetPropertyValue(tmp2)));
+            if (pluginManager.GetPropertyValue(Settings.WSeffect_bind) == null)
+            {
+
+                binding_check = false;
+                
+            }
+            else
+            {
+                binding_check = true;
+                //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(),pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                object tmp_ws= (pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                int tmp_ws_number = Int32.Parse(tmp_ws.ToString());
+                WS_value = (byte)tmp_ws_number;
+            }
+
             if (data.GamePaused | (!data.GameRunning))
             {
                 in_game_flag = 0;
@@ -421,6 +444,11 @@ namespace User.PluginSdkDemo
                     {
                         _G_force = 128;
                     }
+                    if (WS_value > (Settings.WS_trigger+50))
+                    {
+                        WS_flag = true;
+                    }
+
                     game_running_index = 1;
 
                 }
@@ -428,6 +456,7 @@ namespace User.PluginSdkDemo
                 {
                     RPM_value = 0;
                     _G_force = 128;
+                    
                 }
             }
             else
@@ -447,6 +476,8 @@ namespace User.PluginSdkDemo
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
+                WS_flag=false;
+
             }
             else
             {
@@ -471,6 +502,8 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                        
+                        tmp.payloadPedalAction_.WS_u8 = 0;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -521,6 +554,19 @@ namespace User.PluginSdkDemo
 
                             }
                         }
+
+                        //Wheel slip
+                        
+                        if (Settings.WS_enable_flag[pedalIdx] == 1)
+                        {
+                            if (WS_flag == true)
+                            {
+                                update_flag = true;
+                                tmp.payloadPedalAction_.WS_u8 = 1;
+                            }
+                        }
+                        
+
 
                         if (pedalIdx == 1)
                         {
@@ -581,6 +627,7 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                     tmp.payloadPedalAction_.RPM_u8 = 0;
                     tmp.payloadPedalAction_.G_value = 128;
+                    tmp.payloadPedalAction_.WS_u8 = 0;
                     rpm_last_value = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
@@ -613,6 +660,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.triggerAbs_u8 = 1;
                 tmp.payloadPedalAction_.RPM_u8 = 0;
                 tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -636,7 +684,10 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
+            
             this.AttachDelegate("CurrentProfile", () => current_profile);
+
+
         }
 
 
@@ -1021,11 +1072,11 @@ namespace User.PluginSdkDemo
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
             this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
-
+            pluginManager.AddProperty("Wheelslip-test", this.GetType(), 0);
             // Declare an event
             //this.AddEvent("SpeedWarning");
-            
-            
+
+
             // Declare an action which can be called
             /*
             this.AddAction("IncrementSpeedWarning",(a, b) =>
@@ -1262,6 +1313,9 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
             dap_config_initial_st.payloadPedalConfig_.G_multi = 50;
             dap_config_initial_st.payloadPedalConfig_.G_window = 60;
+            dap_config_initial_st.payloadPedalConfig_.WS_amp = 1;
+            dap_config_initial_st.payloadPedalConfig_.WS_freq = 15;
+
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
