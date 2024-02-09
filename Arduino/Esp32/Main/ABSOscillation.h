@@ -6,6 +6,7 @@
 static const long ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long BP_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static const long WS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static int RPM_VALUE_LAST = 0;
 
 class ABSOscillation {
@@ -286,5 +287,64 @@ class G_force_effect
     G_force=movingAverageFilter.process(G_force_raw);
     //G_force=G_force_raw;
     
+  }
+};
+
+class WSOscillation {
+private:
+  long _timeLastTriggerMillis;
+  long _WSTimeMillis;
+  long _lastCallTimeMillis = 0;
+  
+
+public:
+  WSOscillation()
+    : _timeLastTriggerMillis(0)
+  {}
+  //float RPM_value =0;
+  float WS_Force_offset = 0;
+public:
+  void trigger() {
+    _timeLastTriggerMillis = millis();
+  }
+  
+  void forceOffset(DAP_calculationVariables_st* calcVars_st) {
+
+
+    long timeNowMillis = millis();
+    float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
+    float WSForceOffset = 0;
+    float WS_freq = calcVars_st->WS_freq;
+    //float BP_freq = 15;
+    float WS_amp = calcVars_st->WS_amp;
+    //float BP_amp = 2;
+
+    if (timeSinceTrigger > WS_ACTIVE_TIME_PER_TRIGGER_MILLIS)
+    {
+      _WSTimeMillis = 0;
+      WSForceOffset = 0;
+    }
+    else
+    {
+      _WSTimeMillis += timeNowMillis - _lastCallTimeMillis;
+      float WSTimeSeconds = _WSTimeMillis / 1000.0f;
+
+      //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
+      //WSForceOffset = WS_amp * sin( 2*PI* WS_freq* WSTimeSeconds);
+      if (WS_freq > 0)
+      {
+        WSForceOffset = WS_amp * fmod(WSTimeSeconds, 1.0 / (float)WS_freq) * WS_freq;
+        //WSForceOffset = WS_amp * (2*fmod(WSTimeSeconds, 1.0 / (float)WS_freq) * WS_freq-1);
+      }
+            
+          
+    }
+    WS_Force_offset=WSForceOffset;
+    _lastCallTimeMillis = timeNowMillis;
+    //RPM_VALUE_LAST=RPMForceOffset;
+    
+    //return RPMForceOffset;
+    
+
   }
 };

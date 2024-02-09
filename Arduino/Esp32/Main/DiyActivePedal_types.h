@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 129
+#define DAP_VERSION_CONFIG 130
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -31,6 +31,7 @@ struct payloadPedalAction {
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
   uint8_t G_value;
+  uint8_t WS_u8;
 };
 
 
@@ -106,7 +107,9 @@ struct payloadPedalConfig {
     //G force effect
   uint8_t G_multi;
   uint8_t G_window;
-
+  //wheel slip
+  uint8_t WS_amp;
+  uint8_t WS_freq;
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
@@ -216,6 +219,8 @@ struct DAP_calculationVariables_st
   float BP_freq;
   float dampingPress;
   float Force_Max_default;
+  float WS_amp;
+  float WS_freq;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);

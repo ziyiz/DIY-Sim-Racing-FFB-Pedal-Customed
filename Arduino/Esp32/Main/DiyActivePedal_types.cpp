@@ -49,7 +49,8 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.BP_trigger=0;
   payLoadPedalConfig_.G_multi = 50;
   payLoadPedalConfig_.G_window=60;
-
+  payLoadPedalConfig_.WS_amp=1;
+  payLoadPedalConfig_.WS_freq=15;
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;
@@ -149,7 +150,8 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   BP_trigger_value=(float)config_st.payLoadPedalConfig_.BP_trigger_value;
   BP_amp=((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
   BP_freq=(float)config_st.payLoadPedalConfig_.BP_freq;
-  
+  WS_amp=((float)config_st.payLoadPedalConfig_.WS_amp) / 100.0f;
+  WS_freq=(float)config_st.payLoadPedalConfig_.WS_freq;
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
