@@ -1055,7 +1055,7 @@ void serialCommunicationTask( void * pvParameters )
             //G force effect
             _G_force_effect.G_value=dap_actions_st.payloadPedalAction_.G_value-128;       
             //wheel slip
-            if (dap_actions_st.payloadPedalAction_.WS_u8==1)
+            if (dap_actions_st.payloadPedalAction_.WS_u8)
             {
               WSOscillation.trigger();
             }     

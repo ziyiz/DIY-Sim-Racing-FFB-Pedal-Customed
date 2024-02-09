@@ -330,12 +330,13 @@ public:
       float WSTimeSeconds = _WSTimeMillis / 1000.0f;
 
       //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
-      //WSForceOffset = WS_amp * sin( 2*PI* WS_freq* WSTimeSeconds);
-      if (WS_freq > 0)
+      WSForceOffset = WS_amp * sin( 2*PI* WS_freq* WSTimeSeconds);
+      /*if (WS_freq > 0)
       {
-        WSForceOffset = WS_amp * fmod(WSTimeSeconds, 1.0 / (float)WS_freq) * WS_freq;
+        //WSForceOffset = WS_amp * fmod(WSTimeSeconds, 1.0 / (float)WS_freq) * WS_freq;
         //WSForceOffset = WS_amp * (2*fmod(WSTimeSeconds, 1.0 / (float)WS_freq) * WS_freq-1);
       }
+      */
             
           
     }
