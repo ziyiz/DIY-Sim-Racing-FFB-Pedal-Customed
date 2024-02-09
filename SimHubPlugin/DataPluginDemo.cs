@@ -1,6 +1,7 @@
 ﻿using GameReaderCommon;
 //using log4net.Plugin;
 using SimHub.Plugins;
+using SimHub.Plugins.DataPlugins.ShakeItV3.UI.Effects;
 using SimHub.Plugins.OutputPlugins.Dash.GLCDTemplating;
 using System;
 using System.IO.Ports;
@@ -9,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -359,22 +361,6 @@ namespace User.PluginSdkDemo
             byte WS_value = 0;
             bool WS_flag = false;
 
-            //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(), (float)(pluginManager.GetPropertyValue(tmp2)));
-            if (pluginManager.GetPropertyValue(Settings.WSeffect_bind) == null)
-            {
-
-                binding_check = false;
-                
-            }
-            else
-            {
-                binding_check = true;
-                //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(),pluginManager.GetPropertyValue(Settings.WSeffect_bind));
-                object tmp_ws= (pluginManager.GetPropertyValue(Settings.WSeffect_bind));
-                int tmp_ws_number = Int32.Parse(tmp_ws.ToString());
-                WS_value = (byte)tmp_ws_number;
-            }
-
             if (data.GamePaused | (!data.GameRunning))
             {
                 in_game_flag = 0;
@@ -444,10 +430,6 @@ namespace User.PluginSdkDemo
                     {
                         _G_force = 128;
                     }
-                    if (WS_value > (Settings.WS_trigger+50))
-                    {
-                        WS_flag = true;
-                    }
 
                     game_running_index = 1;
 
@@ -456,13 +438,16 @@ namespace User.PluginSdkDemo
                 {
                     RPM_value = 0;
                     _G_force = 128;
-                    
+                    WS_flag = false;
+
+
                 }
             }
             else
             {
                 RPM_value = 0;
                 _G_force = 128;
+                WS_flag = false;
             }
 			
 
@@ -559,11 +544,23 @@ namespace User.PluginSdkDemo
                         
                         if (Settings.WS_enable_flag[pedalIdx] == 1)
                         {
-                            if (WS_flag == true)
+                            if (pluginManager.GetPropertyValue(Settings.WSeffect_bind) != null)
                             {
-                                update_flag = true;
-                                tmp.payloadPedalAction_.WS_u8 = 1;
+                                /*object tmp_ws = (pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                                int tmp_ws_number = Int32.Parse(tmp_ws.ToString());
+                                WS_value = (byte)tmp_ws_number;
+                                */
+                                WS_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                                //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(), WS_value);
+                                if (WS_value >= (Settings.WS_trigger + 50))
+                                {
+                                    tmp.payloadPedalAction_.WS_u8 = 1;
+                                    update_flag = true;
+                                }
                             }
+
+                            
+
                         }
                         
 
@@ -1072,7 +1069,7 @@ namespace User.PluginSdkDemo
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
             this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
-            pluginManager.AddProperty("Wheelslip-test", this.GetType(), 0);
+            //pluginManager.AddProperty("Wheelslip-test", this.GetType(), 0);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
