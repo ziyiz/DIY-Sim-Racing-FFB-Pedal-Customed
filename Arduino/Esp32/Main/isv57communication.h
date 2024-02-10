@@ -4,9 +4,8 @@
 //#include <SoftwareSerial.h>
 #include "Modbus.h"
 
+
 // define modbus stuff
-#define TXPIN 27 //17
-#define RXPIN 26 // 16
 #define MODE  5
 
 

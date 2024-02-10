@@ -1,6 +1,7 @@
 ﻿using GameReaderCommon;
 //using log4net.Plugin;
 using SimHub.Plugins;
+using SimHub.Plugins.DataPlugins.ShakeItV3.UI.Effects;
 using SimHub.Plugins.OutputPlugins.Dash.GLCDTemplating;
 using System;
 using System.IO.Ports;
@@ -9,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -20,7 +22,7 @@ using System.Windows.Media;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 126;
+    public const uint pedalConfigPayload_version = 130;
 
 
     // pyload types
@@ -52,6 +54,7 @@ public struct payloadPedalAction
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
     public byte G_value;
+    public byte WS_u8;
 };
 
 public struct payloadPedalState_Basic
@@ -65,14 +68,15 @@ public struct payloadPedalState_Basic
 public struct payloadPedalState_Extended
 {
     public UInt32 timeInMs_u32;
-    public UInt16 pedalForce_raw_u16;
-    public UInt16 pedalForce_filtered_u16;
-    public Int16 forceVel_est_i16;
+    public float pedalForce_raw_fl32;
+    public float pedalForce_filtered_fl32;
+    public float forceVel_est_fl32;
 
     // register values from servo
     public Int16 servoPosition_i16;
     public Int16 servoPositionTarget_i16;
     public Int16 servo_voltage_0p1V_i16;
+    public Int16 servo_current_percent_i16;
 };
 
 public struct payloadPedalConfig
@@ -123,6 +127,8 @@ public struct payloadPedalConfig
     public byte BP_trigger;
     public byte G_multi;
     public byte G_window;
+    public byte WS_amp;
+    public byte WS_freq;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -155,6 +161,7 @@ public struct payloadPedalConfig
 
     // Kalman filter model noise
     public byte kf_modelNoise;
+    public byte kf_modelOrder;
 
     // debug flags, sued to enable debug output
     public byte debug_flags_0;
@@ -167,6 +174,9 @@ public struct payloadPedalConfig
 
     // invert loadcell sign
     public byte invertLoadcellReading_u8;
+
+    // invert motor direction
+    public byte invertMotorDirection_u8;
 
     // spindle pitch in mm/rev
     public byte spindlePitch_mmPerRev_u8;
@@ -217,7 +227,7 @@ namespace User.PluginSdkDemo
     [PluginDescription("My plugin description")]
     [PluginAuthor("OpenSource")]
     [PluginName("DIY active pedal plugin")]
-    public class DataPluginDemo : IPlugin, IDataPlugin, IWPFSettingsV2
+    public class DIY_FFB_Pedal : IPlugin, IDataPlugin, IWPFSettingsV2
     {
 
         public PluginManager pluginHandle;// = this;
@@ -228,8 +238,19 @@ namespace User.PluginSdkDemo
         public double g_force_last_value = 128;
         public byte game_running_index = 0 ;
         public uint testValue = 0;
-
+        public uint[] profile_flag = new uint[4] { 0,0,0,0};
+        public uint[] select_button_flag = new uint[2] { 0, 0, };// define the up and down selection
+        public uint slotA_flag = 0;
+        public uint slotB_flag = 0;
+        public uint slotC_flag = 0;
+        public uint slotD_flag = 0;
+        public uint sendconfig_flag = 0;
         public SettingsControlDemo wpfHandle;
+        public uint in_game_flag = 0; // check current game is off or pause
+        public string current_profile = "NA" ;
+        public uint profile_index = 0;
+        public uint profile_update_flag = 0;
+        public bool binding_check=false;
 
 
         // ABS trigger timer
@@ -280,7 +301,8 @@ namespace User.PluginSdkDemo
         /// <summary>
         /// Gets a short plugin title to show in left menu. Return null if you want to use the title as defined in PluginName attribute.
         /// </summary>
-        public string LeftMenuTitle => "DIY FFB Pedal";
+        public string LeftMenuTitle => "FFB Pedal Dashboard";
+        //public string LeftMenuTitle => "DIY FFB Pedal";
 
         /// <summary>
         /// Called one time per game data update, contains all normalized game data,
@@ -336,7 +358,17 @@ namespace User.PluginSdkDemo
             double RPM_value =0;
             double RPM_MAX = 0;
             double _G_force = 128;
+            byte WS_value = 0;
+            bool WS_flag = false;
 
+            if (data.GamePaused | (!data.GameRunning))
+            {
+                in_game_flag = 0;
+            }
+            else 
+            {
+                in_game_flag = 1;
+            }
             //for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             //{
             //    if (_serialPort[pedalIdx].IsOpen)
@@ -346,7 +378,6 @@ namespace User.PluginSdkDemo
             //        settings.TextBox_debugOutput.Text = "Test";
             //    }
             //}
-
 
 
             // Send ABS signal when triggered by the game
@@ -363,16 +394,33 @@ namespace User.PluginSdkDemo
                     {
                         sendTcSignal_local_b = true;
                     }
-                    if (data.NewData.CarSettings_MaxRPM == 0)
+                    //fill the RPM value
+                    if (Settings.RPM_effect_type == 0)
                     {
-                        RPM_MAX = 10000;
+                        if (data.NewData.CarSettings_MaxRPM == 0)
+                        {
+                            RPM_MAX = 10000;
+                        }
+                        else
+                        {
+                            RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                        }
+
+                        RPM_value = (data.NewData.Rpms / RPM_MAX * 100);
                     }
                     else
                     {
-                        RPM_MAX = data.NewData.CarSettings_MaxRPM;
+                        if (data.NewData.MaxSpeedKmh == 0)
+                        {
+                            RPM_MAX = 300;
+                        }
+                        else
+                        { 
+                            RPM_MAX= data.NewData.MaxSpeedKmh;
+                        }
+                        RPM_value = (data.NewData.SpeedKmh / RPM_MAX * 100);
                     }
 
-                    RPM_value = (data.NewData.Rpms / RPM_MAX*100);
                     
                     if (data.NewData.GlobalAccelerationG != 0)
                     {
@@ -382,6 +430,7 @@ namespace User.PluginSdkDemo
                     {
                         _G_force = 128;
                     }
+
                     game_running_index = 1;
 
                 }
@@ -389,12 +438,16 @@ namespace User.PluginSdkDemo
                 {
                     RPM_value = 0;
                     _G_force = 128;
+                    WS_flag = false;
+
+
                 }
             }
             else
             {
                 RPM_value = 0;
                 _G_force = 128;
+                WS_flag = false;
             }
 			
 
@@ -408,6 +461,8 @@ namespace User.PluginSdkDemo
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
+                WS_flag=false;
+
             }
             else
             {
@@ -432,6 +487,8 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
+                        
+                        tmp.payloadPedalAction_.WS_u8 = 0;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -441,14 +498,17 @@ namespace User.PluginSdkDemo
                             tmp.payloadPedalAction_.G_value = 128;
                         }
                         
+                        
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
-                            if (Math.Abs(RPM_value - rpm_last_value) >10)
+
+                            if (Math.Abs(RPM_value - rpm_last_value) > 10)
                             {
                                 tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
                                 update_flag = true;
                                 rpm_last_value = (Byte)RPM_value;
                             }
+
                         }
 
                         //G force effect only effect on brake
@@ -479,6 +539,31 @@ namespace User.PluginSdkDemo
 
                             }
                         }
+
+                        //Wheel slip
+                        
+                        if (Settings.WS_enable_flag[pedalIdx] == 1)
+                        {
+                            if (pluginManager.GetPropertyValue(Settings.WSeffect_bind) != null)
+                            {
+                                /*object tmp_ws = (pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                                int tmp_ws_number = Int32.Parse(tmp_ws.ToString());
+                                WS_value = (byte)tmp_ws_number;
+                                */
+                                WS_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.WSeffect_bind));
+                                //pluginManager.SetPropertyValue("Wheelslip-test", this.GetType(), WS_value);
+                                if (WS_value >= (Settings.WS_trigger + 50))
+                                {
+                                    tmp.payloadPedalAction_.WS_u8 = 1;
+                                    update_flag = true;
+                                }
+                            }
+
+                            
+
+                        }
+                        
+
 
                         if (pedalIdx == 1)
                         {
@@ -539,6 +624,7 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                     tmp.payloadPedalAction_.RPM_u8 = 0;
                     tmp.payloadPedalAction_.G_value = 128;
+                    tmp.payloadPedalAction_.WS_u8 = 0;
                     rpm_last_value = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
@@ -571,6 +657,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.triggerAbs_u8 = 1;
                 tmp.payloadPedalAction_.RPM_u8 = 0;
                 tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -594,6 +681,9 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
+            
+            this.AttachDelegate("CurrentProfile", () => current_profile);
+
 
         }
 
@@ -930,7 +1020,11 @@ namespace User.PluginSdkDemo
                 {
                     //wpfHandle.joystick.Release();
                     //wpfHandle.joystick.Dispose();
-                    wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    if (wpfHandle.joystick != null)
+                    {
+                        wpfHandle.joystick.RelinquishVJD(Settings.vjoy_order);
+                    }
+                    
                     
                 }
                 catch (Exception caughtEx)
@@ -975,12 +1069,13 @@ namespace User.PluginSdkDemo
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
             this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
-
+            //pluginManager.AddProperty("Wheelslip-test", this.GetType(), 0);
             // Declare an event
-            this.AddEvent("SpeedWarning");
+            //this.AddEvent("SpeedWarning");
 
 
             // Declare an action which can be called
+            /*
             this.AddAction("IncrementSpeedWarning",(a, b) =>
             {
                 Settings.SpeedWarningLevel++;
@@ -992,6 +1087,76 @@ namespace User.PluginSdkDemo
             {
                 Settings.SpeedWarningLevel--;
             });
+
+            */
+
+
+            this.AddAction("ChangeSlotA", (a, b) =>
+            {
+                profile_index = 0;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotA");
+                current_profile = "Slot A";
+            });
+
+            this.AddAction("ChangeSlotB", (a, b) =>
+            {
+                
+                profile_index = 1;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotB");
+                current_profile = "Slot B";
+            });
+
+            this.AddAction("ChangeSlotC", (a, b) =>
+            {
+                profile_index = 2;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotC");
+                current_profile = "Slot C";
+            });
+
+            this.AddAction("ChangeSlotD", (a, b) =>
+            {
+                profile_index = 3;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotD");
+                current_profile = "Slot D";
+            });
+            this.AddAction("SendConfigToPedal", (a, b) =>
+            {
+                sendconfig_flag =1;
+                SimHub.Logging.Current.Info("SendConfig");
+            });
+
+            this.AddAction("PreviousProfile", (a, b) =>
+            {
+                if (profile_index == 0)
+                {
+                    profile_index=3;
+                }
+                else
+                {
+                    profile_index--;
+                }
+                
+
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("PreviousProfile");
+            });
+
+            this.AddAction("NextProfile", (a, b) =>
+            {
+                profile_index++;
+                if (profile_index > 3)
+                {
+                    profile_index = 0;
+                }
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("NextProfile");
+            });
+
+            
 
 
             //Settings.selectedJsonIndexLast[0]
@@ -1022,7 +1187,7 @@ namespace User.PluginSdkDemo
                     catch (Exception caughtEx)
                     {
                     }
-
+                    
                     //try connect back to com port
                     if (Settings.auto_connect_flag == 1)
                     {
@@ -1050,7 +1215,7 @@ namespace User.PluginSdkDemo
                                     //}
                                     //ConnectToPedal.IsChecked = false;
                                     //TextBox_debugOutput.Text = "Serialport already open, close it";
-                                    Settings.connect_status[pedalIdx] = 0;
+                                    //Settings.connect_status[pedalIdx] = 0;
                                     connectSerialPort[pedalIdx] = false;
                                 }
 
@@ -1058,17 +1223,18 @@ namespace User.PluginSdkDemo
                             }
                             else
                             {
-                                Settings.connect_status[pedalIdx] = 0;
+                                //Settings.connect_status[pedalIdx] = 0;
                                 connectSerialPort[pedalIdx] = false;
                             }
                         }
                         else
                         {
-                            Settings.connect_status[pedalIdx] = 0;
+                            //Settings.connect_status[pedalIdx] = 0;
                             connectSerialPort[pedalIdx] = false;
                         }
 
                     }
+                    
 
                 }
 
@@ -1144,9 +1310,13 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.BP_trigger = 0;
             dap_config_initial_st.payloadPedalConfig_.G_multi = 50;
             dap_config_initial_st.payloadPedalConfig_.G_window = 60;
+            dap_config_initial_st.payloadPedalConfig_.WS_amp = 1;
+            dap_config_initial_st.payloadPedalConfig_.WS_freq = 15;
+
             dap_config_initial_st.payloadPedalConfig_.maxGameOutput = 100;
 
             dap_config_initial_st.payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_initial_st.payloadPedalConfig_.kf_modelOrder = 0;
             dap_config_initial_st.payloadPedalConfig_.debug_flags_0 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.cubic_spline_param_a_0 = 0;
@@ -1176,8 +1346,11 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.invertLoadcellReading_u8 = 0;
 
+            dap_config_initial_st.payloadPedalConfig_.invertMotorDirection_u8 = 0;
+
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
 
+            
 
 
 

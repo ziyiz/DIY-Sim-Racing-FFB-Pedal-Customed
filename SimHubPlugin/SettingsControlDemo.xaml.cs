@@ -71,8 +71,8 @@ namespace User.PluginSdkDemo
         //public uint pedalActionPayload_type = 110;
 
         public uint indexOfSelectedPedal_u = 1;
-
-        public DataPluginDemo Plugin { get; }
+        public uint profile_select = 0;
+        public DIY_FFB_Pedal Plugin { get; }
 
 
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
@@ -81,6 +81,7 @@ namespace User.PluginSdkDemo
 
         public bool[] waiting_for_pedal_config = new bool[3];
         public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
+        public System.Windows.Forms.Timer connect_timer;
         //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
         int printCtr = 0;
 
@@ -95,7 +96,7 @@ namespace User.PluginSdkDemo
 
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
-        
+
 
 
         // read config from JSON on startup
@@ -211,7 +212,7 @@ namespace User.PluginSdkDemo
             {
                 // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-8-0
                 // https://www.educative.io/answers/how-to-read-a-json-file-in-c-sharp
-                string jsonFileName="NA";
+                string jsonFileName = "NA";
 
                 string currentDirectory = Directory.GetCurrentDirectory();
                 string dirName = currentDirectory + "\\PluginsData\\Common";
@@ -226,7 +227,7 @@ namespace User.PluginSdkDemo
                 }
                 else if (indexOfSelectedPedal_u == 2)
                 {
-                     jsonFileName = ("DiyPedalConfig_Accelerator_Default");                    
+                    jsonFileName = ("DiyPedalConfig_Accelerator_Default");
                 }
 
                 string fileName = dirName + "\\" + jsonFileName + ".json";
@@ -237,7 +238,7 @@ namespace User.PluginSdkDemo
                 DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
                 var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
                 dap_config_st[indexOfSelectedPedal_u] = (DAP_config_st)deserializer.ReadObject(ms);
-                TextBox_debugOutput.Text = "Config loaded!"+ jsonFileName;
+                TextBox_debugOutput.Text = "Config loaded!" + jsonFileName;
                 //TextBox_debugOutput.Text += ComboBox_JsonFileSelected.Text;
                 //TextBox_debugOutput.Text += "    ";
                 //TextBox_debugOutput.Text += ComboBox_JsonFileSelected.SelectedIndex;
@@ -314,8 +315,12 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.WS_amp = 1;
+            dap_config_st[pedalIdx].payloadPedalConfig_.WS_freq = 15;
+            
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
+            dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelOrder = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_0 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_1 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_a_2 = 0;
@@ -342,6 +347,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.travelAsJoystickOutput_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.invertLoadcellReading_u8 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
         }
@@ -358,30 +364,36 @@ namespace User.PluginSdkDemo
                 DAP_config_set_default(pedalIdx);
                 InitializeComponent();
 
-               
+
             }
             // debug mode invisiable
             text_debug_flag.Visibility = Visibility.Hidden;
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
+            Border_serial_monitor.Visibility=Visibility.Hidden;
+            debug_border.Visibility=Visibility.Hidden;
+            debug_label_text.Visibility=Visibility.Hidden;
             //btn_serial.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
+            Label_reverse_LC.Visibility=Visibility.Hidden;
+            Label_reverse_servo.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
-            
+
             Color color = Color.FromArgb(150, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
             Color color_2 = Color.FromArgb(200, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
             Color color_3 = Color.FromArgb(255, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
-            SolidColorBrush Line_fill= new SolidColorBrush(color_2);
+            SolidColorBrush Line_fill = new SolidColorBrush(color_2);
             //SolidColorBrush rect_fill = new SolidColorBrush(color);
-            defaultcolor= new SolidColorBrush(color);
-            lightcolor= new SolidColorBrush(color_3);
+            defaultcolor = new SolidColorBrush(color);
+            lightcolor = new SolidColorBrush(color_3);
 
             text_min_force.Foreground = Line_fill;
             text_max_force.Foreground = Line_fill;
@@ -402,95 +414,119 @@ namespace User.PluginSdkDemo
             Line_H_pos.Stroke = Line_fill;
             //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
             Polyline_BrakeForceCurve.Stroke = Line_fill;
-            text_damping_text.Foreground = Line_fill;
+            //text_damping_text.Foreground = Line_fill;
             Line_H_damping.Stroke = Line_fill;
             text_damping.Foreground = Line_fill;
             rect_damping.Fill = defaultcolor;
 
-            text_Pgain_text.Foreground = Line_fill;
+            //text_Pgain_text.Foreground = Line_fill;
             Line_H_Pgain.Stroke = Line_fill;
             text_Pgain.Foreground = Line_fill;
             rect_Pgain.Fill = defaultcolor;
 
-            text_Igain_text.Foreground = Line_fill;
+            //text_Igain_text.Foreground = Line_fill;
             Line_H_Igain.Stroke = Line_fill;
             text_Igain.Foreground = Line_fill;
             rect_Igain.Fill = defaultcolor;
 
-            text_Dgain_text.Foreground = Line_fill;
+            //text_Dgain_text.Foreground = Line_fill;
             Line_H_Dgain.Stroke = Line_fill;
             text_Dgain.Foreground = Line_fill;
             rect_Dgain.Fill = defaultcolor;
 
-            text_VFgain_text.Foreground = Line_fill;
+            //text_VFgain_text.Foreground = Line_fill;
             Line_H_VFgain.Stroke = Line_fill;
             text_VFgain.Foreground = Line_fill;
             rect_VFgain.Fill = defaultcolor;
 
             Line_H_ABS.Stroke = Line_fill;
             text_ABS.Foreground = Line_fill;
+            textBox_ABS_AMP.Foreground=Line_fill;
             rect_ABS.Fill = defaultcolor;
-            text_ABS_text.Foreground = Line_fill;
+            //text_ABS_text.Foreground = Line_fill;
             Line_H_ABS_freq.Stroke = Line_fill;
             text_ABS_freq.Foreground = Line_fill;
+            textBox_ABS_freq.Foreground = Line_fill;
             rect_ABS_freq.Fill = defaultcolor;
-            text_ABS_freq_text.Foreground = Line_fill;
+            //text_ABS_freq_text.Foreground = Line_fill;
             Line_H_max_game.Stroke = Line_fill;
             text_max_game.Foreground = Line_fill;
-            text_max_game_text.Foreground = Line_fill;
+            textbox_max_game.Foreground = Line_fill;
+            //text_max_game_text.Foreground = Line_fill;
             rect_max_game.Fill = defaultcolor;
 
             Line_H_KF.Stroke = Line_fill;
             text_KF.Foreground = Line_fill;
             rect_KF.Fill = defaultcolor;
-            text_KF_text.Foreground = Line_fill;
+            //text_KF_text.Foreground = Line_fill;
             Line_H_LC_rating.Stroke = Line_fill;
             text_LC_rating.Foreground = Line_fill;
-            text_LC_rating_text.Foreground = Line_fill;
+            //text_LC_rating_text.Foreground = Line_fill;
             rect_LC_rating.Fill = defaultcolor;
-
+            textBox_LC_rating.Foreground= Line_fill;
             text_RPM_freq_min.Foreground = Line_fill;
             text_RPM_freq_max.Foreground = Line_fill;
             text_RPM_AMP.Foreground = Line_fill;
+            textBox_RPM_AMP.Foreground = Line_fill;
             Line_H_RPM_AMP.Stroke = Line_fill;
             rect_RPM_AMP.Fill = defaultcolor;
-            text_RPM_AMP_text.Foreground =          
-
+            //text_RPM_AMP_text.Foreground =
+            textBox_RPM_freq_min.Foreground = Line_fill;
+            textBox_RPM_freq_max.Foreground = Line_fill;
             Line_H_RPM_freq.Stroke = Line_fill;
             rect_RPM_max.Fill = Line_fill;
             rect_RPM_min.Fill = defaultcolor;
-            text_RPM_freq_text.Foreground = Line_fill;
+            //text_RPM_freq_text.Foreground = Line_fill;
 
             text_bite_amp.Foreground = Line_fill;
-            text_bite_freq.Foreground =         
+            text_bite_freq.Foreground = Line_fill;
+            textBox_bite_amp.Foreground = Line_fill;
+            textBox_bite_freq.Foreground = Line_fill;
             rect_bite_amp.Fill = defaultcolor;
             rect_bite_freq.Fill = defaultcolor;
-            text_bite_amp_text.Foreground = Line_fill;
-            text_bite_freq_text.Foreground = Line_fill;
+            //text_bite_amp_text.Foreground = Line_fill;
+            //text_bite_freq_text.Foreground = Line_fill;
             Line_H_bite_amp.Stroke = Line_fill;
             Line_H_bite_freq.Stroke = Line_fill;
 
             Line_G_force_multi.Stroke = Line_fill;
-            text_G_force_multi_text.Foreground = Line_fill;
+            //text_G_force_multi_text.Foreground = Line_fill;
             text_G_multi.Foreground = Line_fill;
+            textbox_G_multi.Foreground = Line_fill;
             rect_G_force_multi.Fill = defaultcolor;
 
             Line_G_force_window.Stroke = Line_fill;
-            text_G_force_window_text.Foreground = Line_fill;
+            //text_G_force_window_text.Foreground = Line_fill;
             text_G_window.Foreground = Line_fill;
             rect_G_force_window.Fill = defaultcolor;
 
-            text_MPC_0th_order_gain.Foreground= Line_fill;
-            text_MPC_0th_order_gain_text.Foreground = Line_fill;
-            Line_H_MPC_0th_order_gain.Stroke= Line_fill;
-            rect_MPC_0th_order_gain.Fill= defaultcolor;
+            text_MPC_0th_order_gain.Foreground = Line_fill;
+            //text_MPC_0th_order_gain_text.Foreground = Line_fill;
+            textBox_MPC_0th_order_gain.Foreground= Line_fill;
+            Line_H_MPC_0th_order_gain.Stroke = Line_fill;
+            rect_MPC_0th_order_gain.Fill = defaultcolor;
+
+            Line_H_HeaderTab.Stroke = Line_fill;
 
             //text_MPC_1st_order_gain.Foreground = Line_fill;
             //text_MPC_1st_order_gain_text.Foreground = Line_fill;
             //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
             //rect_MPC_1st_order_gain.Fill = defaultcolor;
 
-
+            text_WS_amp.Foreground = Line_fill;
+            text_WS_freq.Foreground = Line_fill;
+            text_WS_trigger.Foreground = Line_fill;
+            textBox_WS_amp.Foreground = Line_fill;
+            textBox_WS_freq.Foreground = Line_fill;
+            textbox_WS_trigger.Foreground = Line_fill;
+            rect_WS_amp.Fill = defaultcolor;
+            rect_WS_freq.Fill = defaultcolor;
+            rect_WS_trigger.Fill = defaultcolor;
+            //text_bite_amp_text.Foreground = Line_fill;
+            //text_bite_freq_text.Foreground = Line_fill;
+            Line_H_WS_amp.Stroke = Line_fill;
+            Line_H_WS_freq.Stroke = Line_fill;
+            Line_WS_trigger.Stroke = Line_fill;
 
 
 
@@ -505,7 +541,7 @@ namespace User.PluginSdkDemo
 
 
 
-            
+
         }
 
 
@@ -626,7 +662,7 @@ namespace User.PluginSdkDemo
         //}
 
 
-        public SettingsControlDemo(DataPluginDemo plugin) : this()
+        public SettingsControlDemo(DIY_FFB_Pedal plugin) : this()
         {
             this.Plugin = plugin;
             plugin.testValue = 1;
@@ -636,7 +672,7 @@ namespace User.PluginSdkDemo
             UpdateSerialPortList_click();
             //closeSerialAndStopReadCallback(1);
 
-
+             
 
             // check if Json config files are present, otherwise create new ones
             //for (int jsonIndex = 0; jsonIndex < ComboBox_JsonFileSelected.Items.Count; jsonIndex++)
@@ -751,8 +787,8 @@ namespace User.PluginSdkDemo
 
                 }
                 */
-                
-                
+
+
                 /*
                 if (plugin.PortExists(plugin._serialPort[pedalIndex].PortName))
                 {
@@ -779,7 +815,7 @@ namespace User.PluginSdkDemo
             if (plugin.Settings.reading_config == 1)
             {
                 checkbox_pedal_read.IsChecked = true;
-                
+
             }
             else
             {
@@ -798,7 +834,20 @@ namespace User.PluginSdkDemo
                 checkbox_auto_connect.IsChecked = false;
             }
 
+            //auto connection with timmer
+            if (connect_timer != null)
+            {
+                connect_timer.Dispose();
+                connect_timer.Stop();
+            }
 
+            connect_timer = new System.Windows.Forms.Timer();
+            connect_timer.Tick += new EventHandler(connection_timmer_tick);
+            connect_timer.Interval = 5000; // in miliseconds try connect every 5s
+            connect_timer.Start();
+            System.Threading.Thread.Sleep(50);
+
+            /*
             // autoconnect serial
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
@@ -824,6 +873,9 @@ namespace User.PluginSdkDemo
 
                 }
             }
+            */
+
+
             //vjoy initialized
             if (Plugin.Settings.vjoy_output_flag == 1)
             {
@@ -852,7 +904,7 @@ namespace User.PluginSdkDemo
             // update the sliders
 
 
-            info_label.Content = "Connection State:\nDAP Version:";
+            info_label.Content = "State:\nDAP Version:";
             string info_text;
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
@@ -860,13 +912,21 @@ namespace User.PluginSdkDemo
             }
             else
             {
-                info_text = "Waiting";
+                if (Plugin.Settings.auto_connect_flag == 1)
+                {
+                    info_text = "Connecting..";
+                }
+                else
+                {
+                    info_text = "Waiting...";
+                }
+
             }
             info_text += "\n" + Constants.pedalConfigPayload_version;
-            if ((bool)TestAbs_check.IsChecked)
+            /*if ((bool)TestAbs_check.IsChecked)
             {
                 info_text += "\nABS/TC Testing";
-            }
+            }*/
             info_label_2.Content = info_text;
 
 
@@ -903,11 +963,11 @@ namespace User.PluginSdkDemo
 
 
             //set control point position
-            text_point_pos.Opacity = 0;
+            text_point_pos.Visibility = Visibility.Hidden;
             double control_rect_value_max = 100;
             double dyy = canvas.Height / control_rect_value_max;
-            Canvas.SetTop(rect0, canvas.Height-dyy*dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 - rect0.Height / 2);
-            Canvas.SetLeft(rect0, 0*canvas.Width/5-rect0.Width/2);
+            Canvas.SetTop(rect0, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 - rect0.Height / 2);
+            Canvas.SetLeft(rect0, 0 * canvas.Width / 5 - rect0.Width / 2);
             Canvas.SetTop(rect1, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 - rect0.Height / 2);
             Canvas.SetLeft(rect1, 1 * canvas.Width / 5 - rect1.Width / 2);
             Canvas.SetTop(rect2, canvas.Height - dyy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 - rect0.Height / 2);
@@ -934,13 +994,13 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
             text_state.Text = "0%";
             //set for ABS slider
-            Canvas.SetTop(rect_SABS_Control, (control_rect_value_max- dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value ) *dyy-rect_SABS_Control.Height/2);
-            Canvas.SetLeft(rect_SABS_Control , 0);
+            Canvas.SetTop(rect_SABS_Control, (control_rect_value_max - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value) * dyy - rect_SABS_Control.Height / 2);
+            Canvas.SetLeft(rect_SABS_Control, 0);
             Canvas.SetTop(rect_SABS, 0);
             Canvas.SetLeft(rect_SABS, 0);
             rect_SABS.Height = canvas.Height - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value * dyy;
-            Canvas.SetTop(text_SABS, Canvas.GetTop(rect_SABS_Control) -text_SABS.Height -rect_SABS_Control.Height);
-            Canvas.SetLeft(text_SABS, canvas.Width-text_SABS.Width);
+            Canvas.SetTop(text_SABS, Canvas.GetTop(rect_SABS_Control) - text_SABS.Height - rect_SABS_Control.Height);
+            Canvas.SetLeft(text_SABS, canvas.Width - text_SABS.Width);
             text_SABS.Text = "ABS trigger value: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_value + "%";
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger == 1)
             {
@@ -948,83 +1008,84 @@ namespace User.PluginSdkDemo
                 rect_SABS_Control.Visibility = Visibility.Visible;
                 text_SABS.Visibility = Visibility.Visible;
             }
-            else {
+            else
+            {
                 rect_SABS.Visibility = Visibility.Hidden;
                 rect_SABS_Control.Visibility = Visibility.Hidden;
                 text_SABS.Visibility = Visibility.Hidden;
             }
             //set for travel slider;
-            double dx = (canvas_horz_slider.Width-10) / 100;
+            double dx = (canvas_horz_slider.Width - 10) / 100;
             Canvas.SetTop(rect6, 15);
             //TextBox_debugOutput.Text= Convert.ToString(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition);
-            Canvas.SetLeft(rect6, rect6.Width / 2+dx* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition);
-            Canvas.SetLeft(text_min_pos,  Canvas.GetLeft(rect6) - text_min_pos.Width / 2+rect6.Width/2);
+            Canvas.SetLeft(rect6, rect6.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition);
+            Canvas.SetLeft(text_min_pos, Canvas.GetLeft(rect6) - text_min_pos.Width / 2 + rect6.Width / 2);
             Canvas.SetTop(text_min_pos, 5);
             text_min_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
             text_max_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
             Canvas.SetTop(rect7, 15);
             Canvas.SetLeft(rect7, rect7.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition);
-            Canvas.SetLeft(text_max_pos,  Canvas.GetLeft(rect7) - text_max_pos.Width / 2+rect7.Width/2);
+            Canvas.SetLeft(text_max_pos, Canvas.GetLeft(rect7) - text_max_pos.Width / 2 + rect7.Width / 2);
             Canvas.SetTop(text_max_pos, 5);
 
             //set for RPM freq slider;
             dx = (canvas_horz_RPM_freq.Width - 10) / 50;
-            Canvas.SetTop(rect_RPM_min, 15);
-            
+            Canvas.SetTop(rect_RPM_min, 23);
+
             Canvas.SetLeft(rect_RPM_min, rect_RPM_min.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq);
-            Canvas.SetLeft(text_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) - text_RPM_freq_min.Width / 2 + rect_RPM_min.Width / 2);
-            Canvas.SetTop(text_RPM_freq_min, 5);
-            text_RPM_freq_min.Text =dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
-            text_RPM_freq_max.Text =dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
-            Canvas.SetTop(rect_RPM_max, 15);
+            Canvas.SetLeft(Panel_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) + rect_RPM_min.Width / 2 - Panel_RPM_freq_min.Width / 2);
+            Canvas.SetTop(Panel_RPM_freq_min, Canvas.GetTop(rect_RPM_min) - Panel_RPM_freq_min.Height);
+            textBox_RPM_freq_min.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "";
+            textBox_RPM_freq_max.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "";
+            Canvas.SetTop(rect_RPM_max, 23);
             Canvas.SetLeft(rect_RPM_max, rect_RPM_max.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq);
-            Canvas.SetLeft(text_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) - text_RPM_freq_max.Width / 2 + rect_RPM_max.Width / 2);
-            Canvas.SetTop(text_RPM_freq_max, 5);
+            Canvas.SetLeft(Panel_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) + rect_RPM_max.Width / 2 - Panel_RPM_freq_max.Width / 2);
+            Canvas.SetTop(Panel_RPM_freq_max, Canvas.GetTop(rect_RPM_max) - Panel_RPM_freq_max.Height);
             //set for force vertical slider
-            double dy = (canvas_vert_slider.Height/250);
-            Canvas.SetTop(rect8,canvas_vert_slider.Height-dy* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
-            Canvas.SetLeft(rect8, canvas_vert_slider.Width / 2 - rect8.Width / 2- Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_min_force,  rect8.Width+3);
+            double dy = (canvas_vert_slider.Height / 250);
+            Canvas.SetTop(rect8, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
+            Canvas.SetLeft(rect8, canvas_vert_slider.Width / 2 - rect8.Width / 2 - Line_V_force.StrokeThickness / 2);
+            Canvas.SetLeft(text_min_force, rect8.Width + 3);
             Canvas.SetTop(text_min_force, Canvas.GetTop(rect8));
             Canvas.SetTop(rect9, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce);
-            Canvas.SetLeft(rect9, canvas_vert_slider.Width / 2 - rect9.Width / 2-Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_max_force,  rect9.Width+3);
-            Canvas.SetTop(text_max_force, Canvas.GetTop(rect9)-6-text_max_force.Height/2);
-            
+            Canvas.SetLeft(rect9, canvas_vert_slider.Width / 2 - rect9.Width / 2 - Line_V_force.StrokeThickness / 2);
+            Canvas.SetLeft(text_max_force, rect9.Width + 3);
+            Canvas.SetTop(text_max_force, Canvas.GetTop(rect9) - 6 - text_max_force.Height / 2);
+
             text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
             text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
             //damping slider
             double damping_max = 255;
             dx = canvas_horz_damping.Width / damping_max;
             Canvas.SetLeft(rect_damping, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress);
-            text_damping.Text =  ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
+            text_damping.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
             Canvas.SetLeft(text_damping, Canvas.GetLeft(rect_damping) + rect_damping.Width / 2 - text_damping.Width / 2);
-            Canvas.SetTop(text_damping, 5);
+            Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping) - text_damping.Height);
             //ABS amplitude slider
             double abs_max = 255;
             dx = canvas_horz_ABS.Width / abs_max;
             Canvas.SetLeft(rect_ABS, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude);
+            textBox_ABS_AMP.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "";
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
                 case 0:
-                    text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                    text_ABS.Text = "kg";
                     break;
                 case 1:
-                    text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                    text_ABS.Text = "%";
                     break;
                 default:
                     break;
             }
-            
-            Canvas.SetLeft(text_ABS, Canvas.GetLeft(rect_ABS) - text_ABS.Width / 2 + rect_ABS.Width / 2);
-            Canvas.SetTop(text_ABS, 5);
+            Canvas.SetLeft(Panel_ABS_AMP, Canvas.GetLeft(rect_ABS) + rect_ABS.Width / 2 - Panel_ABS_AMP.Width / 2);
+            Canvas.SetTop(Panel_ABS_AMP, Canvas.GetTop(rect_ABS) - Panel_ABS_AMP.Height);
             //ABS freq slider
             double abs_freq_max = 30;
             dx = canvas_horz_ABS_freq.Width / abs_freq_max;
             Canvas.SetLeft(rect_ABS_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency);
-            text_ABS_freq.Text =dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency+"Hz";
-            Canvas.SetLeft(text_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2-text_ABS_freq.Width/2);
-            Canvas.SetTop(text_ABS_freq, 5);
+            textBox_ABS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "";
+            Canvas.SetLeft(Panel_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2 - Panel_ABS_freq.Width / 2);
+            Canvas.SetTop(Panel_ABS_freq, Canvas.GetTop(rect_ABS_freq) - Panel_ABS_freq.Height);
 
             // ABS pattern
             try
@@ -1058,32 +1119,47 @@ namespace User.PluginSdkDemo
             double max_game_max = 100;
             dx = canvas_horz_max_game.Width / max_game_max;
             Canvas.SetLeft(rect_max_game, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput);
-            text_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput+"%";
-            Canvas.SetLeft(text_max_game, Canvas.GetLeft(rect_max_game) - text_max_game.Width / 2+rect_max_game.Width/2);
-            Canvas.SetTop(text_max_game, 5);
+            textbox_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
+            Canvas.SetLeft(Panel_max_game, Canvas.GetLeft(rect_max_game) + rect_max_game.Width / 2 - Panel_max_game.Width / 2);
+            Canvas.SetTop(Panel_max_game, Canvas.GetTop(rect_max_game) - Panel_max_game.Height);
             //KF SLider
             double KF_max = 255;
             dx = canvas_horz_KF.Width / KF_max;
             Canvas.SetLeft(rect_KF, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise);
             text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
             Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-            Canvas.SetTop(text_KF, 5);
+            Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF) - text_KF.Height);
+
+
+            // Filter type
+            try
+            {
+                KF_filter_order.SelectedIndex = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelOrder;
+            }
+            catch (Exception caughtEx)
+            {
+            }
+
             //LC rating slider
 
             double LC_max = 510;
             dx = canvas_horz_LC_rating.Width / LC_max;
-            Canvas.SetLeft(rect_LC_rating, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2);
-            text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "kg";
-            Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
-            Canvas.SetTop(text_LC_rating, 5);
+            Canvas.SetLeft(rect_LC_rating, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2);
+            //text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "kg";
+            //Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
+            //Canvas.SetTop(text_LC_rating, 5);
+            textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
+            Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
+            Canvas.SetTop(Panel_LC_rating, Canvas.GetTop(rect_LC_rating)-Panel_LC_rating.Height);
+
             //RPM AMP slider
 
             double RPM_AMP_max = 200;
             dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
             Canvas.SetLeft(rect_RPM_AMP, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP);
-            text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "kg";
-            Canvas.SetLeft(text_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
-            Canvas.SetTop(text_RPM_AMP, 5);
+            textBox_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "";
+            Canvas.SetLeft(Panel_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) + rect_RPM_AMP.Width / 2 - Panel_RPM_AMP.Width / 2);
+            Canvas.SetTop(Panel_RPM_AMP, Canvas.GetTop(rect_RPM_AMP) - Panel_RPM_AMP.Height);
 
             //Bite point control
             double BP_max = 100;
@@ -1096,25 +1172,25 @@ namespace User.PluginSdkDemo
             double BP_freq_max = 30;
             dx = canvas_horz_bite_freq.Width / BP_freq_max;
             Canvas.SetLeft(rect_bite_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq);
-            text_bite_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
-            Canvas.SetLeft(text_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - text_bite_freq.Width / 2);
-            Canvas.SetTop(text_bite_freq, 5);
+            textBox_bite_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "";
+            Canvas.SetLeft(Panel_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - Panel_bite_freq.Width / 2);
+            Canvas.SetTop(Panel_bite_freq, Canvas.GetTop(rect_bite_freq) - Panel_bite_freq.Height);
 
             //Bite point AMP slider
             double BP_amp_max = 200;
             dx = canvas_horz_bite_amp.Width / BP_amp_max;
             Canvas.SetLeft(rect_bite_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp);
-            text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
-            Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
-            Canvas.SetTop(text_bite_amp, 5);
+            textBox_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "";
+            Canvas.SetLeft(Panel_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - Panel_bite_amp.Width / 2);
+            Canvas.SetTop(Panel_bite_amp, Canvas.GetTop(rect_bite_amp) - Panel_bite_amp.Height);
 
             //Pgain slider
             double value_max = 2;
             dx = canvas_horz_Pgain.Width / value_max;
             Canvas.SetLeft(rect_Pgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain * dx);
-            text_Pgain.Text =""+Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain,2); 
+            text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
             Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-            Canvas.SetTop(text_Pgain, 5);
+            Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
 
             //Igain slider
 
@@ -1123,15 +1199,15 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_Igain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain * dx);
             text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
             Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-            Canvas.SetTop(text_Igain, 5);
+            Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
 
             //Dgain slider
             value_max = 0.01;
             dx = canvas_horz_Dgain.Width / value_max;
             Canvas.SetLeft(rect_Dgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain * dx);
-            text_Dgain.Text = "" +Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain,4);
+            text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
             Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-            Canvas.SetTop(text_Dgain, 5);
+            Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
 
             //VF gain slider
             value_max = 20;
@@ -1139,15 +1215,15 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_VFgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain * dx);
             text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
             Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-            Canvas.SetTop(text_VFgain, 5);
+            Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
 
             //MPC 0th order gain slider
             value_max = 4;
             dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
             Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
-            text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "mm/kg";
-            Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - rect_MPC_0th_order_gain.Width / 2);
-            Canvas.SetTop(text_MPC_0th_order_gain, 5);
+            textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
+            Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
+            Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
 
 
             ////MPC 1st order gain slider
@@ -1163,9 +1239,9 @@ namespace User.PluginSdkDemo
             double G_force_multi_max = 100;
             dx = canvas_horz_G_force_multi.Width / G_force_multi_max;
             Canvas.SetLeft(rect_G_force_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi);
-            text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
-            Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
-            Canvas.SetTop(text_G_multi, 5);
+            textbox_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "";
+            Canvas.SetLeft(Panel_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - Panel_G_multi.Width / 2);
+            Canvas.SetTop(Panel_G_multi, Canvas.GetTop(rect_G_force_multi) - Panel_G_multi.Height);
 
             //G force window slider
             value_max = 100;
@@ -1173,7 +1249,30 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_G_force_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window);
             text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
             Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
-            Canvas.SetTop(text_G_window, 5);
+            Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
+            //wheel slip freq slider
+            value_max = 30;
+            dx = canvas_horz_WS_freq.Width / value_max;
+            Canvas.SetLeft(rect_WS_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq);
+            textBox_WS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "";
+            Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
+            Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
+
+            //wheel slip AMP slider
+            value_max = 200;
+            dx = canvas_horz_WS_amp.Width / value_max;
+            Canvas.SetLeft(rect_WS_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp);
+            textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
+            Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
+            Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
+            //wheel slip trigger slider
+            value_max = 50;
+            dx = canvas_horz_WS_trigger.Width / value_max;
+            Canvas.SetLeft(rect_WS_trigger, dx * Plugin.Settings.WS_trigger);
+            textbox_WS_trigger.Text = (Plugin.Settings.WS_trigger+50)  + "";
+            Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
+            Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
+
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -1202,12 +1301,12 @@ namespace User.PluginSdkDemo
             if (Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] == 1)
             {
                 checkbox_enable_RPM.IsChecked = true;
-                checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+                checkbox_enable_RPM.Content = "Effect Enabled";
             }
             else
             {
                 checkbox_enable_RPM.IsChecked = false;
-                checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+                checkbox_enable_RPM.Content = "Effect Disabled";
             }
 
             if (Plugin.Settings.ABS_enable_flag[indexOfSelectedPedal_u] == 1)
@@ -1260,7 +1359,7 @@ namespace User.PluginSdkDemo
             if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
             {
                 Serial_port_text.Text = "Serial Port connected";
-                Serial_port_text.Visibility= Visibility.Visible;
+                Serial_port_text.Visibility = Visibility.Visible;
 
             }
             else
@@ -1268,10 +1367,76 @@ namespace User.PluginSdkDemo
                 Serial_port_text.Visibility = Visibility.Hidden;
             }
 
+            if (Plugin.Settings.RPM_effect_type == 0)
+            {
+                RPMeffecttype_Sel_1.IsChecked = true;
+            }
+            else
+            {
+                RPMeffecttype_Sel_2.IsChecked = true;
+            }
 
+            if (Plugin.Settings.file_enable[profile_select, 0] == 1)
+            {
+                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select,0];
+                Clutch_file_check.IsChecked = true;
+            }
+            else 
+            {
+                Label_clutch_file.Content = "";
+                Clutch_file_check.IsChecked = false;
+            }
+            if (Plugin.Settings.file_enable[profile_select, 1] == 1)
+            {
+                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                Brake_file_check.IsChecked = true;
+            }
+            else
+            {
+                Label_brake_file.Content = "";
+                Brake_file_check.IsChecked = false;
+            }
+
+            if (Plugin.Settings.file_enable[profile_select,2] == 1)
+            {
+                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                Gas_file_check.IsChecked = true;
+            }
+            else
+            {
+                Label_gas_file.Content = "";
+                Gas_file_check.IsChecked = false;
+            }
+            /*
+            if (Plugin.binding_check == true)
+            {
+                checkbox_enable_wheelslip.IsEnabled = true;
+            }
+            else
+            { 
+                checkbox_enable_wheelslip.IsEnabled= false;
+                Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
+
+            }*/
+            
+            if (Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_enable_wheelslip.IsChecked = true;
+            }
+            else
+            {
+                checkbox_enable_wheelslip.IsChecked = false;
+            }
+            textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
+
+            //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
             InvertLoadcellReading_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertLoadcellReading_u8 == 1;
+            InvertMotorDir_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 == 1;
+
+            
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+
             //try
             //{
             //    //ComboBox_JsonFileSelected.SelectedItem = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
@@ -1361,13 +1526,13 @@ namespace User.PluginSdkDemo
 
             for (int pointIdx = 0; pointIdx < 100; pointIdx++)
             {
-                System.Windows.Point Pointlcl = new System.Windows.Point(dx * xs2[pointIdx], dy*ys2[pointIdx]);
+                System.Windows.Point Pointlcl = new System.Windows.Point(dx * xs2[pointIdx], dy * ys2[pointIdx]);
                 myPointCollection2.Add(Pointlcl);
-                Force_curve_Y[pointIdx] =  dy * ys2[pointIdx];
+                Force_curve_Y[pointIdx] = dy * ys2[pointIdx];
             }
 
             this.Polyline_BrakeForceCurve.Points = myPointCollection2;
-            
+
 
         }
 
@@ -1408,22 +1573,22 @@ namespace User.PluginSdkDemo
         public void TestAbs_click(object sender, RoutedEventArgs e)
         {
             //if (indexOfSelectedPedal_u == 1)
-                if (TestAbs_check.IsChecked==false)
-                { 
-                    TestAbs_check.IsChecked= true;
-                    Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
-                    TextBox_debugOutput.Text = "ABS-Test begin";
-                    updateTheGuiFromConfig();
-                }
-                else
-                {
-                    TestAbs_check.IsChecked = false;
-                    //Plugin.sendAbsSignal = !Plugin.sendAbsSignal;
-                    Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
-                    TextBox_debugOutput.Text = "ABS-Test stopped";
-                    updateTheGuiFromConfig();
-                }
-            
+            if (TestAbs_check.IsChecked == false)
+            {
+                TestAbs_check.IsChecked = true;
+                Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
+                TextBox_debugOutput.Text = "ABS-Test begin";
+                updateTheGuiFromConfig();
+            }
+            else
+            {
+                TestAbs_check.IsChecked = false;
+                //Plugin.sendAbsSignal = !Plugin.sendAbsSignal;
+                Plugin.sendAbsSignal = (bool)TestAbs_check.IsChecked;
+                TextBox_debugOutput.Text = "ABS-Test stopped";
+                updateTheGuiFromConfig();
+            }
+
         }
 
 
@@ -1459,7 +1624,243 @@ namespace User.PluginSdkDemo
 
 
 
+        private void Control_TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //labelEingabe.Content = "Sie haben '" + textBox_debug_Flag_0.Text + "' eingegeben!";
+            //TextBox_debugOutput.Text = textBox_debug_Flag_0.Text;
+            var textbox = sender as System.Windows.Controls.TextBox;
+            if (textbox.Name == "textBox_LC_rating")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 510))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(result/2);
+                    }
+                }
+            }
 
+            if (textbox.Name == "text_damping")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 255))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (byte)(result );
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (byte)(result);
+                    }
+                }
+            }
+
+            if (textbox.Name == "textbox_max_game")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = (byte)(result);
+                        
+                    }
+                }
+            }
+
+            if (textbox.Name == "text_KF")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 255))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = (byte)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_Pgain")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_Igain")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 500))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_Dgain")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 0.01))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "text_VFgain")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 20))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)(result);
+
+                    }
+                }
+            }
+            
+            if (textbox.Name == "textBox_MPC_0th_order_gain")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= 4))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)(result);
+
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_ABS_AMP")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 12.5))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = (byte)(result*20);                       
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_ABS_freq")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 30))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = (byte)(result);
+                        
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_RPM_AMP")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        double tmp = result * 100;
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(tmp);
+
+                    }
+                }
+            }
+
+            if (textbox.Name == "textBox_RPM_freq_min")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= 0) && (result <= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_RPM_freq_max")
+            {
+                if (float.TryParse(textbox.Text, out float result))
+                {
+                    if ((result >= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq) && (result <= 50))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_bite_freq")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 30))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_bite_amp")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = (byte)(result*100);
+                    }
+                }
+            }
+            if (textbox.Name == "textbox_G_multi")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = (byte)(result);
+                    }
+                }
+            }
+
+            if (textbox.Name == "text_G_window")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_WS_freq")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 30))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (byte)(result);
+                    }
+                }
+            }
+            if (textbox.Name == "textBox_WS_amp")
+            {
+                if (double.TryParse(textbox.Text, out double result))
+                {
+                    if ((result >= 0) && (result <= 2))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (byte)(result * 100);
+                    }
+                }
+            }
+
+            if (textbox.Name == "textBox_WS_trigger")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        Plugin.Settings.WS_trigger = result - 50;
+                    }
+                }
+            }
+
+            updateTheGuiFromConfig();
+
+        }
 
 
 
@@ -1485,7 +1886,7 @@ namespace User.PluginSdkDemo
             //}
 
             // Use a regular expression to allow only numeric input
-            Regex regex = new Regex("[^0-9]+");
+            Regex regex = new Regex("^[.][0-9]+$|^[0-9]*[.]{0,4}[0-9]*$");
 
             System.Windows.Controls.TextBox textBox = (System.Windows.Controls.TextBox)sender;
 
@@ -1599,7 +2000,7 @@ namespace User.PluginSdkDemo
 
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
-                
+
                 try
                 {
                     // compute checksum
@@ -1721,8 +2122,75 @@ namespace User.PluginSdkDemo
         /********************************************************************************************************************/
         /*							Send config to pedal																	*/
         /********************************************************************************************************************/
+        unsafe public void Sendconfig(uint pedalIdx)
+        {
+
+
+            if (Plugin._serialPort[pedalIdx].IsOpen)
+            {
+
+                // compute checksum
+                //getBytes(this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_)
+                this.dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                this.dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+                this.dap_config_st[pedalIdx].payloadHeader_.storeToEeprom = 1;
+                DAP_config_st tmp = this.dap_config_st[pedalIdx];
+
+                //payloadPedalConfig tmp = this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
+                DAP_config_st* v = &tmp;
+                byte* p = (byte*)v;
+                this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
+
+
+                //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";
+
+                TextBox_debugOutput.Text = String.Empty;
+
+                try
+                {
+                    int length = sizeof(DAP_config_st);
+                    //int val = this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.checkSum;
+                    //string msg = "CRC value: " + val.ToString();
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes(this.dap_config_st[pedalIdx]);
+
+                    //TextBox_debugOutput.Text = "ConfigLength" + length;
+
+                    // clear inbuffer 
+                    Plugin._serialPort[pedalIdx].DiscardInBuffer();
+                    Plugin._serialPort[pedalIdx].DiscardOutBuffer();
+
+
+                    // send data
+                    Plugin._serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                    //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
+                }
+                catch (Exception caughtEx)
+                {
+                    string errorMessage = caughtEx.Message;
+                    TextBox_debugOutput.Text = errorMessage;
+                }
+
+            }
+        }
+        unsafe public void Sendconfigtopedal_shortcut()
+        {
+
+            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            {
+                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                {
+                    Sendconfig(pedalIdx);
+                    TextBox_debugOutput.Text = "config was sent to pedal";
+                }
+            }
+
+        }
         unsafe public void SendConfigToPedal_click(object sender, RoutedEventArgs e)
         {
+
+            Sendconfig(indexOfSelectedPedal_u);
+            /*
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
 
@@ -1769,6 +2237,7 @@ namespace User.PluginSdkDemo
                 }
 
             }
+            */
         }
 
 
@@ -1795,7 +2264,7 @@ namespace User.PluginSdkDemo
                 // tell the plugin that we expect config data
                 waiting_for_pedal_config[i] = true;
 
-                
+
                 // try N times and check whether config has been received
                 for (int rep = 0; rep < 1; rep++)
                 {
@@ -1809,11 +2278,11 @@ namespace User.PluginSdkDemo
                     {
                         break;
                     }
-                }                
+                }
             }
         }
 
-        public string[] STOPCHAR = { "\r\n"};
+        public string[] STOPCHAR = { "\r\n" };
         public bool EndsWithStop(string incomingData)
         {
             for (int i = 0; i < STOPCHAR.Length; i++)
@@ -1835,7 +2304,7 @@ namespace User.PluginSdkDemo
         }
 
 
-        public string[] _data = {"", "", "" };// = "";
+        public string[] _data = { "", "", "" };// = "";
 
         //unsafe private void sp_DataReceived(object sender, object e)
         unsafe private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1850,25 +2319,25 @@ namespace User.PluginSdkDemo
             int pedalSelected = 255;
             for (int pedalIdx_i = 0; pedalIdx_i < 3; pedalIdx_i++)
             {
-                if ( (Plugin._serialPort[pedalIdx_i].PortName == sp.PortName) && (Plugin._serialPort[pedalIdx_i].IsOpen))
+                if ((Plugin._serialPort[pedalIdx_i].PortName == sp.PortName) && (Plugin._serialPort[pedalIdx_i].IsOpen))
                 {
                     pedalSelected = pedalIdx_i;
                 }
             }
 
             // once the pedal has identified, go ahead
-            if(pedalSelected < 3)
+            if (pedalSelected < 3)
             //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
             {
                 // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
-                
+
 
                 int length = sizeof(DAP_config_st);
                 byte[] newBuffer_config = new byte[length];
 
                 int receivedLength = sp.BytesToRead;
 
-                    
+
                 string incomingData = sp.ReadExisting();
                 //if the data doesn't end with a stop char this will signal to keep it in _data 
                 //for appending to the following read of data
@@ -1881,126 +2350,126 @@ namespace User.PluginSdkDemo
                 {
                     string newData = dataArray[i];
 
-                //if you are at the last object in the array and this hasn't got a stopchar after
-                //it will be saved in _data
-                if (!endsWithStop && i == dataArray.Length - 1)
-                {
-                    _data[pedalSelected] += newData;
-                }
-                else
-                {
-                    string dataToSend = _data[pedalSelected] + newData;
-                    _data[pedalSelected] = "";
-
-
-                    // decode into config struct
-                    if (dataToSend.Length == length)
+                    //if you are at the last object in the array and this hasn't got a stopchar after
+                    //it will be saved in _data
+                    if (!endsWithStop && i == dataArray.Length - 1)
                     {
-                        DAP_config_st tmp;
+                        _data[pedalSelected] += newData;
+                    }
+                    else
+                    {
+                        string dataToSend = _data[pedalSelected] + newData;
+                        _data[pedalSelected] = "";
 
-                        // transform string into byte
-                        fixed (byte* p = Encoding.ASCII.GetBytes(dataToSend))
+
+                        // decode into config struct
+                        if (dataToSend.Length == length)
                         {
-                            // create a fixed size buffer
-                            length = sizeof(DAP_config_st);
-                            byte[] newBuffer_config_2 = new byte[length];
+                            DAP_config_st tmp;
 
-                            // copy the received bytes into byte array
-                            for (int j = 0; j < length; j++)
+                            // transform string into byte
+                            fixed (byte* p = Encoding.ASCII.GetBytes(dataToSend))
                             {
-                                newBuffer_config_2[j] = p[j];
-                            }
+                                // create a fixed size buffer
+                                length = sizeof(DAP_config_st);
+                                byte[] newBuffer_config_2 = new byte[length];
 
-                            // parse byte array as config struct
-                            DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
-
-                            // check whether receive struct is plausible
-                            DAP_config_st* v_config = &pedalConfig_read_st;
-                            byte* p_config = (byte*)v_config;
-
-                            // payload type check
-                            bool check_payload_config_b = false;
-                            if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
-                            {
-                                check_payload_config_b = true;
-                            }
-
-                            // CRC check
-                            bool check_crc_config_b = false;
-                            if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
-                            {
-                                check_crc_config_b = true;
-                            }
-
-
-                            // when all checks are passed, accept the config. Otherwise discard and trow error
-                            Dispatcher.Invoke(
-                            new Action<DAP_config_st>((t) => this.dap_config_st[pedalSelected] = t),
-                            pedalConfig_read_st);
-
-
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                // update pedal config
-                                if (check_payload_config_b)
+                                // copy the received bytes into byte array
+                                for (int j = 0; j < length; j++)
                                 {
-                                    //this.dap_config_st[indexOfSelectedPedal_u] = pedalConfig_read_st;
-                                    updateTheGuiFromConfig();
+                                    newBuffer_config_2[j] = p[j];
                                 }
 
-                                TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
-                                TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
-                            });
+                                // parse byte array as config struct
+                                DAP_config_st pedalConfig_read_st = getConfigFromBytes(newBuffer_config_2);
+
+                                // check whether receive struct is plausible
+                                DAP_config_st* v_config = &pedalConfig_read_st;
+                                byte* p_config = (byte*)v_config;
+
+                                // payload type check
+                                bool check_payload_config_b = false;
+                                if (pedalConfig_read_st.payloadHeader_.payloadType == Constants.pedalConfigPayload_type)
+                                {
+                                    check_payload_config_b = true;
+                                }
+
+                                // CRC check
+                                bool check_crc_config_b = false;
+                                if (Plugin.checksumCalc(p_config, sizeof(payloadHeader) + sizeof(payloadPedalConfig)) == pedalConfig_read_st.payloadFooter_.checkSum)
+                                {
+                                    check_crc_config_b = true;
+                                }
+
+
+                                // when all checks are passed, accept the config. Otherwise discard and trow error
+                                Dispatcher.Invoke(
+                                new Action<DAP_config_st>((t) => this.dap_config_st[pedalSelected] = t),
+                                pedalConfig_read_st);
+
+
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    // update pedal config
+                                    if (check_payload_config_b)
+                                    {
+                                        //this.dap_config_st[indexOfSelectedPedal_u] = pedalConfig_read_st;
+                                        updateTheGuiFromConfig();
+                                    }
+
+                                    TextBox_debugOutput.Text = "Payload config test 1: " + check_payload_config_b;
+                                    TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
+                                });
+
+                            }
 
                         }
-
-                    }
-                    else 
-                    {
-                        this.Dispatcher.Invoke(() =>
+                        else
                         {
-                            //TextBox_serialMonitor.Text += "DataArrayLength: " + dataArray.Length + "\n";
-                            //TextBox_serialMonitor.Text += "DataLength: " + dataToSend.Length + "\n";
-                            TextBox_serialMonitor.Text += dataToSend + "\n";
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                //TextBox_serialMonitor.Text += "DataArrayLength: " + dataArray.Length + "\n";
+                                //TextBox_serialMonitor.Text += "DataLength: " + dataToSend.Length + "\n";
+                                TextBox_serialMonitor.Text += dataToSend + "\n";
 
-                            TextBox_serialMonitor.ScrollToEnd();
-                            //TextBox_serialMonitor.Text += receivedLength + "\n";
-                        });
+                                TextBox_serialMonitor.ScrollToEnd();
+                                //TextBox_serialMonitor.Text += receivedLength + "\n";
+                            });
+                        }
+
+
                     }
 
-                            
-                }
 
 
 
-                                
-
-                                
-
-                            
 
 
 
-                //limits the data stored to 1000 to avoid using up all the memory in case of 
-                //failure to register callback or include stopchar
-
-                if (_data[pedalSelected].Length > 1000)
-                {
-                    _data[pedalSelected] = "";
-                }
 
 
-                //////this.Dispatcher.Invoke(() =>
-                //////    {
-                //////        TextBox_serialMonitor.Text += incomingData;
 
-                //////        TextBox_serialMonitor.ScrollToEnd();
-                //////        //TextBox_serialMonitor.Text += receivedLength + "\n";
-                //////    });
+
+                    //limits the data stored to 1000 to avoid using up all the memory in case of 
+                    //failure to register callback or include stopchar
+
+                    if (_data[pedalSelected].Length > 1000)
+                    {
+                        _data[pedalSelected] = "";
+                    }
+
+
+                    //////this.Dispatcher.Invoke(() =>
+                    //////    {
+                    //////        TextBox_serialMonitor.Text += incomingData;
+
+                    //////        TextBox_serialMonitor.ScrollToEnd();
+                    //////        //TextBox_serialMonitor.Text += receivedLength + "\n";
+                    //////    });
                 }
 
                 // obtain data and check whether it is from known payload type or just debug info
-                
+
             }
         }
 
@@ -2029,10 +2498,29 @@ namespace User.PluginSdkDemo
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-
+                if (Plugin.Settings.auto_connect_flag == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
+                {
+                    if (Plugin.Settings.autoconnectComPortNames[pedalIdx] == "NA")
+                    {
+                        Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                    }
+                    else
+                    {
+                        Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
+                        Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin.Settings.selectedComPortNames[pedalIdx];
+                    }
+                    
+                }
+                else
+                {
+                    Plugin._serialPort[pedalIdx].PortName = Plugin.Settings.selectedComPortNames[pedalIdx];
+                    Plugin.Settings.autoconnectComPortNames[pedalIdx]= Plugin.Settings.selectedComPortNames[pedalIdx];
+                }
+                
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
                     Plugin._serialPort[pedalIdx].Open();
+                    Plugin.Settings.connect_status[pedalIdx] = 1;
                     // read callback
                     pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
                     pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
@@ -2050,9 +2538,66 @@ namespace User.PluginSdkDemo
             }
             catch (Exception ex)
             { }
-            
 
 
+
+
+        }
+        private uint count_timmer_count = 0;
+        public void connection_timmer_tick(object sender, EventArgs e)
+        {
+            if (Plugin.profile_update_flag == 1)
+            {
+                Profile_change(Plugin.profile_index);
+                Plugin.profile_update_flag = 0;
+            }
+
+            count_timmer_count++;
+            if (count_timmer_count > 1)
+            {
+                if (Plugin.Settings.auto_connect_flag == 1)
+                {
+                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                    {
+
+
+                        if (Plugin.Settings.connect_flag[pedalIdx] == 1)
+                        {
+                            if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
+                            {
+                                if (Plugin._serialPort[pedalIdx].IsOpen == false)
+                                {
+                                    //UpdateSerialPortList_click();
+                                    openSerialAndAddReadCallback(pedalIdx);
+                                    //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
+                                    if (Plugin.Settings.reading_config == 1)
+                                    {
+                                        Reading_config_auto(pedalIdx);
+
+
+                                    }
+                                    updateTheGuiFromConfig();
+                                }
+                            }
+                            else
+                            {
+                                Plugin.connectSerialPort[pedalIdx] = false;
+                                Plugin.Settings.connect_status[pedalIdx] = 0;
+                                updateTheGuiFromConfig();
+                            }
+
+
+
+
+                        }
+                    }
+
+                }
+            }
+            if (count_timmer_count > 200)
+            {
+                count_timmer_count = 2;
+            }
 
         }
 
@@ -2063,6 +2608,8 @@ namespace User.PluginSdkDemo
                 pedal_serial_read_timer[pedalIdx].Stop();
                 pedal_serial_read_timer[pedalIdx].Dispose();
             }
+            connect_timer.Dispose();
+            connect_timer.Stop();
             System.Threading.Thread.Sleep(300);
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
@@ -2075,7 +2622,7 @@ namespace User.PluginSdkDemo
 
         Int64 writeCntr = 0;
 
-        int[] timeCntr = { 0, 0, 0};
+        int[] timeCntr = { 0, 0, 0 };
 
         double[] timeCollector = { 0, 0, 0 };
 
@@ -2119,6 +2666,20 @@ namespace User.PluginSdkDemo
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
+            //action here 
+
+            if (Plugin.profile_update_flag == 1)
+            {
+                Profile_change(Plugin.profile_index);
+                Plugin.profile_update_flag = 0;
+            }
+
+            if (Plugin.sendconfig_flag == 1)
+            {
+                Sendconfigtopedal_shortcut();
+                Plugin.sendconfig_flag = 0;
+            }
+
 
             int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
             //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
@@ -2148,7 +2709,7 @@ namespace User.PluginSdkDemo
 
 
                 //int length = sizeof(DAP_config_st);
-                
+
 
 
 
@@ -2167,7 +2728,7 @@ namespace User.PluginSdkDemo
                         byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
 
                         // check if buffer is large enough otherwise discard in buffer and set offset to 0
-                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength) )
+                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength))
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
                         }
@@ -2191,7 +2752,7 @@ namespace User.PluginSdkDemo
                         List<int> indices = FindAllOccurrences(localBuffer, byteToFind, currentBufferLength);
 
 
-                        
+
 
                         // Destination array
                         byte[] destinationArray = new byte[1000];
@@ -2207,7 +2768,7 @@ namespace User.PluginSdkDemo
                             {
                                 appendedBufferOffset[pedalSelected] = remainingMessageLength;
 
-                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement+2, buffer_appended[pedalSelected], 0, remainingMessageLength);
+                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement + 2, buffer_appended[pedalSelected], 0, remainingMessageLength);
                             }
                         }
                         else
@@ -2305,7 +2866,7 @@ namespace User.PluginSdkDemo
 
                                         pedalStateHasAlreadyBeenUpdated_b = true;
 
-                                        text_point_pos.Opacity = 0;
+                                        text_point_pos.Visibility = Visibility.Hidden;
                                         double control_rect_value_max = 65535;
                                         double dyy = canvas.Height / control_rect_value_max;
                                         double dxx = canvas.Width / control_rect_value_max;
@@ -2384,6 +2945,26 @@ namespace User.PluginSdkDemo
                                             string currentDirectory = Directory.GetCurrentDirectory();
                                             string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
 
+
+                                            // write header
+                                            if (!File.Exists(filePath))
+                                            {
+                                                using (StreamWriter writer = new StreamWriter(filePath, true))
+                                                {
+                                                    // Write the content to the file
+                                                    writer.Write("cycleCtr, ");
+                                                    writer.Write("time_InMs, ");
+                                                    writer.Write("forceRaw_InKg, ");
+                                                    writer.Write("forceFiltered_InKg, ");
+                                                    writer.Write("forceVelocity_InKgPerSec, ");
+                                                    writer.Write("servoPos_InSteps, ");
+                                                    writer.Write("servoPosEsp_InSteps, ");
+                                                    writer.Write("servoCurrent_InPercent, ");
+                                                    writer.Write("servoVoltage_InV");
+                                                    writer.Write("\n");
+                                                }
+
+                                            }
                                             // Use StreamWriter to write to the file
                                             using (StreamWriter writer = new StreamWriter(filePath, true))
                                             {
@@ -2393,15 +2974,19 @@ namespace User.PluginSdkDemo
                                                 writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.timeInMs_u32);
                                                 writer.Write(", ");
-                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_u16);
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_raw_fl32);
                                                 writer.Write(", ");
-                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_u16);
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.pedalForce_filtered_fl32);
+                                                writer.Write(", ");
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.forceVel_est_fl32);
                                                 writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPosition_i16);
                                                 writer.Write(", ");
                                                 writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servoPositionTarget_i16);
                                                 writer.Write(", ");
-                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16);
+                                                writer.Write(pedalState_ext_read_st.payloadPedalExtendedState_.servo_current_percent_i16);
+                                                writer.Write(", ");
+                                                writer.Write(((float)pedalState_ext_read_st.payloadPedalExtendedState_.servo_voltage_0p1V_i16) / 10.0);
                                                 writer.Write("\n");
                                             }
                                         }
@@ -2517,7 +3102,7 @@ namespace User.PluginSdkDemo
                             timeCollector[pedalSelected] = 0;
                         }
                     }
-                    
+
                 }
             }
         }
@@ -2532,7 +3117,7 @@ namespace User.PluginSdkDemo
         unsafe public void ConnectToPedal_click(object sender, RoutedEventArgs e)
         {
 
-
+            Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 1;
             if (ConnectToPedal.IsChecked == false)
             {
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == false)
@@ -2550,7 +3135,7 @@ namespace User.PluginSdkDemo
 
                         System.Threading.Thread.Sleep(100);
 
-                        Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 1; 
+                        Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 1;
 
                     }
                     catch (Exception ex)
@@ -2569,6 +3154,7 @@ namespace User.PluginSdkDemo
                     ConnectToPedal.IsChecked = false;
                     TextBox_debugOutput.Text = "Serialport already open, close it";
                     Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                    Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
                     Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
                     btn_pedal_connect.Content = "Connect To Pedal";
                 }
@@ -2580,6 +3166,7 @@ namespace User.PluginSdkDemo
                 TextBox_debugOutput.Text = "Serialport close";
                 Plugin.connectSerialPort[indexOfSelectedPedal_u] = false;
                 Plugin.Settings.connect_status[indexOfSelectedPedal_u] = 0;
+                Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
                 btn_pedal_connect.Content = "Connect To Pedal";
 
             }
@@ -2656,7 +3243,18 @@ namespace User.PluginSdkDemo
         }
 
 
-
+        public void KF_filter_order_changed(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelOrder = (byte)KF_filter_order.SelectedIndex;
+            }
+            catch (Exception caughtEx)
+            {
+                string errorMessage = caughtEx.Message;
+                TextBox_debugOutput.Text = errorMessage;
+            }
+        }
 
         public void SpindlePitchChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -2687,6 +3285,151 @@ namespace User.PluginSdkDemo
             Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = false;
         }
 
+        public void Read_for_slot(object sender, EventArgs e)
+        {
+            var Button = sender as SHButtonPrimary;
+            
+            using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                openFileDialog.Title = "Datei auswählen";
+                openFileDialog.Filter = "Configdateien (*.json)|*.json";
+                string currentDirectory = Directory.GetCurrentDirectory();
+                openFileDialog.InitialDirectory = currentDirectory + "\\PluginsData\\Common";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string content = (string)openFileDialog.FileName;
+
+
+                    string filePath = openFileDialog.FileName;
+                    //TextBox_debugOutput.Text =  Button.Name; 
+                    if (Button.Name == "Reading_clutch")
+                    {
+
+                        Plugin.Settings.pedal_file_string[profile_select,0] = filePath;
+                        Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
+                        Plugin.Settings.file_enable[profile_select, 0] = 1;
+                        Clutch_file_check.IsChecked = true;
+
+                    }
+                    if (Button.Name == "Reading_brake")
+                    {
+                        Plugin.Settings.pedal_file_string[profile_select, 1] = filePath;
+                        Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                        Plugin.Settings.file_enable[profile_select, 1] = 1;
+                        Brake_file_check.IsChecked = true;
+                    }
+                    if (Button.Name == "Reading_gas")
+                    {
+                        Plugin.Settings.pedal_file_string[profile_select, 2] = filePath;
+                        Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                        Plugin.Settings.file_enable[profile_select, 2] = 1;
+                        Gas_file_check.IsChecked = true;
+                    }
+
+
+                }
+            }
+        }
+
+        public void Clear_slot(object sender, EventArgs e)
+        {
+            var Button = sender as SHButtonPrimary;
+            if (Button.Name == "Clear_clutch")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 0] = "";
+                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
+                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Clutch_file_check.IsChecked = false;
+
+            }
+            if (Button.Name == "Clear_brake")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 1] = "";
+                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Brake_file_check.IsChecked = false;
+
+            }
+            if (Button.Name == "Clear_gas")
+            {
+
+                Plugin.Settings.pedal_file_string[profile_select, 2] = "";
+                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Gas_file_check.IsChecked = false;
+
+            }
+            //updateTheGuiFromConfig();
+        }
+        void Parsefile(uint profile_index)
+        {
+            // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
+
+
+            // c# code to iterate over all fields of struct and set values from json file
+            for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+            {
+                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                {
+                    payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[pedalIdx].payloadPedalConfig_;
+                    // Read the entire JSON file
+                    string jsonString = File.ReadAllText(Plugin.Settings.pedal_file_string[profile_index, pedalIdx]);
+                    // Parse all of the JSON.
+                    //JsonNode forecastNode = JsonNode.Parse(jsonString);
+                    dynamic data = JsonConvert.DeserializeObject(jsonString);
+                    //var s = default(payloadPedalConfig);
+                    Object obj = payloadPedalConfig_fromJson_st;// s;
+                    FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+                    // Iterate over each field and print its name and value
+                    foreach (var field in fi)
+                    {
+
+                        if (data["payloadPedalConfig_"][field.Name] != null)
+                        //if (forecastNode["payloadPedalConfig_"][field.Name] != null)
+                        {
+                            try
+                            {
+                                if (field.FieldType == typeof(float))
+                                {
+                                    //float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                    float value = (float)data["payloadPedalConfig_"][field.Name];
+                                    field.SetValue(obj, value);
+                                }
+
+                                if (field.FieldType == typeof(byte))
+                                {
+                                    //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                    byte value = (byte)data["payloadPedalConfig_"][field.Name];
+                                    field.SetValue(obj, value);
+                                }
+
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+
+                        }
+                    }
+
+                    // set values in global structure
+                    dap_config_st[pedalIdx].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                }
+                
+            }
+            
+
+
+            updateTheGuiFromConfig();
+        }
+    
+
+        
+
+        
         private void OpenButton_Click(object sender, EventArgs e)
         {
             using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
@@ -2832,7 +3575,7 @@ namespace User.PluginSdkDemo
         {
 
             closeSerialAndStopReadCallback(indexOfSelectedPedal_u);
-
+            Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 0;
 
             if (ConnectToPedal.IsChecked == true)
             {
@@ -2957,6 +3700,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = Convert.ToByte(y_actual);
                     text_point_pos.Text = "Travel:0%";
                     text_point_pos.Text += "\nForce: "+(int)y_actual+"%";
+                    
                 }
                 if (rectangle.Name == "rect1")
                 {
@@ -3073,8 +3817,8 @@ namespace User.PluginSdkDemo
                     double actual_x = (x - 5) * dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = Convert.ToByte(actual_x);
                     //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(text_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) - text_RPM_freq_min.Width / 2+rect_RPM_min.Width/2);
-                    Canvas.SetTop(text_RPM_freq_min, 5);
+                    Canvas.SetLeft(Panel_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) + rect_RPM_min.Width / 2 - Panel_RPM_freq_min.Width / 2);
+                    Canvas.SetTop(Panel_RPM_freq_min, Canvas.GetTop(rect_RPM_min) - Panel_RPM_freq_min.Height);
                 }
                 if (rectangle.Name == "rect_RPM_max")
                 {
@@ -3083,11 +3827,11 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = Convert.ToByte(actual_x);
 
                     //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(text_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) - text_RPM_freq_max.Width / 2+rect_RPM_max.Width/2);
-                    Canvas.SetTop(text_RPM_freq_max, 5);
+                    Canvas.SetLeft(Panel_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) + rect_RPM_max.Width / 2 - Panel_RPM_freq_max.Width / 2);
+                    Canvas.SetTop(Panel_RPM_freq_max, Canvas.GetTop(rect_RPM_max) - Panel_RPM_freq_max.Height);
                 }
-                text_RPM_freq_min.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
-                text_RPM_freq_max.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
+                textBox_RPM_freq_min.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "";
+                textBox_RPM_freq_max.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "";
 
                 //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
 
@@ -3202,7 +3946,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = Convert.ToByte(actual_x);
                     text_damping.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
                     Canvas.SetLeft(text_damping, Canvas.GetLeft(rect_damping) + rect_damping.Width / 2-text_damping.Width/2);
-                    Canvas.SetTop(text_damping, 5);
+                    Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping)-text_damping.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 // ABS Amplitude
@@ -3218,23 +3962,25 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = Convert.ToByte(actual_x);
-
+                    textBox_ABS_AMP.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "";
 
                     switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
                     {
                         case 0:
-                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                            
+                            text_ABS.Text = "kg";
                             break;
                         case 1:
-                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                            
+                            text_ABS.Text = "%";
                             break;
                         default:
                             break;
                     }
 
-                    
-                    Canvas.SetLeft(text_ABS, Canvas.GetLeft(rect_ABS) - text_ABS.Width / 2 + rect_ABS.Width / 2);
-                    Canvas.SetTop(text_ABS, 5);
+
+                    Canvas.SetLeft(Panel_ABS_AMP, Canvas.GetLeft(rect_ABS) + rect_ABS.Width / 2 - Panel_ABS_AMP.Width / 2);
+                    Canvas.SetTop(Panel_ABS_AMP, Canvas.GetTop(rect_ABS) - Panel_ABS_AMP.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //ABS freq
@@ -3250,9 +3996,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = Convert.ToByte(actual_x);
-                    text_ABS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
-                    Canvas.SetLeft(text_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2 - text_ABS_freq.Width / 2);
-                    Canvas.SetTop(text_ABS_freq, 5);
+                    textBox_ABS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "";
+                    Canvas.SetLeft(Panel_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2 - Panel_ABS_freq.Width / 2);
+                    Canvas.SetTop(Panel_ABS_freq, Canvas.GetTop(rect_ABS_freq) - Panel_ABS_freq.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //max game output
@@ -3269,9 +4015,9 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = Convert.ToByte(actual_x);
 
-                    text_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
-                    Canvas.SetLeft(text_max_game, Canvas.GetLeft(rect_max_game) - text_max_game.Width / 2 + rect_max_game.Width / 2);
-                    Canvas.SetTop(text_max_game, 5);
+                    textbox_max_game.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
+                    Canvas.SetLeft(Panel_max_game, Canvas.GetLeft(rect_max_game) + rect_max_game.Width / 2 - Panel_max_game.Width / 2);
+                    Canvas.SetTop(Panel_max_game, Canvas.GetTop(rect_max_game) - Panel_max_game.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //KF Slider
@@ -3291,7 +4037,7 @@ namespace User.PluginSdkDemo
 
                     text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
                     Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-                    Canvas.SetTop(text_KF, 5);
+                    Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF)-text_KF.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //LC rating slider
@@ -3307,10 +4053,12 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating = (byte)(actual_x / 2);
-
-                    text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
-                    Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
-                    Canvas.SetTop(text_LC_rating, 5);
+                    textBox_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2 + "";
+                    //text_LC_rating.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2 + "kg";
+                    Canvas.SetLeft(Panel_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - Panel_LC_rating.Width / 2);
+                    Canvas.SetTop(Panel_LC_rating, Canvas.GetTop(rect_LC_rating) - Panel_LC_rating.Height);
+                    // Canvas.SetLeft(text_LC_rating, Canvas.GetLeft(rect_LC_rating) + rect_LC_rating.Width / 2 - text_LC_rating.Width / 2);
+                    //Canvas.SetTop(text_LC_rating, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
                 // RPM effect AMP
@@ -3319,7 +4067,7 @@ namespace User.PluginSdkDemo
                     // Ensure the rectangle stays within the canvas
                     double x = e.GetPosition(canvas_horz_RPM_AMP).X - offset.X;
                     double RPM_AMP_max = 200;
-                    double dx = (canvas_horz_RPM_AMP.Width -10)/ RPM_AMP_max;
+                    double dx = (canvas_horz_RPM_AMP.Width-10)/ RPM_AMP_max;
                     double min_position = 0 * dx;
                     double max_position = RPM_AMP_max * dx;
 
@@ -3327,9 +4075,9 @@ namespace User.PluginSdkDemo
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(actual_x);
 
-                    text_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100 + "kg";
-                    Canvas.SetLeft(text_RPM_AMP, x - text_RPM_AMP.Width / 2 + rect_RPM_AMP.Width / 2);
-                    Canvas.SetTop(text_RPM_AMP, 5);
+                    textBox_RPM_AMP.Text = (((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100) +"";
+                    Canvas.SetLeft(Panel_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) + rect_RPM_AMP.Width / 2 - Panel_RPM_AMP.Width / 2);
+                    Canvas.SetTop(Panel_RPM_AMP, Canvas.GetTop(rect_RPM_AMP) - Panel_RPM_AMP.Height);                    
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3366,9 +4114,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = Convert.ToByte(actual_x);
-                    text_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
-                    Canvas.SetLeft(text_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - text_bite_amp.Width / 2);
-                    Canvas.SetTop(text_bite_amp, 5);
+                    textBox_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "";
+                    Canvas.SetLeft(Panel_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - Panel_bite_amp.Width / 2);
+                    Canvas.SetTop(Panel_bite_amp, Canvas.GetTop(rect_bite_amp) - Panel_bite_amp.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 if (rectangle.Name == "rect_bite_freq")
@@ -3383,9 +4131,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = Convert.ToByte(actual_x);
-                    text_bite_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq) + "Hz";
-                    Canvas.SetLeft(text_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - text_bite_freq.Width / 2);
-                    Canvas.SetTop(text_bite_freq, 5);
+                    textBox_bite_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq) + "";
+                    Canvas.SetLeft(Panel_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - Panel_bite_freq.Width / 2);
+                    Canvas.SetTop(Panel_bite_freq, Canvas.GetTop(rect_bite_freq) - Panel_bite_freq.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //Pgain
@@ -3401,9 +4149,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)actual_x;
-                    text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 4);
+                    text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
                     Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-                    Canvas.SetTop(text_Pgain, 5);
+                    Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3419,9 +4167,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)actual_x;
-                    text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 4);
+                    text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 1);
                     Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-                    Canvas.SetTop(text_Igain, 5);
+                    Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3439,7 +4187,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)actual_x;
                     text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
                     Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-                    Canvas.SetTop(text_Dgain, 5);
+                    Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3457,7 +4205,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)actual_x;
                     text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 2);
                     Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-                    Canvas.SetTop(text_VFgain, 5);
+                    Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3473,9 +4221,9 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = Convert.ToByte(actual_x);
-                    text_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "%";
-                    Canvas.SetLeft(text_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - text_G_multi.Width / 2);
-                    Canvas.SetTop(text_G_multi, 5);
+                    textbox_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "";
+                    Canvas.SetLeft(Panel_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - Panel_G_multi.Width / 2);
+                    Canvas.SetTop(Panel_G_multi, Canvas.GetTop(rect_G_force_multi) - Panel_G_multi.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
                 //G_force window
@@ -3493,7 +4241,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = Convert.ToByte(actual_x);
                     text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
                     Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
-                    Canvas.SetTop(text_G_window, 5);
+                    Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3511,9 +4259,61 @@ namespace User.PluginSdkDemo
                     x = Math.Max(min_position, Math.Min(x, max_position));
                     double actual_x = x / dx;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
-                    text_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 4) + "mm/kg";
-                    Canvas.SetLeft(text_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - text_MPC_0th_order_gain.Width / 2);
-                    Canvas.SetTop(text_MPC_0th_order_gain, 5);
+                    textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) ;
+                    Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
+                    Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                //Wheelslip
+                if (rectangle.Name == "rect_WS_amp")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_amp).X - offset.X;
+                    double WS_amp_max = 200;
+                    double dx = canvas_horz_bite_amp.Width / WS_amp_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_amp_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = Convert.ToByte(actual_x);
+                    textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
+                    Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
+                    Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                if (rectangle.Name == "rect_WS_freq")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
+                    double WS_freq_max = 30;
+                    double dx = canvas_horz_bite_freq.Width / WS_freq_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_freq_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = Convert.ToByte(actual_x);
+                    textBox_WS_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq) + "";
+                    Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
+                    Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                if (rectangle.Name == "rect_WS_trigger")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
+                    double WS_trigger_max = 50;
+                    double dx = canvas_horz_bite_freq.Width / WS_trigger_max;
+                    double min_position = 0 * dx;
+                    double max_position = WS_trigger_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    Plugin.Settings.WS_trigger = Convert.ToByte(actual_x);
+                    textBox_WS_freq.Text = (Plugin.Settings.WS_trigger+50) + "";
+                    Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
+                    Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
 
@@ -3548,7 +4348,7 @@ namespace User.PluginSdkDemo
                 var rectangle = sender as Rectangle;
                 isDragging = false;
                 rectangle.ReleaseMouseCapture();
-                text_point_pos.Opacity=0;
+                text_point_pos.Visibility = Visibility.Hidden;
                 //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
                 //Color color = Color.FromArgb(150, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
                 //rectangle.Fill = btn_update.Background;
@@ -3582,9 +4382,15 @@ namespace User.PluginSdkDemo
             btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
             InvertLoadcellReading_check.Visibility = Visibility.Visible;
+            InvertMotorDir_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
-            
+            Border_serial_monitor.Visibility = Visibility.Visible;
+            debug_border.Visibility = Visibility.Visible;
+            debug_label_text.Visibility = Visibility.Visible;
+            Label_reverse_LC.Visibility = Visibility.Visible;
+            Label_reverse_servo.Visibility = Visibility.Visible;
+
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -3599,8 +4405,14 @@ namespace User.PluginSdkDemo
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            InvertMotorDir_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
+            Border_serial_monitor.Visibility = Visibility.Hidden;
+            debug_border.Visibility = Visibility.Hidden;
+            debug_label_text.Visibility = Visibility.Hidden;
+            Label_reverse_LC.Visibility = Visibility.Hidden;
+            Label_reverse_servo.Visibility = Visibility.Hidden;
         }
 
 
@@ -3625,12 +4437,22 @@ namespace User.PluginSdkDemo
         }
 
 
+        private void InvertMotorDir_checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 = 1;
+        }
+        private void InvertMotorDir_unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.invertMotorDirection_u8 = 0;
+        }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+
+
+        private void CheckBox_Reading_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.reading_config = 1;
         }
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void CheckBox_Reading_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.reading_config = 0;
         }
@@ -3659,13 +4481,13 @@ namespace User.PluginSdkDemo
         private void checkbox_enable_RPM_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 1;
-            checkbox_enable_RPM.Content = "Engine RPM Effect Enabled";
+            checkbox_enable_RPM.Content = "Effect Enabled";
         }
 
         private void checkbox_enable_RPM_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Settings.RPM_enable_flag[indexOfSelectedPedal_u] = 0;
-            checkbox_enable_RPM.Content = "Engine RPM Effect Disabled";
+            checkbox_enable_RPM.Content = "Effect Disabled";
         }
 
         private void Vjoy_out_check_Checked(object sender, RoutedEventArgs e)
@@ -3906,10 +4728,132 @@ namespace User.PluginSdkDemo
             }
 
         }
+        // RPM effect select
+        private void RPMeffecttype_Sel_1_Checked(object sender, RoutedEventArgs e)
+        {
+            if (RPMeffecttype_Sel_1.IsChecked == true)
+            {
+                Plugin.Settings.RPM_effect_type = 0;
+                //TextBox_debugOutput.Text = "" + Plugin.Settings.RPM_effect_type;
+            }
+            if (RPMeffecttype_Sel_2.IsChecked == true)
+            {
+                Plugin.Settings.RPM_effect_type = 1;
+                //TextBox_debugOutput.Text = "" + Plugin.Settings.RPM_effect_type;
+            }
+        }
 
+        private void TabControl_file_path(object sender, SelectionChangedEventArgs e)
+        {
+            profile_select = (uint)ProfileTab.SelectedIndex;
+            Plugin.profile_index = profile_select;
+            //Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
+            // update the sliders & serial port selection accordingly
+            updateTheGuiFromConfig();
+        }
 
+        private void file_check_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkbox = sender as System.Windows.Controls.CheckBox;
+            if (checkbox.Name == "Clutch_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 0] = 1;
+            }
 
-        
+            if (checkbox.Name == "Brake_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 1] = 1;
+            }
+
+            if (checkbox.Name == "Gas_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 2] = 1;
+            }
+        }
+
+        private void file_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var checkbox = sender as System.Windows.Controls.CheckBox;
+            if (checkbox.Name == "Clutch_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 0] = 0;
+            }
+
+            if (checkbox.Name == "Brake_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 1] = 0;
+            }
+
+            if (checkbox.Name == "Gas_file_check")
+            {
+                Plugin.Settings.file_enable[profile_select, 2] = 0;
+            }
+        }
+
+        public void Profile_change(uint profile_index)
+        {
+            profile_select = profile_index;
+            ProfileTab.SelectedIndex = (int)profile_index;
+            //if (Plugin.Settings.file_enable[profile_select])
+            Parsefile(profile_index);
+            string tmp;
+            switch (profile_index)
+            {
+                case 0:
+                    tmp = "Profile A";
+                    break;
+                case 1:
+                    tmp = "Profile B";
+                    break;
+                case 2:
+                    tmp = "Profile C";
+                    break;
+                case 3:
+                    tmp = "Profile D";
+                    break;
+                default:
+                    tmp = "No Profile";
+                    break;
+            }
+            Plugin.current_profile = tmp;
+        }
+
+        private void effect_bind_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WSeffect_bind = (string)textBox_wheelslip_effect_string.Text;
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 1;
+            updateTheGuiFromConfig();
+        }
+        private void effect_clear_click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WSeffect_bind = "";
+            textBox_wheelslip_effect_string.Text = "";
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
+            updateTheGuiFromConfig();
+        }
+
+        private void checkbox_enable_WS_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 1;
+            //checkbox_enable_RPM.Content = "Effect Enabled";
+        }
+
+        private void checkbox_enable_WS_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
+            //checkbox_enable_RPM.Content = "Effect Disabled";
+        }
+
+        private void btn_apply_profile_Click(object sender, RoutedEventArgs e)
+        {
+
+            Parsefile((uint)ProfileTab.SelectedIndex);
+        }
+
+        private void btn_send_profile_Click(object sender, RoutedEventArgs e)
+        {
+            Sendconfigtopedal_shortcut();
+        }
 
         /*
 private void GetRectanglePositions()

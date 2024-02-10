@@ -1,5 +1,5 @@
 #include "isv57communication.h"
-
+#include "Main.h"
 
 Modbus modbus(Serial1);
 
@@ -7,7 +7,7 @@ Modbus modbus(Serial1);
 // initialize the communication
 isv57communication::isv57communication()
 {
-  Serial1.begin(38400, SERIAL_8N1, RXPIN, TXPIN, true); // Modbus serial
+  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
   modbus.init(MODE);
 }
 
@@ -119,12 +119,14 @@ void isv57communication::sendTunedServoParameters() {
 
 bool isv57communication::checkCommunication()
 {
-  if(modbus.requestFrom(slaveId, 0x03, 0x0000,  2) > 0)
+  if(modbus.requestFrom(slaveId, 0x03, 0x0000, 2) > 0)
   {
+    //Serial.println("Lifeline check: true");
     return true;
   }
   else
   {
+    //Serial.println("Lifeline check: false");
     return false;
   }
 }

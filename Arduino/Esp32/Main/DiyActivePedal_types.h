@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 126
+#define DAP_VERSION_CONFIG 130
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -31,6 +31,7 @@ struct payloadPedalAction {
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
   uint8_t G_value;
+  uint8_t WS_u8;
 };
 
 
@@ -43,14 +44,15 @@ struct payloadPedalState_Basic {
 struct payloadPedalState_Extended {
 
   unsigned long timeInMs_u32; 
-  uint16_t pedalForce_raw_u16;
-  uint16_t pedalForce_filtered_u16;
-  int16_t forceVel_est_i16;
+  float pedalForce_raw_fl32;
+  float pedalForce_filtered_fl32;
+  float forceVel_est_fl32;
 
   // register values from servo
   int16_t servoPosition_i16;
   int16_t servoPositionTarget_i16;
   int16_t servo_voltage_0p1V;
+  int16_t servo_current_percent_i16;
 };
 
 struct payloadPedalConfig {
@@ -105,7 +107,9 @@ struct payloadPedalConfig {
     //G force effect
   uint8_t G_multi;
   uint8_t G_window;
-
+  //wheel slip
+  uint8_t WS_amp;
+  uint8_t WS_freq;
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
@@ -128,6 +132,7 @@ struct payloadPedalConfig {
 
   // Kalman filter model noise
   uint8_t kf_modelNoise;
+  uint8_t kf_modelOrder;
 
   // debug flags, sued to enable debug output
   uint8_t debug_flags_0;
@@ -140,6 +145,9 @@ struct payloadPedalConfig {
 
   // invert loadcell sign
   uint8_t invertLoadcellReading_u8;
+
+  // invert motor direction
+  uint8_t invertMotorDirection_u8;
 
   // spindle pitch in mm/rev
   uint8_t spindlePitch_mmPerRev_u8;
@@ -211,6 +219,8 @@ struct DAP_calculationVariables_st
   float BP_freq;
   float dampingPress;
   float Force_Max_default;
+  float WS_amp;
+  float WS_freq;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);

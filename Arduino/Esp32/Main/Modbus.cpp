@@ -201,7 +201,7 @@ long Modbus::inputRegisterRead(int id, int address, int block)
 
 
 
-int Modbus::requestFrom(int slaveId, int type, int address,int nb)
+int Modbus::requestFrom(int slaveId, int type, int address, int nb)
 {
     
     // address = address - 1;
@@ -291,22 +291,34 @@ int Modbus::requestFrom(int slaveId, int type, int address,int nb)
             Serial.println();
      }
 
+    /*Serial.print(lenRx);
+    Serial.println();*/
+
+
     if(lenRx > 2){
         int crc1 = rawRx[lenRx - 1] <<8 | rawRx[lenRx - 2];
         int crc2 = CheckCRC(rawRx, lenRx - 2);
         //Serial.printf("CRC1: %04X CRC2: %04X\n",crc1, crc2);
 
+
+        /*Serial.print("CRC1: ");
+        Serial.print(crc1);
+        Serial.print(",   CRC2: ");
+        Serial.print(crc2);
+        Serial.println();*/
+
          if(crc1 == crc2)
           {
-        
             datalen = rawRx[2];
-
-        //  for(int i = 0; i < datalen;i++){
-        //     dataRx[i] = rawRx[i+3];
-        //   }
-           return datalen;
+            /*Serial.print("Datalen: ");
+            Serial.print(datalen);
+            Serial.println();*/
+            return datalen;
           }
-         else{ return -1; }
+          else
+          { 
+            return -1; 
+          }
     }else{
         return -1;
     }

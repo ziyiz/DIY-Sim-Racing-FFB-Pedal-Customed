@@ -38,6 +38,14 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AvalonDock, Version=4.72.1.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Dirkster.AvalonDock.4.72.1\lib\net40\AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AvalonDock.Themes.VS2013, Version=4.72.1.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SimHub\AvalonDock.Themes.VS2013.dll</HintPath>
+    </Reference>
     <Reference Include="GameReaderCommon">
       <HintPath>..\..\..\SimHub\GameReaderCommon.dll</HintPath>
       <Private>False</Private>
@@ -54,7 +62,7 @@
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\SimHub\MahApps.Metro.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -117,6 +125,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="vJoyInterfaceWrap, Version=0.2.1.6, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WoteverCommon, Version=1.1.0.0, Culture=neutral, PublicKeyToken=35893a067a282a97, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SimHub\WoteverCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CubicSpline.cs" />
@@ -158,8 +171,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(ProjectDir)obj\Release\DiyActivePedal.dll  $(ProjectDir)bin
-xcopy /y $(ProjectDir)obj\Release\DiyActivePedal.g.resources  $(ProjectDir)bin
+    <PostBuildEvent>xcopy /y $(ProjectDir)obj\Release\DiyActivePedal.dll  $(ProjectDir)bin 
+xcopy /y $(ProjectDir)obj\Release\DiyActivePedal.g.resources  $(ProjectDir)bin 
 xcopy /y $(ProjectDir)obj\Release\DiyActivePedal.pdb $(ProjectDir)bin</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

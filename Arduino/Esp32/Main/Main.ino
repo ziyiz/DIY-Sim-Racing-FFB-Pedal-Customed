@@ -54,6 +54,7 @@ ABSOscillation absOscillation;
 RPMOscillation RPMOscillation;
 BitePointOscillation BitePointOscillation;
 G_force_effect _G_force_effect;
+WSOscillation WSOscillation;
 #define ABS_OSCILLATION
 
 
@@ -220,7 +221,7 @@ void setup()
 
   // init controller
   SetupController();
-  delay(2000);
+  delay(3000);
   
 
 
@@ -254,8 +255,8 @@ void setup()
 
 
 
-
-  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin);
+  bool invMotorDir = dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 > 0;
+  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin, invMotorDir);
   loadcell = new LoadCell_ADS1256();
 
   loadcell->setLoadcellRating(dap_config_st.payLoadPedalConfig_.loadcell_rating);
@@ -554,6 +555,7 @@ void pedalUpdateTask( void * pvParameters )
       RPMOscillation.forceOffset(&dap_calculationVariables_st);
       BitePointOscillation.forceOffset(&dap_calculationVariables_st);
       _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
+      WSOscillation.forceOffset(&dap_calculationVariables_st);
     #endif
 
     //update max force with G force effect
@@ -590,14 +592,40 @@ void pedalUpdateTask( void * pvParameters )
     }
 
     // Do the loadcell signal filtering
-    float filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
-    float changeVelocity = kalman->changeVelocity();
+    float filteredReading = 0;
+    float changeVelocity = 0;
+
+    // const velocity model denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 0)
+    {
+      filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      changeVelocity = kalman->changeVelocity();
+    }
+
+    // const acceleration model denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 1)
+    {
+      filteredReading = kalman_2nd_order->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      changeVelocity = kalman->changeVelocity();
+    }
+
+    // exponential denoising filter
+    if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 2)
+    {
+      float alpha_exp_filter = 1.0f - ( (float)dap_config_st.payLoadPedalConfig_.kf_modelNoise) / 5000.0f;
+      float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
+      filteredReading = filteredReading_exp_filter;
+    }
+
+    
+
+    
 
 
     // Do position state estimate
-    float stepper_pos_filtered_fl32 = kalman_2nd_order->filteredValue(stepper->getCurrentPosition(), 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
-    float stepper_vel_filtered_fl32 = kalman_2nd_order->changeVelocity();
-    float stepper_accel_filtered_fl32 = kalman_2nd_order->changeAccel();
+    float stepper_pos_filtered_fl32 = 0;//kalman_2nd_order->filteredValue(stepper->getCurrentPosition(), 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+    float stepper_vel_filtered_fl32 = 0;//kalman_2nd_order->changeVelocity();
+    float stepper_accel_filtered_fl32 = 0;//kalman_2nd_order->changeAccel();
 
 
     /*Serial.print(stepper->getCurrentPosition());
@@ -607,9 +635,7 @@ void pedalUpdateTask( void * pvParameters )
     Serial.print(stepper_vel_filtered_fl32);
     Serial.println("   ");*/
 
-    /*float alpha_exp_filter = 0.98;
-    float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
-    filteredReading = filteredReading_exp_filter;*/
+    
 
     // Apply FIR notch filter to reduce force oscillation caused by ABS
     //#define APPLY_FIR_FILTER
@@ -651,7 +677,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
     //Add effect by force
-    float effect_force=absForceOffset+ BitePointOscillation.BitePoint_Force_offset;
+    float effect_force=absForceOffset+ BitePointOscillation.BitePoint_Force_offset+WSOscillation.WS_Force_offset;
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
@@ -805,7 +831,7 @@ void pedalUpdateTask( void * pvParameters )
         printCycleCounter = 0;
         dap_state_basic_st.payloadPedalState_Basic_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
         dap_state_basic_st.payloadPedalState_Basic_.pedalPosition_u16 = constrain(stepperPosFraction, 0, 1) * 65535;
-        dap_state_basic_st.payloadPedalState_Basic_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32000.0;//65535;
+        dap_state_basic_st.payloadPedalState_Basic_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32767.0;//65535;
 
         dap_state_basic_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_BASIC;
         dap_state_basic_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
@@ -827,15 +853,17 @@ void pedalUpdateTask( void * pvParameters )
       {
         printCycleCounter = 0;
         dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
-        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_u16 =  (uint16_t)constrain(loadcellReading * 200, 0, 65000);
-        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_u16 =  (uint16_t)constrain(filteredReading * 200, 0, 65000);
-        dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_i16 =  (uint16_t)constrain(changeVelocity * 100, -32000, 32000);
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_fl32 =  loadcellReading;;
+        dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_fl32 =  filteredReading;
+        dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_fl32 =  changeVelocity;
 
         if(semaphore_readServoValues!=NULL)
         {
           if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
             dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = servoPos_i16;
             dap_state_extended_st.payloadPedalState_Extended_.servo_voltage_0p1V =  isv57.servo_voltage_0p1V;
+            dap_state_extended_st.payloadPedalState_Extended_.servo_current_percent_i16 = isv57.servo_current_percent;
+            
             xSemaphoreGive(semaphore_readServoValues);
           }
         }
@@ -1025,7 +1053,12 @@ void serialCommunicationTask( void * pvParameters )
             //RPM effect
             RPMOscillation.RPM_value=dap_actions_st.payloadPedalAction_.RPM_u8;
             //G force effect
-            _G_force_effect.G_value=dap_actions_st.payloadPedalAction_.G_value-128;            
+            _G_force_effect.G_value=dap_actions_st.payloadPedalAction_.G_value-128;       
+            //wheel slip
+            if (dap_actions_st.payloadPedalAction_.WS_u8)
+            {
+              WSOscillation.trigger();
+            }     
             // trigger system identification
             if (dap_actions_st.payloadPedalAction_.startSystemIdentification_u8)
             {
@@ -1107,8 +1140,7 @@ int64_t timeDiff = 0;
 
 
 uint64_t print_cycle_counter_u64 = 0;
-uint64_t lifeline_cycle_counter_u64 = 0;
-unsigned long cycleTimeLastCall_lifelineCheck = micros();
+unsigned long cycleTimeLastCall_lifelineCheck = 0;//micros();
 void servoCommunicationTask( void * pvParameters )
 {
   
@@ -1128,7 +1160,6 @@ void servoCommunicationTask( void * pvParameters )
       cycleTimeLastCall_lifelineCheck = now;
 
       isv57LifeSignal_b = isv57.checkCommunication();
-      lifeline_cycle_counter_u64 = 0;
       //Serial.println("Lifeline check");
     }
 
@@ -1239,7 +1270,7 @@ void servoCommunicationTask( void * pvParameters )
 
 
         // invert the compensation wrt the motor direction
-        if (MOTOR_INVERT_MOTOR_DIR)
+        if (dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 == 1)
         {
           servo_offset_compensation_steps_local_i32 *= -1;
         }

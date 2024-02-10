@@ -17,7 +17,7 @@ private:
   int32_t _posMin,   _posMax;      // stepper position at min/max of travel
 
 public:
-  StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint8_t pinMin, uint8_t pinMax);
+  StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint8_t pinMin, uint8_t pinMax, bool invertMotorDir_b);
   bool hasValidStepper() const { return NULL != _stepper; }
 
 public:
