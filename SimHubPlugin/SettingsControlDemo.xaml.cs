@@ -4844,6 +4844,17 @@ namespace User.PluginSdkDemo
             //checkbox_enable_RPM.Content = "Effect Disabled";
         }
 
+        private void btn_apply_profile_Click(object sender, RoutedEventArgs e)
+        {
+
+            Parsefile((uint)ProfileTab.SelectedIndex);
+        }
+
+        private void btn_send_profile_Click(object sender, RoutedEventArgs e)
+        {
+            Sendconfigtopedal_shortcut();
+        }
+
         /*
 private void GetRectanglePositions()
 {
