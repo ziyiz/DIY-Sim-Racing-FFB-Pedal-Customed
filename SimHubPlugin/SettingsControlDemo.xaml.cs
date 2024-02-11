@@ -2715,7 +2715,21 @@ namespace User.PluginSdkDemo
 
                 if (sp.IsOpen)
                 {
-                    int receivedLength = sp.BytesToRead;
+
+                
+                    int receivedLength = 0;
+                    try 
+                    {
+                        receivedLength = sp.BytesToRead; 
+                    }
+                    catch (Exception ex)
+                    {
+                        TextBox_debugOutput.Text = ex.Message;
+                        //ConnectToPedal.IsChecked = false;
+                        return;
+                    }
+
+                
 
                     if (receivedLength > 0)
                     {
