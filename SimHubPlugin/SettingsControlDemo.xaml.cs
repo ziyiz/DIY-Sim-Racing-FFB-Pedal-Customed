@@ -1890,7 +1890,7 @@ namespace User.PluginSdkDemo
 
             System.Windows.Controls.TextBox textBox = (System.Windows.Controls.TextBox)sender;
 
-            e.Handled = regex.IsMatch(textBox.Text + e.Text);
+            e.Handled = !regex.IsMatch(textBox.Text + e.Text);
 
             ////if (!e.Handled)
             ////{
@@ -2654,13 +2654,37 @@ namespace User.PluginSdkDemo
                 }
             }
 
+
+
+            //int i = 0;
+            //while (i < len)
+            //{
+            //    bool found = true;
+            //    for (int j = 0; j < sequence.Length; j++)
+            //    {
+            //        if (source[i + j] != sequence[j])
+            //        {
+            //            found = false;
+            //            break;
+            //        }
+            //    }
+            //    if (found)
+            //    {
+            //        indices.Add(i); // Sequence found, add index to the list
+            //        i += sequence.Length;
+            //    }
+            //    else { i++; } 
+            //}
+
+
+
             return indices;
         }
 
 
         int[] appendedBufferOffset = { 0, 0, 0 };
 
-        static int bufferSize = 100000;
+        static int bufferSize = 10000;
         byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
 
         unsafe public void timerCallback_serial(object sender, EventArgs e)
@@ -2720,7 +2744,7 @@ namespace User.PluginSdkDemo
                     int receivedLength = 0;
                     try 
                     {
-                        receivedLength = sp.BytesToRead; 
+                        receivedLength = sp.BytesToRead;
                     }
                     catch (Exception ex)
                     {
@@ -2740,9 +2764,15 @@ namespace User.PluginSdkDemo
 
                         // determine byte sequence which is defined as message end --> crlf
                         byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
+                        int stop_char_length = byteToFind.Length;
+
+
+                        // calculate current buffer length
+                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+
 
                         // check if buffer is large enough otherwise discard in buffer and set offset to 0
-                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength))
+                        if (bufferSize > currentBufferLength)
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
                         }
@@ -2750,20 +2780,21 @@ namespace User.PluginSdkDemo
                         {
                             sp.DiscardInBuffer();
                             appendedBufferOffset[pedalSelected] = 0;
+                            return;
                         }
 
 
-                        // calculate current buffer length
-                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+                        
 
 
                         // copy to local buffer
-                        byte[] localBuffer = new byte[currentBufferLength];
-                        Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
+                        //byte[] localBuffer = new byte[currentBufferLength];
+                        
+                        //Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
 
 
                         // find all occurences of crlf as they indicate message end
-                        List<int> indices = FindAllOccurrences(localBuffer, byteToFind, currentBufferLength);
+                        List<int> indices = FindAllOccurrences(buffer_appended[pedalSelected], byteToFind, currentBufferLength);
 
 
 
@@ -2771,24 +2802,7 @@ namespace User.PluginSdkDemo
                         // Destination array
                         byte[] destinationArray = new byte[1000];
 
-                        // copy the last not finished buffer element to begining of next cycles buffer
-                        // and determine buffer offset
-                        if (indices.Count > 0)
-                        {
-                            // If at least one crlf was detected, check whether it arrieved at the last bytes
-                            int lastElement = indices.Last<int>();
-                            int remainingMessageLength = currentBufferLength - (lastElement + 2);
-                            if (remainingMessageLength >= 0)
-                            {
-                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
-
-                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement + 2, buffer_appended[pedalSelected], 0, remainingMessageLength);
-                            }
-                        }
-                        else
-                        {
-                            appendedBufferOffset[pedalSelected] += receivedLength;
-                        }
+                        
 
 
 
@@ -2796,22 +2810,32 @@ namespace User.PluginSdkDemo
 
                         int srcBufferOffset = 0;
                         // decode every message
-                        foreach (int number in indices)
+                        //foreach (int number in indices)
+                        for (int msgId = 0; msgId < indices.Count; msgId++)
                         {
                             // computes the length of bytes to read
-                            int destBuffLength = number - srcBufferOffset;
-                            if (destBuffLength > 1000)
+                            int destBuffLength = 0; //number - srcBufferOffset;
+
+                            if (msgId == 0)
+                            {
+                                srcBufferOffset = 0;
+                                destBuffLength = indices.ElementAt(msgId);
+                            }
+                            else 
+                            {
+                                srcBufferOffset = indices.ElementAt(msgId - 1) + stop_char_length;
+                                destBuffLength = indices.ElementAt(msgId) - srcBufferOffset;
+                            }
+
+                            if (destBuffLength <= 0)
                             {
                                 continue;
                             }
 
 
+
                             // copy bytes to subarray
-                            Buffer.BlockCopy(localBuffer, srcBufferOffset, destinationArray, 0, destBuffLength);
-
-                            // update src buffer offset
-                            srcBufferOffset = number + 2;
-
+                            Buffer.BlockCopy(buffer_appended[pedalSelected], srcBufferOffset, destinationArray, 0, destBuffLength);
 
 
                             // check for pedal state struct
@@ -3063,12 +3087,17 @@ namespace User.PluginSdkDemo
 
 
                             // If non known array datatype was received, assume a text message was received and print it
-                            byte[] destinationArray_sub = new byte[destBuffLength];
-                            Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
-                            string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
+                            // only print debug messages when debug mode is active as it degrades performance
+                            if (Debug_check.IsChecked == true)
+                            {
+                                byte[] destinationArray_sub = new byte[destBuffLength];
+                                Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
+                                string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
 
-                            TextBox_serialMonitor.Text += resultString + "\n";
-                            TextBox_serialMonitor.ScrollToEnd();
+                                TextBox_serialMonitor.Text += resultString + "\n";
+                                TextBox_serialMonitor.ScrollToEnd();
+                            }
+                            
 
 
 
@@ -3090,6 +3119,35 @@ namespace User.PluginSdkDemo
 
 
 
+                        }
+
+
+
+
+
+
+
+                        // copy the last not finished buffer element to begining of next cycles buffer
+                        // and determine buffer offset
+                        if (indices.Count > 0)
+                        {
+                            // If at least one crlf was detected, check whether it arrieved at the last bytes
+                            int lastElement = indices.Last<int>();
+                            int remainingMessageLength = currentBufferLength - (lastElement + stop_char_length);
+                            if (remainingMessageLength > 0)
+                            {
+                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
+
+                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement + stop_char_length, buffer_appended[pedalSelected], 0, remainingMessageLength);
+                            }
+                            else
+                            {
+                                appendedBufferOffset[pedalSelected] = 0;
+                            }
+                        }
+                        else
+                        {
+                            appendedBufferOffset[pedalSelected] += receivedLength;
                         }
 
 
