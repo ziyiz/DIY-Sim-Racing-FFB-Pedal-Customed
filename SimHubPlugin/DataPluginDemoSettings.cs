@@ -6,6 +6,7 @@
 
     public class DataPluginDemoSettings
     {
+        //should change the variable name after array size change to updtae the config setting
         public int SpeedWarningLevel = 100;
         public int[] selectedJsonIndexLast = new int[3] { 0, 3, 6 };
         public string[] selectedComPortNames = { "COM1", "COM1", "COM1" };
@@ -24,8 +25,8 @@
         public int[] G_force_enable_flag = new int[3] { 0, 0, 0 };
         public int vjoy_output_flag = 0;
         public uint vjoy_order = 1;
-        public string[,] pedal_file_string = new string[4, 3] { { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" } };
-        public int[,] file_enable = new int[4, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+        public string[,] Pedal_file_string = new string[6, 3] { { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" } };
+        public int[,] file_enable_check = new int[6, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
         public string WSeffect_bind = "";
         public int WS_trigger = 30;
         

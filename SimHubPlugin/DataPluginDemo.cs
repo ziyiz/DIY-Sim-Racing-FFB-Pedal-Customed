@@ -1123,6 +1123,20 @@ namespace User.PluginSdkDemo
                 SimHub.Logging.Current.Info("SlotD");
                 current_profile = "Slot D";
             });
+            this.AddAction("ChangeSlotE", (a, b) =>
+            {
+                profile_index = 4;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotE");
+                current_profile = "Slot E";
+            });
+            this.AddAction("ChangeSlotF", (a, b) =>
+            {
+                profile_index = 5;
+                profile_update_flag = 1;
+                SimHub.Logging.Current.Info("SlotF");
+                current_profile = "Slot F";
+            });
             this.AddAction("SendConfigToPedal", (a, b) =>
             {
                 sendconfig_flag =1;
@@ -1133,7 +1147,7 @@ namespace User.PluginSdkDemo
             {
                 if (profile_index == 0)
                 {
-                    profile_index=3;
+                    profile_index=5;
                 }
                 else
                 {
@@ -1148,7 +1162,7 @@ namespace User.PluginSdkDemo
             this.AddAction("NextProfile", (a, b) =>
             {
                 profile_index++;
-                if (profile_index > 3)
+                if (profile_index > 5)
                 {
                     profile_index = 0;
                 }

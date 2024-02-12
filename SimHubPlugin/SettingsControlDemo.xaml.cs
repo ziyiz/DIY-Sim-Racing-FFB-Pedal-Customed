@@ -1376,9 +1376,9 @@ namespace User.PluginSdkDemo
                 RPMeffecttype_Sel_2.IsChecked = true;
             }
 
-            if (Plugin.Settings.file_enable[profile_select, 0] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select, 0] == 1)
             {
-                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select,0];
+                Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select,0];
                 Clutch_file_check.IsChecked = true;
             }
             else 
@@ -1386,9 +1386,9 @@ namespace User.PluginSdkDemo
                 Label_clutch_file.Content = "";
                 Clutch_file_check.IsChecked = false;
             }
-            if (Plugin.Settings.file_enable[profile_select, 1] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select, 1] == 1)
             {
-                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
                 Brake_file_check.IsChecked = true;
             }
             else
@@ -1397,9 +1397,9 @@ namespace User.PluginSdkDemo
                 Brake_file_check.IsChecked = false;
             }
 
-            if (Plugin.Settings.file_enable[profile_select,2] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select,2] == 1)
             {
-                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
                 Gas_file_check.IsChecked = true;
             }
             else
@@ -2178,7 +2178,7 @@ namespace User.PluginSdkDemo
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                if (Plugin.Settings.file_enable_check[profile_select, pedalIdx] == 1)
                 {
                     Sendconfig(pedalIdx);
                     TextBox_debugOutput.Text = "config was sent to pedal";
@@ -2546,11 +2546,11 @@ namespace User.PluginSdkDemo
         private uint count_timmer_count = 0;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
-            if (Plugin.profile_update_flag == 1)
+            /*if (Plugin.profile_update_flag == 1)
             {
                 Profile_change(Plugin.profile_index);
                 Plugin.profile_update_flag = 0;
-            }
+            }*/
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -3320,24 +3320,24 @@ namespace User.PluginSdkDemo
                     if (Button.Name == "Reading_clutch")
                     {
 
-                        Plugin.Settings.pedal_file_string[profile_select,0] = filePath;
-                        Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
-                        Plugin.Settings.file_enable[profile_select, 0] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select,0] = filePath;
+                        Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
+                        Plugin.Settings.file_enable_check[profile_select, 0] = 1;
                         Clutch_file_check.IsChecked = true;
 
                     }
                     if (Button.Name == "Reading_brake")
                     {
-                        Plugin.Settings.pedal_file_string[profile_select, 1] = filePath;
-                        Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
-                        Plugin.Settings.file_enable[profile_select, 1] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select, 1] = filePath;
+                        Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
+                        Plugin.Settings.file_enable_check[profile_select, 1] = 1;
                         Brake_file_check.IsChecked = true;
                     }
                     if (Button.Name == "Reading_gas")
                     {
-                        Plugin.Settings.pedal_file_string[profile_select, 2] = filePath;
-                        Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
-                        Plugin.Settings.file_enable[profile_select, 2] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select, 2] = filePath;
+                        Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
+                        Plugin.Settings.file_enable_check[profile_select, 2] = 1;
                         Gas_file_check.IsChecked = true;
                     }
 
@@ -3352,27 +3352,27 @@ namespace User.PluginSdkDemo
             if (Button.Name == "Clear_clutch")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 0] = "";
-                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
-                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 0] = "";
+                Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
+                Plugin.Settings.file_enable_check[profile_select, 0] = 0;
                 Clutch_file_check.IsChecked = false;
 
             }
             if (Button.Name == "Clear_brake")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 1] = "";
-                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
-                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 1] = "";
+                Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
+                Plugin.Settings.file_enable_check[profile_select, 1] = 0;
                 Brake_file_check.IsChecked = false;
 
             }
             if (Button.Name == "Clear_gas")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 2] = "";
-                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
-                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 2] = "";
+                Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
+                Plugin.Settings.file_enable_check[profile_select, 2] = 0;
                 Gas_file_check.IsChecked = false;
 
             }
@@ -3386,11 +3386,11 @@ namespace User.PluginSdkDemo
             // c# code to iterate over all fields of struct and set values from json file
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                if (Plugin.Settings.file_enable_check[profile_select, pedalIdx] == 1)
                 {
                     payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[pedalIdx].payloadPedalConfig_;
                     // Read the entire JSON file
-                    string jsonString = File.ReadAllText(Plugin.Settings.pedal_file_string[profile_index, pedalIdx]);
+                    string jsonString = File.ReadAllText(Plugin.Settings.Pedal_file_string[profile_index, pedalIdx]);
                     // Parse all of the JSON.
                     //JsonNode forecastNode = JsonNode.Parse(jsonString);
                     dynamic data = JsonConvert.DeserializeObject(jsonString);
@@ -4771,17 +4771,17 @@ namespace User.PluginSdkDemo
             var checkbox = sender as System.Windows.Controls.CheckBox;
             if (checkbox.Name == "Clutch_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 0] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 0] = 1;
             }
 
             if (checkbox.Name == "Brake_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 1] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 1] = 1;
             }
 
             if (checkbox.Name == "Gas_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 2] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 2] = 1;
             }
         }
 
@@ -4790,17 +4790,17 @@ namespace User.PluginSdkDemo
             var checkbox = sender as System.Windows.Controls.CheckBox;
             if (checkbox.Name == "Clutch_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 0] = 0;
             }
 
             if (checkbox.Name == "Brake_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 1] = 0;
             }
 
             if (checkbox.Name == "Gas_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 2] = 0;
             }
         }
 
@@ -4808,7 +4808,7 @@ namespace User.PluginSdkDemo
         {
             profile_select = profile_index;
             ProfileTab.SelectedIndex = (int)profile_index;
-            //if (Plugin.Settings.file_enable[profile_select])
+            //if (Plugin.Settings.file_enable_check[profile_select])
             Parsefile(profile_index);
             string tmp;
             switch (profile_index)
@@ -4824,6 +4824,12 @@ namespace User.PluginSdkDemo
                     break;
                 case 3:
                     tmp = "Profile D";
+                    break;
+                case 4:
+                    tmp = "Profile E";
+                    break;
+                case 5:
+                    tmp = "Profile F";
                     break;
                 default:
                     tmp = "No Profile";

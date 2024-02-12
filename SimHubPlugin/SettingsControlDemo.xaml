@@ -664,8 +664,8 @@
 
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
                                 <Label Content="Effect depend:" Height="25" Width="70" FontSize="10" Margin="70,0,0,0" FontFamily="Arial" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
-                                <RadioButton x:Name="RPMeffecttype_Sel_1" Content="Engine RPM" GroupName="RPMSel_options" Checked="RPMeffecttype_Sel_1_Checked" Width="100" Height="20" BorderThickness="0,0,0,0"/>
-                                <RadioButton x:Name="RPMeffecttype_Sel_2" Content="Speed Rumble" GroupName="RPMSel_options" Checked="RPMeffecttype_Sel_1_Checked" Width="110" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0"/>
+                                <RadioButton x:Name="RPMeffecttype_Sel_1" Content="Engine RPM" GroupName="RPMSel_options" Checked="RPMeffecttype_Sel_1_Checked" Width="100" Height="20" BorderThickness="0,0,0,0" FontFamily="Arial" FontSize="10"/>
+                                <RadioButton x:Name="RPMeffecttype_Sel_2" Content="Speed Rumble" GroupName="RPMSel_options" Checked="RPMeffecttype_Sel_1_Checked" Width="110" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" FontFamily="Arial" FontSize="10"/>
 
 
                             </StackPanel>
@@ -909,7 +909,7 @@
                 <TabItem Width="90" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="90" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Wheel Slip"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter of G force effect" Width="90"  />
+                            <Label Content="Wheel Slip"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter for wheel slip notification, use it when game didn't provide ABS telemetry" Width="90"  />
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
@@ -937,8 +937,8 @@
                                         X2="405" Y2="28"
                                         Stroke="#7F87CEFA"
                                         StrokeThickness="2" />
-                                <Rectangle x:Name="rect_WS_trigger" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_WS_trigger_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Wheel Slip Trigger:" Height="10"/>
+                                <Rectangle x:Name="rect_WS_trigger" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Decidie the notification timing"/>
+                                <TextBlock x:Name="text_WS_trigger_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Notification Trigger:" Height="10"/>
 
                             </Canvas>
                             <Canvas x:Name="canvas_horz_WS_amp" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="65,0,0,0" >
@@ -955,7 +955,7 @@
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
                                 <Rectangle x:Name="rect_WS_amp" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_WS_amp_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Wheel Slip Amplitude:" Height="10"/>
+                                <TextBlock x:Name="text_WS_amp_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Notification Amplitude:" Height="10"/>
 
                             </Canvas>
                             <Canvas x:Name="canvas_horz_WS_freq" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="65,0,0,0" >
@@ -972,7 +972,7 @@
                                     Stroke="#7F87CEFA"
                                     StrokeThickness="2" />
                                 <Rectangle x:Name="rect_WS_freq" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <TextBlock x:Name="text_WS_freq_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Text="Wheel Slip Frequency:" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="5" Height="10"/>
+                                <TextBlock x:Name="text_WS_freq_text" Width="100" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Text="Notificaiton Frequency:" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="5" Height="10"/>
 
                             </Canvas>
                         </StackPanel>
@@ -1500,7 +1500,7 @@
                         </Border>
                     </TabItem.Header>
                     <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="542" Grid.Column="1" Grid.Row="5" Orientation="Horizontal" Margin="-2,3,0,0">
-                        <TabControl x:Name="ProfileTab" Grid.Column="1" HorizontalAlignment="Left" Height="128" Grid.Row="5" VerticalAlignment="Top" Width="102" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" SelectionChanged="TabControl_file_path" TabStripPlacement="Left" HorizontalContentAlignment="Center">
+                        <TabControl x:Name="ProfileTab" Grid.Column="1" HorizontalAlignment="Left" Height="180" Grid.Row="5" VerticalAlignment="Top" Width="102" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" SelectionChanged="TabControl_file_path" TabStripPlacement="Left" HorizontalContentAlignment="Center" Margin="0,4,0,0">
                             <TabControl.Resources>
                                 <Style TargetType="TabItem">
                                     <Setter Property="Template">
@@ -1561,6 +1561,20 @@
                                 <TabItem.Header>
                                     <Border  Width="100" Height="30" Margin="0,0,0,0" >
                                         <Label Content="Slot D"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                                    </Border>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                                <TabItem.Header>
+                                    <Border  Width="100" Height="30" Margin="0,0,0,0" >
+                                        <Label Content="Slot E"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                                    </Border>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem Width="100" Height="30" Padding="0,0,0,0">
+                                <TabItem.Header>
+                                    <Border  Width="100" Height="30" Margin="0,0,0,0" >
+                                        <Label Content="Slot F"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
                                     </Border>
                                 </TabItem.Header>
                             </TabItem>
