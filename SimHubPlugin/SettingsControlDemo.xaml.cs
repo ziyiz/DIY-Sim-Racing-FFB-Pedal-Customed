@@ -2551,6 +2551,28 @@ namespace User.PluginSdkDemo
                 Profile_change(Plugin.profile_index);
                 Plugin.profile_update_flag = 0;
             }*/
+            /*
+            if (Plugin.pedal_select_update_flag == true)
+            {
+                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
+                Plugin.pedal_select_update_flag = false;
+                switch (Plugin.Settings.table_selected)
+                {
+                    case 0:
+                        Plugin.current_pedal = "Clutch";
+                        break;
+                    case 1:
+                        Plugin.current_pedal = "Brake";
+                        break;
+                    case 2:
+                        Plugin.current_pedal = "Throttle";
+                        break;
+                }
+                updateTheGuiFromConfig();
+
+            }
+            */
+            
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -2702,6 +2724,25 @@ namespace User.PluginSdkDemo
             {
                 Sendconfigtopedal_shortcut();
                 Plugin.sendconfig_flag = 0;
+            }
+            if (Plugin.pedal_select_update_flag == true)
+            {
+                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
+                Plugin.pedal_select_update_flag = false;
+                switch (Plugin.Settings.table_selected)
+                {
+                    case 0:
+                        Plugin.current_pedal = "Clutch";
+                        break;
+                    case 1:
+                        Plugin.current_pedal = "Brake";
+                        break;
+                    case 2:
+                        Plugin.current_pedal = "Throttle";
+                        break;
+                }
+                updateTheGuiFromConfig();
+
             }
 
 
