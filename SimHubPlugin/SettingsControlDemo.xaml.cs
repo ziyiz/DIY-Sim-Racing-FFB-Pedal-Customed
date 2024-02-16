@@ -2546,12 +2546,14 @@ namespace User.PluginSdkDemo
         private uint count_timmer_count = 0;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
-            /*if (Plugin.profile_update_flag == 1)
+            /*
+            //simhub action debug without serial connection
+            if (Plugin.profile_update_flag == 1)
             {
                 Profile_change(Plugin.profile_index);
                 Plugin.profile_update_flag = 0;
-            }*/
-            /*
+            }
+            
             if (Plugin.pedal_select_update_flag == true)
             {
                 MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
@@ -2572,6 +2574,7 @@ namespace User.PluginSdkDemo
 
             }
             */
+            
             
 
             count_timmer_count++;

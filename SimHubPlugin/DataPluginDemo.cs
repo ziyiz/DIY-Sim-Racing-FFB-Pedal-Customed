@@ -689,6 +689,10 @@ namespace User.PluginSdkDemo
             this.AttachDelegate("CurrentProfile", () => current_profile);
             pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
             pluginManager.SetPropertyValue("Action", this.GetType(), current_action);
+            pluginManager.SetPropertyValue("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
 
         }
 
@@ -1074,9 +1078,13 @@ namespace User.PluginSdkDemo
             Settings = this.ReadCommonSettings<DataPluginDemoSettings>("GeneralSettings", () => new DataPluginDemoSettings());
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
-            this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
+            //this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
             pluginManager.AddProperty("SelectedPedal", this.GetType(), current_pedal);
             pluginManager.AddProperty("Action", this.GetType(), current_action);
+            pluginManager.AddProperty("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
@@ -1281,8 +1289,8 @@ namespace User.PluginSdkDemo
             });
 
             //Settings.selectedJsonIndexLast[0]
-            SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");
-            SimHub.Logging.Current.Info("Diy active pedas plugin - COM port: " + Settings.selectedComPortNames[0]);
+            //SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");
+            //SimHub.Logging.Current.Info("Diy active pedas plugin - COM port: " + Settings.selectedComPortNames[0]);
 
 
 
