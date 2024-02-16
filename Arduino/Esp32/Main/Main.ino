@@ -944,7 +944,7 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
-
+    delay(1);
     // read serial input 
     byte n = Serial.available();
 
