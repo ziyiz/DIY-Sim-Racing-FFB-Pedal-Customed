@@ -229,9 +229,9 @@ void setup()
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
 #ifdef ISV_COMMUNICATION
 
-  bool isv57slaveIfFound_b = isv57.findServosSlaveId();
+  bool isv57slaveIdFound_b = isv57.findServosSlaveId();
   Serial.print("iSV57 slaveId found:  ");
-  Serial.println( isv57slaveIfFound_b );
+  Serial.println( isv57slaveIdFound_b );
 
   
   // check whether iSV57 is connected
