@@ -1376,9 +1376,9 @@ namespace User.PluginSdkDemo
                 RPMeffecttype_Sel_2.IsChecked = true;
             }
 
-            if (Plugin.Settings.file_enable[profile_select, 0] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select, 0] == 1)
             {
-                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select,0];
+                Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select,0];
                 Clutch_file_check.IsChecked = true;
             }
             else 
@@ -1386,9 +1386,9 @@ namespace User.PluginSdkDemo
                 Label_clutch_file.Content = "";
                 Clutch_file_check.IsChecked = false;
             }
-            if (Plugin.Settings.file_enable[profile_select, 1] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select, 1] == 1)
             {
-                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
+                Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
                 Brake_file_check.IsChecked = true;
             }
             else
@@ -1397,9 +1397,9 @@ namespace User.PluginSdkDemo
                 Brake_file_check.IsChecked = false;
             }
 
-            if (Plugin.Settings.file_enable[profile_select,2] == 1)
+            if (Plugin.Settings.file_enable_check[profile_select,2] == 1)
             {
-                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
+                Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
                 Gas_file_check.IsChecked = true;
             }
             else
@@ -1890,7 +1890,7 @@ namespace User.PluginSdkDemo
 
             System.Windows.Controls.TextBox textBox = (System.Windows.Controls.TextBox)sender;
 
-            e.Handled = regex.IsMatch(textBox.Text + e.Text);
+            e.Handled = !regex.IsMatch(textBox.Text + e.Text);
 
             ////if (!e.Handled)
             ////{
@@ -2178,7 +2178,7 @@ namespace User.PluginSdkDemo
 
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                if (Plugin.Settings.file_enable_check[profile_select, pedalIdx] == 1)
                 {
                     Sendconfig(pedalIdx);
                     TextBox_debugOutput.Text = "config was sent to pedal";
@@ -2546,11 +2546,36 @@ namespace User.PluginSdkDemo
         private uint count_timmer_count = 0;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
+            /*
+            //simhub action debug without serial connection
             if (Plugin.profile_update_flag == 1)
             {
                 Profile_change(Plugin.profile_index);
                 Plugin.profile_update_flag = 0;
             }
+            
+            if (Plugin.pedal_select_update_flag == true)
+            {
+                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
+                Plugin.pedal_select_update_flag = false;
+                switch (Plugin.Settings.table_selected)
+                {
+                    case 0:
+                        Plugin.current_pedal = "Clutch";
+                        break;
+                    case 1:
+                        Plugin.current_pedal = "Brake";
+                        break;
+                    case 2:
+                        Plugin.current_pedal = "Throttle";
+                        break;
+                }
+                updateTheGuiFromConfig();
+
+            }
+            */
+            
+            
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -2654,13 +2679,37 @@ namespace User.PluginSdkDemo
                 }
             }
 
+
+
+            //int i = 0;
+            //while (i < len)
+            //{
+            //    bool found = true;
+            //    for (int j = 0; j < sequence.Length; j++)
+            //    {
+            //        if (source[i + j] != sequence[j])
+            //        {
+            //            found = false;
+            //            break;
+            //        }
+            //    }
+            //    if (found)
+            //    {
+            //        indices.Add(i); // Sequence found, add index to the list
+            //        i += sequence.Length;
+            //    }
+            //    else { i++; } 
+            //}
+
+
+
             return indices;
         }
 
 
         int[] appendedBufferOffset = { 0, 0, 0 };
 
-        static int bufferSize = 100000;
+        static int bufferSize = 10000;
         byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
 
         unsafe public void timerCallback_serial(object sender, EventArgs e)
@@ -2668,10 +2717,25 @@ namespace User.PluginSdkDemo
 
             //action here 
 
-            if (Plugin.profile_update_flag == 1)
+            if (Plugin.Page_update_flag == true)
             {
                 Profile_change(Plugin.profile_index);
-                Plugin.profile_update_flag = 0;
+                Plugin.Page_update_flag = false;
+                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
+                Plugin.pedal_select_update_flag = false;
+                switch (Plugin.Settings.table_selected)
+                {
+                    case 0:
+                        Plugin.current_pedal = "Clutch";
+                        break;
+                    case 1:
+                        Plugin.current_pedal = "Brake";
+                        break;
+                    case 2:
+                        Plugin.current_pedal = "Throttle";
+                        break;
+                }
+                updateTheGuiFromConfig();
             }
 
             if (Plugin.sendconfig_flag == 1)
@@ -2679,6 +2743,27 @@ namespace User.PluginSdkDemo
                 Sendconfigtopedal_shortcut();
                 Plugin.sendconfig_flag = 0;
             }
+            /*
+            if (Plugin.pedal_select_update_flag == true)
+            {
+                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
+                Plugin.pedal_select_update_flag = false;
+                switch (Plugin.Settings.table_selected)
+                {
+                    case 0:
+                        Plugin.current_pedal = "Clutch";
+                        break;
+                    case 1:
+                        Plugin.current_pedal = "Brake";
+                        break;
+                    case 2:
+                        Plugin.current_pedal = "Throttle";
+                        break;
+                }
+                updateTheGuiFromConfig();
+
+            }
+            */
 
 
             int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
@@ -2715,7 +2800,21 @@ namespace User.PluginSdkDemo
 
                 if (sp.IsOpen)
                 {
-                    int receivedLength = sp.BytesToRead;
+
+                
+                    int receivedLength = 0;
+                    try 
+                    {
+                        receivedLength = sp.BytesToRead;
+                    }
+                    catch (Exception ex)
+                    {
+                        TextBox_debugOutput.Text = ex.Message;
+                        //ConnectToPedal.IsChecked = false;
+                        return;
+                    }
+
+                
 
                     if (receivedLength > 0)
                     {
@@ -2726,9 +2825,15 @@ namespace User.PluginSdkDemo
 
                         // determine byte sequence which is defined as message end --> crlf
                         byte[] byteToFind = System.Text.Encoding.GetEncoding(28591).GetBytes(STOPCHAR[0].ToCharArray());
+                        int stop_char_length = byteToFind.Length;
+
+
+                        // calculate current buffer length
+                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+
 
                         // check if buffer is large enough otherwise discard in buffer and set offset to 0
-                        if (bufferSize > (appendedBufferOffset[pedalSelected] + receivedLength))
+                        if (bufferSize > currentBufferLength)
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
                         }
@@ -2736,20 +2841,21 @@ namespace User.PluginSdkDemo
                         {
                             sp.DiscardInBuffer();
                             appendedBufferOffset[pedalSelected] = 0;
+                            return;
                         }
 
 
-                        // calculate current buffer length
-                        int currentBufferLength = appendedBufferOffset[pedalSelected] + receivedLength;
+                        
 
 
                         // copy to local buffer
-                        byte[] localBuffer = new byte[currentBufferLength];
-                        Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
+                        //byte[] localBuffer = new byte[currentBufferLength];
+                        
+                        //Buffer.BlockCopy(buffer_appended[pedalSelected], 0, localBuffer, 0, currentBufferLength);
 
 
                         // find all occurences of crlf as they indicate message end
-                        List<int> indices = FindAllOccurrences(localBuffer, byteToFind, currentBufferLength);
+                        List<int> indices = FindAllOccurrences(buffer_appended[pedalSelected], byteToFind, currentBufferLength);
 
 
 
@@ -2757,24 +2863,7 @@ namespace User.PluginSdkDemo
                         // Destination array
                         byte[] destinationArray = new byte[1000];
 
-                        // copy the last not finished buffer element to begining of next cycles buffer
-                        // and determine buffer offset
-                        if (indices.Count > 0)
-                        {
-                            // If at least one crlf was detected, check whether it arrieved at the last bytes
-                            int lastElement = indices.Last<int>();
-                            int remainingMessageLength = currentBufferLength - (lastElement + 2);
-                            if (remainingMessageLength >= 0)
-                            {
-                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
-
-                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement + 2, buffer_appended[pedalSelected], 0, remainingMessageLength);
-                            }
-                        }
-                        else
-                        {
-                            appendedBufferOffset[pedalSelected] += receivedLength;
-                        }
+                        
 
 
 
@@ -2782,22 +2871,32 @@ namespace User.PluginSdkDemo
 
                         int srcBufferOffset = 0;
                         // decode every message
-                        foreach (int number in indices)
+                        //foreach (int number in indices)
+                        for (int msgId = 0; msgId < indices.Count; msgId++)
                         {
                             // computes the length of bytes to read
-                            int destBuffLength = number - srcBufferOffset;
-                            if (destBuffLength > 1000)
+                            int destBuffLength = 0; //number - srcBufferOffset;
+
+                            if (msgId == 0)
+                            {
+                                srcBufferOffset = 0;
+                                destBuffLength = indices.ElementAt(msgId);
+                            }
+                            else 
+                            {
+                                srcBufferOffset = indices.ElementAt(msgId - 1) + stop_char_length;
+                                destBuffLength = indices.ElementAt(msgId) - srcBufferOffset;
+                            }
+
+                            if (destBuffLength <= 0)
                             {
                                 continue;
                             }
 
 
+
                             // copy bytes to subarray
-                            Buffer.BlockCopy(localBuffer, srcBufferOffset, destinationArray, 0, destBuffLength);
-
-                            // update src buffer offset
-                            srcBufferOffset = number + 2;
-
+                            Buffer.BlockCopy(buffer_appended[pedalSelected], srcBufferOffset, destinationArray, 0, destBuffLength);
 
 
                             // check for pedal state struct
@@ -3049,12 +3148,17 @@ namespace User.PluginSdkDemo
 
 
                             // If non known array datatype was received, assume a text message was received and print it
-                            byte[] destinationArray_sub = new byte[destBuffLength];
-                            Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
-                            string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
+                            // only print debug messages when debug mode is active as it degrades performance
+                            if (Debug_check.IsChecked == true)
+                            {
+                                byte[] destinationArray_sub = new byte[destBuffLength];
+                                Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
+                                string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
 
-                            TextBox_serialMonitor.Text += resultString + "\n";
-                            TextBox_serialMonitor.ScrollToEnd();
+                                TextBox_serialMonitor.Text += resultString + "\n";
+                                TextBox_serialMonitor.ScrollToEnd();
+                            }
+                            
 
 
 
@@ -3076,6 +3180,35 @@ namespace User.PluginSdkDemo
 
 
 
+                        }
+
+
+
+
+
+
+
+                        // copy the last not finished buffer element to begining of next cycles buffer
+                        // and determine buffer offset
+                        if (indices.Count > 0)
+                        {
+                            // If at least one crlf was detected, check whether it arrieved at the last bytes
+                            int lastElement = indices.Last<int>();
+                            int remainingMessageLength = currentBufferLength - (lastElement + stop_char_length);
+                            if (remainingMessageLength > 0)
+                            {
+                                appendedBufferOffset[pedalSelected] = remainingMessageLength;
+
+                                Buffer.BlockCopy(buffer_appended[pedalSelected], lastElement + stop_char_length, buffer_appended[pedalSelected], 0, remainingMessageLength);
+                            }
+                            else
+                            {
+                                appendedBufferOffset[pedalSelected] = 0;
+                            }
+                        }
+                        else
+                        {
+                            appendedBufferOffset[pedalSelected] += receivedLength;
                         }
 
 
@@ -3306,24 +3439,24 @@ namespace User.PluginSdkDemo
                     if (Button.Name == "Reading_clutch")
                     {
 
-                        Plugin.Settings.pedal_file_string[profile_select,0] = filePath;
-                        Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
-                        Plugin.Settings.file_enable[profile_select, 0] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select,0] = filePath;
+                        Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
+                        Plugin.Settings.file_enable_check[profile_select, 0] = 1;
                         Clutch_file_check.IsChecked = true;
 
                     }
                     if (Button.Name == "Reading_brake")
                     {
-                        Plugin.Settings.pedal_file_string[profile_select, 1] = filePath;
-                        Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
-                        Plugin.Settings.file_enable[profile_select, 1] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select, 1] = filePath;
+                        Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
+                        Plugin.Settings.file_enable_check[profile_select, 1] = 1;
                         Brake_file_check.IsChecked = true;
                     }
                     if (Button.Name == "Reading_gas")
                     {
-                        Plugin.Settings.pedal_file_string[profile_select, 2] = filePath;
-                        Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
-                        Plugin.Settings.file_enable[profile_select, 2] = 1;
+                        Plugin.Settings.Pedal_file_string[profile_select, 2] = filePath;
+                        Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
+                        Plugin.Settings.file_enable_check[profile_select, 2] = 1;
                         Gas_file_check.IsChecked = true;
                     }
 
@@ -3338,27 +3471,27 @@ namespace User.PluginSdkDemo
             if (Button.Name == "Clear_clutch")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 0] = "";
-                Label_clutch_file.Content = Plugin.Settings.pedal_file_string[profile_select, 0];
-                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 0] = "";
+                Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
+                Plugin.Settings.file_enable_check[profile_select, 0] = 0;
                 Clutch_file_check.IsChecked = false;
 
             }
             if (Button.Name == "Clear_brake")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 1] = "";
-                Label_brake_file.Content = Plugin.Settings.pedal_file_string[profile_select, 1];
-                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 1] = "";
+                Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
+                Plugin.Settings.file_enable_check[profile_select, 1] = 0;
                 Brake_file_check.IsChecked = false;
 
             }
             if (Button.Name == "Clear_gas")
             {
 
-                Plugin.Settings.pedal_file_string[profile_select, 2] = "";
-                Label_gas_file.Content = Plugin.Settings.pedal_file_string[profile_select, 2];
-                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Plugin.Settings.Pedal_file_string[profile_select, 2] = "";
+                Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
+                Plugin.Settings.file_enable_check[profile_select, 2] = 0;
                 Gas_file_check.IsChecked = false;
 
             }
@@ -3372,11 +3505,11 @@ namespace User.PluginSdkDemo
             // c# code to iterate over all fields of struct and set values from json file
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
-                if (Plugin.Settings.file_enable[profile_select, pedalIdx] == 1)
+                if (Plugin.Settings.file_enable_check[profile_select, pedalIdx] == 1)
                 {
                     payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[pedalIdx].payloadPedalConfig_;
                     // Read the entire JSON file
-                    string jsonString = File.ReadAllText(Plugin.Settings.pedal_file_string[profile_index, pedalIdx]);
+                    string jsonString = File.ReadAllText(Plugin.Settings.Pedal_file_string[profile_index, pedalIdx]);
                     // Parse all of the JSON.
                     //JsonNode forecastNode = JsonNode.Parse(jsonString);
                     dynamic data = JsonConvert.DeserializeObject(jsonString);
@@ -4757,17 +4890,17 @@ namespace User.PluginSdkDemo
             var checkbox = sender as System.Windows.Controls.CheckBox;
             if (checkbox.Name == "Clutch_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 0] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 0] = 1;
             }
 
             if (checkbox.Name == "Brake_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 1] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 1] = 1;
             }
 
             if (checkbox.Name == "Gas_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 2] = 1;
+                Plugin.Settings.file_enable_check[profile_select, 2] = 1;
             }
         }
 
@@ -4776,17 +4909,17 @@ namespace User.PluginSdkDemo
             var checkbox = sender as System.Windows.Controls.CheckBox;
             if (checkbox.Name == "Clutch_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 0] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 0] = 0;
             }
 
             if (checkbox.Name == "Brake_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 1] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 1] = 0;
             }
 
             if (checkbox.Name == "Gas_file_check")
             {
-                Plugin.Settings.file_enable[profile_select, 2] = 0;
+                Plugin.Settings.file_enable_check[profile_select, 2] = 0;
             }
         }
 
@@ -4794,7 +4927,7 @@ namespace User.PluginSdkDemo
         {
             profile_select = profile_index;
             ProfileTab.SelectedIndex = (int)profile_index;
-            //if (Plugin.Settings.file_enable[profile_select])
+            //if (Plugin.Settings.file_enable_check[profile_select])
             Parsefile(profile_index);
             string tmp;
             switch (profile_index)
@@ -4810,6 +4943,12 @@ namespace User.PluginSdkDemo
                     break;
                 case 3:
                     tmp = "Profile D";
+                    break;
+                case 4:
+                    tmp = "Profile E";
+                    break;
+                case 5:
+                    tmp = "Profile F";
                     break;
                 default:
                     tmp = "No Profile";

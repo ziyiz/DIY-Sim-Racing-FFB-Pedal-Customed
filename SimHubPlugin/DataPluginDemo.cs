@@ -249,8 +249,15 @@ namespace User.PluginSdkDemo
         public uint in_game_flag = 0; // check current game is off or pause
         public string current_profile = "NA" ;
         public uint profile_index = 0;
-        public uint profile_update_flag = 0;
+        //public uint Page_update_flag = 0;
         public bool binding_check=false;
+        public bool pedal_select_update_flag = false;
+        public string current_pedal = "NA";
+        public string current_action = "NA";
+        public bool Page_update_flag =false;
+        public uint overlay_display = 0;
+
+
 
 
         // ABS trigger timer
@@ -359,7 +366,7 @@ namespace User.PluginSdkDemo
             double RPM_MAX = 0;
             double _G_force = 128;
             byte WS_value = 0;
-            bool WS_flag = false;
+            //bool WS_flag = false;
 
             if (data.GamePaused | (!data.GameRunning))
             {
@@ -438,7 +445,7 @@ namespace User.PluginSdkDemo
                 {
                     RPM_value = 0;
                     _G_force = 128;
-                    WS_flag = false;
+                    
 
 
                 }
@@ -447,7 +454,7 @@ namespace User.PluginSdkDemo
             {
                 RPM_value = 0;
                 _G_force = 128;
-                WS_flag = false;
+                
             }
 			
 
@@ -461,7 +468,7 @@ namespace User.PluginSdkDemo
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
-                WS_flag=false;
+                
 
             }
             else
@@ -681,11 +688,23 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
+
+            if (Page_update_flag == true)
+            {
+                this.AttachDelegate("CurrentProfile", () => current_profile);
+                pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
+                pluginManager.SetPropertyValue("Action", this.GetType(), current_action);
+                pluginManager.SetPropertyValue("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
+                pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
+                pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
+                pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+                pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
+            }
             
-            this.AttachDelegate("CurrentProfile", () => current_profile);
 
 
         }
+
 
 
 
@@ -1068,8 +1087,14 @@ namespace User.PluginSdkDemo
             Settings = this.ReadCommonSettings<DataPluginDemoSettings>("GeneralSettings", () => new DataPluginDemoSettings());
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
-            this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
-            //pluginManager.AddProperty("Wheelslip-test", this.GetType(), 0);
+            //this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
+            pluginManager.AddProperty("SelectedPedal", this.GetType(), current_pedal);
+            pluginManager.AddProperty("Action", this.GetType(), current_action);
+            pluginManager.AddProperty("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("Overlay_display", this.GetType(), overlay_display);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
@@ -1094,46 +1119,67 @@ namespace User.PluginSdkDemo
             this.AddAction("ChangeSlotA", (a, b) =>
             {
                 profile_index = 0;
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("SlotA");
                 current_profile = "Slot A";
+                current_action= "Slot A";
             });
 
             this.AddAction("ChangeSlotB", (a, b) =>
             {
                 
                 profile_index = 1;
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("SlotB");
                 current_profile = "Slot B";
+                current_action = "Slot B";
             });
 
             this.AddAction("ChangeSlotC", (a, b) =>
             {
                 profile_index = 2;
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("SlotC");
                 current_profile = "Slot C";
+                current_action = "Slot C";
             });
 
             this.AddAction("ChangeSlotD", (a, b) =>
             {
                 profile_index = 3;
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("SlotD");
                 current_profile = "Slot D";
+                current_action = "Slot D";
+            });
+            this.AddAction("ChangeSlotE", (a, b) =>
+            {
+                profile_index = 4;
+                Page_update_flag = true;
+                SimHub.Logging.Current.Info("SlotE");
+                current_profile = "Slot E";
+                current_action = "Slot E";
+            });
+            this.AddAction("ChangeSlotF", (a, b) =>
+            {
+                profile_index = 5;
+                Page_update_flag = true;
+                SimHub.Logging.Current.Info("SlotF");
+                current_profile = "Slot F";
+                current_action = "Slot F";
             });
             this.AddAction("SendConfigToPedal", (a, b) =>
             {
                 sendconfig_flag =1;
                 SimHub.Logging.Current.Info("SendConfig");
+                current_action = "Send Config to Pedal";
             });
 
             this.AddAction("PreviousProfile", (a, b) =>
             {
                 if (profile_index == 0)
                 {
-                    profile_index=3;
+                    profile_index=5;
                 }
                 else
                 {
@@ -1141,27 +1187,135 @@ namespace User.PluginSdkDemo
                 }
                 
 
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("PreviousProfile");
+                current_action = "Previous Profile";
             });
 
             this.AddAction("NextProfile", (a, b) =>
             {
                 profile_index++;
-                if (profile_index > 3)
+                if (profile_index > 5)
                 {
                     profile_index = 0;
                 }
-                profile_update_flag = 1;
+                Page_update_flag = true;
                 SimHub.Logging.Current.Info("NextProfile");
+                current_action = "Next Profile";
+            });
+            this.AddAction("NextPedal", (a, b) =>
+            {
+                Settings.table_selected++;
+                if (Settings.table_selected > 2)
+                {
+                    Settings.table_selected = 0;
+                }
+                Page_update_flag = true;
+                SimHub.Logging.Current.Info("NextPedal");
+                current_action = "Next Pedal";
+            });
+            this.AddAction("PreviousPedal", (a, b) =>
+            {
+                
+                if (Settings.table_selected == 0)
+                {
+                    Settings.table_selected = 2;
+                }
+                else
+                {
+                    Settings.table_selected--;
+                }
+                Page_update_flag = true;
+                SimHub.Logging.Current.Info("PreviousPedal");
+                current_action = "Previous Pedal";
+            });
+            this.AddAction("ABStoggle", (a, b) =>
+            {
+                if (Settings.ABS_enable_flag[Settings.table_selected] == 0)
+                {
+                    Settings.ABS_enable_flag[Settings.table_selected] = 1;
+                    SimHub.Logging.Current.Info("ABS on");
+                    current_action = "ABS On";
+                }
+                else
+                {
+                    Settings.ABS_enable_flag[Settings.table_selected] = 0;
+                    SimHub.Logging.Current.Info("ABS off");
+                    current_action = "ABS Off";
+                }
+                Page_update_flag = true;
+            });
+            this.AddAction("RPMtoggle", (a, b) =>
+            {
+                if (Settings.RPM_enable_flag[Settings.table_selected] == 0)
+                {
+                    Settings.RPM_enable_flag[Settings.table_selected] = 1;
+                    SimHub.Logging.Current.Info("RPM on");
+                    current_action = "RPM On";
+                }
+                else
+                {
+                    Settings.RPM_enable_flag[Settings.table_selected] = 0;
+                    SimHub.Logging.Current.Info("RPM off");
+                    current_action = "RPM Off";
+                }
+                Page_update_flag = true;
+            });
+            this.AddAction("Gforce_toggle", (a, b) =>
+            {
+                if (Settings.table_selected == 1)
+                {
+                    if (Settings.G_force_enable_flag[Settings.table_selected] == 0)
+                    {
+                        Settings.G_force_enable_flag[Settings.table_selected] = 1;
+                        SimHub.Logging.Current.Info("Gforce on");
+                        current_action = "Gforce On";
+                    }
+                    else
+                    {
+                        Settings.G_force_enable_flag[Settings.table_selected] = 0;
+                        SimHub.Logging.Current.Info("Gforce off");
+                        current_action = "Gforce Off";
+                    }
+                    Page_update_flag = true;
+                }
+
+            });
+            this.AddAction("WheelSliptoggle", (a, b) =>
+            {
+                if (Settings.WS_enable_flag[Settings.table_selected] == 0)
+                {
+                    Settings.WS_enable_flag[Settings.table_selected] = 1;
+                    SimHub.Logging.Current.Info("WheelSlip on");
+                    current_action = "Wheel Slip On";
+                }
+                else
+                {
+                    Settings.WS_enable_flag[Settings.table_selected] = 0;
+                    SimHub.Logging.Current.Info("WheelSlip off");
+                    current_action = "Wheel Slip Off";
+                }
+                Page_update_flag = true;
             });
 
-            
-
+            this.AddAction("OverlayToggle", (a, b) =>
+            {
+                Page_update_flag = true;
+                SimHub.Logging.Current.Info("OverlayToggle");               
+                current_action = "OverlayToggle";
+                if (overlay_display == 1)
+                {
+                    overlay_display = 0;
+                }
+                else
+                {
+                    overlay_display = 1;
+                }
+            });
 
             //Settings.selectedJsonIndexLast[0]
-            SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");
-            SimHub.Logging.Current.Info("Diy active pedas plugin - COM port: " + Settings.selectedComPortNames[0]);
+            //SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");
+            //SimHub.Logging.Current.Info("Diy active pedas plugin - COM port: " + Settings.selectedComPortNames[0]);
 
 
 

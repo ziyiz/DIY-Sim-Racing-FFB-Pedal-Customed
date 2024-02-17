@@ -42,8 +42,6 @@
 #define pr_6_00 pr_5_00 + 40 // special settings
 
 
-#define slaveId 63
-
 
 class isv57communication {
 	
@@ -54,10 +52,15 @@ class isv57communication {
     void readAllServoParameters();
     void readServoStates();
     bool checkCommunication();
+    bool findServosSlaveId();
+
+
 
     void setZeroPos();
     int16_t getZeroPos();
     int16_t regArray[4];
+
+    int16_t slaveId = 63; 
 
     int16_t servo_pos_given_p = 0;
     int16_t servo_pos_error_p = 0;

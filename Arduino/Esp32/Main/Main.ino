@@ -228,6 +228,18 @@ void setup()
 // check whether iSV57 communication can be established
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
 #ifdef ISV_COMMUNICATION
+
+  bool isv57slaveIdFound_b = isv57.findServosSlaveId();
+  Serial.print("iSV57 slaveId found:  ");
+  Serial.println( isv57slaveIdFound_b );
+
+  if (!isv57slaveIdFound_b)
+  {
+    Serial.println( "Restarting ESP" );
+    ESP.restart();
+  }
+
+  
   // check whether iSV57 is connected
   isv57LifeSignal_b = isv57.checkCommunication();
 
@@ -944,7 +956,7 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
-
+    delay(1);
     // read serial input 
     byte n = Serial.available();
 
