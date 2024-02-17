@@ -233,6 +233,12 @@ void setup()
   Serial.print("iSV57 slaveId found:  ");
   Serial.println( isv57slaveIdFound_b );
 
+  if (!isv57slaveIdFound_b)
+  {
+    Serial.println( "Restarting ESP" );
+    ESP.restart();
+  }
+
   
   // check whether iSV57 is connected
   isv57LifeSignal_b = isv57.checkCommunication();

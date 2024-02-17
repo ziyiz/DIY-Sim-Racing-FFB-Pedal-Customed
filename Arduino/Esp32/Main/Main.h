@@ -5,12 +5,13 @@
 /********************************************************************/
 /*                      Select the PCB      */
 /********************************************************************/
-//#define PCB_VERSION 1 // V1 for regular ESP32
-//#define PCB_VERSION 2 // V1 for ESP32 S2 mini
-#define PCB_VERSION 3 // V3 for regular ESP32
-//#define PCB_VERSION 4 // speedcrafter PCB V1.3
-//#define PCB_VERSION 5 // speedcrafter PCB V1.4
-
+#ifndef PCB_VERSION
+  //#define PCB_VERSION 1 // V1 for regular ESP32
+  //#define PCB_VERSION 2 // V1 for ESP32 S2 mini
+  #define PCB_VERSION 3 // V3 for regular ESP32
+  //#define PCB_VERSION 4 // speedcrafter PCB V1.3
+  //#define PCB_VERSION 5 // speedcrafter PCB V1.4
+#endif
 
 
 
