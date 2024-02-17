@@ -689,8 +689,7 @@ namespace User.PluginSdkDemo
                 }
             }
 
-            if (Page_update_flag == true)
-            {
+
                 this.AttachDelegate("CurrentProfile", () => current_profile);
                 pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
                 pluginManager.SetPropertyValue("Action", this.GetType(), current_action);
@@ -699,7 +698,7 @@ namespace User.PluginSdkDemo
                 pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
                 pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
                 pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
-            }
+
             
 
 
