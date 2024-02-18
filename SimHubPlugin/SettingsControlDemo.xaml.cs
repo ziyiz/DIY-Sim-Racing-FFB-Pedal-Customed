@@ -2710,6 +2710,7 @@ namespace User.PluginSdkDemo
         int[] appendedBufferOffset = { 0, 0, 0 };
 
         static int bufferSize = 10000;
+        static int destBufferSize = 1000;
         byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
 
         unsafe public void timerCallback_serial(object sender, EventArgs e)
@@ -2861,7 +2862,7 @@ namespace User.PluginSdkDemo
 
 
                         // Destination array
-                        byte[] destinationArray = new byte[1000];
+                        byte[] destinationArray = new byte[destBufferSize];
 
                         
 
@@ -2888,11 +2889,14 @@ namespace User.PluginSdkDemo
                                 destBuffLength = indices.ElementAt(msgId) - srcBufferOffset;
                             }
 
-                            if (destBuffLength <= 0)
+                            // check if dest buffer length is within valid length
+                            if ( (destBuffLength <= 0) | (destBuffLength > destBufferSize) )
                             {
                                 continue;
                             }
 
+
+                 
 
 
                             // copy bytes to subarray
