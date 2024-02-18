@@ -978,8 +978,17 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                
-
+                <TabItem Width="90" Height="30" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="90" Height="30" Margin="0,0,0,0" >
+                            <Label Content="License"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter for wheel slip notification, use it when game didn't provide ABS telemetry" Width="90"  />
+                        </Border>
+                    </TabItem.Header>
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                        </StackPanel>
+                    </Border>
+                </TabItem>
 
 
 

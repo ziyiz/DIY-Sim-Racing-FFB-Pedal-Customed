@@ -2546,36 +2546,10 @@ namespace User.PluginSdkDemo
         private uint count_timmer_count = 0;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
-            /*
-            //simhub action debug without serial connection
-            if (Plugin.profile_update_flag == 1)
-            {
-                Profile_change(Plugin.profile_index);
-                Plugin.profile_update_flag = 0;
-            }
-            
-            if (Plugin.pedal_select_update_flag == true)
-            {
-                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
-                Plugin.pedal_select_update_flag = false;
-                switch (Plugin.Settings.table_selected)
-                {
-                    case 0:
-                        Plugin.current_pedal = "Clutch";
-                        break;
-                    case 1:
-                        Plugin.current_pedal = "Brake";
-                        break;
-                    case 2:
-                        Plugin.current_pedal = "Throttle";
-                        break;
-                }
-                updateTheGuiFromConfig();
+            //simhub action for debug
+            Simhub_action_update();
 
-            }
-            */
-            
-            
+
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -2706,24 +2680,15 @@ namespace User.PluginSdkDemo
             return indices;
         }
 
-
-        int[] appendedBufferOffset = { 0, 0, 0 };
-
-        static int bufferSize = 10000;
-        static int destBufferSize = 1000;
-        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
-
-        unsafe public void timerCallback_serial(object sender, EventArgs e)
+        public void Simhub_action_update()
         {
-
-            //action here 
-
             if (Plugin.Page_update_flag == true)
             {
                 Profile_change(Plugin.profile_index);
                 Plugin.Page_update_flag = false;
                 MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
                 Plugin.pedal_select_update_flag = false;
+                Plugin.simhub_theme_color = defaultcolor.ToString();
                 switch (Plugin.Settings.table_selected)
                 {
                     case 0:
@@ -2744,27 +2709,21 @@ namespace User.PluginSdkDemo
                 Sendconfigtopedal_shortcut();
                 Plugin.sendconfig_flag = 0;
             }
-            /*
-            if (Plugin.pedal_select_update_flag == true)
-            {
-                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
-                Plugin.pedal_select_update_flag = false;
-                switch (Plugin.Settings.table_selected)
-                {
-                    case 0:
-                        Plugin.current_pedal = "Clutch";
-                        break;
-                    case 1:
-                        Plugin.current_pedal = "Brake";
-                        break;
-                    case 2:
-                        Plugin.current_pedal = "Throttle";
-                        break;
-                }
-                updateTheGuiFromConfig();
+        }
 
-            }
-            */
+        int[] appendedBufferOffset = { 0, 0, 0 };
+
+        static int bufferSize = 10000;
+        static int destBufferSize = 1000;
+        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
+
+        unsafe public void timerCallback_serial(object sender, EventArgs e)
+        {
+
+            //action here 
+            Simhub_action_update();
+            
+            
 
 
             int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
