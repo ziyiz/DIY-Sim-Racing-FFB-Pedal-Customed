@@ -31,12 +31,15 @@ The joystick/gamepad data is provided via three redundant channels
 
 
 # Contributions
-A lot of awesome devs have helped this project grow. just to name a few:
+A lot of awesome devs have helped this project grow. Just to name a few:
 
-- [tjfenwick](https://github.com/tjfenwick) started the project and the initial implementation
-- [tcfshcrw](https://github.com/tcfshcrw) helped to elevate the Simhub plugin to its current form, added a ton of pedal effects, discord support, good guy and much more.
-- [MichaelJFr](https://github.com/MichaelJFr) helped with refactoring the code at the beginning of this project.
-- [Ibakha](https://github.com/Ibakha) Discord channel CEO
+- [tjfenwick](https://github.com/tjfenwick) started the project with an initial implementation.
+- [tcfshcrw](https://github.com/tcfshcrw) helped to elevate the Simhub plugin to its current form, added a ton of pedal effects, hardware and discord support, good guy and much more.
+- [MichaelJFr](https://github.com/MichaelJFr) helped with refactoring the code at the beginning of this project. Fruitful discussions let to the implementation of the control-loop strategies.
+- [Ibakha](https://github.com/Ibakha) Discord channel CEO.
+
+
+
 
 # Discord
 A [Discord](https://discord.gg/j8QhD5hCv7) server has been created to allow joint research.
