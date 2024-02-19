@@ -16,7 +16,7 @@ private:
     /* data */
     bool log = false;
     int mode_ = -1;
-    uint32_t timeout_ = 20;
+    uint32_t timeout_ = 50;
     HardwareSerial* s ;
     byte rawRx[512];
     int  lenRx = 0;

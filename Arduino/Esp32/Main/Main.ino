@@ -221,7 +221,7 @@ void setup()
 
   // init controller
   SetupController();
-  delay(3000);
+  //delay(3000);
   
 
 
@@ -242,6 +242,12 @@ void setup()
   
   // check whether iSV57 is connected
   isv57LifeSignal_b = isv57.checkCommunication();
+  if (!isv57LifeSignal_b)
+  {
+    Serial.println( "Restarting ESP" );
+    ESP.restart();
+  }
+
 
   Serial.print("iSV57 communication state:  ");
   Serial.println(isv57LifeSignal_b);
