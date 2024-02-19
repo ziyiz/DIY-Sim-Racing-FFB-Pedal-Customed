@@ -285,7 +285,7 @@ void setup()
   #endif
 
   // find the min & max endstops
-
+  Serial.print("Start homing")
   if (isv57LifeSignal_b && SENSORLESS_HOMING)
   {
     stepper->findMinMaxSensorless(&isv57);
