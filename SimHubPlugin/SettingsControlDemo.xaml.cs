@@ -48,6 +48,7 @@ using System.Windows.Media.Effects;
 using System.Diagnostics;
 using System.Collections;
 using System.Linq;
+using Windows.UI.Notifications;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -142,6 +143,15 @@ namespace User.PluginSdkDemo
 
 
         //}
+        private void ToastNotification(string message)
+        {
+            var xml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            var text = xml.GetElementsByTagName("text");
+            text[0].AppendChild(xml.CreateTextNode(message));
+            var toast = new ToastNotification(xml);
+            ToastNotificationManager.CreateToastNotifier("FFB Pedal Dashboard").Show(toast);
+        }
+
         private void vjoy_axis_initialize()
         {
             //center all axis/hats reader
@@ -4963,6 +4973,11 @@ namespace User.PluginSdkDemo
         {
             var textbox = sender as System.Windows.Controls.TextBox;
             Plugin.Settings.Profile_name[profile_select]= textbox.Text;
+        }
+
+        private void btn_toast_Click(object sender, RoutedEventArgs e)
+        {
+            ToastNotification("Hello World");
         }
 
         /*
