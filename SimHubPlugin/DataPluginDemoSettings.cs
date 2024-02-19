@@ -29,6 +29,7 @@
         public int[,] file_enable_check = new int[6, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
         public string WSeffect_bind = "";
         public int WS_trigger = 30;
+        public string[] Profile_name = new string[6] { "", "", "", "", "", "" };
         
         
     }

@@ -1436,6 +1436,7 @@ namespace User.PluginSdkDemo
 
             
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+            textbox_profile_name.Text = Plugin.Settings.Profile_name[profile_select];
 
             //try
             //{
@@ -4843,6 +4844,7 @@ namespace User.PluginSdkDemo
         {
             profile_select = (uint)ProfileTab.SelectedIndex;
             Plugin.profile_index = profile_select;
+            //Profile_change(profile_select);
             //Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
             // update the sliders & serial port selection accordingly
             updateTheGuiFromConfig();
@@ -4896,22 +4898,22 @@ namespace User.PluginSdkDemo
             switch (profile_index)
             {
                 case 0:
-                    tmp = "Profile A";
+                    tmp = "A" +Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 1:
-                    tmp = "Profile B";
+                    tmp = "B" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 2:
-                    tmp = "Profile C";
+                    tmp = "C" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 3:
-                    tmp = "Profile D";
+                    tmp = "D" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 4:
-                    tmp = "Profile E";
+                    tmp = "E" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 5:
-                    tmp = "Profile F";
+                    tmp = "F" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 default:
                     tmp = "No Profile";
@@ -4948,13 +4950,19 @@ namespace User.PluginSdkDemo
 
         private void btn_apply_profile_Click(object sender, RoutedEventArgs e)
         {
-
+            Profile_change((uint)ProfileTab.SelectedIndex);
             Parsefile((uint)ProfileTab.SelectedIndex);
         }
 
         private void btn_send_profile_Click(object sender, RoutedEventArgs e)
         {
             Sendconfigtopedal_shortcut();
+        }
+
+        private void textbox_profile_name_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as System.Windows.Controls.TextBox;
+            Plugin.Settings.Profile_name[profile_select]= textbox.Text;
         }
 
         /*
