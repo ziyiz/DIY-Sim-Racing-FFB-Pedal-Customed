@@ -153,11 +153,10 @@ namespace User.PluginSdkDemo
             text[0].AppendChild(xml.CreateTextNode(message1));
             text[1].AppendChild(xml.CreateTextNode(message2));
             var toast = new ToastNotification(xml);
-            toast.ExpirationTime = DateTime.Now.AddSeconds(4);
-            
+            toast.ExpirationTime = DateTime.Now.AddSeconds(1);
+            toast.Tag = "Pedal_notification";
             ToastNotificationManager.CreateToastNotifier("FFB Pedal Dashboard").Show(toast);
-            System.Threading.Thread.Sleep(3000);
-            ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
+
 
 
         }
@@ -2592,13 +2591,14 @@ namespace User.PluginSdkDemo
                                     //UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
                                     //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
+                                    System.Threading.Thread.Sleep(100);
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);
                                     }
-                                    updateTheGuiFromConfig();
+                                    System.Threading.Thread.Sleep(100);
                                     //add toast notificaiton
-                                    switch(pedalIdx)
+                                    switch (pedalIdx)
                                     {
                                         case 0:
                                             Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
@@ -2611,7 +2611,11 @@ namespace User.PluginSdkDemo
                                             break;
                                     }
                                     ToastNotification(Toast_tmp, "Connected");
-                                        
+                                    updateTheGuiFromConfig();
+                                    //System.Threading.Thread.Sleep(2000);
+                                    //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
+                                    
+
                                 }
                             }
                             else
@@ -2638,6 +2642,7 @@ namespace User.PluginSdkDemo
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
+            ToastNotificationManager.History.Remove("Pedal_notification");
             if (pedal_serial_read_timer[pedalIdx] != null)
             {
                 pedal_serial_read_timer[pedalIdx].Stop();
@@ -2646,6 +2651,8 @@ namespace User.PluginSdkDemo
             connect_timer.Dispose();
             connect_timer.Stop();
             System.Threading.Thread.Sleep(300);
+            
+            
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
