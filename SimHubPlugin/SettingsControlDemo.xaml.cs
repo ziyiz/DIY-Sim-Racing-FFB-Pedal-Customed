@@ -49,6 +49,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Linq;
 using Windows.UI.Notifications;
+using System.Diagnostics;
+using System.Windows.Navigation;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -2555,6 +2557,7 @@ namespace User.PluginSdkDemo
 
         }
         private uint count_timmer_count = 0;
+        private string Toast_tmp;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
             //simhub action for debug
@@ -2587,6 +2590,21 @@ namespace User.PluginSdkDemo
 
                                     }
                                     updateTheGuiFromConfig();
+                                    
+                                    switch(pedalIdx)
+                                    {
+                                        case 0:
+                                            Toast_tmp = "Clutch Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            break;
+                                        case 1:
+                                            Toast_tmp = "Brake Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
+                                            break;
+                                        case 2:
+                                            Toast_tmp = "Throttle Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            break;
+                                    }
+                                    ToastNotification(Toast_tmp);
+                                        
                                 }
                             }
                             else
@@ -4978,6 +4996,13 @@ namespace User.PluginSdkDemo
         private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
             ToastNotification("Hello World");
+        }
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            // for .NET Core you need to add UseShellExecute = true
+            // see https://learn.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
 
         /*

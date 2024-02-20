@@ -986,6 +986,18 @@
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
                         <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                            <TextBlock HorizontalAlignment="Center" Width="540" Height="15" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" TextAlignment="Center" Margin="0,20,0,0">           
+                                This work is licensed under a
+                                <Hyperlink NavigateUri="http://creativecommons.org/licenses/by-nc-sa/4.0/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
+                                    Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Width="540" Height="15" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" TextAlignment="Center">           
+                                More detail please check github repo:
+                                <Hyperlink NavigateUri="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
+                                    https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/
+                                </Hyperlink>
+                            </TextBlock>
                         </StackPanel>
                     </Border>
                 </TabItem>
