@@ -145,13 +145,21 @@ namespace User.PluginSdkDemo
 
 
         //}
-        private void ToastNotification(string message)
+        private void ToastNotification(string message1, string message2)
         {
-            var xml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            
+            var xml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var text = xml.GetElementsByTagName("text");
-            text[0].AppendChild(xml.CreateTextNode(message));
+            text[0].AppendChild(xml.CreateTextNode(message1));
+            text[1].AppendChild(xml.CreateTextNode(message2));
             var toast = new ToastNotification(xml);
+            toast.ExpirationTime = DateTime.Now.AddSeconds(4);
+            
             ToastNotificationManager.CreateToastNotifier("FFB Pedal Dashboard").Show(toast);
+            System.Threading.Thread.Sleep(3000);
+            ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
+
+
         }
 
         private void vjoy_axis_initialize()
@@ -396,6 +404,7 @@ namespace User.PluginSdkDemo
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             Label_reverse_LC.Visibility=Visibility.Hidden;
             Label_reverse_servo.Visibility=Visibility.Hidden;
+            btn_test.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -406,7 +415,7 @@ namespace User.PluginSdkDemo
             //SolidColorBrush rect_fill = new SolidColorBrush(color);
             defaultcolor = new SolidColorBrush(color);
             lightcolor = new SolidColorBrush(color_3);
-
+            //Plugin.simhub_theme_color=defaultcolor.ToString();
             text_min_force.Foreground = Line_fill;
             text_max_force.Foreground = Line_fill;
             text_max_pos.Foreground = Line_fill;
@@ -2586,24 +2595,22 @@ namespace User.PluginSdkDemo
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);
-
-
                                     }
                                     updateTheGuiFromConfig();
-                                    
+                                    //add toast notificaiton
                                     switch(pedalIdx)
                                     {
                                         case 0:
-                                            Toast_tmp = "Clutch Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
                                             break;
                                         case 1:
-                                            Toast_tmp = "Brake Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
+                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
                                             break;
                                         case 2:
-                                            Toast_tmp = "Throttle Pedal Connected:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
                                             break;
                                     }
-                                    ToastNotification(Toast_tmp);
+                                    ToastNotification(Toast_tmp, "Connected");
                                         
                                 }
                             }
@@ -4515,6 +4522,7 @@ namespace User.PluginSdkDemo
             debug_label_text.Visibility = Visibility.Visible;
             Label_reverse_LC.Visibility = Visibility.Visible;
             Label_reverse_servo.Visibility = Visibility.Visible;
+            btn_test.Visibility = Visibility.Visible;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4538,6 +4546,7 @@ namespace User.PluginSdkDemo
             debug_label_text.Visibility = Visibility.Hidden;
             Label_reverse_LC.Visibility = Visibility.Hidden;
             Label_reverse_servo.Visibility = Visibility.Hidden;
+            btn_test.Visibility = Visibility.Hidden;
         }
 
 
@@ -4995,7 +5004,7 @@ namespace User.PluginSdkDemo
 
         private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotification("Hello World");
+            ToastNotification("Hello World","Connected");
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
