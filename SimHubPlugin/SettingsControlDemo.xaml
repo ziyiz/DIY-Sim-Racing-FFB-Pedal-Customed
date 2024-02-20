@@ -978,8 +978,31 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                
+                <TabItem Width="90" Height="30" Padding="0,0,0,0">
+                    <TabItem.Header>
+                        <Border  Width="90" Height="30" Margin="0,0,0,0" >
+                            <Label Content="License"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter for wheel slip notification, use it when game didn't provide ABS telemetry" Width="90"  />
+                        </Border>
+                    </TabItem.Header>
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                            <TextBlock HorizontalAlignment="Center" Width="540" Height="15" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" TextAlignment="Center" Margin="0,20,0,0">           
+                                This work is licensed under a
+                                <Hyperlink NavigateUri="http://creativecommons.org/licenses/by-nc-sa/4.0/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
+                                    Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Width="540" Height="15" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" TextAlignment="Center">           
+                                More detail please check github repo:
+                                <Hyperlink NavigateUri="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
+                                    https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/
+                                </Hyperlink>
+                            </TextBlock>
+                            <styles:SHButtonPrimary x:Name="btn_test" Click="btn_toast_Click" Width="30" Content="TEST" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
 
+                        </StackPanel>
+                    </Border>
+                </TabItem>
 
 
 
@@ -1583,6 +1606,10 @@
                             <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,0,0,0" Width="440" HorizontalAlignment="Left" >
                                 <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="440" Grid.Column="1" Grid.Row="5">
                                     <StackPanel HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="440" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
+                                        <Label Content="Profile Name:" Height="15" Width="90" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="2,0,0,0"/>
+                                        <TextBox x:Name="textbox_profile_name" Text="" Height="20" Width="150" Padding="0,0,0,0" TextChanged="textbox_profile_name_TextChanged" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="16" BorderThickness="0,0,0,0" FontStyle="Italic"/>
+                                    </StackPanel>
+                                    <StackPanel HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="440" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
                                         <CheckBox x:Name="Clutch_file_check" Width="20" Height="30" Checked="file_check_Checked" Unchecked="file_check_Unchecked" IsChecked="False" Content="" FontSize="8" Margin="2,0,0,0" IsEnabled="False"/>
                                         <Label Content="Clutch:" Height="15" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left"/>
                                         <Label x:Name="Label_clutch_file" Content="" Height="30" Width="295" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="8"/>
@@ -1607,7 +1634,7 @@
 
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="440" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
-                                        <styles:SHButtonPrimary x:Name="btn_apply_profile" Click="btn_apply_profile_Click" Width="62" Content="Apply Profile" Height="20" Margin="303,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                        <styles:SHButtonPrimary x:Name="btn_apply_profile" Click="btn_apply_profile_Click" Width="62" Content="Apply Profile" Height="20" Margin="303,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" FontSize="10" MinHeight="20" FontStyle="Italic" />
                                         <styles:SHButtonPrimary x:Name="btn_send_profile" Click="btn_send_profile_Click" Width="62" Content="Send Profile" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                     </StackPanel>
                                 </StackPanel>

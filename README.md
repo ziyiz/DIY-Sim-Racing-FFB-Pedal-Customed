@@ -8,7 +8,17 @@ This repository documents my research progress. I wanted to understand the neces
 
 The FFB pedal is a robot and can be dangerous. Please watch [The Terminator](https://en.wikipedia.org/wiki/The_Terminator) before continuing. If not interacted with care, it may cause harm. I'm not responsible for any harm caused by this design suggestion. Use responsibly and at your own risk.
 
+# License
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
 # Features
 ## Control of pedal parameters
@@ -28,6 +38,15 @@ The joystick/gamepad data is provided via three redundant channels
 
 ## Pedals in action
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/i2e1ukc1ylA/0.jpg)](https://www.youtube.com/watch?v=i2e1ukc1ylA)
+
+
+# Contributions
+A lot of awesome devs have helped this project grow. Just to name a few:
+
+- [tjfenwick](https://github.com/tjfenwick) started the project with an initial implementation.
+- [tcfshcrw](https://github.com/tcfshcrw) helped to elevate the Simhub plugin to its current form, added a ton of pedal effects, hardware and discord support, good guy and much more.
+- [MichaelJFr](https://github.com/MichaelJFr) helped with refactoring the code at the beginning of this project. Fruitful discussions let to the implementation of the control-loop strategies.
+- [Ibakha](https://github.com/Ibakha) Discord channel CEO.
 
 
 

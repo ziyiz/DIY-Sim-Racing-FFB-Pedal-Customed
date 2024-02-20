@@ -48,6 +48,9 @@ using System.Windows.Media.Effects;
 using System.Diagnostics;
 using System.Collections;
 using System.Linq;
+using Windows.UI.Notifications;
+using System.Diagnostics;
+using System.Windows.Navigation;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -142,6 +145,22 @@ namespace User.PluginSdkDemo
 
 
         //}
+        private void ToastNotification(string message1, string message2)
+        {
+            
+            var xml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            var text = xml.GetElementsByTagName("text");
+            text[0].AppendChild(xml.CreateTextNode(message1));
+            text[1].AppendChild(xml.CreateTextNode(message2));
+            var toast = new ToastNotification(xml);
+            toast.ExpirationTime = DateTime.Now.AddSeconds(1);
+            toast.Tag = "Pedal_notification";
+            ToastNotificationManager.CreateToastNotifier("FFB Pedal Dashboard").Show(toast);
+
+
+
+        }
+
         private void vjoy_axis_initialize()
         {
             //center all axis/hats reader
@@ -384,6 +403,7 @@ namespace User.PluginSdkDemo
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
             Label_reverse_LC.Visibility=Visibility.Hidden;
             Label_reverse_servo.Visibility=Visibility.Hidden;
+            btn_test.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -394,7 +414,7 @@ namespace User.PluginSdkDemo
             //SolidColorBrush rect_fill = new SolidColorBrush(color);
             defaultcolor = new SolidColorBrush(color);
             lightcolor = new SolidColorBrush(color_3);
-
+            //Plugin.simhub_theme_color=defaultcolor.ToString();
             text_min_force.Foreground = Line_fill;
             text_max_force.Foreground = Line_fill;
             text_max_pos.Foreground = Line_fill;
@@ -1436,6 +1456,7 @@ namespace User.PluginSdkDemo
 
             
             Label_vjoy_order.Content = Plugin.Settings.vjoy_order;
+            textbox_profile_name.Text = Plugin.Settings.Profile_name[profile_select];
 
             //try
             //{
@@ -2544,38 +2565,13 @@ namespace User.PluginSdkDemo
 
         }
         private uint count_timmer_count = 0;
+        private string Toast_tmp;
         public void connection_timmer_tick(object sender, EventArgs e)
         {
-            /*
-            //simhub action debug without serial connection
-            if (Plugin.profile_update_flag == 1)
-            {
-                Profile_change(Plugin.profile_index);
-                Plugin.profile_update_flag = 0;
-            }
-            
-            if (Plugin.pedal_select_update_flag == true)
-            {
-                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
-                Plugin.pedal_select_update_flag = false;
-                switch (Plugin.Settings.table_selected)
-                {
-                    case 0:
-                        Plugin.current_pedal = "Clutch";
-                        break;
-                    case 1:
-                        Plugin.current_pedal = "Brake";
-                        break;
-                    case 2:
-                        Plugin.current_pedal = "Throttle";
-                        break;
-                }
-                updateTheGuiFromConfig();
+            //simhub action for debug
+            Simhub_action_update();
 
-            }
-            */
-            
-            
+
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -2595,13 +2591,31 @@ namespace User.PluginSdkDemo
                                     //UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
                                     //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
+                                    System.Threading.Thread.Sleep(100);
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);
-
-
                                     }
+                                    System.Threading.Thread.Sleep(100);
+                                    //add toast notificaiton
+                                    switch (pedalIdx)
+                                    {
+                                        case 0:
+                                            Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            break;
+                                        case 1:
+                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
+                                            break;
+                                        case 2:
+                                            Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                            break;
+                                    }
+                                    ToastNotification(Toast_tmp, "Connected");
                                     updateTheGuiFromConfig();
+                                    //System.Threading.Thread.Sleep(2000);
+                                    //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
+                                    
+
                                 }
                             }
                             else
@@ -2628,6 +2642,7 @@ namespace User.PluginSdkDemo
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
+            ToastNotificationManager.History.Remove("Pedal_notification");
             if (pedal_serial_read_timer[pedalIdx] != null)
             {
                 pedal_serial_read_timer[pedalIdx].Stop();
@@ -2636,6 +2651,8 @@ namespace User.PluginSdkDemo
             connect_timer.Dispose();
             connect_timer.Stop();
             System.Threading.Thread.Sleep(300);
+            
+            
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
@@ -2706,23 +2723,15 @@ namespace User.PluginSdkDemo
             return indices;
         }
 
-
-        int[] appendedBufferOffset = { 0, 0, 0 };
-
-        static int bufferSize = 10000;
-        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
-
-        unsafe public void timerCallback_serial(object sender, EventArgs e)
+        public void Simhub_action_update()
         {
-
-            //action here 
-
             if (Plugin.Page_update_flag == true)
             {
                 Profile_change(Plugin.profile_index);
                 Plugin.Page_update_flag = false;
                 MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
                 Plugin.pedal_select_update_flag = false;
+                Plugin.simhub_theme_color = defaultcolor.ToString();
                 switch (Plugin.Settings.table_selected)
                 {
                     case 0:
@@ -2743,27 +2752,21 @@ namespace User.PluginSdkDemo
                 Sendconfigtopedal_shortcut();
                 Plugin.sendconfig_flag = 0;
             }
-            /*
-            if (Plugin.pedal_select_update_flag == true)
-            {
-                MyTab.SelectedIndex = (int)Plugin.Settings.table_selected;
-                Plugin.pedal_select_update_flag = false;
-                switch (Plugin.Settings.table_selected)
-                {
-                    case 0:
-                        Plugin.current_pedal = "Clutch";
-                        break;
-                    case 1:
-                        Plugin.current_pedal = "Brake";
-                        break;
-                    case 2:
-                        Plugin.current_pedal = "Throttle";
-                        break;
-                }
-                updateTheGuiFromConfig();
+        }
 
-            }
-            */
+        int[] appendedBufferOffset = { 0, 0, 0 };
+
+        static int bufferSize = 10000;
+        static int destBufferSize = 1000;
+        byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
+
+        unsafe public void timerCallback_serial(object sender, EventArgs e)
+        {
+
+            //action here 
+            Simhub_action_update();
+            
+            
 
 
             int pedalSelected = Int32.Parse((sender as System.Windows.Forms.Timer).Tag.ToString());
@@ -2861,7 +2864,7 @@ namespace User.PluginSdkDemo
 
 
                         // Destination array
-                        byte[] destinationArray = new byte[1000];
+                        byte[] destinationArray = new byte[destBufferSize];
 
                         
 
@@ -2888,11 +2891,14 @@ namespace User.PluginSdkDemo
                                 destBuffLength = indices.ElementAt(msgId) - srcBufferOffset;
                             }
 
-                            if (destBuffLength <= 0)
+                            // check if dest buffer length is within valid length
+                            if ( (destBuffLength <= 0) | (destBuffLength > destBufferSize) )
                             {
                                 continue;
                             }
 
+
+                 
 
 
                             // copy bytes to subarray
@@ -4523,6 +4529,7 @@ namespace User.PluginSdkDemo
             debug_label_text.Visibility = Visibility.Visible;
             Label_reverse_LC.Visibility = Visibility.Visible;
             Label_reverse_servo.Visibility = Visibility.Visible;
+            btn_test.Visibility = Visibility.Visible;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4546,6 +4553,7 @@ namespace User.PluginSdkDemo
             debug_label_text.Visibility = Visibility.Hidden;
             Label_reverse_LC.Visibility = Visibility.Hidden;
             Label_reverse_servo.Visibility = Visibility.Hidden;
+            btn_test.Visibility = Visibility.Hidden;
         }
 
 
@@ -4880,6 +4888,7 @@ namespace User.PluginSdkDemo
         {
             profile_select = (uint)ProfileTab.SelectedIndex;
             Plugin.profile_index = profile_select;
+            //Profile_change(profile_select);
             //Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
             // update the sliders & serial port selection accordingly
             updateTheGuiFromConfig();
@@ -4933,22 +4942,22 @@ namespace User.PluginSdkDemo
             switch (profile_index)
             {
                 case 0:
-                    tmp = "Profile A";
+                    tmp = "A" +Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 1:
-                    tmp = "Profile B";
+                    tmp = "B" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 2:
-                    tmp = "Profile C";
+                    tmp = "C" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 3:
-                    tmp = "Profile D";
+                    tmp = "D" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 4:
-                    tmp = "Profile E";
+                    tmp = "E" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 5:
-                    tmp = "Profile F";
+                    tmp = "F" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 default:
                     tmp = "No Profile";
@@ -4985,13 +4994,31 @@ namespace User.PluginSdkDemo
 
         private void btn_apply_profile_Click(object sender, RoutedEventArgs e)
         {
-
+            Profile_change((uint)ProfileTab.SelectedIndex);
             Parsefile((uint)ProfileTab.SelectedIndex);
         }
 
         private void btn_send_profile_Click(object sender, RoutedEventArgs e)
         {
             Sendconfigtopedal_shortcut();
+        }
+
+        private void textbox_profile_name_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as System.Windows.Controls.TextBox;
+            Plugin.Settings.Profile_name[profile_select]= textbox.Text;
+        }
+
+        private void btn_toast_Click(object sender, RoutedEventArgs e)
+        {
+            ToastNotification("Hello World","Connected");
+        }
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            // for .NET Core you need to add UseShellExecute = true
+            // see https://learn.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
 
         /*

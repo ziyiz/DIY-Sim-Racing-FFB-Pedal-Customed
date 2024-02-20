@@ -24,6 +24,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetPlatformVersion>10.0.10586</TargetPlatformVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -124,6 +127,8 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="vJoyInterfaceWrap, Version=0.2.1.6, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Windows.Data" />
+    <Reference Include="Windows.UI" />
     <Reference Include="WindowsBase" />
     <Reference Include="WoteverCommon, Version=1.1.0.0, Culture=neutral, PublicKeyToken=35893a067a282a97, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

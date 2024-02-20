@@ -256,6 +256,7 @@ namespace User.PluginSdkDemo
         public string current_action = "NA";
         public bool Page_update_flag =false;
         public uint overlay_display = 0;
+        public string simhub_theme_color = "#7E87CEFA";
 
 
 
@@ -689,18 +690,19 @@ namespace User.PluginSdkDemo
                 }
             }
 
-            if (Page_update_flag == true)
-            {
-                this.AttachDelegate("CurrentProfile", () => current_profile);
-                pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
-                pluginManager.SetPropertyValue("Action", this.GetType(), current_action);
-                pluginManager.SetPropertyValue("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
-                pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
-                pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
-                pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
-                pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
-            }
-            
+
+            this.AttachDelegate("CurrentProfile", () => current_profile);
+            pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
+            pluginManager.SetPropertyValue("Action", this.GetType(), current_action);
+            pluginManager.SetPropertyValue("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
+            pluginManager.SetPropertyValue("Theme_color", this.GetType(), simhub_theme_color);
+            pluginManager.SetPropertyValue("ProfileIndex", this.GetType(), profile_index);
+
+
 
 
         }
@@ -1088,6 +1090,7 @@ namespace User.PluginSdkDemo
 
             // Declare a property available in the property list, this gets evaluated "on demand" (when shown or used in formulas)
             //this.AttachDelegate("CurrentDateTime", () => DateTime.Now);
+            pluginManager.AddProperty("ProfileIndex", this.GetType(), profile_index);
             pluginManager.AddProperty("SelectedPedal", this.GetType(), current_pedal);
             pluginManager.AddProperty("Action", this.GetType(), current_action);
             pluginManager.AddProperty("ABS_effect_status", this.GetType(), Settings.ABS_enable_flag[Settings.table_selected]);
@@ -1095,6 +1098,7 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("Overlay_display", this.GetType(), overlay_display);
+            pluginManager.AddProperty("Theme_color", this.GetType(), simhub_theme_color);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
