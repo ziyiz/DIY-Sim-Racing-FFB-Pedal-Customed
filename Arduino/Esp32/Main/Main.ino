@@ -221,7 +221,7 @@ void setup()
 
   // init controller
   SetupController();
-  //delay(3000);
+  delay(3000);
   
 
 
