@@ -157,10 +157,16 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
   //	https://www.youtube.com/watch?v=XaD8Lngfkzk
   //	https://github.com/pronenewbits/Arduino_Constrained_MPC_Library
 
-
-  Input = ( loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
-  Setpoint = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
-
+  if (calc_st->Force_Range > 0.001)
+  {
+      Input = ( loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
+      Setpoint = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
+  }
+  else
+  {
+    Input = 0;
+    Setpoint= 0;
+  }
   // compute PID output
   myPID.Compute();
 
