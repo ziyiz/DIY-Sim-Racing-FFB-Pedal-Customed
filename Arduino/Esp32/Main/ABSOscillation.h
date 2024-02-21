@@ -122,11 +122,13 @@ public:
     float RPM_max_freq = calcVars_st->RPM_max_freq;
     float RPM_min_freq = calcVars_st->RPM_min_freq;
     //float RPM_max =10;
-    float RPM_amp = calcVars_st->RPM_AMP;
+    float RPM_amp_base = calcVars_st->RPM_AMP;
+    float RPM_amp=0;
     if(RPM_value==0)
     {
       RPM_min_freq=0;
     }
+    RPM_amp=RPM_amp_base*(1+0.3*RPM_value/100);
 
 
     float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100, RPM_min_freq, RPM_max_freq);
@@ -149,8 +151,11 @@ public:
 
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
-    RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
-    //return RPMForceOffset;
+    if (calcVars_st->Force_Range > 0)
+    {
+        RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
+    }
+      //return RPMForceOffset;
     
 
   }
@@ -254,7 +259,13 @@ float MovingAverageFilter::process(float in)
     out += values[i];
   }
 
-  return out / dataPointsCount;
+  float retValue= 0;
+  if (dataPointsCount> 0)
+  {
+    retValue= out / dataPointsCount;
+  }
+  
+  return retValue;
 }
 
 MovingAverageFilter movingAverageFilter(100);
