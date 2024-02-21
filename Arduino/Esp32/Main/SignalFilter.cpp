@@ -42,9 +42,9 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   float modelNoiseScaling_fl32 = modelNoiseScaling_u8;
   modelNoiseScaling_fl32 /= 255.0;
 
-  if (modelNoiseScaling_fl32> 0.001)
+  if (modelNoiseScaling_fl32 < 0.001)
   {
-    modelNoiseScaling_fl32>= 0.001;
+    modelNoiseScaling_fl32 = 0.001;
   }
   if (elapsedTime < 1) { elapsedTime=1; }
   _timeLastObservation = currentTime;
