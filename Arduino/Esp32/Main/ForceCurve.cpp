@@ -36,7 +36,15 @@ float ForceCurve_Interpolated::EvalForceCubicSpline(const DAP_config_st* config_
   double t = (splineSegment_fl32 - (float)splineSegment_u8);// / dx;
   double y = (1 - t) * yOrig[splineSegment_u8] + t * yOrig[splineSegment_u8 + 1] + t * (1 - t) * (a * (1 - t) + b * t);
 
-  y = calc_st->Force_Min + y / 100.0f * calc_st->Force_Range;
+  if (calc_st->Force_Range> 0)
+  {
+      y = calc_st->Force_Min + y / 100.0f * calc_st->Force_Range;
+  }
+  else
+  {
+    y = calc_st->Force_Min;
+  }
+
 
   return y;
 }
@@ -75,14 +83,22 @@ float ForceCurve_Interpolated::EvalForceGradientCubicSpline(const DAP_config_st*
   double dx = Delta_x_orig / NUMBER_OF_SPLINE_SEGMENTS; // spline segment horizontal range
   double t = (splineSegment_fl32 - (float)splineSegment_u8); // relative position in spline segment [0, 1]
   double dy = yOrig[splineSegment_u8 + 1] - yOrig[splineSegment_u8]; // spline segment vertical range
-  double y_prime = dy / dx + (1 - 2 * t) * (a * (1 - t) + b * t) / dx + t * (1 - t) * (b - a) / dx;
-
+  double y_prime = 0;
+  if (fabs(dx) > 0)
+  {
+      y_prime = dy / dx + (1 - 2 * t) * (a * (1 - t) + b * t) / dx + t * (1 - t) * (b - a) / dx;
+  }
   // when the spline was identified, x and y were givin in the unit of percent --> 0-100
   // --> conversion of the gradient to the proper axis scaling is performed
   if (normalized_b == false)
   {
     double d_y_scale = calc_st->Force_Range / 100.0;
-    double d_x_scale = 100.0 / calc_st->stepperPosRange;
+    double d_x_scale=0;
+    if (fabs(calc_st->stepperPosRange) > 0.01)
+    {
+        d_x_scale = 100.0 / calc_st->stepperPosRange;
+    }
+    
     y_prime *= d_x_scale * d_y_scale;
   }
 
