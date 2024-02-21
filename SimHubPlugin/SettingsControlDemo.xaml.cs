@@ -1187,7 +1187,7 @@ namespace User.PluginSdkDemo
             text_BP.Text = "Bite Point:\n" + ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value) + "%";
             Canvas.SetLeft(rect_BP_Control, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value * dx - rect_BP_Control.Width / 2);
             Canvas.SetLeft(text_BP, Canvas.GetLeft(rect_BP_Control) + rect_BP_Control.Width + 3);
-            Canvas.SetTop(text_BP, canvas.Height - text_BP.Height);
+            Canvas.SetTop(text_BP, canvas.Height - text_BP.Height-15);
             //Bite point freq slider
             double BP_freq_max = 30;
             dx = canvas_horz_bite_freq.Width / BP_freq_max;
@@ -4237,7 +4237,7 @@ namespace User.PluginSdkDemo
                     text_BP.Text = "Bite Point:\n" + ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value) + "%";
                     Canvas.SetLeft(rectangle, x);
                     Canvas.SetLeft(text_BP, Canvas.GetLeft(rect_BP_Control) + rect_BP_Control.Width + 3);
-                    Canvas.SetTop(text_BP, canvas.Height - text_BP.Height);
+                    Canvas.SetTop(text_BP, canvas.Height - text_BP.Height-15);
 
                 }
 
@@ -5019,6 +5019,50 @@ namespace User.PluginSdkDemo
             // see https://learn.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+        private void btn_scurve_Click(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 1;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 17;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 99;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
+            Update_BrakeForceCurve();
+            updateTheGuiFromConfig();
+        }
+        private void btn_10xcurve_Click(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 43;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 69;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 85;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 95;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
+            Update_BrakeForceCurve();
+            updateTheGuiFromConfig();
+        }
+        private void btn_logcurve_Click(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 6;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 17;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 33;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 59;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
+            Update_BrakeForceCurve();
+            updateTheGuiFromConfig();
+        }
+        private void btn_linearcurve_Click(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 20;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 40;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 60;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 80;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
+            Update_BrakeForceCurve();
+            updateTheGuiFromConfig();
         }
 
         /*
