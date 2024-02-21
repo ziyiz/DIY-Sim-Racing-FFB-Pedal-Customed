@@ -505,8 +505,8 @@ namespace User.PluginSdkDemo
                         {
                             tmp.payloadPedalAction_.G_value = 128;
                         }
-                        
-                        
+
+
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
 
@@ -517,6 +517,10 @@ namespace User.PluginSdkDemo
                                 rpm_last_value = (Byte)RPM_value;
                             }
 
+                        }
+                        else
+                        {
+                            tmp.payloadPedalAction_.RPM_u8 = 0;
                         }
 
                         //G force effect only effect on brake
