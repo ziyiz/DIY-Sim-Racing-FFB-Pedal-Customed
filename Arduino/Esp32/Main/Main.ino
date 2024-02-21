@@ -825,9 +825,13 @@ void pedalUpdateTask( void * pvParameters )
       dacWrite(D_O,dac_value);
     #endif
 
-
-    float normalizedPedalReading_fl32 = constrain((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Range, 0, 1);
-
+    
+    float normalizedPedalReading_fl32 = 0;
+    if ( fabs(dap_calculationVariables_st.Force_Range) > 0.01)
+    {
+        normalizedPedalReading_fl32 = constrain((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Range, 0, 1);
+    }
+    
     // simulate ABS trigger 
     if(dap_config_st.payLoadPedalConfig_.Simulate_ABS_trigger==1)
     {
