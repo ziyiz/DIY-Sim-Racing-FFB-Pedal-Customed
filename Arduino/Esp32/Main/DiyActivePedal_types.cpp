@@ -194,8 +194,16 @@ void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMax
 
 void DAP_calculationVariables_st::updateStiffness() {
   springStiffnesss = Force_Range / stepperPosRange;
-  springStiffnesssInv = 1.0 / springStiffnesss;
-}
+  if ( fabs(springStiffnesss) > 0.0001 )
+  {
+      springStiffnesssInv = 1.0 / springStiffnesss;
+  }
+  else
+  {
+    springStiffnesssInv = 1000000;
+  }
+  
+  }
 
 
 
