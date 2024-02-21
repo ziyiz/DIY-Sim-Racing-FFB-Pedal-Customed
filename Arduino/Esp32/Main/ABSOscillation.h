@@ -151,8 +151,11 @@ public:
 
     _lastCallTimeMillis = timeNowMillis;
     RPM_VALUE_LAST=RPMForceOffset;
-    RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
-    //return RPMForceOffset;
+    if (calcVars_st->Force_Range > 0)
+    {
+        RPM_position_offset = calcVars_st->stepperPosRange*(RPMForceOffset/calcVars_st->Force_Range);
+    }
+      //return RPMForceOffset;
     
 
   }
@@ -256,7 +259,13 @@ float MovingAverageFilter::process(float in)
     out += values[i];
   }
 
-  return out / dataPointsCount;
+  float retValue= 0;
+  if (dataPointsCount> 0)
+  {
+    retValue= out / dataPointsCount;
+  }
+  
+  return retValue;
 }
 
 MovingAverageFilter movingAverageFilter(100);
