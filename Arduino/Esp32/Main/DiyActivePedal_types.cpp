@@ -138,6 +138,12 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   startPosRel = ((float)config_st.payLoadPedalConfig_.pedalStartPosition) / 100.0f;
   endPosRel = ((float)config_st.payLoadPedalConfig_.pedalEndPosition) / 100.0f;
 
+
+  if (startPosRel  ==  endPosRel)
+  {
+    endPosRel =   startPosRel + 1 / 100;
+  }
+  
   absFrequency = ((float)config_st.payLoadPedalConfig_.absFrequency);
   absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg or percent
 
@@ -170,12 +176,19 @@ void DAP_calculationVariables_st::reset_maxforce()
 }
 
 void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop) {
+ 
+  if ( newMinEndstop == newMaxEndstop )
+  {
+    newMaxEndstop = newMinEndstop  + 10;
+  }
+  
   stepperPosMinEndstop = newMinEndstop;
   stepperPosMaxEndstop = newMaxEndstop;
   stepperPosEndstopRange = stepperPosMaxEndstop - stepperPosMinEndstop;
-
+  
   stepperPosMin = stepperPosEndstopRange * startPosRel;
   stepperPosMax = stepperPosEndstopRange * endPosRel;
+
   stepperPosRange = stepperPosMax - stepperPosMin;
 }
 
