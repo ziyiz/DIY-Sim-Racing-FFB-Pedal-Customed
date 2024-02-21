@@ -38,8 +38,14 @@ ADS1256& ADC() {
     Serial.println("ADC Started");
     
     adc.waitDRDY(); // wait for DRDY to go low before changing multiplexer register
-    adc.setConversionFactor(CONVERSION_FACTOR);
-
+    if ( fabs(CONVERSION_FACTOR) > 0.01)
+    {
+        adc.setConversionFactor(CONVERSION_FACTOR);
+    }
+    else
+    {
+        adc.setConversionFactor(1);
+    }
     firstTime = false;
   }
 
@@ -50,8 +56,12 @@ ADS1256& ADC() {
 void LoadCell_ADS1256::setLoadcellRating(uint8_t loadcellRating_u8) const {
   ADS1256& adc = ADC();
   double originalConversionFactor_f64 = CONVERSION_FACTOR;
-  double updatedConversionFactor_f64 = 2 * ((double)loadcellRating_u8) * (CONVERSION_FACTOR/LOADCELL_WEIGHT_RATING_KG);
-
+  
+  double updatedConversionFactor_f64 = 1;
+  if (LOADCELL_WEIGHT_RATING_KG>0)
+  {
+      updatedConversionFactor_f64 = 2 * ((double)loadcellRating_u8) * (CONVERSION_FACTOR/LOADCELL_WEIGHT_RATING_KG);
+  }
   Serial.print("OrigConversionFactor: ");
   Serial.print(originalConversionFactor_f64);
   Serial.print(",     NewConversionFactor:");
