@@ -18,7 +18,7 @@ bool isv57LifeSignal_b = false;
   int32_t servo_offset_compensation_steps_i32 = 0; 
 #endif
 
-
+//#define OTA_update
 
 
 
@@ -196,11 +196,15 @@ StepperWithLimits* stepper = NULL;
 //static const int32_t MIN_STEPS = 5;
 
 #include "StepperMovementStrategy.h"
-
-
-
-
-
+/**********************************************************************************************/
+/*                                                                                            */
+/*                         OTA                                                                */
+/*                                                                                            */
+/**********************************************************************************************/
+//OTA update
+#ifdef OTA_update
+#include "ota.h"
+#endif
 
 
 
@@ -403,11 +407,10 @@ void setup()
 
 
 
-
-
-
-  
-
+  //Serial.begin(115200);
+  #ifdef OTA_update
+    ota_wifi_initialize();
+  #endif
   Serial.println("Setup end");
   
 }
@@ -444,6 +447,11 @@ void updatePedalCalcParameters()
 /**********************************************************************************************/
 void loop() {
   taskYIELD();
+  #ifdef OTA_update
+  server.handleClient();
+  //delay(1);
+  #endif
+  
 }
 
 
