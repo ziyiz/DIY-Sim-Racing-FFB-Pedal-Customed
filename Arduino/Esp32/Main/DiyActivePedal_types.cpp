@@ -110,7 +110,7 @@ void DAP_config_st::loadConfigFromEprom(DAP_config_st& config_st)
   DAP_config_st local_config_st;
 
   EEPROM.get(0, local_config_st);
-  EEPROM.commit();
+  //EEPROM.commit();
 
   // check if version matches revision, in case, update the default config
   if (local_config_st.payLoadHeader_.version == DAP_VERSION_CONFIG)
