@@ -4012,6 +4012,7 @@ namespace User.PluginSdkDemo
                     y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height + rectangle.Height / 2));
                     
                     double actual_y = (canvas_vert_slider.Height- y-rectangle.Height/2)  * dy;
+                    actual_y = Math.Min(Math.Max(actual_y, 0), 255);
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Convert.ToByte(actual_y);
 
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce)
