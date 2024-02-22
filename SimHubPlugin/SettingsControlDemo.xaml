@@ -1068,8 +1068,8 @@
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Label Content="Linear Module Pitch:" Height="20" Width="95" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0" FontFamily="Arial"/>
                                 <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="50" Height="20" FontSize="10" SelectedIndex="5" Margin="3,0,0,0" HorizontalAlignment="Left" MinHeight="20" ToolTip="Spindle Pitch in mm/rev" BorderThickness="0,0,0,0">
-                                    <ComboBoxItem Content="0" ToolTip="Spindle Pitch in mm/rev"/>
-                                    <ComboBoxItem Content="1"/>
+                                    <ComboBoxItem Content="0" />
+                                    <ComboBoxItem Content="1" />
                                     <ComboBoxItem Content="2"/>
                                     <ComboBoxItem Content="3"/>
                                     <ComboBoxItem Content="4"/>

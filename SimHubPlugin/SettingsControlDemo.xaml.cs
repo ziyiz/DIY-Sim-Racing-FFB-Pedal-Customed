@@ -3556,6 +3556,14 @@ namespace User.PluginSdkDemo
 
                     // set values in global structure
                     dap_config_st[pedalIdx].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                    if (dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 == 0)
+                    {
+                        dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+                    }
+                    if (dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise == 0)
+                    {
+                        dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 5;
+                    }
                 }
                 
             }
@@ -3652,6 +3660,14 @@ namespace User.PluginSdkDemo
 
                         // set values in global structure
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = 5;
+                        }
                     }
 
                     updateTheGuiFromConfig();
@@ -4167,7 +4183,7 @@ namespace User.PluginSdkDemo
                     double x = e.GetPosition(canvas_horz_KF).X - offset.X;
                     double KF_max = 255;
                     double dx = canvas_horz_KF.Width / KF_max;
-                    double min_position = 0 * dx;
+                    double min_position = 1 * dx;
                     double max_position = KF_max * dx;
 
                     x = Math.Max(min_position, Math.Min(x, max_position));
