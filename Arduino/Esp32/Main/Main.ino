@@ -270,7 +270,70 @@ void setup()
 
   // Load config from EEPROM, if valid, overwrite initial config
   EEPROM.begin(sizeof(DAP_config_st));
-  dap_config_st.loadConfigFromEprom(dap_config_st);
+  dap_config_st.loadConfigFromEprom(dap_config_st_local);
+
+
+  // check validity of data from EEPROM  
+  bool structChecker = true;
+  uint16_t crc;
+  if ( dap_config_st_local.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_CONFIG ){ 
+    structChecker = false;
+    /*Serial.print("Payload type expected: ");
+    Serial.print(DAP_PAYLOAD_TYPE_CONFIG);
+    Serial.print(",   Payload type received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.payloadType);*/
+  }
+  if ( dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
+    structChecker = false;
+    /*Serial.print("Config version expected: ");
+    Serial.print(DAP_VERSION_CONFIG);
+    Serial.print(",   Config version received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.version);*/
+  }
+  // checksum validation
+  crc = checksumCalculator((uint8_t*)(&(dap_config_st_local.payLoadHeader_)), sizeof(dap_config_st_local.payLoadHeader_) + sizeof(dap_config_st_local.payLoadPedalConfig_));
+  if (crc != dap_config_st_local.payloadFooter_.checkSum){ 
+    structChecker = false;
+    /*Serial.print("CRC expected: ");
+    Serial.print(crc);
+    Serial.print(",   CRC received: ");
+    Serial.println(dap_config_st_local.payloadFooter_.checkSum);*/
+  }
+
+
+
+
+
+
+  // if checks are successfull, overwrite global configuration struct
+  if (structChecker == true)
+  {
+    Serial.println("Updating pedal config from EEPROM");
+    dap_config_st = dap_config_st_local;          
+  }
+  else
+  {
+
+    Serial.println("Couldn't load config from EPROM due to mismatch: ");
+
+    Serial.print("Payload type expected: ");
+    Serial.print(DAP_PAYLOAD_TYPE_CONFIG);
+    Serial.print(",   Payload type received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
+
+    
+    Serial.print("Target version: ");
+    Serial.print(DAP_VERSION_CONFIG);
+    Serial.print(",    Source version: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.version);
+
+    Serial.print("CRC expected: ");
+    Serial.print(crc);
+    Serial.print(",   CRC received: ");
+    Serial.println(dap_config_st_local.payloadFooter_.checkSum);
+
+  }
+
 
   // interprete config values
   dap_calculationVariables_st.updateFromConfig(dap_config_st);
@@ -532,7 +595,15 @@ void pedalUpdateTask( void * pvParameters )
         {
           Serial.println("Updating the calc params");
           configWasUpdated_b = false;
-          dap_config_st.storeConfigToEprom(dap_config_st); // store config to EEPROM
+
+          if (true == dap_config_st.payLoadHeader_.storeToEeprom)
+          {
+            dap_config_st.payLoadHeader_.storeToEeprom = false; // set to false, thus at restart existing EEPROM config isn't restored to EEPROM
+            uint16_t crc = checksumCalculator((uint8_t*)(&(dap_config_st.payLoadHeader_)), sizeof(dap_config_st.payLoadHeader_) + sizeof(dap_config_st.payLoadPedalConfig_));
+            dap_config_st.payloadFooter_.checkSum = crc;
+            dap_config_st.storeConfigToEprom(dap_config_st); // store config to EEPROM
+          }
+          
           updatePedalCalcParameters(); // update the calc parameters
         }
 
