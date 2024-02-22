@@ -1,5 +1,6 @@
 #pragma once
 //OTA update
+//source:https://lastminuteengineers.com/esp32-ota-web-updater-arduino-ide/
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -8,8 +9,8 @@
 
 
 const char* host = "esp32";
-const char* ssid_new = "***";
-const char* password = "***";
+const char* ssid_new = "***";//change SSID here
+const char* password = "***";//change wifi password here
 WebServer server(80);
 //OTA update page
 /* Style */
@@ -24,7 +25,7 @@ String style =
 /* Login page */
 String loginIndex = 
 "<form name=loginForm>"
-"<h1>ESP32 Login</h1>"
+"<h1>Pedal Login</h1>"
 "<input name=userid placeholder='User ID'> "
 "<input name=pwd placeholder=Password type=Password> "
 "<input type=submit onclick=check(this.form) class=btn value=Login></form>"
@@ -90,7 +91,7 @@ void ota_wifi_initialize()
   Serial.println("");
   uint64_t chipid = ESP.getEfuseMac(); // The chip ID is essentially its MAC address(length: 6 bytes).
   unsigned int chip = (unsigned int)(chipid >> 32);
-  std::string string_mdns = "DiyFfbPedal_" + std::to_string( chip );
+  std::string string_mdns = "DIYFFBPedal_" + std::to_string( chip );
   char* host_name=(char*)string_mdns.data();
   //std::string esp_lcl = "DiyFfbPedal_" + std::to_string( chip );
   // Wait for connection
@@ -103,11 +104,9 @@ void ota_wifi_initialize()
   Serial.println(ssid_new);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-  Serial.print("Connect to: ");
-  Serial.print(host_name);
-  Serial.println(".local");
+
   /*use mdns for host name resolution*/
-  //bluetoothName_lcl
+  
   if (!MDNS.begin(host_name)) { //http://esp32.local
     Serial.println("Error setting up MDNS responder!");
     while (1) {
@@ -115,6 +114,9 @@ void ota_wifi_initialize()
     }
   }
   Serial.println("mDNS responder started");
+  Serial.print("Connect to: ");
+  Serial.print(host_name);
+  Serial.println(".local to upload the bin file. username/password : admin/admin");
   /*return index page which is stored in serverIndex */
   server.on("/", HTTP_GET, []() {
     server.sendHeader("Connection", "close");
