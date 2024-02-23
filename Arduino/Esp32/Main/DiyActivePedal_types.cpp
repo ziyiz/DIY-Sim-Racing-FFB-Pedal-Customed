@@ -8,6 +8,8 @@
 
 static const float ABS_SCALING = 50;
 
+const uint32_t EEPROM_OFFSET = (DAP_VERSION_CONFIG-128) * sizeof(DAP_config_st) % (2048-sizeof(DAP_config_st));
+
 void DAP_config_st::initialiseDefaults() {
   payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_CONFIG;
   payLoadHeader_.version = DAP_VERSION_CONFIG;
@@ -97,7 +99,7 @@ void DAP_config_st::initialiseDefaults() {
 void DAP_config_st::storeConfigToEprom(DAP_config_st& config_st)
 {
 
-  EEPROM.put(0, config_st); 
+  EEPROM.put(EEPROM_OFFSET, config_st); 
   EEPROM.commit();
   Serial.println("Successfully stored config in EPROM");
   
@@ -114,7 +116,7 @@ void DAP_config_st::loadConfigFromEprom(DAP_config_st& config_st)
 {
   DAP_config_st local_config_st;
 
-  EEPROM.get(0, local_config_st);
+  EEPROM.get(EEPROM_OFFSET, local_config_st);
   //EEPROM.commit();
 
   config_st = local_config_st;
