@@ -510,10 +510,13 @@ void updatePedalCalcParameters()
 /**********************************************************************************************/
 void loop() {
   taskYIELD();
+  
   #ifdef OTA_update
   server.handleClient();
   //delay(1);
   #endif
+  
+  
   
 }
 
@@ -992,6 +995,13 @@ void pedalUpdateTask( void * pvParameters )
       unsigned int temp2 = uxTaskGetStackHighWaterMark(nullptr);
       Serial.print("PU task stack size="); Serial.println(temp2);
     #endif
+    /*
+    #ifdef OTA_update
+    server.handleClient();
+    //delay(1);
+    #endif
+    */
+
   }
 }
 

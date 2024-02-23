@@ -14,6 +14,7 @@ const char* password = "***";//change wifi password here
 WebServer server(80);
 //OTA update page
 /* Style */
+
 String style =
 "<style>#file-input,input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
 "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}"
@@ -23,6 +24,7 @@ String style =
 ".btn{background:#3498db;color:#fff;cursor:pointer}</style>";
 
 /* Login page */
+/*
 String loginIndex = 
 "<form name=loginForm>"
 "<h1>Pedal Login</h1>"
@@ -37,6 +39,7 @@ String loginIndex =
 "{alert('Error Password or Username')}"
 "}"
 "</script>" + style;
+*/
  
 /* Server Index Page */
 String serverIndex = 
@@ -95,15 +98,29 @@ void ota_wifi_initialize()
   char* host_name=(char*)string_mdns.data();
   //std::string esp_lcl = "DiyFfbPedal_" + std::to_string( chip );
   // Wait for connection
+  int wifi_count =0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    wifi_count =wifi_count+1;
+    if(wifi_count>10)
+    {
+      break;
+    }
   }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid_new);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  if(wifi_count>10)
+  {
+    Serial.println("Please check your wifi SSID and password");
+  }
+  else
+  {
+    Serial.println("");
+    Serial.print("Connected to ");
+    Serial.println(ssid_new);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
+
 
   /*use mdns for host name resolution*/
   
@@ -117,15 +134,24 @@ void ota_wifi_initialize()
   Serial.print("Connect to: ");
   Serial.print(host_name);
   Serial.println(".local to upload the bin file. username/password : admin/admin");
+  
   /*return index page which is stored in serverIndex */
+  /*
   server.on("/", HTTP_GET, []() {
     server.sendHeader("Connection", "close");
     server.send(200, "text/html", loginIndex);
   });
+  */
+  server.on("/", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", serverIndex);
+  });
+  /*
   server.on("/serverIndex", HTTP_GET, []() {
     server.sendHeader("Connection", "close");
     server.send(200, "text/html", serverIndex);
   });
+  */
   /*handling uploading firmware file */
   server.on("/update", HTTP_POST, []() {
     server.sendHeader("Connection", "close");
