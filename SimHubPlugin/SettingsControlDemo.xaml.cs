@@ -2642,7 +2642,7 @@ namespace User.PluginSdkDemo
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
-            ToastNotificationManager.History.Remove("Pedal_notification");
+            
             if (pedal_serial_read_timer[pedalIdx] != null)
             {
                 pedal_serial_read_timer[pedalIdx].Stop();
@@ -4003,16 +4003,18 @@ namespace User.PluginSdkDemo
                 //double y = e.GetPosition(canvas).Y - offset.Y;
 
                 // Ensure the rectangle stays within the canvas
-
+                double dy = 250 / (canvas_vert_slider.Height);
                 double min_position =  Canvas.GetTop(rect8) - rectangle.Height / 2;
                 double max_position = Canvas.GetTop(rect9) + rectangle.Height / 2;
-                double dy = 250 / (canvas_vert_slider.Height);
+                double min_limit = canvas_vert_slider.Height-0 / dy;
+                double max_limit = canvas_vert_slider.Height-250 / dy;
+                
                 if (rectangle.Name == "rect8")
                 {
-                    y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height + rectangle.Height / 2));
+                    y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height - rectangle.Height / 2));
                     
                     double actual_y = (canvas_vert_slider.Height- y-rectangle.Height/2)  * dy;
-                    actual_y = Math.Min(Math.Max(actual_y, 0), 255);
+                    actual_y=Math.Max(0, Math.Min(actual_y, 250));
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Convert.ToByte(actual_y);
 
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce)
@@ -4030,6 +4032,7 @@ namespace User.PluginSdkDemo
                     y = Math.Max(-1 * rectangle.Height / 2, Math.Min(y, min_position ));
                     
                     double actual_y = (canvas_vert_slider.Height - y - rectangle.Height / 2) * dy;
+                    actual_y = Math.Max(0, Math.Min(actual_y, 250));
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = Convert.ToByte(actual_y);
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce < dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce)
                     {
@@ -5040,10 +5043,10 @@ namespace User.PluginSdkDemo
         private void btn_scurve_Click(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 1;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 17;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 99;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 7;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 28;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 70;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 93;
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
             Update_BrakeForceCurve();
             updateTheGuiFromConfig();

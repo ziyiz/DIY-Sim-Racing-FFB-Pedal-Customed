@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.UI.Notifications;
 using static System.Net.Mime.MediaTypeNames;
 
 
@@ -1063,6 +1064,12 @@ namespace User.PluginSdkDemo
                 }
             }
             
+            if (ToastNotificationManager.History.GetHistory("Pedal_notification").Count != 0)
+            {
+                ToastNotificationManager.History.Remove("Pedal_notification");
+            }
+            
+
         }
 
 
