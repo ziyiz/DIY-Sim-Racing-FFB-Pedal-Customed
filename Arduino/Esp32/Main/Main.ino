@@ -269,7 +269,8 @@ void setup()
   dap_config_st.initialiseDefaults();
 
   // Load config from EEPROM, if valid, overwrite initial config
-  EEPROM.begin(sizeof(DAP_config_st));
+  //EEPROM.begin(sizeof(DAP_config_st));
+  EEPROM.begin(2048);
   dap_config_st.loadConfigFromEprom(dap_config_st_local);
 
 
