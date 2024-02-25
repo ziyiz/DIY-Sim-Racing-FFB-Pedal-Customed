@@ -18,7 +18,7 @@ bool isv57LifeSignal_b = false;
   int32_t servo_offset_compensation_steps_i32 = 0; 
 #endif
 
-//#define OTA_update
+#define OTA_update
 
 
 
@@ -269,7 +269,6 @@ void setup()
   dap_config_st.initialiseDefaults();
 
   // Load config from EEPROM, if valid, overwrite initial config
-  //EEPROM.begin(sizeof(DAP_config_st));
   EEPROM.begin(2048);
   dap_config_st.loadConfigFromEprom(dap_config_st_local);
 
