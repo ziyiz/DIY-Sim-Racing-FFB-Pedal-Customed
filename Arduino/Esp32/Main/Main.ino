@@ -18,7 +18,7 @@ bool isv57LifeSignal_b = false;
   int32_t servo_offset_compensation_steps_i32 = 0; 
 #endif
 
-#define OTA_update
+//#define OTA_update
 
 
 
