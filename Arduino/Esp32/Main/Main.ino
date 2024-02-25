@@ -473,7 +473,18 @@ void setup()
   //Serial.begin(115200);
   #ifdef OTA_update
     ota_wifi_initialize();
+    xTaskCreatePinnedToCore(
+                  OTATask,   
+                  "OTATask", 
+                  16000,  
+                  //STACK_SIZE_FOR_TASK_2,    
+                  NULL,      
+                  1,         
+                  &Task2,    
+                  0);     
+    delay(500);
   #endif
+
   Serial.println("Setup end");
   
 }
@@ -510,12 +521,12 @@ void updatePedalCalcParameters()
 /**********************************************************************************************/
 void loop() {
   taskYIELD();
-  
+  /*
   #ifdef OTA_update
   server.handleClient();
   //delay(1);
   #endif
-  
+  */
   
   
 }
@@ -1233,6 +1244,18 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
+  }
+}
+//OTA multitask
+void OTATask( void * pvParameters )
+{
+
+  for(;;)
+  {
+    #ifdef OTA_update
+    server.handleClient();
+    //delay(1);
+    #endif
   }
 }
 
