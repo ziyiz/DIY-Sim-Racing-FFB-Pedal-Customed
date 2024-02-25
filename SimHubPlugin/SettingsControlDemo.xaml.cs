@@ -99,6 +99,7 @@ namespace User.PluginSdkDemo
 
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
+        private string info_text_connection;
 
 
 
@@ -389,8 +390,8 @@ namespace User.PluginSdkDemo
             text_debug_flag.Visibility = Visibility.Hidden;
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
-            InvertMotorDir_check.Visibility = Visibility.Hidden;
+            //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            //InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             Border_serial_monitor.Visibility=Visibility.Hidden;
             debug_border.Visibility=Visibility.Hidden;
@@ -401,8 +402,8 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            Label_reverse_LC.Visibility=Visibility.Hidden;
-            Label_reverse_servo.Visibility=Visibility.Hidden;
+            //Label_reverse_LC.Visibility=Visibility.Hidden;
+            //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
@@ -934,7 +935,7 @@ namespace User.PluginSdkDemo
             {
                 if (Plugin.Settings.auto_connect_flag == 1)
                 {
-                    info_text = "Connecting..";
+                    info_text = info_text_connection;
                 }
                 else
                 {
@@ -2570,6 +2571,23 @@ namespace User.PluginSdkDemo
         {
             //simhub action for debug
             Simhub_action_update();
+            string tmp = "Connecting";
+            int count_connection = ((int)count_timmer_count) % 4;
+            switch (count_connection) 
+            {
+                case 0:
+                    break;
+                case 1:
+                    tmp = tmp + ".";
+                    break;
+                case 2:
+                    tmp = tmp + "..";
+                    break;
+                case 3:
+                    tmp = tmp + "...";
+                    break;
+            }
+            info_text_connection = tmp;
 
 
 
@@ -3235,8 +3253,10 @@ namespace User.PluginSdkDemo
 
 
                             double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
-                            TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
-
+                            if (debug_flag)
+                            {
+                                TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
+                            }
                             timeCntr[pedalSelected] = 0;
                             timeCollector[pedalSelected] = 0;
                         }
@@ -4540,15 +4560,15 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
-            InvertLoadcellReading_check.Visibility = Visibility.Visible;
-            InvertMotorDir_check.Visibility = Visibility.Visible;
+            //InvertLoadcellReading_check.Visibility = Visibility.Visible;
+            //InvertMotorDir_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             Border_serial_monitor.Visibility = Visibility.Visible;
             debug_border.Visibility = Visibility.Visible;
             debug_label_text.Visibility = Visibility.Visible;
-            Label_reverse_LC.Visibility = Visibility.Visible;
-            Label_reverse_servo.Visibility = Visibility.Visible;
+           // Label_reverse_LC.Visibility = Visibility.Visible;
+            //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
 
         }
@@ -4564,15 +4584,15 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
-            InvertMotorDir_check.Visibility = Visibility.Hidden;
+            //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            //InvertMotorDir_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
             Border_serial_monitor.Visibility = Visibility.Hidden;
             debug_border.Visibility = Visibility.Hidden;
             debug_label_text.Visibility = Visibility.Hidden;
-            Label_reverse_LC.Visibility = Visibility.Hidden;
-            Label_reverse_servo.Visibility = Visibility.Hidden;
+            //Label_reverse_LC.Visibility = Visibility.Hidden;
+            //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
         }
 

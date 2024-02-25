@@ -539,8 +539,8 @@
                                     <ComboBoxItem Content="Sinewave"/>
                                     <ComboBoxItem Content="Sawtooth"/>
                                 </ComboBox>
-                                <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0" ToolTip="CLick for testing ABS/TC, click again to cancel"/>
-                                <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left"/>
+                                <styles:SHButtonPrimary Content="Test ABS/TC" Click="TestAbs_click" Height="20"  FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0" ToolTip="Click for testing ABS/TC, click again to cancel" MinHeight="20" FontFamily="Arial" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
+                                <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left" Margin="3,0,0,0"/>
 
 
                             </StackPanel>
@@ -1626,7 +1626,7 @@
 
             <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
-                    <Label Content="Debug Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                    <Label Content="System Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
                     <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="296" Height="50" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" Margin="5,0,0,0" />
 
                 </StackPanel>
