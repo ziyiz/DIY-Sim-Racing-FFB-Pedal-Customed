@@ -3,15 +3,15 @@
 //source:https://lastminuteengineers.com/esp32-ota-web-updater-arduino-ide/
 //https://github.com/italocjs/ESP32_OTA_APMODE
 #include <WiFi.h>
-#include <WiFiClient.h>
+//#include <WiFiClient.h>
 #include <WebServer.h>
-#include <ESPmDNS.h>
+//#include <ESPmDNS.h>
 #include <Update.h>
 
 
 
-const char *host = "esp32";
-const char *new_ssid = "ADD_WANTED_SSID_HERE";
+//const char *host = "esp32";
+//const char *new_ssid = "ADD_WANTED_SSID_HERE";
 const char *password = "pedaladmin";
 WebServer server(80);
 //OTA update page
@@ -65,6 +65,7 @@ String style =
 String serverIndex =
     "<script src='/jquery.min.js'></script>"
     "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
+    "<h1>Pedal Firmware Upload</h1>"
     "<input type='file' name='update' id='file' onchange='sub(this)' style=display:none>"
     "<label id='file-input' for='file'>   Choose file...</label>"
     "<input type='submit' class=btn value='Update'>"
@@ -147,15 +148,16 @@ void ota_wifi_initialize()
     //     delay(500);
     //     Serial.print(".");
     // }
-    Serial.println("");
-    Serial.print("Connected to ");
-    Serial.println(host_name);
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+    //Serial.println("");
+    //Serial.print("Connected to ");
+    //Serial.println(host_name);
+    //Serial.print("IP address: ");
+    //Serial.println(WiFi.localIP());
 
     /*use mdns for host name resolution*/
+    /*
     if (!MDNS.begin(host_name))
-    { // http://esp32.local
+    {  //http://esp32.local
         Serial.println("Error setting up MDNS responder!");
         while (1)
         {
@@ -163,6 +165,7 @@ void ota_wifi_initialize()
         }
     }
     Serial.println("mDNS responder started");
+    */
 
      /*return javascript jquery */
   server.on("/jquery.min.js", HTTP_GET, onJavaScript);
@@ -191,6 +194,7 @@ void ota_wifi_initialize()
             if (upload.status == UPLOAD_FILE_START)
             {
                 Serial.printf("Update: %s\n", upload.filename.c_str());
+                Serial.println("Please don't move the Pedal");
                 if (!Update.begin(UPDATE_SIZE_UNKNOWN))
                 { // start with max available size
                     Update.printError(Serial);

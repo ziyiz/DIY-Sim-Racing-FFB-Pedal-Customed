@@ -204,6 +204,7 @@ StepperWithLimits* stepper = NULL;
 //OTA update
 #ifdef OTA_update
 #include "ota.h"
+TaskHandle_t Task4;
 #endif
 
 
@@ -439,7 +440,7 @@ void setup()
                     //STACK_SIZE_FOR_TASK_1,
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
-                    &Task2,      /* Task handle to keep track of created task */
+                    &Task1,      /* Task handle to keep track of created task */
                     1);          /* pin task to core 1 */
   delay(500);
 
@@ -463,7 +464,7 @@ void setup()
                       //STACK_SIZE_FOR_TASK_2,    
                       NULL,      
                       1,         
-                      &Task2,    
+                      &Task3,    
                       0);     
     delay(500);
 #endif
@@ -480,7 +481,7 @@ void setup()
                   //STACK_SIZE_FOR_TASK_2,    
                   NULL,      
                   1,         
-                  &Task2,    
+                  &Task4,    
                   0);     
     delay(500);
   #endif
