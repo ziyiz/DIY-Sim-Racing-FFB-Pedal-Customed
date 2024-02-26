@@ -18,7 +18,7 @@ bool isv57LifeSignal_b = false;
   int32_t servo_offset_compensation_steps_i32 = 0; 
 #endif
 
-//#define OTA_update
+#define OTA_update
 
 
 
@@ -473,7 +473,24 @@ void setup()
 
   //Serial.begin(115200);
   #ifdef OTA_update
-    ota_wifi_initialize();
+  char* APhost;
+    switch(dap_config_st.payLoadPedalConfig_.pedal_type)
+    {
+      case 0:
+        APhost="FFBPedalClutch";
+        break;
+      case 1:
+        APhost="FFBPedalBrake";
+        break;
+      case 2:
+        APhost="FFBPedalGas";
+        break;
+      default:
+        APhost="FFBPedal";
+        break;        
+
+    }
+    ota_wifi_initialize(APhost);
     xTaskCreatePinnedToCore(
                   OTATask,   
                   "OTATask", 

@@ -58,7 +58,7 @@ String style =
     "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}"
     "#file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:left;display:block;cursor:pointer}"
     "#bar,#prgbar{background-color:#f1f1f1;border-radius:10px}#bar{background-color:#3498db;width:0%;height:10px}"
-    "form{background:#fff;max-width:258px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
+    "form{background:#fff;max-width:400px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
     ".btn{background:#3498db;color:#fff;cursor:pointer}</style>";
 
 /* Server Index Page */
@@ -117,21 +117,18 @@ void onJavaScript(void)
     server.send_P(200, "text/javascript", jquery_min_js_v3_2_1_gz, jquery_min_js_v3_2_1_gz_len);
 }
 
-void ota_wifi_initialize()
+void ota_wifi_initialize(char* APhostname)
 {
-  uint64_t chipid = ESP.getEfuseMac(); // The chip ID is essentially its MAC address(length: 6 bytes).
-  unsigned int chip = (unsigned int)(chipid >> 32);
-  std::string string_mdns = "DIYFFBPedal_" + std::to_string( chip );
-  char* host_name=(char*)string_mdns.data();
+
     IPAddress local_ip(192, 168, 2, 1);
     IPAddress local_mask(255,255,255,0);
     IPAddress gateway(192, 168, 2, 1);
     //Serial.begin(115200);
-    WiFi.softAP(host_name,password);
+    WiFi.softAP(APhostname,password);
     WiFi.softAPConfig(local_ip,gateway,local_mask);
     Serial.println("");
     Serial.print("AP set to ");
-    Serial.println(host_name);
+    Serial.println(APhostname);
     Serial.print("IP address: ");
     Serial.println(WiFi.softAPIP());
     Serial.print("wifi password: ");

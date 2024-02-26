@@ -91,6 +91,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.invertLoadcellReading_u8 = 0;
 
   payLoadPedalConfig_.invertMotorDirection_u8 = 0;
+  payLoadPedalConfig_.pedal_type=0;
 }
 
 
