@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 130;
+    public const uint pedalConfigPayload_version = 131;
 
 
     // pyload types
@@ -181,6 +181,9 @@ public struct payloadPedalConfig
 
     // spindle pitch in mm/rev
     public byte spindlePitch_mmPerRev_u8;
+
+    // pedal type
+    public byte pedal_type;
 
 
 }
@@ -1518,8 +1521,9 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+            dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
 
-            
+
 
 
 

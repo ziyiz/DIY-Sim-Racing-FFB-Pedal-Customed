@@ -370,6 +370,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
         }
 
 
@@ -3277,6 +3278,7 @@ namespace User.PluginSdkDemo
         {
 
             Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 1;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = (byte)indexOfSelectedPedal_u;
             if (ConnectToPedal.IsChecked == false)
             {
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == false)
@@ -3687,6 +3689,11 @@ namespace User.PluginSdkDemo
                         if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise == 0)
                         {
                             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = 5;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type != indexOfSelectedPedal_u)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = (byte)indexOfSelectedPedal_u;
+
                         }
                     }
 
