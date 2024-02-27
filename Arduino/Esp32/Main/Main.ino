@@ -490,19 +490,21 @@ void setup()
         break;        
 
     }
-    ota_wifi_initialize(APhost);
-    xTaskCreatePinnedToCore(
-                  OTATask,   
-                  "OTATask", 
-                  16000,  
-                  //STACK_SIZE_FOR_TASK_2,    
-                  NULL,      
-                  1,         
-                  &Task4,    
-                  0);     
-    delay(500);
+    if(dap_config_st.payLoadPedalConfig_.OTA_flag==1)
+    {
+      ota_wifi_initialize(APhost);
+      xTaskCreatePinnedToCore(
+                    OTATask,   
+                    "OTATask", 
+                    16000,  
+                    //STACK_SIZE_FOR_TASK_2,    
+                    NULL,      
+                    1,         
+                    &Task4,    
+                    0);     
+      delay(500);
+    }
   #endif
-
   Serial.println("Setup end");
   
 }

@@ -55,20 +55,20 @@ PROGMEM const char jquery_min_js_v3_2_1_gz[]  = {
 /* Style */
 String style =
     "<style>#file-input,input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
-    "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}"
-    "#file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:left;display:block;cursor:pointer}"
-    "#bar,#prgbar{background-color:#f1f1f1;border-radius:10px}#bar{background-color:#3498db;width:0%;height:10px}"
-    "form{background:#fff;max-width:400px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
-    ".btn{background:#3498db;color:#fff;cursor:pointer}</style>";
+    "input{background:#252525;border:0;padding:0 15px}body{background:#252525;font-family:sans-serif;font-size:14px;color:#fff}"
+    "#file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:center;display:block;cursor:pointer}"
+    "#bar,#prgbar{background-color:#f1f1f1;border-radius:5px}#bar{background-color:#119EDA;width:0%;height:15px}"
+    "form{background:#3A3A3A;max-width:400px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
+    ".btn{background:#119EDA;color:#fff;cursor:pointer}</style>";
 
 /* Server Index Page */
 String serverIndex =
     "<script src='/jquery.min.js'></script>"
     "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
-    "<h1>Pedal Firmware Upload</h1>"
+    "<h1>Pedal Firmware Update</h1>"
     "<input type='file' name='update' id='file' onchange='sub(this)' style=display:none>"
-    "<label id='file-input' for='file'>   Choose file...</label>"
-    "<input type='submit' class=btn value='Update'>"
+    "<label id='file-input' for='file'>   Click to Select the Bin...</label>"
+    "<input type='submit' class=btn value='Firmware Update'>"
     "<br><br>"
     "<div id='prg'></div>"
     "<br><div id='prgbar'><div id='bar'></div></div><br></form>"
