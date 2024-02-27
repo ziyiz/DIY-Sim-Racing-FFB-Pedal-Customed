@@ -49,7 +49,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Linq;
 using Windows.UI.Notifications;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Windows.Navigation;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
@@ -371,6 +371,7 @@ namespace User.PluginSdkDemo
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
+            dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
         }
 
 
@@ -1449,6 +1450,16 @@ namespace User.PluginSdkDemo
             {
                 checkbox_enable_wheelslip.IsChecked = false;
             }
+
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag == 1)
+            {
+                OTA_update_check.IsChecked = true;
+            }
+            else
+            { 
+                OTA_update_check.IsChecked = false;
+            }
+
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
 
             //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
@@ -3183,6 +3194,7 @@ namespace User.PluginSdkDemo
                                 TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor.ScrollToEnd();
                             }
+
                             
 
 
@@ -5110,6 +5122,21 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
             Update_BrakeForceCurve();
             updateTheGuiFromConfig();
+        }
+
+        private void OTA_update_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 0;
+        }
+
+        private void OTA_update_check_Checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 1;
+        }
+
+        private void btn_serial_clear_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox_serialMonitor.Clear();
         }
 
         /*

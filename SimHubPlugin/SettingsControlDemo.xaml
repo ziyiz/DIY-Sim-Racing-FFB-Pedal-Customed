@@ -1050,6 +1050,10 @@
                                     <ComboBoxItem Content="9"/>
                                     <ComboBoxItem Content="10"/>
                                 </ComboBox>
+                                <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <styles:SHToggleButton x:Name="OTA_update_check" Content="" Checked="OTA_update_check_Checked" Unchecked="OTA_update_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Enable for  OTA, restart pedal after send the config in." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                    <Label Content="Pedal firmware OTA upload" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                </StackPanel>
 
                             </StackPanel>
 
@@ -1633,7 +1637,11 @@
             </Border>
             <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="637" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
                 <StackPanel HorizontalAlignment="Center" Height="632" VerticalAlignment="Top" Width="296">
-                    <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                    <StackPanel HorizontalAlignment="Center" Height="25" VerticalAlignment="Top" Width="296" Orientation="Horizontal">
+                        <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                        <styles:SHButtonPrimary x:Name="btn_serial_clear" Click="btn_serial_clear_Click" Width="30" Content="Clear" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+
+                    </StackPanel>
                     <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="602" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
 
                 </StackPanel>
