@@ -230,7 +230,7 @@ public struct DAP_state_extended_st
 
 namespace User.PluginSdkDemo
 {
-    [PluginDescription("My plugin description")]
+    [PluginDescription("The Plugin was for FFB pedal, To tune the pedal parameters and communicates with the pedal over USB.")]
     [PluginAuthor("OpenSource")]
     [PluginName("DIY active pedal plugin")]
     public class DIY_FFB_Pedal : IPlugin, IDataPlugin, IWPFSettingsV2

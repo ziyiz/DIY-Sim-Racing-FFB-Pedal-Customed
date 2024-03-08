@@ -414,7 +414,7 @@
                 <Border Background="#7F4E4E4E" Height="376" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
                     <StackPanel HorizontalAlignment="Center" Height="366" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
                         <StackPanel Height="80" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Label x:Name="info_label" Content="" Height="80" Width="80" FontFamily="Segoe UI" HorizontalAlignment="Right"/>
+                            <Label x:Name="info_label" Content="" Height="80" Width="80" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
                             <Label x:Name="info_label_2" Content="Label" Height="80" Width="80" FontFamily="Segoe UI Light"/>
                         </StackPanel>
                         <StackPanel Height="30" Width="250" Orientation="Horizontal">
@@ -533,10 +533,12 @@
                                 <styles:SHToggleButton x:Name="checkbox_enable_ABS" Content="" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for ABS/TC effect, the trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="ABS/TC Effect" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
-                            <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+               
+                                <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                    <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
-                            </Canvas>
+                                </Canvas>
+
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Label Content="Effect Profile:" Height="20" Width="65" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
                                 <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged"   Width="80" Height="10" FontSize="10" SelectedIndex="0" Margin="10,0,0,0" BorderThickness="0,0,0,0">
@@ -645,8 +647,8 @@
                                 <styles:SHToggleButton x:Name="checkbox_enable_RPM" Content="" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for RPM/Spped rumble, the trigger was save in local, no need sned config to Pedal"/>
                                 <Label Content="Engine RPM / Speed Rumble Effect" Height="15" Width="300" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
-                            <Canvas x:Name="canvas_plot_RPM" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Polyline x:Name="Polyline_plot_RPM" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+                            <Canvas x:Name="canvas_plot_RPM" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                <Polyline x:Name="Polyline_plot_RPM" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                             </Canvas>
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
@@ -749,7 +751,7 @@
                                 <styles:SHToggleButton x:Name="checkbox_enable_bite_point" Content="" Checked="checkbox_enable_bite_point_Checked" Unchecked="checkbox_enable_bite_point_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="The effect trigger was save in Pedal, need send config to Pedal to trigger it."/>
                                 <Label Content="Bite Point Vibration" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
-                            <Canvas x:Name="canvas_plot_BP" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
+                            <Canvas x:Name="canvas_plot_BP" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
                                 <Polyline x:Name="Polyline_plot_BP" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
                             </Canvas>
@@ -911,7 +913,7 @@
 
                                 
                             </StackPanel>
-                            <Canvas x:Name="canvas_plot_WS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
+                            <Canvas x:Name="canvas_plot_WS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
                                 <Polyline x:Name="Polyline_plot_WS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
                             </Canvas>

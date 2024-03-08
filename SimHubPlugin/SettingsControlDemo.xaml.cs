@@ -1643,8 +1643,8 @@ namespace User.PluginSdkDemo
             double[] y = new double[x_quantity];
 
             double y_max = 50;
-            double dx = canvas_plot_BP.Width / x_quantity;
-            double dy = canvas_plot_BP.Height / y_max;
+            double dx = canvas_plot_WS.Width / x_quantity;
+            double dy = canvas_plot_WS.Height / y_max;
             double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
             double max_force = 200 / 20;
             double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20;
@@ -1661,15 +1661,15 @@ namespace User.PluginSdkDemo
         }
         private void update_plot_RPM()
         {
-            int x_quantity = 400;
+            int x_quantity = 1601;
             double[] x = new double[x_quantity];
             double[] y = new double[x_quantity];
             double[] peroid_x = new double[x_quantity];
             double[] freq= new double[x_quantity];
             double[] amp=new double[x_quantity];
             double y_max = 50;
-            double dx = canvas_plot_BP.Width / x_quantity;
-            double dy = canvas_plot_BP.Height / y_max;
+            double dx = canvas_plot_RPM.Width / (x_quantity-1);
+            double dy = canvas_plot_RPM.Height / y_max;
             double freq_max = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
             double freq_min= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq;
             double max_force = 200 / 20*1.3;
