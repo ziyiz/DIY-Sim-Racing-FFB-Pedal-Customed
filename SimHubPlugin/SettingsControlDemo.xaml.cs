@@ -51,6 +51,7 @@ using System.Linq;
 using Windows.UI.Notifications;
 //using System.Diagnostics;
 using System.Windows.Navigation;
+using System.CodeDom;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -551,9 +552,10 @@ namespace User.PluginSdkDemo
             Line_H_WS_freq.Stroke = Line_fill;
             Line_WS_trigger.Stroke = Line_fill;
 
-
-
-
+            Polyline_plot_ABS.Stroke=Line_fill;
+            Polyline_plot_BP.Stroke = Line_fill;
+            Polyline_plot_WS.Stroke = Line_fill;
+            Polyline_plot_RPM.Stroke = Line_fill;
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -926,7 +928,10 @@ namespace User.PluginSdkDemo
         {
             // update the sliders
 
-
+            update_plot_ABS();
+            update_plot_BP();
+            update_plot_WS();
+            update_plot_RPM();
             info_label.Content = "State:\nDAP Version:";
             string info_text;
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
@@ -1570,6 +1575,119 @@ namespace User.PluginSdkDemo
 
         }
 
+        private void update_plot_ABS()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+            
+            double y_max =50;
+            double dx = canvas_plot_ABS.Width / x_quantity;
+            double dy = canvas_plot_ABS.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
+            double max_force = 255 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) /20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern == 0)
+            {
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;
+                    y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                    myPointCollection2.Add(Pointlcl);
+                }
+
+            }
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern == 1)
+            {
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;     
+                    y[idx] = -1 * amp / max_force  * y_max * (x[idx]%peroid)/peroid;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 50);
+                    myPointCollection2.Add(Pointlcl);
+                }
+            }
+
+            this.Polyline_plot_ABS.Points = myPointCollection2;
+        }
+        private void update_plot_BP()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+
+            double y_max = 50;
+            double dx = canvas_plot_BP.Width / x_quantity;
+            double dy = canvas_plot_BP.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq;
+            double max_force = 200 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;
+                    y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                    myPointCollection2.Add(Pointlcl);
+                }
+            this.Polyline_plot_BP.Points = myPointCollection2;
+        }
+        private void update_plot_WS()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+
+            double y_max = 50;
+            double dx = canvas_plot_BP.Width / x_quantity;
+            double dy = canvas_plot_BP.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
+            double max_force = 200 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            for (int idx = 0; idx < x_quantity; idx++)
+            {
+                x[idx] = idx;
+                y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                myPointCollection2.Add(Pointlcl);
+            }
+            this.Polyline_plot_WS.Points = myPointCollection2;
+        }
+        private void update_plot_RPM()
+        {
+            int x_quantity = 400;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+            double[] peroid_x = new double[x_quantity];
+            double[] freq= new double[x_quantity];
+            double[] amp=new double[x_quantity];
+            double y_max = 50;
+            double dx = canvas_plot_BP.Width / x_quantity;
+            double dy = canvas_plot_BP.Height / y_max;
+            double freq_max = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
+            double freq_min= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq;
+            double max_force = 200 / 20*1.3;
+            double amp_base = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 20;
+            //double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            for (int idx = 0; idx < x_quantity; idx++)
+            {
+                x[idx] = idx;
+                freq[idx] = freq_min+(((double)idx)/(double)x_quantity)*(freq_max-freq_min);
+                peroid_x[idx] = x_quantity / freq[idx];
+                amp[idx] = amp_base + amp_base * idx / x_quantity * 0.3;
+                y[idx] = -1 * amp[idx] / max_force * Math.Sin(2* x[idx] / peroid_x[idx] * Math.PI) * y_max / 2;
+                System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                myPointCollection2.Add(Pointlcl);
+            }
+            this.Polyline_plot_RPM.Points = myPointCollection2;
+        }
 
 
         public class SerialPortChoice
@@ -3413,6 +3531,7 @@ namespace User.PluginSdkDemo
                 string errorMessage = caughtEx.Message;
                 TextBox_debugOutput.Text = errorMessage;
             }
+            update_plot_ABS();
         }
 
 
