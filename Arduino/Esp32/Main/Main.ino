@@ -223,11 +223,11 @@ void setup()
   Serial.println(" ");
   Serial.println(" ");
   Serial.println(" ");
-
+  
   // init controller
   SetupController();
   delay(3000);
-  
+  Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
 
 
 // check whether iSV57 communication can be established
