@@ -95,7 +95,7 @@
 
             </TabControl>
 
-            <Canvas x:Name="canvas_Header_Tab" Height="6" Width="1025" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
+            <Canvas x:Name="canvas_Header_Tab" Height="6" Width="725" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -105,7 +105,7 @@
                     </TransformGroup>
 
                 </Canvas.RenderTransform>
-                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="1022" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="718" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
             </Canvas>
 
 
@@ -411,12 +411,14 @@
             </Border>
             <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="3" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
 
-                <Border Background="#7F4E4E4E" Height="376" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
-                    <StackPanel HorizontalAlignment="Center" Height="366" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
-                        <StackPanel Height="80" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Label x:Name="info_label" Content="" Height="80" Width="80" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
-                            <Label x:Name="info_label_2" Content="Label" Height="80" Width="80" FontFamily="Segoe UI Light"/>
+                <Border Background="#7F4E4E4E" Height="391" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
+                    <StackPanel HorizontalAlignment="Center" Height="381" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
+                        <Label Content="System Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
+                        <StackPanel Height="35" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Label x:Name="info_label" Content="" Height="35" Width="80" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>
+                            <Label x:Name="info_label_2" Content="Label" Height="35" Width="80" FontFamily="Arial" VerticalAlignment="Top" FontSize="10"/>
                         </StackPanel>
+                        <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="45" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="10" FontFamily="Arial" />
                         <StackPanel Height="30" Width="250" Orientation="Horizontal">
                             <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged" Width="135" ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
                             <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
@@ -462,7 +464,7 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="255" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,19,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
+            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="240" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,34,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
                 <StackPanel HorizontalAlignment="Left" Height="255" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
                     <Label x:Name="debug_label_text" Content="Debug Area" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                     <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -1646,21 +1648,15 @@
                 </TabItem>
             </TabControl>
 
-            <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
-                <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
-                    <Label Content="System Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
-                    <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="296" Height="50" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" Margin="5,0,0,0" />
 
-                </StackPanel>
-            </Border>
-            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="687" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
-                <StackPanel HorizontalAlignment="Center" Height="632" VerticalAlignment="Top" Width="296">
+            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="777" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.RowSpan="4" >
+                <StackPanel HorizontalAlignment="Center" Height="777" VerticalAlignment="Top" Width="296">
                     <StackPanel HorizontalAlignment="Center" Height="25" VerticalAlignment="Top" Width="296" Orientation="Horizontal">
                         <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
                         <styles:SHButtonPrimary x:Name="btn_serial_clear" Click="btn_serial_clear_Click" Width="30" Content="Clear" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
 
                     </StackPanel>
-                    <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="652" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
+                    <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="742" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
 
                 </StackPanel>
             </Border>
