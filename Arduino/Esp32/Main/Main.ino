@@ -18,7 +18,7 @@ bool isv57LifeSignal_b = false;
   int32_t servo_offset_compensation_steps_i32 = 0; 
 #endif
 
-
+#define OTA_update
 
 
 
@@ -196,11 +196,16 @@ StepperWithLimits* stepper = NULL;
 //static const int32_t MIN_STEPS = 5;
 
 #include "StepperMovementStrategy.h"
-
-
-
-
-
+/**********************************************************************************************/
+/*                                                                                            */
+/*                         OTA                                                                */
+/*                                                                                            */
+/**********************************************************************************************/
+//OTA update
+#ifdef OTA_update
+#include "ota.h"
+TaskHandle_t Task4;
+#endif
 
 
 
@@ -218,11 +223,11 @@ void setup()
   Serial.println(" ");
   Serial.println(" ");
   Serial.println(" ");
-
+  
   // init controller
   SetupController();
   delay(3000);
-  
+  Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
 
 
 // check whether iSV57 communication can be established
@@ -265,8 +270,71 @@ void setup()
   dap_config_st.initialiseDefaults();
 
   // Load config from EEPROM, if valid, overwrite initial config
-  EEPROM.begin(sizeof(DAP_config_st));
-  dap_config_st.loadConfigFromEprom(dap_config_st);
+  EEPROM.begin(2048);
+  dap_config_st.loadConfigFromEprom(dap_config_st_local);
+
+
+  // check validity of data from EEPROM  
+  bool structChecker = true;
+  uint16_t crc;
+  if ( dap_config_st_local.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_CONFIG ){ 
+    structChecker = false;
+    /*Serial.print("Payload type expected: ");
+    Serial.print(DAP_PAYLOAD_TYPE_CONFIG);
+    Serial.print(",   Payload type received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.payloadType);*/
+  }
+  if ( dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
+    structChecker = false;
+    /*Serial.print("Config version expected: ");
+    Serial.print(DAP_VERSION_CONFIG);
+    Serial.print(",   Config version received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.version);*/
+  }
+  // checksum validation
+  crc = checksumCalculator((uint8_t*)(&(dap_config_st_local.payLoadHeader_)), sizeof(dap_config_st_local.payLoadHeader_) + sizeof(dap_config_st_local.payLoadPedalConfig_));
+  if (crc != dap_config_st_local.payloadFooter_.checkSum){ 
+    structChecker = false;
+    /*Serial.print("CRC expected: ");
+    Serial.print(crc);
+    Serial.print(",   CRC received: ");
+    Serial.println(dap_config_st_local.payloadFooter_.checkSum);*/
+  }
+
+
+
+
+
+
+  // if checks are successfull, overwrite global configuration struct
+  if (structChecker == true)
+  {
+    Serial.println("Updating pedal config from EEPROM");
+    dap_config_st = dap_config_st_local;          
+  }
+  else
+  {
+
+    Serial.println("Couldn't load config from EPROM due to mismatch: ");
+
+    Serial.print("Payload type expected: ");
+    Serial.print(DAP_PAYLOAD_TYPE_CONFIG);
+    Serial.print(",   Payload type received: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
+
+    
+    Serial.print("Target version: ");
+    Serial.print(DAP_VERSION_CONFIG);
+    Serial.print(",    Source version: ");
+    Serial.println(dap_config_st_local.payLoadHeader_.version);
+
+    Serial.print("CRC expected: ");
+    Serial.print(crc);
+    Serial.print(",   CRC received: ");
+    Serial.println(dap_config_st_local.payloadFooter_.checkSum);
+
+  }
+
 
   // interprete config values
   dap_calculationVariables_st.updateFromConfig(dap_config_st);
@@ -372,7 +440,7 @@ void setup()
                     //STACK_SIZE_FOR_TASK_1,
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
-                    &Task2,      /* Task handle to keep track of created task */
+                    &Task1,      /* Task handle to keep track of created task */
                     1);          /* pin task to core 1 */
   delay(500);
 
@@ -396,18 +464,47 @@ void setup()
                       //STACK_SIZE_FOR_TASK_2,    
                       NULL,      
                       1,         
-                      &Task2,    
+                      &Task3,    
                       0);     
     delay(500);
 #endif
 
 
 
+  //Serial.begin(115200);
+  #ifdef OTA_update
+  char* APhost;
+    switch(dap_config_st.payLoadPedalConfig_.pedal_type)
+    {
+      case 0:
+        APhost="FFBPedalClutch";
+        break;
+      case 1:
+        APhost="FFBPedalBrake";
+        break;
+      case 2:
+        APhost="FFBPedalGas";
+        break;
+      default:
+        APhost="FFBPedal";
+        break;        
 
-
-
-  
-
+    }
+    if(dap_config_st.payLoadPedalConfig_.OTA_flag==1)
+    {
+      ota_wifi_initialize(APhost);
+      xTaskCreatePinnedToCore(
+                    OTATask,   
+                    "OTATask", 
+                    16000,  
+                    //STACK_SIZE_FOR_TASK_2,    
+                    NULL,      
+                    1,         
+                    &Task4,    
+                    0);     
+      delay(500);
+    }
+  #endif
   Serial.println("Setup end");
   
 }
@@ -444,6 +541,14 @@ void updatePedalCalcParameters()
 /**********************************************************************************************/
 void loop() {
   taskYIELD();
+  /*
+  #ifdef OTA_update
+  server.handleClient();
+  //delay(1);
+  #endif
+  */
+  
+  
 }
 
 
@@ -524,7 +629,15 @@ void pedalUpdateTask( void * pvParameters )
         {
           Serial.println("Updating the calc params");
           configWasUpdated_b = false;
-          dap_config_st.storeConfigToEprom(dap_config_st); // store config to EEPROM
+
+          if (true == dap_config_st.payLoadHeader_.storeToEeprom)
+          {
+            dap_config_st.payLoadHeader_.storeToEeprom = false; // set to false, thus at restart existing EEPROM config isn't restored to EEPROM
+            uint16_t crc = checksumCalculator((uint8_t*)(&(dap_config_st.payLoadHeader_)), sizeof(dap_config_st.payLoadHeader_) + sizeof(dap_config_st.payLoadPedalConfig_));
+            dap_config_st.payloadFooter_.checkSum = crc;
+            dap_config_st.storeConfigToEprom(dap_config_st); // store config to EEPROM
+          }
+          
           updatePedalCalcParameters(); // update the calc parameters
         }
 
@@ -825,9 +938,13 @@ void pedalUpdateTask( void * pvParameters )
       dacWrite(D_O,dac_value);
     #endif
 
-
-    float normalizedPedalReading_fl32 = constrain((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Range, 0, 1);
-
+    
+    float normalizedPedalReading_fl32 = 0;
+    if ( fabs(dap_calculationVariables_st.Force_Range) > 0.01)
+    {
+        normalizedPedalReading_fl32 = constrain((filteredReading - dap_calculationVariables_st.Force_Min) / dap_calculationVariables_st.Force_Range, 0, 1);
+    }
+    
     // simulate ABS trigger 
     if(dap_config_st.payLoadPedalConfig_.Simulate_ABS_trigger==1)
     {
@@ -909,6 +1026,13 @@ void pedalUpdateTask( void * pvParameters )
       unsigned int temp2 = uxTaskGetStackHighWaterMark(nullptr);
       Serial.print("PU task stack size="); Serial.println(temp2);
     #endif
+    /*
+    #ifdef OTA_update
+    server.handleClient();
+    //delay(1);
+    #endif
+    */
+
   }
 }
 
@@ -1140,6 +1264,18 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
+  }
+}
+//OTA multitask
+void OTATask( void * pvParameters )
+{
+
+  for(;;)
+  {
+    #ifdef OTA_update
+    server.handleClient();
+    //delay(1);
+    #endif
   }
 }
 

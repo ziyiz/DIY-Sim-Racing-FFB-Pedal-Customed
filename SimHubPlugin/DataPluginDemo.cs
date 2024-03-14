@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.UI.Notifications;
 using static System.Net.Mime.MediaTypeNames;
 
 
@@ -22,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 130;
+    public const uint pedalConfigPayload_version = 132;
 
 
     // pyload types
@@ -181,6 +182,11 @@ public struct payloadPedalConfig
     // spindle pitch in mm/rev
     public byte spindlePitch_mmPerRev_u8;
 
+    // pedal type
+    public byte pedal_type;
+
+    // OTA update flag
+    public byte OTA_flag;
 
 }
 
@@ -224,7 +230,7 @@ public struct DAP_state_extended_st
 
 namespace User.PluginSdkDemo
 {
-    [PluginDescription("My plugin description")]
+    [PluginDescription("The Plugin was for FFB pedal, To tune the pedal parameters and communicates with the pedal over USB.")]
     [PluginAuthor("OpenSource")]
     [PluginName("DIY active pedal plugin")]
     public class DIY_FFB_Pedal : IPlugin, IDataPlugin, IWPFSettingsV2
@@ -1063,6 +1069,12 @@ namespace User.PluginSdkDemo
                 }
             }
             
+            if (ToastNotificationManager.History.GetHistory("Pedal_notification").Count != 0)
+            {
+                ToastNotificationManager.History.Remove("Pedal_notification");
+            }
+            
+
         }
 
 
@@ -1511,8 +1523,10 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+            dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
+            dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
 
-            
+
 
 
 

@@ -49,8 +49,9 @@ using System.Diagnostics;
 using System.Collections;
 using System.Linq;
 using Windows.UI.Notifications;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Windows.Navigation;
+using System.CodeDom;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -99,6 +100,7 @@ namespace User.PluginSdkDemo
 
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
+        private string info_text_connection;
 
 
 
@@ -369,6 +371,8 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.invertMotorDirection_u8 = 0;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+            dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
+            dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
         }
 
 
@@ -389,8 +393,8 @@ namespace User.PluginSdkDemo
             text_debug_flag.Visibility = Visibility.Hidden;
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
-            InvertMotorDir_check.Visibility = Visibility.Hidden;
+            //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            //InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             Border_serial_monitor.Visibility=Visibility.Hidden;
             debug_border.Visibility=Visibility.Hidden;
@@ -401,8 +405,8 @@ namespace User.PluginSdkDemo
             btn_system_id.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            Label_reverse_LC.Visibility=Visibility.Hidden;
-            Label_reverse_servo.Visibility=Visibility.Hidden;
+            //Label_reverse_LC.Visibility=Visibility.Hidden;
+            //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
@@ -548,9 +552,10 @@ namespace User.PluginSdkDemo
             Line_H_WS_freq.Stroke = Line_fill;
             Line_WS_trigger.Stroke = Line_fill;
 
-
-
-
+            Polyline_plot_ABS.Stroke=Line_fill;
+            Polyline_plot_BP.Stroke = Line_fill;
+            Polyline_plot_WS.Stroke = Line_fill;
+            Polyline_plot_RPM.Stroke = Line_fill;
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
 
@@ -923,7 +928,10 @@ namespace User.PluginSdkDemo
         {
             // update the sliders
 
-
+            update_plot_ABS();
+            update_plot_BP();
+            update_plot_WS();
+            update_plot_RPM();
             info_label.Content = "State:\nDAP Version:";
             string info_text;
             if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
@@ -934,7 +942,7 @@ namespace User.PluginSdkDemo
             {
                 if (Plugin.Settings.auto_connect_flag == 1)
                 {
-                    info_text = "Connecting..";
+                    info_text = info_text_connection;
                 }
                 else
                 {
@@ -1447,6 +1455,16 @@ namespace User.PluginSdkDemo
             {
                 checkbox_enable_wheelslip.IsChecked = false;
             }
+
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag == 1)
+            {
+                OTA_update_check.IsChecked = true;
+            }
+            else
+            { 
+                OTA_update_check.IsChecked = false;
+            }
+
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
 
             //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
@@ -1557,6 +1575,119 @@ namespace User.PluginSdkDemo
 
         }
 
+        private void update_plot_ABS()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+            
+            double y_max =50;
+            double dx = canvas_plot_ABS.Width / x_quantity;
+            double dy = canvas_plot_ABS.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
+            double max_force = 255 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) /20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern == 0)
+            {
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;
+                    y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                    myPointCollection2.Add(Pointlcl);
+                }
+
+            }
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absPattern == 1)
+            {
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;     
+                    y[idx] = -1 * amp / max_force  * y_max * (x[idx]%peroid)/peroid;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 50);
+                    myPointCollection2.Add(Pointlcl);
+                }
+            }
+
+            this.Polyline_plot_ABS.Points = myPointCollection2;
+        }
+        private void update_plot_BP()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+
+            double y_max = 50;
+            double dx = canvas_plot_BP.Width / x_quantity;
+            double dy = canvas_plot_BP.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq;
+            double max_force = 200 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+                for (int idx = 0; idx < x_quantity; idx++)
+                {
+                    x[idx] = idx;
+                    y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                    myPointCollection2.Add(Pointlcl);
+                }
+            this.Polyline_plot_BP.Points = myPointCollection2;
+        }
+        private void update_plot_WS()
+        {
+            int x_quantity = 200;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+
+            double y_max = 50;
+            double dx = canvas_plot_WS.Width / x_quantity;
+            double dy = canvas_plot_WS.Height / y_max;
+            double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
+            double max_force = 200 / 20;
+            double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20;
+            double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            for (int idx = 0; idx < x_quantity; idx++)
+            {
+                x[idx] = idx;
+                y[idx] = -1 * amp / max_force * Math.Sin(2 * x[idx] / peroid * Math.PI) * y_max / 2;
+                System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                myPointCollection2.Add(Pointlcl);
+            }
+            this.Polyline_plot_WS.Points = myPointCollection2;
+        }
+        private void update_plot_RPM()
+        {
+            int x_quantity = 1601;
+            double[] x = new double[x_quantity];
+            double[] y = new double[x_quantity];
+            double[] peroid_x = new double[x_quantity];
+            double[] freq= new double[x_quantity];
+            double[] amp=new double[x_quantity];
+            double y_max = 50;
+            double dx = canvas_plot_RPM.Width / (x_quantity-1);
+            double dy = canvas_plot_RPM.Height / y_max;
+            double freq_max = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
+            double freq_min= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq;
+            double max_force = 200 / 20*1.3;
+            double amp_base = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 20;
+            //double peroid = x_quantity / freq;
+            System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
+            for (int idx = 0; idx < x_quantity; idx++)
+            {
+                x[idx] = idx;
+                freq[idx] = freq_min+(((double)idx)/(double)x_quantity)*(freq_max-freq_min);
+                peroid_x[idx] = x_quantity / freq[idx];
+                amp[idx] = amp_base + amp_base * idx / x_quantity * 0.3;
+                y[idx] = -1 * amp[idx] / max_force * Math.Sin(2* x[idx] / peroid_x[idx] * Math.PI) * y_max / 2;
+                System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
+                myPointCollection2.Add(Pointlcl);
+            }
+            this.Polyline_plot_RPM.Points = myPointCollection2;
+        }
 
 
         public class SerialPortChoice
@@ -2570,6 +2701,23 @@ namespace User.PluginSdkDemo
         {
             //simhub action for debug
             Simhub_action_update();
+            string tmp = "Connecting";
+            int count_connection = ((int)count_timmer_count) % 4;
+            switch (count_connection) 
+            {
+                case 0:
+                    break;
+                case 1:
+                    tmp = tmp + ".";
+                    break;
+                case 2:
+                    tmp = tmp + "..";
+                    break;
+                case 3:
+                    tmp = tmp + "...";
+                    break;
+            }
+            info_text_connection = tmp;
 
 
 
@@ -2642,7 +2790,7 @@ namespace User.PluginSdkDemo
 
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
-            ToastNotificationManager.History.Remove("Pedal_notification");
+            
             if (pedal_serial_read_timer[pedalIdx] != null)
             {
                 pedal_serial_read_timer[pedalIdx].Stop();
@@ -3164,6 +3312,7 @@ namespace User.PluginSdkDemo
                                 TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor.ScrollToEnd();
                             }
+
                             
 
 
@@ -3235,8 +3384,10 @@ namespace User.PluginSdkDemo
 
 
                             double avgTime = timeCollector[pedalSelected] / timeCntr[pedalSelected];
-                            TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
-
+                            if (debug_flag)
+                            {
+                                TextBox_debugOutput.Text = "Serial callback time in ms: " + avgTime.ToString();
+                            }
                             timeCntr[pedalSelected] = 0;
                             timeCollector[pedalSelected] = 0;
                         }
@@ -3257,6 +3408,7 @@ namespace User.PluginSdkDemo
         {
 
             Plugin.Settings.connect_flag[indexOfSelectedPedal_u] = 1;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = (byte)indexOfSelectedPedal_u;
             if (ConnectToPedal.IsChecked == false)
             {
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen == false)
@@ -3379,6 +3531,7 @@ namespace User.PluginSdkDemo
                 string errorMessage = caughtEx.Message;
                 TextBox_debugOutput.Text = errorMessage;
             }
+            update_plot_ABS();
         }
 
 
@@ -3556,6 +3709,14 @@ namespace User.PluginSdkDemo
 
                     // set values in global structure
                     dap_config_st[pedalIdx].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                    if (dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 == 0)
+                    {
+                        dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+                    }
+                    if (dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise == 0)
+                    {
+                        dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 5;
+                    }
                 }
                 
             }
@@ -3652,6 +3813,19 @@ namespace User.PluginSdkDemo
 
                         // set values in global structure
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = 5;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type != indexOfSelectedPedal_u)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = (byte)indexOfSelectedPedal_u;
+
+                        }
                     }
 
                     updateTheGuiFromConfig();
@@ -3987,15 +4161,18 @@ namespace User.PluginSdkDemo
                 //double y = e.GetPosition(canvas).Y - offset.Y;
 
                 // Ensure the rectangle stays within the canvas
-
+                double dy = 250 / (canvas_vert_slider.Height);
                 double min_position =  Canvas.GetTop(rect8) - rectangle.Height / 2;
                 double max_position = Canvas.GetTop(rect9) + rectangle.Height / 2;
-                double dy = 250 / (canvas_vert_slider.Height);
+                double min_limit = canvas_vert_slider.Height-0 / dy;
+                double max_limit = canvas_vert_slider.Height-250 / dy;
+                
                 if (rectangle.Name == "rect8")
                 {
-                    y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height + rectangle.Height / 2));
+                    y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height - rectangle.Height / 2));
                     
                     double actual_y = (canvas_vert_slider.Height- y-rectangle.Height/2)  * dy;
+                    actual_y=Math.Max(0, Math.Min(actual_y, 250));
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Convert.ToByte(actual_y);
 
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce)
@@ -4013,6 +4190,7 @@ namespace User.PluginSdkDemo
                     y = Math.Max(-1 * rectangle.Height / 2, Math.Min(y, min_position ));
                     
                     double actual_y = (canvas_vert_slider.Height - y - rectangle.Height / 2) * dy;
+                    actual_y = Math.Max(0, Math.Min(actual_y, 250));
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = Convert.ToByte(actual_y);
                     if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce < dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce)
                     {
@@ -4167,7 +4345,7 @@ namespace User.PluginSdkDemo
                     double x = e.GetPosition(canvas_horz_KF).X - offset.X;
                     double KF_max = 255;
                     double dx = canvas_horz_KF.Width / KF_max;
-                    double min_position = 0 * dx;
+                    double min_position = 1 * dx;
                     double max_position = KF_max * dx;
 
                     x = Math.Max(min_position, Math.Min(x, max_position));
@@ -4520,15 +4698,15 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
             btn_reset_default.Visibility = System.Windows.Visibility.Visible;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
-            InvertLoadcellReading_check.Visibility = Visibility.Visible;
-            InvertMotorDir_check.Visibility = Visibility.Visible;
+            //InvertLoadcellReading_check.Visibility = Visibility.Visible;
+            //InvertMotorDir_check.Visibility = Visibility.Visible;
             //text_state.Visibility = Visibility.Hidden;
             debug_flag = true;
             Border_serial_monitor.Visibility = Visibility.Visible;
             debug_border.Visibility = Visibility.Visible;
             debug_label_text.Visibility = Visibility.Visible;
-            Label_reverse_LC.Visibility = Visibility.Visible;
-            Label_reverse_servo.Visibility = Visibility.Visible;
+           // Label_reverse_LC.Visibility = Visibility.Visible;
+            //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
 
         }
@@ -4544,15 +4722,15 @@ namespace User.PluginSdkDemo
             button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
             btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
             dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            InvertLoadcellReading_check.Visibility = Visibility.Hidden;
-            InvertMotorDir_check.Visibility = Visibility.Hidden;
+            //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
+            //InvertMotorDir_check.Visibility = Visibility.Hidden;
             //text_state.Visibility = Visibility.Visible;
             debug_flag = false;
             Border_serial_monitor.Visibility = Visibility.Hidden;
             debug_border.Visibility = Visibility.Hidden;
             debug_label_text.Visibility = Visibility.Hidden;
-            Label_reverse_LC.Visibility = Visibility.Hidden;
-            Label_reverse_servo.Visibility = Visibility.Hidden;
+            //Label_reverse_LC.Visibility = Visibility.Hidden;
+            //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
         }
 
@@ -5023,10 +5201,10 @@ namespace User.PluginSdkDemo
         private void btn_scurve_Click(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = 0;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 1;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 17;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 80;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 99;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = 7;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = 28;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = 70;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = 93;
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
             Update_BrakeForceCurve();
             updateTheGuiFromConfig();
@@ -5063,6 +5241,21 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = 100;
             Update_BrakeForceCurve();
             updateTheGuiFromConfig();
+        }
+
+        private void OTA_update_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 0;
+        }
+
+        private void OTA_update_check_Checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 1;
+        }
+
+        private void btn_serial_clear_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox_serialMonitor.Clear();
         }
 
         /*

@@ -7,7 +7,7 @@
              xmlns:styles="clr-namespace:SimHub.Plugins.Styles;assembly=SimHub.Plugins" mc:Ignorable="d" 
              xmlns:ui="clr-namespace:SimHub.Plugins.UI;assembly=SimHub.Plugins" 
              
-             Height="820" Width="1050">
+             Height="870" Width="1050">
 
 
 
@@ -25,7 +25,7 @@
                 <RowDefinition Height="8"/>
                 <RowDefinition Height="277"/>
                 <RowDefinition Height="227"/>
-                <RowDefinition Height="227"/>
+                <RowDefinition Height="277"/>
                 <RowDefinition Height="227"/>
                 <RowDefinition Height="227"/>
 
@@ -95,7 +95,7 @@
 
             </TabControl>
 
-            <Canvas x:Name="canvas_Header_Tab" Height="6" Width="1025" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
+            <Canvas x:Name="canvas_Header_Tab" Height="6" Width="725" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" >
                 <Canvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -105,7 +105,7 @@
                     </TransformGroup>
 
                 </Canvas.RenderTransform>
-                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="1022" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="718" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
             </Canvas>
 
 
@@ -315,7 +315,7 @@
 
 
                             </Canvas>
-                            <Canvas x:Name="canvas_vert_slider" Height="200" Width="20                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="2,0,0,0" >
+                            <Canvas x:Name="canvas_vert_slider" Height="200" Width="20                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="2,0,0,0" VerticalAlignment="Top" >
                                 <Canvas.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -327,45 +327,15 @@
                                 </Canvas.RenderTransform>
 
 
-                                <TextBlock x:Name="text_min_force" HorizontalAlignment="Left" 
-                    VerticalAlignment="Center" 
-                    Text="Preload:" 
-                    Width="45" 
-                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="95" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock x:Name="text_max_force" HorizontalAlignment="Left" 
-                    VerticalAlignment="Center" 
-                    Text="Max Force:" 
-                    Width="50" 
-                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="12" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-
-
-
-                                <Line x:Name="Line_V_force"
-                    X1="9" Y1="0"
-                    X2="9" Y2="200"
-                    Stroke="#7E87CEFA"
-                    StrokeThickness="2" HorizontalAlignment="Left" Canvas.Left="0" VerticalAlignment="Center" />
-
-                                <Rectangle x:Name="rect8" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="98" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <Rectangle x:Name="rect9" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                            <TextBlock x:Name="text_min_force" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Preload:" Width="45" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="95" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20"/>
+                            <TextBlock x:Name="text_max_force" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Max Force:" Width="50" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="12" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20"/>
+                            <Line x:Name="Line_V_force"
+                                X1="9" Y1="0"
+                                X2="9" Y2="200"
+                                Stroke="#7E87CEFA"
+                                StrokeThickness="2" HorizontalAlignment="Left" Canvas.Left="0" VerticalAlignment="Center" />    
+                            <Rectangle x:Name="rect8" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="98" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                            <Rectangle x:Name="rect9" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
 
                             </Canvas>
                         </StackPanel>
@@ -441,12 +411,14 @@
             </Border>
             <StackPanel HorizontalAlignment="Center" Height="600" Grid.Row="3" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
 
-                <Border Background="#7F4E4E4E" Height="376" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
-                    <StackPanel HorizontalAlignment="Center" Height="366" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
-                        <StackPanel Height="80" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Label x:Name="info_label" Content="" Height="80" Width="80" FontFamily="Segoe UI" HorizontalAlignment="Right"/>
-                            <Label x:Name="info_label_2" Content="Label" Height="80" Width="80" FontFamily="Segoe UI Light"/>
+                <Border Background="#7F4E4E4E" Height="391" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
+                    <StackPanel HorizontalAlignment="Center" Height="381" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
+                        <Label Content="System Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
+                        <StackPanel Height="35" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Label x:Name="info_label" Content="" Height="35" Width="80" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>
+                            <Label x:Name="info_label_2" Content="Label" Height="35" Width="80" FontFamily="Arial" VerticalAlignment="Top" FontSize="10"/>
                         </StackPanel>
+                        <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="45" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="10" FontFamily="Arial" />
                         <StackPanel Height="30" Width="250" Orientation="Horizontal">
                             <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged" Width="135" ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
                             <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
@@ -492,8 +464,8 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="205" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,19,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
-                <StackPanel HorizontalAlignment="Left" Height="205" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
+            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="240" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,34,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
+                <StackPanel HorizontalAlignment="Left" Height="255" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
                     <Label x:Name="debug_label_text" Content="Debug Area" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                     <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <Label Content="Debug flag 0:" Height="20" Width="60" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
@@ -513,7 +485,7 @@
                     <!-- PID sliders -->
                 </StackPanel>
             </Border>
-            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="222" Grid.Row="5" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
+            <TabControl Grid.Column="1" HorizontalAlignment="Left" Height="272" Grid.Row="5" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -557,20 +529,26 @@
                             <Label Content="ABS/TC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="93" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of the ABS/TC effect "  />
                         </Border>
                     </TabItem.Header>
-                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="240" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <styles:SHToggleButton x:Name="checkbox_enable_ABS" Content="" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for ABS/TC effect, the trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="ABS/TC Effect" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
+               
+                                <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                    <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+
+                                </Canvas>
+
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Label Content="Effect Profile:" Height="20" Width="65" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
                                 <ComboBox x:Name="AbsPattern" SelectionChanged="AbsPatternChanged"   Width="80" Height="10" FontSize="10" SelectedIndex="0" Margin="10,0,0,0" BorderThickness="0,0,0,0">
                                     <ComboBoxItem Content="Sinewave"/>
                                     <ComboBoxItem Content="Sawtooth"/>
                                 </ComboBox>
-                                <Button Content="Test ABS/TC" Click="TestAbs_click" Height="20" Background="#FF050550" FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0" ToolTip="CLick for testing ABS/TC, click again to cancel"/>
-                                <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left"/>
+                                <styles:SHButtonPrimary Content="Test ABS/TC" Click="TestAbs_click" Height="20"  FontWeight="Bold" FontSize="9" Width="80" HorizontalAlignment="Left" Margin="10,0,0,0" ToolTip="Click for testing ABS/TC, click again to cancel" MinHeight="20" FontFamily="Arial" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
+                                <CheckBox Width="30" x:Name="TestAbs_check" IsEnabled="False" Height="20" FontSize="8" Foreground="White" Content="" HorizontalAlignment="Left" Margin="3,0,0,0"/>
 
 
                             </StackPanel>
@@ -665,13 +643,16 @@
                             <Label Content="ENG/SPD"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="-1,0,0,0" ToolTip="Parameter of Engine or Speed rumble"  />
                         </Border>
                     </TabItem.Header>
-                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="240" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <styles:SHToggleButton x:Name="checkbox_enable_RPM" Content="" Checked="checkbox_enable_RPM_Checked" Unchecked="checkbox_enable_RPM_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for RPM/Spped rumble, the trigger was save in local, no need sned config to Pedal"/>
                                 <Label Content="Engine RPM / Speed Rumble Effect" Height="15" Width="300" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
+                            <Canvas x:Name="canvas_plot_RPM" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                <Polyline x:Name="Polyline_plot_RPM" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" />
 
+                            </Canvas>
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
                                 <Label Content="Effect depend:" Height="25" Width="70" FontSize="10" Margin="70,0,0,0" FontFamily="Arial" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
                                 <RadioButton x:Name="RPMeffecttype_Sel_1" Content="Engine RPM" GroupName="RPMSel_options" Checked="RPMeffecttype_Sel_1_Checked" Width="100" Height="20" BorderThickness="0,0,0,0" FontFamily="Arial" FontSize="10"/>
@@ -766,12 +747,16 @@
                             <Label Content="Bite Point"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of Bite point vibration"  />
                         </Border>
                     </TabItem.Header>
-                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="190" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="160" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="240" BorderThickness="0,2,0,0" >
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <styles:SHToggleButton x:Name="checkbox_enable_bite_point" Content="" Checked="checkbox_enable_bite_point_Checked" Unchecked="checkbox_enable_bite_point_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="The effect trigger was save in Pedal, need send config to Pedal to trigger it."/>
                                 <Label Content="Bite Point Vibration" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
+                            <Canvas x:Name="canvas_plot_BP" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                <Polyline x:Name="Polyline_plot_BP" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+
+                            </Canvas>
                             <Canvas x:Name="canvas_horz_bite_amp" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
                                     <TransformGroup>
@@ -851,8 +836,8 @@
                             <Label Content="G-Force"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter of G force effect" Width="90"  />
                         </Border>
                     </TabItem.Header>
-                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" Height="240" VerticalAlignment="Top" >
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <styles:SHToggleButton x:Name="checkbox_enable_G_force" Content="" Checked="checkbox_enable_G_force_Checked" Unchecked="checkbox_enable_G_force_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="G-Force effect" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
@@ -922,20 +907,25 @@
                             <Label Content="Wheel Slip"  FontFamily="Arial Black" FontSize="12" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" ToolTip="Parameter for wheel slip notification, use it when game didn't provide ABS telemetry" Width="90"  />
                         </Border>
                     </TabItem.Header>
-                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
+                    <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" BorderThickness="0,3,0,0" Height="240" VerticalAlignment="Top" >
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540" Margin="0,0,0,0">
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <styles:SHToggleButton x:Name="checkbox_enable_wheelslip" Content="" Checked="checkbox_enable_WS_Checked" Unchecked="checkbox_enable_WS_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="Wheel Slip Notification" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
 
                                 
                             </StackPanel>
+                            <Canvas x:Name="canvas_plot_WS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                <Polyline x:Name="Polyline_plot_WS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+
+                            </Canvas>
                             <StackPanel  Height="30" Width="540" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
                                 <TextBox x:Name="textBox_wheelslip_effect_string" Width="270" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
                                 <styles:SHButtonPrimary x:Name="Bind_WSeffect" Click="effect_bind_click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                 <styles:SHButtonPrimary x:Name="Clear_WSeffect" Click="effect_clear_click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                             </StackPanel>
+
                             <Canvas x:Name="canvas_horz_WS_trigger" Background="#00333333" RenderTransformOrigin="0.5,0.5" Height="40" Width="400" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <StackPanel x:Name="Panel_WS_trigger" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
                                     <TextBox x:Name="textbox_WS_trigger" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
@@ -1068,8 +1058,8 @@
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Label Content="Linear Module Pitch:" Height="20" Width="95" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0" FontFamily="Arial"/>
                                 <ComboBox x:Name="SpindlePitch" SelectionChanged="SpindlePitchChanged"   Width="50" Height="20" FontSize="10" SelectedIndex="5" Margin="3,0,0,0" HorizontalAlignment="Left" MinHeight="20" ToolTip="Spindle Pitch in mm/rev" BorderThickness="0,0,0,0">
-                                    <ComboBoxItem Content="0" ToolTip="Spindle Pitch in mm/rev"/>
-                                    <ComboBoxItem Content="1"/>
+                                    <ComboBoxItem Content="0" />
+                                    <ComboBoxItem Content="1" />
                                     <ComboBoxItem Content="2"/>
                                     <ComboBoxItem Content="3"/>
                                     <ComboBoxItem Content="4"/>
@@ -1080,6 +1070,10 @@
                                     <ComboBoxItem Content="9"/>
                                     <ComboBoxItem Content="10"/>
                                 </ComboBox>
+                                <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <styles:SHToggleButton x:Name="OTA_update_check" Content="" Checked="OTA_update_check_Checked" Unchecked="OTA_update_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Enable for  OTA, restart pedal after send the config in." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                    <Label Content="Pedal firmware OTA upload" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                </StackPanel>
 
                             </StackPanel>
 
@@ -1654,17 +1648,15 @@
                 </TabItem>
             </TabControl>
 
-            <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="85" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" >
-                <StackPanel HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="300">
-                    <Label Content="Debug Info"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
-                    <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="296" Height="50" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" Margin="5,0,0,0" />
 
-                </StackPanel>
-            </Border>
-            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="637" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,90,0,0" Grid.RowSpan="4" >
-                <StackPanel HorizontalAlignment="Center" Height="632" VerticalAlignment="Top" Width="296">
-                    <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="30" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
-                    <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="602" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
+            <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="777" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.RowSpan="4" >
+                <StackPanel HorizontalAlignment="Center" Height="777" VerticalAlignment="Top" Width="296">
+                    <StackPanel HorizontalAlignment="Center" Height="25" VerticalAlignment="Top" Width="296" Orientation="Horizontal">
+                        <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                        <styles:SHButtonPrimary x:Name="btn_serial_clear" Click="btn_serial_clear_Click" Width="30" Content="Clear" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+
+                    </StackPanel>
+                    <TextBox x:Name="TextBox_serialMonitor" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="742" AutomationProperties.Name="TextBox3" Background="#00252525" BorderBrush="#00CCCCCC" BorderThickness="0,0,0,0" />
 
                 </StackPanel>
             </Border>
