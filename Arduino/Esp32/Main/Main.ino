@@ -91,7 +91,9 @@ ForceCurve_Interpolated forceCurve;
 /*                         multitasking  definitions                                          */
 /*                                                                                            */
 /**********************************************************************************************/
-#include "soc/rtc_wdt.h"
+#ifndef CONFIG_IDF_TARGET_ESP32S3
+  #include "soc/rtc_wdt.h"
+#endif
 
 //#define PRINT_USED_STACK_SIZE
 // https://stackoverflow.com/questions/55998078/freertos-task-priority-and-stack-size

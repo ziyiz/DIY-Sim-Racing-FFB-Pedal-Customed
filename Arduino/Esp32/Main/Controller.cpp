@@ -6,7 +6,7 @@ static const int16_t JOYSTICK_MIN_VALUE = 0;
 static const int16_t JOYSTICK_MAX_VALUE = 10000;
 static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
 
-#if defined USB_JOYSTICK
+#ifdef USB_JOYSTICK
   #include <Joystick_ESP32S2.h>
   
   Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
