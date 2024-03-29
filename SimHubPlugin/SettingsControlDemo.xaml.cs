@@ -1490,7 +1490,17 @@ namespace User.PluginSdkDemo
                 OTA_update_check.IsChecked = false;
             }
 
+            if (Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_enable_impact.IsChecked = true;
+            }
+            else
+            {
+                checkbox_enable_impact.IsChecked = false;
+            }
+
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
+            textBox_impact_effect_string.Text = Plugin.Settings.Road_impact_bind;
 
             //TextBox2.Text = "" + Plugin.Settings.selectedComPortNames[0] + Plugin.Settings.selectedComPortNames[1] + Plugin.Settings.selectedComPortNames[2];
             JoystickOutput_check.IsChecked = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.travelAsJoystickOutput_u8 == 1;
