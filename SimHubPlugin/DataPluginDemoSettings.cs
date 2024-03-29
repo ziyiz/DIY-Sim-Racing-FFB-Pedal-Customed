@@ -23,11 +23,13 @@
         public int[] RPM_enable_flag = new int[3] { 0, 0, 0 };
         public int[] WS_enable_flag = new int[3] { 0, 0, 0 };
         public int[] G_force_enable_flag = new int[3] { 0, 0, 0 };
+        public int[] Road_impact_enable_flag = new int[3] { 0, 0, 0 };
         public int vjoy_output_flag = 0;
         public uint vjoy_order = 1;
         public string[,] Pedal_file_string = new string[6, 3] { { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" }, { "NA", "NA", "NA" } };
         public int[,] file_enable_check = new int[6, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
         public string WSeffect_bind = "";
+        public string Road_impact_bind = "";
         public int WS_trigger = 30;
         public string[] Profile_name = new string[6] { "", "", "", "", "", "" };
         

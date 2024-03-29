@@ -335,10 +335,11 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_freq = 15;
             dap_config_st[pedalIdx].payloadPedalConfig_.BP_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.G_multi = 50;
-            dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.G_window = 10;
             dap_config_st[pedalIdx].payloadPedalConfig_.WS_amp = 1;
             dap_config_st[pedalIdx].payloadPedalConfig_.WS_freq = 15;
-            
+            dap_config_st[pedalIdx].payloadPedalConfig_.Impact_multi = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.Impact_window = 60;
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelOrder = 0;
@@ -551,6 +552,14 @@ namespace User.PluginSdkDemo
             Line_H_WS_amp.Stroke = Line_fill;
             Line_H_WS_freq.Stroke = Line_fill;
             Line_WS_trigger.Stroke = Line_fill;
+            //impact effect
+            Line_impact_multi.Stroke = Line_fill;
+            text_impact_multi.Foreground = Line_fill;
+            textbox_impact_multi.Foreground = Line_fill;
+            rect_impact_multi.Fill = defaultcolor;
+            Line_impact_window.Stroke = Line_fill;
+            text_impact_window.Foreground = Line_fill;
+            rect_impact_window.Fill = defaultcolor;
 
             Polyline_plot_ABS.Stroke=Line_fill;
             Polyline_plot_BP.Stroke = Line_fill;
@@ -1278,6 +1287,7 @@ namespace User.PluginSdkDemo
             text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
             Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
             Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
+
             //wheel slip freq slider
             value_max = 30;
             dx = canvas_horz_WS_freq.Width / value_max;
@@ -1301,6 +1311,21 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
             Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
 
+            //impact multiplier slider
+            double impact_multi_max = 100;
+            dx = canvas_horz_impact_multi.Width / impact_multi_max;
+            Canvas.SetLeft(rect_impact_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi);
+            textbox_impact_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi) + "";
+            Canvas.SetLeft(Panel_impact_multi, Canvas.GetLeft(rect_impact_multi) + rect_impact_multi.Width / 2 - Panel_impact_multi.Width / 2);
+            Canvas.SetTop(Panel_impact_multi, Canvas.GetTop(rect_impact_multi) - Panel_impact_multi.Height);
+
+            //Impact window slider
+            value_max = 100;
+            dx = canvas_horz_impact_window.Width / value_max;
+            Canvas.SetLeft(rect_impact_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window);
+            text_impact_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window) + "";
+            Canvas.SetLeft(text_impact_window, Canvas.GetLeft(rect_impact_window) + rect_impact_window.Width / 2 - text_impact_window.Width / 2);
+            Canvas.SetTop(text_impact_window, Canvas.GetTop(rect_impact_window) - text_impact_window.Height);
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -2009,7 +2034,27 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
+            if (textbox.Name == "textbox_impact_multi")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (byte)(result);
+                    }
+                }
+            }
 
+            if (textbox.Name == "text_impact_window")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if ((result >= 0) && (result <= 100))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = (byte)(result);
+                    }
+                }
+            }
             updateTheGuiFromConfig();
 
         }
@@ -4634,6 +4679,42 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
+                if (rectangle.Name == "rect_impact_multi")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_impact_multi).X - offset.X;
+                    double impact_max = 100;
+                    double dx = canvas_horz_impact_multi.Width / impact_max;
+                    double min_position = 5 * dx;
+                    double max_position = impact_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = Convert.ToByte(actual_x);
+                    textbox_impact_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi) + "";
+                    Canvas.SetLeft(Panel_impact_multi, Canvas.GetLeft(rect_impact_multi) + rect_impact_multi.Width / 2 - Panel_impact_multi.Width / 2);
+                    Canvas.SetTop(Panel_impact_multi, Canvas.GetTop(rect_impact_multi) - Panel_impact_multi.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+                //G_force window
+                if (rectangle.Name == "rect_impact_window")
+                {
+                    // Ensure the rectangle stays within the canvas
+                    double x = e.GetPosition(canvas_horz_impact_window).X - offset.X;
+                    double Impact_window_max = 100;
+                    double dx = canvas_horz_impact_multi.Width / Impact_window_max;
+                    double min_position = 10 * dx;
+                    double max_position = Impact_window_max * dx;
+                    //double dx = 100 / (canvas_horz_slider.Width - 10);
+                    x = Math.Max(min_position, Math.Min(x, max_position));
+                    double actual_x = x / dx;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = Convert.ToByte(actual_x);
+                    text_impact_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window) + "";
+                    Canvas.SetLeft(text_impact_window, Canvas.GetLeft(rect_impact_window) + rect_impact_window.Width / 2 - text_impact_window.Width / 2);
+                    Canvas.SetTop(text_impact_window, Canvas.GetTop(rect_impact_window) - text_impact_window.Height);
+                    Canvas.SetLeft(rectangle, x);
+                }
+
 
 
                 ////MPC 1st order gain
@@ -5256,6 +5337,30 @@ namespace User.PluginSdkDemo
         private void btn_serial_clear_Click(object sender, RoutedEventArgs e)
         {
             TextBox_serialMonitor.Clear();
+        }
+
+        private void checkbox_enable_impact_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] = 1;
+        }
+
+        private void checkbox_enable_impact_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] = 0;
+        }
+
+        private void Bind_Impacteffect_Click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.Road_impact_bind = (string)textBox_impact_effect_string.Text;
+            Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] = 1;
+            updateTheGuiFromConfig();
+        }
+
+        private void Clear_Impacteffect_Click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.Road_impact_bind = "";
+            Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] = 0;
+            updateTheGuiFromConfig();
         }
 
         /*
