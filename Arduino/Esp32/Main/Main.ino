@@ -55,6 +55,7 @@ RPMOscillation RPMOscillation;
 BitePointOscillation BitePointOscillation;
 G_force_effect _G_force_effect;
 WSOscillation WSOscillation;
+Road_impact_effect Road_impact_effect;
 #define ABS_OSCILLATION
 
 
@@ -230,7 +231,7 @@ void setup()
   SetupController();
   delay(3000);
   Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
-
+  Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
 
 // check whether iSV57 communication can be established
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
@@ -689,12 +690,15 @@ void pedalUpdateTask( void * pvParameters )
       BitePointOscillation.forceOffset(&dap_calculationVariables_st);
       _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
       WSOscillation.forceOffset(&dap_calculationVariables_st);
+      Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
     #endif
 
     //update max force with G force effect
     movingAverageFilter.dataPointsCount=dap_config_st.payLoadPedalConfig_.G_window;
+    movingAverageFilter_roadimpact.dataPointsCount=dap_config_st.payLoadPedalConfig_.Road_window;
     dap_calculationVariables_st.reset_maxforce();
     dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
+    dap_calculationVariables_st.Force_Max+=Road_impact_effect.Road_Impact_force;
     dap_calculationVariables_st.dynamic_update();
     dap_calculationVariables_st.updateStiffness();
 
@@ -1203,6 +1207,8 @@ void serialCommunicationTask( void * pvParameters )
             {
               WSOscillation.trigger();
             }     
+            //Road impact
+            Road_impact_effect.Road_Impact_value=dap_actions_st.payloadPedalAction_.impact_value_u8;
             // trigger system identification
             if (dap_actions_st.payloadPedalAction_.startSystemIdentification_u8)
             {
