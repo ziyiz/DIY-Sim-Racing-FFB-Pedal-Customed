@@ -757,10 +757,12 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("RoadImpact_effect_status", this.GetType(), Settings.Road_impact_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
             pluginManager.SetPropertyValue("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.SetPropertyValue("ProfileIndex", this.GetType(), profile_index);
             pluginManager.SetPropertyValue("debugvalue", this.GetType(), debug_value);
+            
 
 
 
@@ -1162,6 +1164,7 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("RoadImpact_effect_status", this.GetType(), Settings.Road_impact_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("Overlay_display", this.GetType(), overlay_display);
             pluginManager.AddProperty("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.AddProperty("debugvalue", this.GetType(), debug_value);
@@ -1364,6 +1367,23 @@ namespace User.PluginSdkDemo
                     Settings.WS_enable_flag[Settings.table_selected] = 0;
                     SimHub.Logging.Current.Info("WheelSlip off");
                     current_action = "Wheel Slip Off";
+                }
+                Page_update_flag = true;
+            });
+
+            this.AddAction("RoadImpacttoggle", (a, b) =>
+            {
+                if (Settings.Road_impact_enable_flag[Settings.table_selected] == 0)
+                {
+                    Settings.Road_impact_enable_flag[Settings.table_selected] = 1;
+                    SimHub.Logging.Current.Info("RoadImpact on");
+                    current_action = "Wheel Slip On";
+                }
+                else
+                {
+                    Settings.Road_impact_enable_flag[Settings.table_selected] = 0;
+                    SimHub.Logging.Current.Info("RoadImpact off");
+                    current_action = "RoadImpact Off";
                 }
                 Page_update_flag = true;
             });
