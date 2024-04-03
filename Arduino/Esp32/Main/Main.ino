@@ -728,6 +728,13 @@ void pedalUpdateTask( void * pvParameters )
       loadcellReading *= -1;
     }
 
+
+    // Convert loadcell reading to pedal force
+    float sledPosition = sledPositionInMM(stepper, dap_config_st);
+    loadcellReading = convertToPedalForce(loadcellReading, sledPosition, dap_config_st);
+
+
+
     // Do the loadcell signal filtering
     float filteredReading = 0;
     float changeVelocity = 0;

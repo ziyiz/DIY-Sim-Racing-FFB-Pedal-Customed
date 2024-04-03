@@ -36,10 +36,13 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.absPattern = 0;
   payLoadPedalConfig_.absForceOrTarvelBit = 0;
 
-  payLoadPedalConfig_.lengthPedal_AC = 150;
-  payLoadPedalConfig_.horPos_AB = 215;
-  payLoadPedalConfig_.verPos_AB = 80;
-  payLoadPedalConfig_.lengthPedal_CB = 200;
+  payLoadPedalConfig_.lengthPedal_a = 205;
+  payLoadPedalConfig_.lengthPedal_b = 220; 
+  payLoadPedalConfig_.lengthPedal_d = 60; 
+  payLoadPedalConfig_.lengthPedal_c_horizontal = 215;
+  payLoadPedalConfig_.lengthPedal_c_vertical = 60;
+  
+
   payLoadPedalConfig_.Simulate_ABS_trigger = 0;// add for abs trigger
   payLoadPedalConfig_.Simulate_ABS_value = 80;// add for abs trigger
   payLoadPedalConfig_.RPM_max_freq = 40;

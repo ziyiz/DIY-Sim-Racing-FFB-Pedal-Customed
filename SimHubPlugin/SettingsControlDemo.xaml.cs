@@ -321,10 +321,13 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.absAmplitude = 20;
             dap_config_st[pedalIdx].payloadPedalConfig_.absPattern = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.absForceOrTarvelBit = 0;
-            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_AC = 150;
-            dap_config_st[pedalIdx].payloadPedalConfig_.horPos_AB = 215;
-            dap_config_st[pedalIdx].payloadPedalConfig_.verPos_AB = 80;
-            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_CB = 200;
+
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_a = 205;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_b = 220;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_d = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_c_horizontal = 215;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_c_vertical = 60;
+
             dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value = 80;
             dap_config_st[pedalIdx].payloadPedalConfig_.RPM_max_freq = 40;

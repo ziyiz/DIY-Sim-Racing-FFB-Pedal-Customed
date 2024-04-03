@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 133;
+    public const uint pedalConfigPayload_version = 134;
 
 
     // pyload types
@@ -114,10 +114,13 @@ public struct payloadPedalConfig
 
     // geometric properties of the pedal
     // in mm
-    public byte lengthPedal_AC;
-    public byte horPos_AB;
-    public byte verPos_AB;
-    public byte lengthPedal_CB;
+    public byte lengthPedal_a;
+    public byte lengthPedal_b;
+    public byte lengthPedal_d;
+    public byte lengthPedal_c_horizontal;
+    public byte lengthPedal_c_vertical;
+    
+
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value
     public byte RPM_max_freq;
@@ -1539,10 +1542,13 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.absAmplitude = 100;
             dap_config_initial_st.payloadPedalConfig_.absPattern = 0;
             dap_config_initial_st.payloadPedalConfig_.absForceOrTarvelBit = 0;
-            dap_config_initial_st.payloadPedalConfig_.lengthPedal_AC = 150;
-            dap_config_initial_st.payloadPedalConfig_.horPos_AB = 215;
-            dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;
-            dap_config_initial_st.payloadPedalConfig_.lengthPedal_CB = 200;
+
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_a = 205;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_b = 220;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_d = 60;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_c_horizontal = 215;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_c_vertical = 60;
+
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_trigger = 0;
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_value = 50;
             dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;

@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 133
+#define DAP_VERSION_CONFIG 134
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -88,10 +88,13 @@ struct payloadPedalConfig {
 
   // geometric properties of the pedal
   // in mm
-  uint8_t lengthPedal_AC;
-  uint8_t horPos_AB;
-  uint8_t verPos_AB;
-  uint8_t lengthPedal_CB;
+  uint8_t lengthPedal_a;
+  uint8_t lengthPedal_b;
+  uint8_t lengthPedal_d;
+  uint8_t lengthPedal_c_horizontal;
+  uint8_t lengthPedal_c_vertical;
+  
+
   //Simulate ABS trigger
   uint8_t Simulate_ABS_trigger;
   uint8_t Simulate_ABS_value;
