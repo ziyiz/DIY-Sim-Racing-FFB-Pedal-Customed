@@ -255,13 +255,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
     float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
 
-    // The foor is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
-    // This is accomplished with the forceGain variable
-    float forceGain_abs = fabs( forceGain );
-    if (forceGain_abs > 0)
-    {
-      move_mm_per_kg /= fabs( forceGain );
-    }
+    
     
 
     float MOVE_STEPS_FOR_1KG = 0;
@@ -276,6 +270,14 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float gradient_normalized_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, true);
     gradient_normalized_force_curve_fl32 = constrain(gradient_normalized_force_curve_fl32, 0.05, 1);
     MOVE_STEPS_FOR_1KG *= gradient_normalized_force_curve_fl32;
+
+    // The foor is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
+    // This is accomplished with the forceGain variable
+    float forceGain_abs = fabs( forceGain );
+    if (forceGain_abs > 0)
+    {
+      MOVE_STEPS_FOR_1KG *= fabs( forceGain );
+    }
     
     float m1 = -1000;
     if (MOVE_STEPS_FOR_1KG > 0)

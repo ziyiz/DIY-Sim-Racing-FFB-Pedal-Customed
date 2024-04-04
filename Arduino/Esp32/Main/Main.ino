@@ -20,8 +20,8 @@ bool isv57LifeSignal_b = false;
 
 #define OTA_update
 
-
-
+#define PI 3.14159267
+#define DEG_TO_RAD PI / 180
 
 #include "Main.h"
 
@@ -571,6 +571,7 @@ float filteredReading_exp_filter = 0;
 unsigned long printCycleCounter = 0;
 
 
+//uint printCntr = 0;
 //void loop()
 void pedalUpdateTask( void * pvParameters )
 {
@@ -732,8 +733,28 @@ void pedalUpdateTask( void * pvParameters )
 
     // Convert loadcell reading to pedal force
     float sledPosition = sledPositionInMM(stepper, dap_config_st);
+    float pedalInclineAngleInDeg_fl32 = pedalInclineAngleDeg(sledPosition, dap_config_st);
     float pedalForce_fl32 = convertToPedalForce(loadcellReading, sledPosition, dap_config_st);
     float forceGain = convertToPedalForceGain(sledPosition, dap_config_st);
+    forceGain *= sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD);
+
+    /*printCntr++;
+    if (printCntr >= 100) 
+    {
+      Serial.print("Angle: ");
+      Serial.print(pedalInclineAngleInDeg_fl32);
+
+      Serial.print(",   sin(angle): ");
+      Serial.print( sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD) );
+
+      Serial.print(",   gain mod: ");
+      Serial.print( forceGain );
+
+      Serial.println();
+      printCntr = 0;
+    }*/
+    
+    
 
 
 
