@@ -49,6 +49,8 @@ A lot of awesome devs have helped this project grow. Just to name a few:
 - [Ibakha](https://github.com/Ibakha) Discord channel CEO.
 
 
+# Wiki
+Detailed descriptions of certain aspects can be found on the dedicated [Wiki page](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki):
 
 
 # Discord
