@@ -136,6 +136,60 @@ float convertToPedalForce(float F_l, float sledPositionMM, DAP_config_st& config
 
 
 
+
+// Calculate gradient of force with respect to sled position.
+// This is done by taking the derivative of the force with respect to the sled position.
+float convertToPedalForceGain(float sledPositionMM, DAP_config_st& config_st) {
+  // see https://de.wikipedia.org/wiki/Kosinussatz
+  // A: is lower pedal pivot
+  // B: is rear pedal pivot
+  // C: is upper pedal pivot
+  // D: is foot rest
+  //
+  // a: is loadcell rod (connection CB)
+  // b: is lower pedal plate (connection AC)
+  // c: is sled line (connection AC)
+  // d: is upper pedal plate  (connection AC)
+
+  float a = config_st.payLoadPedalConfig_.lengthPedal_a;
+  float b = config_st.payLoadPedalConfig_.lengthPedal_b;
+  float d = config_st.payLoadPedalConfig_.lengthPedal_d;
+
+  float c_ver = config_st.payLoadPedalConfig_.lengthPedal_c_vertical;
+  float c_hor = config_st.payLoadPedalConfig_.lengthPedal_c_horizontal + sledPositionMM;
+  float c = sqrtf(c_ver * c_ver + c_hor * c_hor);
+
+
+  float z = (b*b + c*c - a*a) / (2*b*c);
+  float dF_dz = 0;
+  if (fabs(z) < 1)
+  {
+    dF_dz = - 1. / sqrtf(1 - z*z);
+  }
+  
+  float dz_dc = 1;
+  if ( (fabs(b) > 0) && (fabs(c) > 0) )
+  {
+    dz_dc = 1.0f / b + ( b*b + c*c - a*a ) / ( 4.0f*b*b*c*c) * 2.0f*b; 
+  }
+  
+  float dc_dx = 1;
+  if (fabs(c) > 0)
+  {
+    dc_dx = 1.0f /2.0f / sqrtf(c) * 2 * c_hor;
+  }
+  
+
+  float dF_dx = dF_dz * dz_dc * dc_dx;
+
+  //Serial.print("dF_dx: ");    Serial.print(dF_dx);
+  //Serial.println();
+
+  return dF_dx;
+}
+
+
+
 float pedalInclineAngleAccel(float pedalInclineAngleDeg_global) {
 
 

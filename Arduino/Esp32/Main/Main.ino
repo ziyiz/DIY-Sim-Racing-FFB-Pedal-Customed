@@ -723,6 +723,7 @@ void pedalUpdateTask( void * pvParameters )
     // Get the loadcell reading
     float loadcellReading = loadcell->getReadingKg();
 
+    // Invert the loadcell reading digitally if desired
     if (dap_config_st.payLoadPedalConfig_.invertLoadcellReading_u8 == 1)
     {
       loadcellReading *= -1;
@@ -731,7 +732,8 @@ void pedalUpdateTask( void * pvParameters )
 
     // Convert loadcell reading to pedal force
     float sledPosition = sledPositionInMM(stepper, dap_config_st);
-    loadcellReading = convertToPedalForce(loadcellReading, sledPosition, dap_config_st);
+    float pedalForce_fl32 = convertToPedalForce(loadcellReading, sledPosition, dap_config_st);
+    float forceGain = convertToPedalForceGain(sledPosition, dap_config_st);
 
 
 
@@ -742,14 +744,14 @@ void pedalUpdateTask( void * pvParameters )
     // const velocity model denoising filter
     if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 0)
     {
-      filteredReading = kalman->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      filteredReading = kalman->filteredValue(pedalForce_fl32, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
       changeVelocity = kalman->changeVelocity();
     }
 
     // const acceleration model denoising filter
     if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 1)
     {
-      filteredReading = kalman_2nd_order->filteredValue(loadcellReading, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
+      filteredReading = kalman_2nd_order->filteredValue(pedalForce_fl32, 0, dap_config_st.payLoadPedalConfig_.kf_modelNoise);
       changeVelocity = kalman->changeVelocity();
     }
 
@@ -757,7 +759,7 @@ void pedalUpdateTask( void * pvParameters )
     if (dap_config_st.payLoadPedalConfig_.kf_modelOrder == 2)
     {
       float alpha_exp_filter = 1.0f - ( (float)dap_config_st.payLoadPedalConfig_.kf_modelNoise) / 5000.0f;
-      float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + loadcellReading * (1.0-alpha_exp_filter);
+      float filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + pedalForce_fl32 * (1.0-alpha_exp_filter);
       filteredReading = filteredReading_exp_filter;
     }
 
@@ -784,7 +786,7 @@ void pedalUpdateTask( void * pvParameters )
     // Apply FIR notch filter to reduce force oscillation caused by ABS
     //#define APPLY_FIR_FILTER
     #ifdef APPLY_FIR_FILTER
-      float filteredReading2 = firNotchFilter->filterValue(loadcellReading);
+      float filteredReading2 = firNotchFilter->filterValue(pedalForce_fl32);
       if (firCycleIncrementer > minCyclesForFirToInit)
       {
         filteredReading = filteredReading2;
@@ -810,8 +812,8 @@ void pedalUpdateTask( void * pvParameters )
     //#define DEBUG_FILTER
     if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_LOADCELL_READING) 
     {
-      static RTDebugOutput<float, 2> rtDebugFilter({ "rawReading_g", "filtered_g"});
-      rtDebugFilter.offerData({ loadcellReading * 1000, filteredReading * 1000});
+      static RTDebugOutput<float, 3> rtDebugFilter({ "rawReading_g", "pedalForce_fl32", "filtered_g"});
+      rtDebugFilter.offerData({ loadcellReading * 1000, pedalForce_fl32*1000, filteredReading * 1000});
     }
       
 
@@ -835,7 +837,7 @@ void pedalUpdateTask( void * pvParameters )
        
     if (dap_config_st.payLoadPedalConfig_.control_strategy_b == 2) 
     {
-      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32);
+      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32, forceGain);
     }
 
     

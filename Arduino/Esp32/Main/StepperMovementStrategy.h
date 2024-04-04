@@ -200,7 +200,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float forceGain) {
   
   /*
   This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
@@ -254,6 +254,15 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
     float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+
+    // The foor is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
+    // This is accomplished with the forceGain variable
+    float forceGain_abs = fabs( forceGain );
+    if (forceGain_abs > 0)
+    {
+      move_mm_per_kg /= fabs( forceGain );
+    }
+    
 
     float MOVE_STEPS_FOR_1KG = 0;
     if (mm_per_motor_rev>0)
