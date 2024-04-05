@@ -1,0 +1,209 @@
+% from https://texample.net/tikz/examples/free-body-diagrams/
+
+\documentclass[crop,tikz]{standalone}
+
+\usepackage{pst-eucl}
+
+
+\usepackage{tikz}
+\usetikzlibrary{scopes}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+
+
+
+\begin{document}
+
+\def\iangle{-20} % pedal angle
+\def\lcangle{15} % angle
+
+\def\llength{8} % angle
+
+\def\down{-90}
+\def\up{90}
+\def\arcr{1cm} % Radius of the arc used to indicate angles
+\def\R{0.33}
+\def\a{2.5}
+
+\tikzstyle{pivot}=[thin,top color=gray!50,bottom color=gray!90!black,shading angle=20]
+
+
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+    { \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
+    
+
+\begin{tikzpicture}[
+    force/.style={>=latex,draw=blue,fill=blue},
+    axis/.style={densely dashed,gray,font=\small},
+    M/.style={rectangle,draw,fill=lightgray,minimum size=0.5cm,thin},
+    m/.style={rectangle,draw=black,fill=lightgray,minimum size=0.3cm,thin},
+    plane/.style={draw=black,fill=blue!10},
+    string/.style={draw=red, thick},
+    pulley/.style={thick},
+]
+
+    %% Free body diagram of M
+    \begin{scope}[rotate=\iangle]
+        \node[M,transform shape] (M) {};
+        % Draw axes and help lines
+
+        % define pivots
+        \coordinate (A) at (0,0);
+        \coordinate (B) at (0,5);
+        \coordinate (C) at ($(B)+(\lcangle:\llength)$);
+        \coordinate (D) at (0,8);
+
+        % x = cos(\lcangle) * \llength + b * cos(phi)
+        % y = sin(\lcangle) * \llength
+        % phi = 90+\iangle = 70
+        \coordinate (E) at (7.7274, 2.07055);
+
+
+        
+
+        % draw connection lines between pivots
+        \draw[line width=2pt] (A) -- (B);
+        \draw[line width=2pt] (B) -- (D);
+        \draw[line width=2pt] (B) -- (C);
+
+        
+
+            
+        {[axis,->]
+            
+
+            % draw coordinate system @ pivot A
+            \draw (A) -- ++ (0,2) node[right] {$+y$};
+            \draw (A) -- ++(2,0) node[right] {$+x$};
+            
+            % draw pivots
+            \draw[pivot] (A) circle (\R) node[scale=1.2] {$+$};
+            \draw[pivot] (B) circle (\R) node[scale=1.2] {$+$};
+            \draw[pivot] (C) circle (\R) node[scale=1.2] {$+$};
+            \draw[pivot] (D) circle (\R) node[scale=1.2] {$+$};
+
+            % draw force @D
+
+            % draw vertical line @A
+            
+
+            
+            % draw pedal angle @A
+            %\draw[solid,shorten >=0.5pt] (\up-\iangle:\arcr)
+            %    arc(\up-\iangle:\up:\arcr);
+            %\node at (\up-0.5*\iangle:1.3*\arcr) {$\phi$};
+
+            % draw angle gamma
+
+            
+
+            
+        }
+
+        % draw phi
+        \centerarc[green,thick, ->](0,0)(-\iangle:89:2.5)
+        \node[green] at ($(A)+(1.6,2.6)$) {$\phi$};
+        
+        % draw alpha
+        \centerarc[red,thick, ->](0,0)(41:89:1)
+        \node[red] at ($(A)+(0.3,0.6)$) {$\alpha$};
+
+        % draw gamma
+        \centerarc[red,thick, ->](B)(\down:\lcangle:1)
+        \node[red] at ($(B)+(+0.5,-0.5)$) {$\gamma$};
+
+        % draw beta
+        \centerarc[red,thick, ->](C)(220:180+\lcangle:1)
+        \node[red] at ($(C)+(-0.5,-0.3)$) {$\beta$};
+
+        % draw alpha+
+        \centerarc[green,thick, ->](0,0)(-\iangle:41:3.5)
+        \node[green] at ($(A)+(3.5,1.9)$) {$\alpha^+$};
+
+        % Forces
+        {[force,->,line width=2pt]
+            % Assuming that Mg = 1. The normal force will therefore be cos(alpha)
+            %\draw (M.center) -- ++(0,{cos(\iangle)}) node[above right] {$N$};
+            %\draw (M.west) -- ++(-1,0) node[left] {$f_R$};
+
+            % draw pedal force
+            \draw ($(D.east)+(-2,0)$) node[above] {$F_p$} -- ++(2,0) ;
+
+            % draw pivot force @A
+            \draw ($(A.east)+(-1,0)$) node[above] {$F_{A,x}$} -- ++(1,0) ;
+            \draw ($(A.east)+(0,-1)$) node[left] {$F_{A,y}$} -- ++(0,1) ;
+
+            % draw loadcell force
+            \draw ($(B.east)+(0,0)$) -- ++(180+\lcangle:2) node[above] {$F_{l}$};
+        }
+
+    % draw helper line @B
+    \draw[dashed] (B) -- ++ (4,0) node[right] {};
+
+    \centerarc[green,thick, ->](B)(0:\lcangle:3)
+    \node[green] at ($(B)+(+2.5,+0.3)$) {$\gamma^+$};
+    
+    
+    \end{scope}
+    
+    % Draw gravity force. The code is put outside the rotated
+    % scope for simplicity. No need to do any angle calculations. 
+    %\draw[force,->] (M.center) -- ++(0,-1) node[below] {$Mg$};
+    %%
+
+    % draw helper line for angle
+    %\draw[dashed] (A) -- ++ (0,4) node[right] {};
+    %\draw[dashed] (A) -- ++ (9.7,0) node[right] {};
+
+    %\draw[dashed] (C) -- ++ (0,-3.9) node[right] {};
+
+    % https://stackoverflow.com/questions/1588568/how-to-get-one-component-of-a-tikz-pgf-coordinate
+    \draw[dashed]
+          let
+            \p1=(A),
+            \p2=(B),
+            \p3=(C)
+          in
+            (\x1,\y1) -- (\x3, \y1) -- (\x3, \y3);
+
+    % draw c_hor        
+    \draw[thick,decorate,decoration={brace,amplitude=12pt}, gray] 
+    let
+            \p1=(A),
+            \p2=(B),
+            \p3=(C)
+          in
+    (\x3,\y1) -- (\x1, \y1) node[midway, below, xshift=0pt, yshift=-10pt,]{$c_\text{hor}$};
+
+
+    % draw c_ver        
+    \draw[thick,decorate,decoration={brace,amplitude=12pt}, gray] 
+    let
+            \p1=(A),
+            \p2=(B),
+            \p3=(C)
+          in
+    (\x3,\y3) -- (\x3, \y1) node[midway, below, xshift=30pt, yshift=10pt,]{$c_\text{vert}$};
+    
+
+
+    
+
+    % draw horizontal and vertical line AC
+    \draw[dashed] (A) -- (C);
+
+
+    % draw length dimensions
+    \draw[thick,decorate,decoration={brace,amplitude=12pt}, gray] (A.north west) -- (B.north east) node[midway, above, xshift=-15pt, yshift=0pt,]{$b$};
+
+    \draw[thick,decorate,decoration={brace,amplitude=12pt}, gray] (B.north west) -- (D.north east) node[midway, above, xshift=-15pt, yshift=0pt,]{$d$};
+
+    \draw[thick,decorate,decoration={brace,amplitude=12pt}, gray] (B.north west) -- (C.north east) node[midway, above, xshift=0pt, yshift=10pt,]{$a$};
+
+
+    
+
+
+\end{tikzpicture}
+
+\end{document}
