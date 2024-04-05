@@ -88,11 +88,11 @@ struct payloadPedalConfig {
 
   // geometric properties of the pedal
   // in mm
-  uint8_t lengthPedal_a;
-  uint8_t lengthPedal_b;
-  uint8_t lengthPedal_d;
-  uint8_t lengthPedal_c_horizontal;
-  uint8_t lengthPedal_c_vertical;
+  uint16_t lengthPedal_a;
+  uint16_t lengthPedal_b;
+  uint16_t lengthPedal_d;
+  uint16_t lengthPedal_c_horizontal;
+  uint16_t lengthPedal_c_vertical;
   
 
   //Simulate ABS trigger
