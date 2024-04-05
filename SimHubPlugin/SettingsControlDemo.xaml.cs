@@ -5501,7 +5501,7 @@ namespace User.PluginSdkDemo
                 double Current_travel_position = Travel_length / 100*(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition-dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition)/100 * current_pedal_travel_state+Travel_length/100* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
                 double OC_length = Math.Sqrt((OB_length+ Current_travel_position) * (OB_length + Current_travel_position) + BC_length * BC_length);
                 double pedal_angle_1 = Math.Acos((OA_length * OA_length + OC_length * OC_length - CA_length * CA_length) / (2 * OA_length * OC_length));
-                double pedal_angle_2 = Math.Acos((OC_length * OC_length + (OB_length + Current_travel_position) * (OB_length + Current_travel_position) - BC_length * BC_length) / (2 * OC_length * (OB_length + Current_travel_position)));
+                double pedal_angle_2 = Math.Atan2(BC_length, (OB_length + Current_travel_position));
 
                 double pedal_angle = pedal_angle_1 + pedal_angle_2;
                 double A_X = OA_length * Math.Cos(pedal_angle);
@@ -5575,7 +5575,9 @@ namespace User.PluginSdkDemo
             
             double OC= Math.Sqrt((OB+travel) * (OB + travel) + BC * BC);
             double pedal_angle_1 = Math.Acos((OA * OA + OC * OC - CA * CA) / (2 * OA * OC));
-            double pedal_angle_2 = Math.Acos((OC * OC + (OB + travel) * (OB + travel) - BC * BC) / (2 * OC * OB));
+            double pedal_angle_2 = Math.Atan2(BC, (OB + travel));
+
+
             double pedal_angle = pedal_angle_1 + pedal_angle_2;
             if (pedal_angle_1 != double.NaN && pedal_angle_2 != double.NaN)
             {
