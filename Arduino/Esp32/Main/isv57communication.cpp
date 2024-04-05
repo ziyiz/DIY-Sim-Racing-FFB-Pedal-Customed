@@ -55,7 +55,7 @@ void isv57communication::sendTunedServoParameters() {
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+8, 1600); // microsteps
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+9, 1); // 1st numerator 
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+10, 1); // & denominator
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+13, 300); // 1st torque limit
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+13, 500); // 1st torque limit
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+14, 500); // position deviation setup
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+16, 50); // regenerative braking resitor
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+17, 50);
