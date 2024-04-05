@@ -248,7 +248,7 @@
                 <TabItem Width="270" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
                         <Border  Width="270" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Force-Travel Curve"  FontFamily="Arial Black" FontSize="12" Height="30" Width="270" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="FORCE-TRAVEL CURVE"  FontFamily="Arial Black" FontSize="12" Height="30" Width="270" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -470,13 +470,13 @@
                 <TabItem Width="270" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
                         <Border  Width="270" Height="30" Margin="0,0,0,0" >
-                            <Label Content="Pedal Kinematic"  FontFamily="Arial Black" FontSize="12" Height="30" Width="270" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="PEDAL KINEMATIC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="270" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
                         <StackPanel HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540">
                             <StackPanel Height="20" Width="540" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
-                                <Label Content="Pedal Kinematic" Width="200" Foreground="White" FontFamily="Arial Black" HorizontalAlignment="Center" Margin="70,0,0,0" Height="20" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
+                                <Label Content="PEDAL KINEMATIC SETTING" Width="200" Foreground="White" FontFamily="Arial Black" HorizontalAlignment="Center" Margin="70,0,0,0" Height="20" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Height="205" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0">
                                 <!-- Travel vs Force curve GUI elements -->
@@ -501,7 +501,7 @@
                                 </Canvas>
                             </StackPanel>
                             <StackPanel Height="40" Width="540" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,0,0,0">
+                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" Margin="77.5,0,0,0" HorizontalAlignment="Left">
                                     <Label Content="Dist. OA" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
                                     <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <Button x:Name="btn_plus_OA"  Click="btn_plus_OA_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
