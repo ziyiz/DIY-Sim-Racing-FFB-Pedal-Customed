@@ -32,7 +32,7 @@
         public string Road_impact_bind = "";
         public int WS_trigger = 30;
         public string[] Profile_name = new string[6] { "", "", "", "", "", "" };
-        public int[] Pedal_travel = new int[3] { 100, 100, 100 };
+        public int[] Pedal_travel = new int[3] { 40, 40, 40 };
         
         
     }
