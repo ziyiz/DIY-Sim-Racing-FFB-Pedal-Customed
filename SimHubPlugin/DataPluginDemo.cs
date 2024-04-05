@@ -114,11 +114,11 @@ public struct payloadPedalConfig
 
     // geometric properties of the pedal
     // in mm
-    public byte lengthPedal_a;
-    public byte lengthPedal_b;
-    public byte lengthPedal_d;
-    public byte lengthPedal_c_horizontal;
-    public byte lengthPedal_c_vertical;
+    public Int16 lengthPedal_a;
+    public Int16 lengthPedal_b;
+    public Int16 lengthPedal_d;
+    public Int16 lengthPedal_c_horizontal;
+    public Int16 lengthPedal_c_vertical;
     
 
     public byte Simulate_ABS_trigger; //simulateABS

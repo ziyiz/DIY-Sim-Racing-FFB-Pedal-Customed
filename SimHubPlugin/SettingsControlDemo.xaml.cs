@@ -101,6 +101,7 @@ namespace User.PluginSdkDemo
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
         private string info_text_connection;
+        private int current_pedal_travel_state=0;
 
 
 
@@ -204,7 +205,19 @@ namespace User.PluginSdkDemo
 
                 };
                 canvas.Children.Add(line);
-                //canvas_kinematic.Children.Add(line);
+                Line line2 = new Line
+                {
+                    X1 = 0,
+                    Y1 = canvas_kinematic.Height - i * cellHeight,
+                    X2 = canvas_kinematic.Width,
+                    Y2 = canvas_kinematic.Height-i * cellHeight,
+                    //Stroke = Brush.Black,
+                    Stroke = System.Windows.Media.Brushes.LightSteelBlue,
+                    StrokeThickness = 1,
+                    Opacity = 0.1
+
+                };
+                canvas_kinematic.Children.Add(line2);
             }
 
             // Draw vertical gridlines
@@ -222,7 +235,18 @@ namespace User.PluginSdkDemo
                     Opacity = 0.1
                 };
                 canvas.Children.Add(line);
-                //canvas_kinematic.Children.Add(line);
+                Line line2 = new Line
+                {
+                    X1 = i * cellWidth,
+                    Y1 = 0,
+                    X2 = i * cellWidth,
+                    Y2 = canvas_kinematic.Height,
+                    //Stroke = Brushes.Black,
+                    Stroke = System.Windows.Media.Brushes.LightSteelBlue,
+                    StrokeThickness = 1,
+                    Opacity = 0.1
+                };
+                canvas_kinematic.Children.Add(line2);
             }
         }
 
@@ -1535,6 +1559,7 @@ namespace User.PluginSdkDemo
             Label_BC.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             Label_CA.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
             Label_AD.Content= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
+            Label_travel.Content = Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
             //try
             //{
             //    //ComboBox_JsonFileSelected.SelectedItem = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
@@ -3219,10 +3244,12 @@ namespace User.PluginSdkDemo
                                             int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
                                             int x_showed = round_x + 1;
                                             round_x = Math.Max(0, Math.Min(round_x, 99));
+                                            current_pedal_travel_state = x_showed;
                                             Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                             text_state.Text = x_showed + "%";
+                                            Pedal_joint_draw();
                                         }
 
                                     }
@@ -3880,6 +3907,13 @@ namespace User.PluginSdkDemo
                                         field.SetValue(obj, value);
                                     }
 
+                                    if (field.FieldType == typeof(UInt16))
+                                    {
+                                        //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        UInt16 value = (UInt16)data["payloadPedalConfig_"][field.Name];
+                                        field.SetValue(obj, value);
+                                    }
+
 
                                 }
                                 catch (Exception)
@@ -3904,6 +3938,26 @@ namespace User.PluginSdkDemo
                         {
                             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = (byte)indexOfSelectedPedal_u;
 
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a==0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = 205;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = 220;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = 60;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = 215;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = 60;
                         }
                     }
 
@@ -5409,7 +5463,7 @@ namespace User.PluginSdkDemo
                 //double y = e.GetPosition(canvas).Y - offset.Y;
 
 
-
+                /*
                 if (rectangle.Name == "rect8")
                 {
                     // Ensure the rectangle stays within the canvas
@@ -5419,6 +5473,7 @@ namespace User.PluginSdkDemo
                     double min_limit = canvas_vert_slider.Height - 0 / dy;
                     double max_limit = canvas_vert_slider.Height - 250 / dy;
                 }
+                */
             }
         }
 
@@ -5428,25 +5483,28 @@ namespace User.PluginSdkDemo
             double OA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
             double OB_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+            double Travel_length = Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
             double CA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
             double OD_length = OA_length + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
-            double OC_length = Math.Sqrt(OB_length * OB_length + BC_length * BC_length);
+            double Current_travel_position = Travel_length / 100*(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition-dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition)/100 * current_pedal_travel_state+Travel_length/100* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+            double OC_length = Math.Sqrt((OB_length+ Current_travel_position) * (OB_length + Current_travel_position) + BC_length * BC_length);
             double pedal_angle_1 = Math.Acos((OA_length * OA_length + OC_length * OC_length - CA_length * CA_length) / (2 * OA_length * OC_length));
-            double pedal_angle_2 = Math.Acos((OC_length * OC_length + OB_length * OB_length - BC_length * BC_length) / (2 * OC_length * OB_length));
+            double pedal_angle_2 = Math.Acos((OC_length * OC_length + (OB_length + Current_travel_position) * (OB_length + Current_travel_position) - BC_length * BC_length) / (2 * OC_length * (OB_length + Current_travel_position)));
             double pedal_angle = pedal_angle_1 + pedal_angle_2;
             double A_X=OA_length*Math.Cos(pedal_angle);
             double A_Y = OA_length * Math.Sin(pedal_angle);
             double D_X= OD_length * Math.Cos(pedal_angle);
             double D_Y= OD_length * Math.Sin(pedal_angle);
+            double scale_factor = 1.5;
             //set rect position
-            Canvas.SetLeft(rect_joint_A, A_X - rect_joint_A.Width / 2);
-            Canvas.SetTop(rect_joint_A, canvas_kinematic.Height- A_Y/2 - rect_joint_A.Height / 2);
-            Canvas.SetLeft(rect_joint_B, OB_length - rect_joint_B.Width / 2);
-            Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - 0/2 - rect_joint_B.Height / 2);
-            Canvas.SetLeft(rect_joint_C, OB_length - rect_joint_A.Width / 2);
-            Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - BC_length/2 - rect_joint_A.Height / 2);
-            Canvas.SetLeft(rect_joint_D, D_X - rect_joint_A.Width / 2);
-            Canvas.SetTop(rect_joint_D, canvas_kinematic.Height - D_Y/2 - rect_joint_A.Height / 2);
+            Canvas.SetLeft(rect_joint_A, A_X/scale_factor - rect_joint_A.Width / 2);
+            Canvas.SetTop(rect_joint_A, canvas_kinematic.Height- A_Y/scale_factor - rect_joint_A.Height / 2);
+            Canvas.SetLeft(rect_joint_B, OB_length/scale_factor - rect_joint_B.Width / 2);
+            Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - 0/scale_factor - rect_joint_B.Height / 2);
+            Canvas.SetLeft(rect_joint_C, OB_length/scale_factor - rect_joint_A.Width / 2+Current_travel_position/scale_factor);
+            Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - BC_length/scale_factor - rect_joint_A.Height / 2);
+            Canvas.SetLeft(rect_joint_D, D_X/scale_factor - rect_joint_A.Width / 2);
+            Canvas.SetTop(rect_joint_D, canvas_kinematic.Height - D_Y/scale_factor - rect_joint_A.Height / 2);
 
             Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A) - Label_joint_A.Width );
             Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A));
@@ -5460,39 +5518,45 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(Label_joint_O, Canvas.GetTop(rect_joint_O));
             this.Line_OA.X1 = 0;
             this.Line_OA.Y1 = canvas_kinematic.Height - 0;
-            this.Line_OA.X2 = A_X;
-            this.Line_OA.Y2 = canvas_kinematic.Height - A_Y/2;
+            this.Line_OA.X2 = A_X/scale_factor;
+            this.Line_OA.Y2 = canvas_kinematic.Height - A_Y/scale_factor;
 
             this.Line_OB.X1 = 0;
             this.Line_OB.Y1 = canvas_kinematic.Height - 0;
-            this.Line_OB.X2 = OB_length;
+            this.Line_OB.X2 = OB_length/scale_factor;
             this.Line_OB.Y2 = canvas_kinematic.Height - 0;
 
-            this.Line_BC.X1 = OB_length;
+            this.Line_BC.X1 = (OB_length+ Current_travel_position)/scale_factor;
             this.Line_BC.Y1 = canvas_kinematic.Height - 0;
-            this.Line_BC.X2 = OB_length;
-            this.Line_BC.Y2 = canvas_kinematic.Height - BC_length/2;
+            this.Line_BC.X2 = (OB_length + Current_travel_position) / scale_factor;
+            this.Line_BC.Y2 = canvas_kinematic.Height - BC_length/scale_factor;
 
-            this.Line_CA.X1 = OB_length;
-            this.Line_CA.Y1 = canvas_kinematic.Height - BC_length/2;
-            this.Line_CA.X2 = A_X;
-            this.Line_CA.Y2 = canvas_kinematic.Height - A_Y/2;
+            this.Line_CA.X1 = (OB_length + Current_travel_position) / scale_factor;
+            this.Line_CA.Y1 = canvas_kinematic.Height - BC_length/scale_factor;
+            this.Line_CA.X2 = A_X/scale_factor;
+            this.Line_CA.Y2 = canvas_kinematic.Height - A_Y/scale_factor;
 
-            this.Line_AD.X1 = A_X;
-            this.Line_AD.Y1 = canvas_kinematic.Height - A_Y/2;
-            this.Line_AD.X2 = D_X;
-            this.Line_AD.Y2 = canvas_kinematic.Height - D_Y/2;
+            this.Line_AD.X1 = A_X/scale_factor;
+            this.Line_AD.Y1 = canvas_kinematic.Height - A_Y/scale_factor;
+            this.Line_AD.X2 = D_X/scale_factor;
+            this.Line_AD.Y2 = canvas_kinematic.Height - D_Y/scale_factor;
+
+            this.Line_Pedal_Travel.X1 = OB_length/scale_factor;
+            this.Line_Pedal_Travel.Y1 = canvas_kinematic.Height;
+            this.Line_Pedal_Travel.X2 = (OB_length+Travel_length)/scale_factor;
+            this.Line_Pedal_Travel.Y2 = canvas_kinematic.Height;
 
 
         }
 
-        private bool Kinematic_check(double OA, double OB, double BC, double CA)
+        private bool Kinematic_check(double OA, double OB, double BC, double CA, double travel)
         {
-            double OC= Math.Sqrt(OB * OB + BC * BC);
+            
+            double OC= Math.Sqrt((OB+travel) * (OB + travel) + BC * BC);
             double pedal_angle_1 = Math.Acos((OA * OA + OC * OC - CA * CA) / (2 * OA * OC));
-            double pedal_angle_2 = Math.Acos((OC * OC + OB * OB - BC * BC) / (2 * OC * OB));
+            double pedal_angle_2 = Math.Acos((OC * OC + (OB + travel) * (OB + travel) - BC * BC) / (2 * OC * OB));
             double pedal_angle = pedal_angle_1 + pedal_angle_2;
-            if (pedal_angle <= Math.PI / 2)
+            if (pedal_angle <= Math.PI *0.6)
             {
                 if ((OA + CA) > OC)
                 {
@@ -5517,10 +5581,10 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA + 1, OB, BC, CA))
+            if (Kinematic_check(OA + 1, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
                 
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b + 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b + 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5535,9 +5599,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA -1 , OB, BC, CA))
+            if (Kinematic_check(OA -1 , OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b - 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b - 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5552,9 +5616,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA , OB+1, BC, CA))
+            if (Kinematic_check(OA , OB+1, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal + 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal + 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5569,9 +5633,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA , OB-1, BC, CA))
+            if (Kinematic_check(OA , OB-1, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal - 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal - 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5586,9 +5650,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC+1, CA))
+            if (Kinematic_check(OA, OB, BC+1, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical + 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical + 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5603,9 +5667,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC-1, CA))
+            if (Kinematic_check(OA, OB, BC-1, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical - 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical - 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5620,9 +5684,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC, CA+1))
+            if (Kinematic_check(OA, OB, BC, CA+1, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a + 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a + 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5637,9 +5701,9 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC, CA-1))
+            if (Kinematic_check(OA, OB, BC, CA-1, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a - 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a - 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5652,7 +5716,7 @@ namespace User.PluginSdkDemo
         {
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d > 1)
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d + 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d + 1);
                 updateTheGuiFromConfig();
             }
             else
@@ -5666,12 +5730,38 @@ namespace User.PluginSdkDemo
         {
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d > 2)
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = (Byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d - 1);
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d - 1);
                 updateTheGuiFromConfig();
             }
             else
             {
                 TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+            }
+        }
+
+        private void btn_plus_travel_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] <= 100)
+            {
+                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]++;
+                updateTheGuiFromConfig();
+            }
+            else
+            {
+                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = 100;
+            }
+        }
+
+        private void btn_minus_travel_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] >=30)
+            {
+                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]--;
+                updateTheGuiFromConfig();
+            }
+            else
+            {
+                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = 30;
             }
         }
 
