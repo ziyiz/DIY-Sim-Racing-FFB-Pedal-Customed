@@ -5482,6 +5482,13 @@ namespace User.PluginSdkDemo
 
         private void Pedal_joint_draw()
         {
+
+            // only draw when pedal kinematic tab is selected
+            if (pedalKinematicTab.IsSelected == false)
+            {
+                return;
+            }
+
             //parameter calculation
             double OA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
             double OB_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
