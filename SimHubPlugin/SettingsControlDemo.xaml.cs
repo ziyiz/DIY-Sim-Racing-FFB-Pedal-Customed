@@ -101,7 +101,12 @@ namespace User.PluginSdkDemo
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
         private string info_text_connection;
-        private int current_pedal_travel_state=0;
+        private int current_pedal_travel_state= 0;
+
+
+        private double kinematicDiagram_zeroPos_OX = 100;
+        private double kinematicDiagram_zeroPos_OY = 20;
+
 
 
 
@@ -179,6 +184,8 @@ namespace User.PluginSdkDemo
             //joystick.SetJoystickHat(0, Hats.HatExt3);
 
         }
+
+
         private void DrawGridLines()
         {
             // Specify the number of rows and columns for the grid
@@ -189,6 +196,8 @@ namespace User.PluginSdkDemo
             double cellWidth = canvas.Width / columnCount;
             double cellHeight = canvas.Height / rowCount;
 
+
+            
             // Draw horizontal gridlines
             for (int i = 1; i < rowCount; i++)
             {
@@ -205,20 +214,7 @@ namespace User.PluginSdkDemo
 
                 };
                 canvas.Children.Add(line);
-                
-                Line line2 = new Line
-                {
-                    X1 = 0,
-                    Y1 = canvas_kinematic.Height - i * cellHeight,
-                    X2 = 400,
-                    Y2 = canvas_kinematic.Height-i * cellHeight,
-                    //Stroke = Brush.Black,
-                    Stroke = System.Windows.Media.Brushes.LightSteelBlue,
-                    StrokeThickness = 1,
-                    Opacity = 0.1
-
-                };
-                canvas_kinematic.Children.Add(line2);
+          
             }
 
             // Draw vertical gridlines
@@ -237,11 +233,57 @@ namespace User.PluginSdkDemo
                 };
                 canvas.Children.Add(line);
                 
+            }
+        }
+
+
+
+        private void DrawGridLines_kinematicCanvas()
+        {
+
+
+            double gridlineSpacing = 50;
+
+            double cellWidth = gridlineSpacing;
+            double cellHeight = gridlineSpacing;
+
+            // we want the gridlines to be centered at pedal position O
+            // --> calculate an offset
+            double xOffset = kinematicDiagram_zeroPos_OX % gridlineSpacing;
+            double yOffset = kinematicDiagram_zeroPos_OY % gridlineSpacing;
+
+            int rowCount = (int)Math.Floor((canvas.Height - 0 * yOffset) / gridlineSpacing);
+            int columnCount = (int)Math.Floor((canvas.Width - 0 * xOffset) / gridlineSpacing);
+
+
+            // Draw horizontal gridlines
+            for (int i = 0; i < rowCount; i++)
+            {
+
                 Line line2 = new Line
                 {
-                    X1 = i * cellWidth,
+                    X1 = 0,
+                    Y1 = canvas_kinematic.Height - (yOffset + i * cellHeight),
+                    X2 = 400,
+                    Y2 = canvas_kinematic.Height - (yOffset + i * cellHeight),
+                    //Stroke = Brush.Black,
+                    Stroke = System.Windows.Media.Brushes.LightSteelBlue,
+                    StrokeThickness = 1,
+                    Opacity = 0.1
+
+                };
+                canvas_kinematic.Children.Add(line2);
+            }
+
+            // Draw vertical gridlines
+            for (int i = 0; i < columnCount; i++)
+            {
+
+                Line line2 = new Line
+                {
+                    X1 = xOffset + i * cellWidth,
                     Y1 = 0,
-                    X2 = i * cellWidth,
+                    X2 = xOffset + i * cellWidth,
                     Y2 = canvas_kinematic.Height,
                     //Stroke = Brushes.Black,
                     Stroke = System.Windows.Media.Brushes.LightSteelBlue,
@@ -249,7 +291,7 @@ namespace User.PluginSdkDemo
                     Opacity = 0.1
                 };
                 canvas_kinematic.Children.Add(line2);
-                
+
             }
         }
 
@@ -610,6 +652,7 @@ namespace User.PluginSdkDemo
             rect_joint_O.Fill = defaultcolor;
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
+            DrawGridLines_kinematicCanvas();
 
 
 
@@ -5518,8 +5561,8 @@ namespace User.PluginSdkDemo
                 double D_X = OD_length * Math.Cos(pedal_angle);
                 double D_Y = OD_length * Math.Sin(pedal_angle);
                 double scale_factor = 1.5;
-                double shifting_OX = 100;
-                double shifting_OY = 20;
+                double shifting_OX = kinematicDiagram_zeroPos_OX;
+                double shifting_OY = kinematicDiagram_zeroPos_OY;
                 //set rect position
                 Canvas.SetLeft(rect_joint_O, shifting_OX- rect_joint_O.Width / 2);
                 Canvas.SetTop(rect_joint_O, canvas_kinematic.Height - shifting_OY- rect_joint_O.Height / 2);
