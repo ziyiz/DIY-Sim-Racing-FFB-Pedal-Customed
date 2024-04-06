@@ -484,59 +484,39 @@
                                     <Label x:Name="Label_joint_C" Content="C" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
                                     <Label x:Name="Label_joint_D" Content="D" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
                                     <Label x:Name="Label_joint_O" Content="O" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-
+                                    <StackPanel x:Name="SP_OA_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_OA_canvas"  Click="btn_plus_OA_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_OA_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_OA_canvas"  Click="btn_minus_OA_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_OB_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_OB_canvas"  Click="btn_plus_OB_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_OB_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_OB_canvas"  Click="btn_minus_OB_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_BC_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_BC_canvas"  Click="btn_plus_BC_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_BC_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_BC_canvas"  Click="btn_minus_BC_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_CA_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_CA_canvas"  Click="btn_plus_CA_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_CA_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_CA_canvas"  Click="btn_minus_CA_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_AD_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_AD_canvas"  Click="btn_plus_AD_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_AD_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_AD_canvas"  Click="btn_minus_AD_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_travel_canvas" Height="15" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
+                                        <Button x:Name="btn_plus_travel_canvas"  Click="btn_plus_travel_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold" Visibility="Hidden"/>
+                                        <Label x:Name="Label_travel_canvas" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                        <Button x:Name="btn_minus_travel_canvas"  Click="btn_minus_travel_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10" Visibility="Hidden"/>
+                                    </StackPanel>
                                 </Canvas>
                             </StackPanel>
-                            <StackPanel Height="40" Width="540" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" Margin="77.5,0,0,0" HorizontalAlignment="Left">
-                                    <Label Content="Dist. OA" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_OA"  Click="btn_plus_OA_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_OA" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_OA"  Click="btn_minus_OA_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0">
-                                    <Label Content="Dist. OB" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_OB"  Click="btn_plus_OB_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_OB" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_OB"  Click="btn_minus_OB_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0">
-                                    <Label Content="Dist. BC" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_BC"  Click="btn_plus_BC_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_BC" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_BC"  Click="btn_minus_BC_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0">
-                                    <Label Content="Dist. CA" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_CA"  Click="btn_plus_CA_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_CA" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_CA"  Click="btn_minus_CA_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0">
-                                    <Label Content="Dist. AD" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_AD"  Click="btn_plus_AD_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_AD" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_AD"  Click="btn_minus_AD_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Height="40" Width="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0">
-                                    <Label Content="Travel" Height="20" Width="50" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Center" FontSize="10" HorizontalContentAlignment="Center"/>
-                                    <StackPanel Height="15" Width="70" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button x:Name="btn_plus_travel"  Click="btn_plus_travel_Click" Content="+" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-0.5,0,0" VerticalContentAlignment="Top" FontWeight="Bold"/>
-                                        <Label x:Name="Label_travel" Content="1" Height="15" Width="30" FontFamily="Yu Gothic UI" FontSize="10" VerticalContentAlignment="Center" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                        <Button x:Name="btn_minus_travel"  Click="btn_minus_travel_Click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
+
                         </StackPanel>
                     </Border>
                 </TabItem>
