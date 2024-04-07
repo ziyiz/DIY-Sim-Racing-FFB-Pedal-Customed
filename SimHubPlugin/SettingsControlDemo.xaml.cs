@@ -6079,6 +6079,11 @@ namespace User.PluginSdkDemo
             }
         }
 
+        private void Tab_main_1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            updateTheGuiFromConfig();
+        }
+
         /*
 private void GetRectanglePositions()
 {
