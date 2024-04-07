@@ -102,11 +102,13 @@ namespace User.PluginSdkDemo
         private SolidColorBrush lightcolor;
         private string info_text_connection;
         private int current_pedal_travel_state= 0;
+        private int gridline_kinematic_count_original = 0;
 
-
+        /*
         private double kinematicDiagram_zeroPos_OX = 100;
         private double kinematicDiagram_zeroPos_OY = 20;
-
+        private double kinematicDiagram_zeroPos_scale = 1;
+        */
 
 
 
@@ -238,19 +240,29 @@ namespace User.PluginSdkDemo
 
 
 
-        private void DrawGridLines_kinematicCanvas()
+        private void DrawGridLines_kinematicCanvas(double OX, double OY, double scale_i)
         {
 
+            if (gridline_kinematic_count_original > 0)
+            {
+                for(int i=0;i< gridline_kinematic_count_original;i++)
+                if (canvas_kinematic.Children.Count !=0)
+                {
+                        canvas_kinematic.Children.RemoveAt(canvas_kinematic.Children.Count - 1);
+                }
+                
+            }
+            double scale = scale_i;
+            double gridlineSpacing = 50 / scale;
 
-            double gridlineSpacing = 50;
-
-            double cellWidth = gridlineSpacing;
-            double cellHeight = gridlineSpacing;
+            double cellWidth = gridlineSpacing ;
+            double cellHeight = gridlineSpacing ;
 
             // we want the gridlines to be centered at pedal position O
             // --> calculate an offset
-            double xOffset = kinematicDiagram_zeroPos_OX % gridlineSpacing;
-            double yOffset = kinematicDiagram_zeroPos_OY % gridlineSpacing;
+            double xOffset = OX % gridlineSpacing;
+            double yOffset = OY % gridlineSpacing;
+
 
             int rowCount = (int)Math.Floor((canvas.Height - 0 * yOffset) / gridlineSpacing);
             int columnCount = (int)Math.Floor((canvas.Width - 0 * xOffset) / gridlineSpacing);
@@ -293,6 +305,7 @@ namespace User.PluginSdkDemo
                 canvas_kinematic.Children.Add(line2);
 
             }
+            gridline_kinematic_count_original = columnCount + rowCount;
         }
 
         private void InitReadStructFromJson()
@@ -652,7 +665,7 @@ namespace User.PluginSdkDemo
             rect_joint_O.Fill = defaultcolor;
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
-            DrawGridLines_kinematicCanvas();
+            DrawGridLines_kinematicCanvas(100,20,1.5);
 
 
 
@@ -5530,17 +5543,15 @@ namespace User.PluginSdkDemo
         private void Pedal_joint_draw()
         {
 
-            // only draw when pedal kinematic tab is selected
-            if (pedalKinematicTab.IsSelected == false)
-            {
-                return;
-            }
-            Label_OA_canvas.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
-            Label_OB_canvas.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
-            Label_BC_canvas.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
-            Label_CA_canvas.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            Label_AD_canvas.Content = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
-            Label_travel_canvas.Content = Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
+
+            Label_OA_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
+            Label_OB_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
+            Label_BC_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+            Label_CA_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
+            Label_AD_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
+            Label_travel_canvas.Text = "" + Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
+            Label_kinematic_scale.Content = Math.Round(Plugin.Settings.kinematicDiagram_zeroPos_scale,1);
+            
             //parameter calculation
             double OA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
             double OB_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
@@ -5548,90 +5559,117 @@ namespace User.PluginSdkDemo
             double Travel_length = Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
             double CA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
             double OD_length = OA_length + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
-            if(OA_length!=0 && OB_length!=0 && BC_length!=0 && CA_length!=0)
-            { 
-                double Current_travel_position = Travel_length / 100*(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition-dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition)/100 * current_pedal_travel_state+Travel_length/100* dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                double OC_length = Math.Sqrt((OB_length+ Current_travel_position) * (OB_length + Current_travel_position) + BC_length * BC_length);
-                double pedal_angle_1 = Math.Acos((OA_length * OA_length + OC_length * OC_length - CA_length * CA_length) / (2 * OA_length * OC_length));
-                double pedal_angle_2 = Math.Atan2(BC_length, (OB_length + Current_travel_position));
+            double Current_travel_position;
+            double OC_length;
+            double pedal_angle_1;
+            double pedal_angle_2;
+            double pedal_angle;
+            if (OA_length != 0 && OB_length != 0 && BC_length != 0 && CA_length != 0)
+            {
 
-                double pedal_angle = pedal_angle_1 + pedal_angle_2;
-                double A_X = OA_length * Math.Cos(pedal_angle);
-                double A_Y = OA_length * Math.Sin(pedal_angle);
-                double D_X = OD_length * Math.Cos(pedal_angle);
-                double D_Y = OD_length * Math.Sin(pedal_angle);
-                double scale_factor = 1.5;
-                double shifting_OX = kinematicDiagram_zeroPos_OX;
-                double shifting_OY = kinematicDiagram_zeroPos_OY;
-                //set rect position
-                Canvas.SetLeft(rect_joint_O, shifting_OX- rect_joint_O.Width / 2);
-                Canvas.SetTop(rect_joint_O, canvas_kinematic.Height - shifting_OY- rect_joint_O.Height / 2);
-                Canvas.SetLeft(rect_joint_A, A_X / scale_factor - rect_joint_A.Width / 2+shifting_OX);
-                Canvas.SetTop(rect_joint_A, canvas_kinematic.Height - A_Y / scale_factor - rect_joint_A.Height / 2-shifting_OY);
-                Canvas.SetLeft(rect_joint_B, OB_length / scale_factor - rect_joint_B.Width / 2 + shifting_OX);
-                Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - 0 / scale_factor - rect_joint_B.Height / 2 - shifting_OY);
-                Canvas.SetLeft(rect_joint_C, OB_length / scale_factor - rect_joint_A.Width / 2 + Current_travel_position / scale_factor+shifting_OX);
-                Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - BC_length / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
-                Canvas.SetLeft(rect_joint_D, D_X / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
-                Canvas.SetTop(rect_joint_D, canvas_kinematic.Height - D_Y / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
-
-                Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A) - Label_joint_A.Width);
-                Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A));
-                Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B) + Label_joint_B.Width);
-                Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B));
-                Canvas.SetLeft(Label_joint_C, Canvas.GetLeft(rect_joint_C) + Label_joint_C.Width);
-                Canvas.SetTop(Label_joint_C, Canvas.GetTop(rect_joint_C));
-                Canvas.SetLeft(Label_joint_D, Canvas.GetLeft(rect_joint_D) - Label_joint_D.Width);
-                Canvas.SetTop(Label_joint_D, Canvas.GetTop(rect_joint_D));
-                Canvas.SetLeft(Label_joint_O, Canvas.GetLeft(rect_joint_O) - Label_joint_O.Width);
-                Canvas.SetTop(Label_joint_O, Canvas.GetTop(rect_joint_O));
-
-                Canvas.SetLeft(SP_OA_canvas, (Canvas.GetLeft(rect_joint_A) + shifting_OX) / 2 - SP_OA_canvas.Width/2-Label_OA_canvas.Width/2);
-                Canvas.SetTop(SP_OA_canvas, (Canvas.GetTop(rect_joint_A) + canvas_kinematic.Height- shifting_OY) / 2 - SP_OA_canvas.Height / 2);
-                Canvas.SetLeft(SP_OB_canvas, (Canvas.GetLeft(rect_joint_B) + shifting_OX) / 2 - SP_OB_canvas.Width / 2);
-                Canvas.SetTop(SP_OB_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + SP_OB_canvas.Height/2);
-                Canvas.SetLeft(SP_BC_canvas, Canvas.GetLeft(rect_joint_C)  - rect_joint_C.Width-SP_BC_canvas.Width / 2 + Label_BC_canvas.Width);
-                Canvas.SetTop(SP_BC_canvas, (Canvas.GetTop(rect_joint_B)  +Canvas.GetTop(rect_joint_C)) / 2 - SP_BC_canvas.Height / 2);
-                Canvas.SetLeft(SP_CA_canvas, (Canvas.GetLeft(rect_joint_C) + Canvas.GetLeft(rect_joint_A)) / 2 - SP_CA_canvas.Width / 2 + Label_CA_canvas.Width / 2);
-                Canvas.SetTop(SP_CA_canvas, (Canvas.GetTop(rect_joint_C)  +Canvas.GetTop(rect_joint_A)) / 2 - SP_CA_canvas.Height);
-                Canvas.SetLeft(SP_AD_canvas, (Canvas.GetLeft(rect_joint_A) + Canvas.GetLeft(rect_joint_D)) / 2 - SP_AD_canvas.Width / 2 - Label_AD_canvas.Width / 2);
-                Canvas.SetTop(SP_AD_canvas, (Canvas.GetTop(rect_joint_A) + +Canvas.GetTop(rect_joint_D)) / 2 - SP_AD_canvas.Height / 2);
-                Canvas.SetLeft(SP_travel_canvas, (Canvas.GetLeft(rect_joint_B) + (OB_length + Travel_length) / scale_factor + shifting_OX) / 2 - SP_travel_canvas.Width / 2);
-                Canvas.SetTop(SP_travel_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + SP_travel_canvas.Height / 2);
-
-                this.Line_OA.X1 = shifting_OX;
-                this.Line_OA.Y1 = canvas_kinematic.Height - shifting_OY;
-                this.Line_OA.X2 = A_X / scale_factor+shifting_OX;
-                this.Line_OA.Y2 = canvas_kinematic.Height - A_Y / scale_factor-shifting_OY;
-
-                this.Line_OB.X1 = shifting_OX;
-                this.Line_OB.Y1 = canvas_kinematic.Height - shifting_OY;
-                this.Line_OB.X2 = OB_length / scale_factor+ shifting_OX;
-                this.Line_OB.Y2 = canvas_kinematic.Height - shifting_OY;
-
-                this.Line_BC.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-                this.Line_BC.Y1 = canvas_kinematic.Height - shifting_OY;
-                this.Line_BC.X2 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-                this.Line_BC.Y2 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
-
-                this.Line_CA.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-                this.Line_CA.Y1 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
-                this.Line_CA.X2 = A_X / scale_factor + shifting_OX;
-                this.Line_CA.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
-
-                this.Line_AD.X1 = A_X / scale_factor + shifting_OX;
-                this.Line_AD.Y1 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
-                this.Line_AD.X2 = D_X / scale_factor + shifting_OX;
-                this.Line_AD.Y2 = canvas_kinematic.Height - D_Y / scale_factor - shifting_OY;
-
-                this.Line_Pedal_Travel.X1 = OB_length / scale_factor + shifting_OX;
-                this.Line_Pedal_Travel.Y1 = canvas_kinematic.Height - shifting_OY;
-                this.Line_Pedal_Travel.X2 = (OB_length + Travel_length) / scale_factor + shifting_OX;
-                this.Line_Pedal_Travel.Y2 = canvas_kinematic.Height - shifting_OY;
+                Current_travel_position = Travel_length / 100 * (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100 * current_pedal_travel_state + Travel_length / 100 * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+                OC_length = Math.Sqrt((OB_length + Current_travel_position) * (OB_length + Current_travel_position) + BC_length * BC_length);
+                pedal_angle_1 = Math.Acos((OA_length * OA_length + OC_length * OC_length - CA_length * CA_length) / (2 * OA_length * OC_length));
+                pedal_angle_2 = Math.Atan2(BC_length, (OB_length + Current_travel_position));
+                pedal_angle = pedal_angle_1 + pedal_angle_2;
+                // only draw when pedal kinematic tab is selected
+                if (pedalKinematicTab.IsSelected == false)
+                {
+                    return;
+                }
             }
-            
+            else 
+            {
+                OA_length = 220;
+                OB_length = 215;
+                BC_length = 60;
+                CA_length = 220;
+                Travel_length = 60;
+                Current_travel_position = Travel_length / 100 * (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100 * current_pedal_travel_state + Travel_length / 100 * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+                OC_length = Math.Sqrt((OB_length + Current_travel_position) * (OB_length + Current_travel_position) + BC_length * BC_length);
+                pedal_angle_1 = Math.Acos((OA_length * OA_length + OC_length * OC_length - CA_length * CA_length) / (2 * OA_length * OC_length));
+                pedal_angle_2 = Math.Atan2(BC_length, (OB_length + Current_travel_position));
+                pedal_angle = pedal_angle_1 + pedal_angle_2;
+            }
+            Label_kinematic_pedal_angle.Content = "Pedal Angle: " + Math.Round(pedal_angle/Math.PI*180)+ "°";
 
-            
+
+
+            double A_X = OA_length * Math.Cos(pedal_angle);
+            double A_Y = OA_length * Math.Sin(pedal_angle);
+            double D_X = OD_length * Math.Cos(pedal_angle);
+            double D_Y = OD_length * Math.Sin(pedal_angle);
+            double scale_factor = Plugin.Settings.kinematicDiagram_zeroPos_scale;
+            double shifting_OX = Plugin.Settings.kinematicDiagram_zeroPos_OX;
+            double shifting_OY = Plugin.Settings.kinematicDiagram_zeroPos_OY;
+            //set rect position
+            Canvas.SetLeft(rect_joint_O, shifting_OX - rect_joint_O.Width / 2);
+            Canvas.SetTop(rect_joint_O, canvas_kinematic.Height - shifting_OY - rect_joint_O.Height / 2);
+            Canvas.SetLeft(rect_joint_A, A_X / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
+            Canvas.SetTop(rect_joint_A, canvas_kinematic.Height - A_Y / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_B, OB_length / scale_factor - rect_joint_B.Width / 2 + shifting_OX);
+            Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - 0 / scale_factor - rect_joint_B.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_C, OB_length / scale_factor - rect_joint_A.Width / 2 + Current_travel_position / scale_factor + shifting_OX);
+            Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - BC_length / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_D, D_X / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
+            Canvas.SetTop(rect_joint_D, canvas_kinematic.Height - D_Y / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
+
+            Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A) - Label_joint_A.Width);
+            Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A));
+            Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B) + Label_joint_B.Width);
+            Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B));
+            Canvas.SetLeft(Label_joint_C, Canvas.GetLeft(rect_joint_C) + Label_joint_C.Width);
+            Canvas.SetTop(Label_joint_C, Canvas.GetTop(rect_joint_C));
+            Canvas.SetLeft(Label_joint_D, Canvas.GetLeft(rect_joint_D) - Label_joint_D.Width);
+            Canvas.SetTop(Label_joint_D, Canvas.GetTop(rect_joint_D));
+            Canvas.SetLeft(Label_joint_O, Canvas.GetLeft(rect_joint_O) - Label_joint_O.Width);
+            Canvas.SetTop(Label_joint_O, Canvas.GetTop(rect_joint_O));
+
+            Canvas.SetLeft(SP_OA_canvas, (Canvas.GetLeft(rect_joint_A) + shifting_OX) / 2 - SP_OA_canvas.Width / 2 - Label_OA_canvas.Width / 2);
+            Canvas.SetTop(SP_OA_canvas, (Canvas.GetTop(rect_joint_A) + canvas_kinematic.Height - shifting_OY) / 2 - Label_OA_canvas.Height / 2);
+            Canvas.SetLeft(SP_OB_canvas, (Canvas.GetLeft(rect_joint_B) + shifting_OX) / 2 - SP_OB_canvas.Width / 2 -5);
+            Canvas.SetTop(SP_OB_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + Label_OB_canvas.Height / 2 -5);
+            Canvas.SetLeft(SP_BC_canvas, Canvas.GetLeft(rect_joint_C) - rect_joint_C.Width - SP_BC_canvas.Width / 2 + Label_BC_canvas.Width);
+            Canvas.SetTop(SP_BC_canvas, (Canvas.GetTop(rect_joint_B) + Canvas.GetTop(rect_joint_C)) / 2 - Label_BC_canvas.Height / 2 +5);
+            Canvas.SetLeft(SP_CA_canvas, (Canvas.GetLeft(rect_joint_C) + Canvas.GetLeft(rect_joint_A)) / 2 - SP_CA_canvas.Width / 2 + Label_CA_canvas.Width / 2);
+            Canvas.SetTop(SP_CA_canvas, (Canvas.GetTop(rect_joint_C) + Canvas.GetTop(rect_joint_A)) / 2 - Label_CA_canvas.Height);
+            Canvas.SetLeft(SP_AD_canvas, (Canvas.GetLeft(rect_joint_A) + Canvas.GetLeft(rect_joint_D)) / 2 - SP_AD_canvas.Width / 2 - Label_AD_canvas.Width / 2);
+            Canvas.SetTop(SP_AD_canvas, (Canvas.GetTop(rect_joint_A) + +Canvas.GetTop(rect_joint_D)) / 2 - Label_AD_canvas.Height / 2 );
+            Canvas.SetLeft(SP_travel_canvas, (Canvas.GetLeft(rect_joint_B) + (OB_length + Travel_length) / scale_factor + shifting_OX) / 2 - SP_travel_canvas.Width / 2);
+            Canvas.SetTop(SP_travel_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + Label_travel_canvas.Height / 2 -5);
+
+            this.Line_OA.X1 = shifting_OX;
+            this.Line_OA.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_OA.X2 = A_X / scale_factor + shifting_OX;
+            this.Line_OA.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+
+            this.Line_OB.X1 = shifting_OX;
+            this.Line_OB.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_OB.X2 = OB_length / scale_factor + shifting_OX;
+            this.Line_OB.Y2 = canvas_kinematic.Height - shifting_OY;
+
+            this.Line_BC.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_BC.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_BC.X2 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_BC.Y2 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
+
+            this.Line_CA.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_CA.Y1 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
+            this.Line_CA.X2 = A_X / scale_factor + shifting_OX;
+            this.Line_CA.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+
+            this.Line_AD.X1 = A_X / scale_factor + shifting_OX;
+            this.Line_AD.Y1 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+            this.Line_AD.X2 = D_X / scale_factor + shifting_OX;
+            this.Line_AD.Y2 = canvas_kinematic.Height - D_Y / scale_factor - shifting_OY;
+
+            this.Line_Pedal_Travel.X1 = OB_length / scale_factor + shifting_OX;
+            this.Line_Pedal_Travel.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_Pedal_Travel.X2 = (OB_length + Travel_length) / scale_factor + shifting_OX;
+            this.Line_Pedal_Travel.Y2 = canvas_kinematic.Height - shifting_OY;
+
+
+
 
 
 
@@ -5896,6 +5934,139 @@ namespace User.PluginSdkDemo
             btn_minus_AD_canvas.Visibility = Visibility.Hidden;
             btn_plus_travel_canvas.Visibility = Visibility.Hidden;
             btn_minus_travel_canvas.Visibility = Visibility.Hidden;
+        }
+
+        private void btn_minus_kinematic_scale_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Settings.kinematicDiagram_zeroPos_scale > 0.7)
+            {
+                Plugin.Settings.kinematicDiagram_zeroPos_scale = Plugin.Settings.kinematicDiagram_zeroPos_scale - 0.1;
+                DrawGridLines_kinematicCanvas(Plugin.Settings.kinematicDiagram_zeroPos_OX, Plugin.Settings.kinematicDiagram_zeroPos_OY, Plugin.Settings.kinematicDiagram_zeroPos_scale);
+                Pedal_joint_draw();
+                //Label_kinematic_scale.Content = Plugin.Settings.kinematicDiagram_zeroPos_scale;
+            }
+        }
+
+        private void btn_plus_kinematic_scale_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Settings.kinematicDiagram_zeroPos_scale < 2)
+            {
+                Plugin.Settings.kinematicDiagram_zeroPos_scale = Plugin.Settings.kinematicDiagram_zeroPos_scale + 0.1;
+                DrawGridLines_kinematicCanvas(Plugin.Settings.kinematicDiagram_zeroPos_OX, Plugin.Settings.kinematicDiagram_zeroPos_OY, Plugin.Settings.kinematicDiagram_zeroPos_scale);
+                Pedal_joint_draw();
+                //Label_kinematic_scale.Content = Plugin.Settings.kinematicDiagram_zeroPos_scale;
+            }
+        }
+
+        private void Kinematic_TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as System.Windows.Controls.TextBox;
+            if (textbox.Name == "Label_OA_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    double OA = result;
+                    double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
+                    double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+                    double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
+                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(result);
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
+            if (textbox.Name == "Label_OB_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    double OA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
+                    double OB = result;
+                    double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+                    double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
+                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(result);
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
+            if (textbox.Name == "Label_BC_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    double OA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
+                    double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
+                    double BC = result;
+                    double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
+                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(result);
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
+            if (textbox.Name == "Label_CA_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    double OA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
+                    double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
+                    double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+                    double CA = result;
+                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(result);
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
+            if (textbox.Name == "Label_AD_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if (result >= 0 && result <= 100)
+                    {
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d = (Int16)result;
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
+            if (textbox.Name == "Label_travel_canvas")
+            {
+                if (int.TryParse(textbox.Text, out int result))
+                {
+                    if (result >= 10 && result <= 100)
+                    {
+                        Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = result;
+                        Pedal_joint_draw();
+                    }
+                    else
+                    {
+                        TextBox_debugOutput.Text = "Pedal Kinematic calculation error";
+                    }
+                }
+            }
         }
 
         /*
