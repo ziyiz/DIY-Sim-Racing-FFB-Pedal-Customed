@@ -245,12 +245,13 @@ namespace User.PluginSdkDemo
 
             if (gridline_kinematic_count_original > 0)
             {
-                for(int i=0;i< gridline_kinematic_count_original;i++)
-                if (canvas_kinematic.Children.Count !=0)
+                for (int i = 0; i < gridline_kinematic_count_original; i++)
                 {
+                    if (canvas_kinematic.Children.Count != 0)
+                    {
                         canvas_kinematic.Children.RemoveAt(canvas_kinematic.Children.Count - 1);
-                }
-                
+                    }
+                }                
             }
             double scale = scale_i;
             double gridlineSpacing = 50 / scale;
@@ -5591,8 +5592,17 @@ namespace User.PluginSdkDemo
                 pedal_angle_2 = Math.Atan2(BC_length, (OB_length + Current_travel_position));
                 pedal_angle = pedal_angle_1 + pedal_angle_2;
             }
-            Label_kinematic_pedal_angle.Content = "Pedal Angle: " + Math.Round(pedal_angle/Math.PI*180)+ "°";
-
+            double OB_Max = OB_length + Travel_length;
+            double OC_Max = Math.Sqrt((OB_Max) * (OB_Max) + BC_length * BC_length);
+            double min_angle_1= Math.Acos((OA_length * OA_length + OC_Max * OC_Max - CA_length * CA_length) / (2 * OA_length * OC_Max));
+            double min_angle_2= Math.Atan2(BC_length, OB_Max);
+            double OC_Min = Math.Sqrt((OB_length) * (OB_length) + BC_length * BC_length);
+            double max_angle_1= Math.Acos((OA_length * OA_length + OC_Min * OC_Min - CA_length * CA_length) / (2 * OA_length * OC_Min));
+            double max_angle_2= Math.Atan2(BC_length, OB_length);
+            Label_kinematic_pedal_angle.Content = "Current Pedal Angle: " + Math.Round(pedal_angle/Math.PI*180)+ "°,";
+            Label_kinematic_pedal_angle.Content = Label_kinematic_pedal_angle.Content + " Max Pedal Angle:" + Math.Round((max_angle_1+max_angle_2) / Math.PI * 180) + "°,";
+            Label_kinematic_pedal_angle.Content = Label_kinematic_pedal_angle.Content + " Min Pedal Angle:" + Math.Round((min_angle_1 + min_angle_2) / Math.PI * 180) + "°,";
+            Label_kinematic_pedal_angle.Content = Label_kinematic_pedal_angle.Content + " Angle Travel:" + Math.Round((max_angle_1 + max_angle_2-min_angle_1-min_angle_2) / Math.PI * 180) + "°";
 
 
             double A_X = OA_length * Math.Cos(pedal_angle);
@@ -5616,8 +5626,8 @@ namespace User.PluginSdkDemo
 
             Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A) - Label_joint_A.Width);
             Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A));
-            Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B) + Label_joint_B.Width);
-            Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B));
+            Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B)+rect_joint_B.Width/2-Label_joint_B.Width/2);
+            Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B)-Label_joint_B.Height);
             Canvas.SetLeft(Label_joint_C, Canvas.GetLeft(rect_joint_C) + Label_joint_C.Width);
             Canvas.SetTop(Label_joint_C, Canvas.GetTop(rect_joint_C));
             Canvas.SetLeft(Label_joint_D, Canvas.GetLeft(rect_joint_D) - Label_joint_D.Width);
