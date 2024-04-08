@@ -849,7 +849,7 @@ namespace User.PluginSdkDemo
             string fileNameA = dirName + "\\" + jsonFileNameA + ".json";
             string fileNameB = dirName + "\\" + jsonFileNameB + ".json";
             string fileNameC = dirName + "\\" + jsonFileNameC + ".json";
-
+            /*
             if (!File.Exists(fileNameA))
             {
                 // create default config
@@ -896,13 +896,15 @@ namespace User.PluginSdkDemo
 
                 System.IO.File.WriteAllText(fileNameC, jsonString);
             }
-            InitReadStructFromJson();
-            for (uint pedalIndex = 0; pedalIndex < 3; pedalIndex++)
-            {
+            */
+            //InitReadStructFromJson();
+            
+            //for (uint pedalIndex = 0; pedalIndex < 3; pedalIndex++)
+            //{
                 //indexOfSelectedPedal_u = pedalIndex;
                 //ComboBox_JsonFileSelected.SelectedIndex = Plugin.Settings.selectedJsonFileNames[indexOfSelectedPedal_u];
                 //ComboBox_JsonFileSelected.SelectedIndex = Plugin.Settings.selectedJsonIndexLast[indexOfSelectedPedal_u];
-                InitReadStructFromJson();
+                //InitReadStructFromJson();
                 /*
                 if (plugin.Settings.connect_status[pedalIndex] == 1)
                 {
@@ -943,8 +945,9 @@ namespace User.PluginSdkDemo
                 */
 
 
-                updateTheGuiFromConfig();
-            }
+                //updateTheGuiFromConfig();
+            //}
+        
 
             if (plugin.Settings.reading_config == 1)
             {
