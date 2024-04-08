@@ -571,7 +571,7 @@ float filteredReading_exp_filter = 0;
 unsigned long printCycleCounter = 0;
 
 
-//uint printCntr = 0;
+uint printCntr = 0;
 //void loop()
 void pedalUpdateTask( void * pvParameters )
 {
@@ -735,8 +735,12 @@ void pedalUpdateTask( void * pvParameters )
     float sledPosition = sledPositionInMM(stepper, dap_config_st);
     float pedalInclineAngleInDeg_fl32 = pedalInclineAngleDeg(sledPosition, dap_config_st);
     float pedalForce_fl32 = convertToPedalForce(loadcellReading, sledPosition, dap_config_st);
-    float forceGain = convertToPedalForceGain(sledPosition, dap_config_st);
-    forceGain *= sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD);
+    float d_phi_d_x = convertToPedalForceGain(sledPosition, dap_config_st);
+
+    // compute gain for horizontal foot model
+    float b = dap_config_st.payLoadPedalConfig_.lengthPedal_b;
+    float d = dap_config_st.payLoadPedalConfig_.lengthPedal_d;
+    float d_x_hor_d_phi = -(b+d) * sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD);
 
     /*printCntr++;
     if (printCntr >= 100) 
@@ -747,8 +751,26 @@ void pedalUpdateTask( void * pvParameters )
       Serial.print(",   sin(angle): ");
       Serial.print( sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD) );
 
-      Serial.print(",   gain mod: ");
-      Serial.print( forceGain );
+      Serial.print(",   d_phi_d_x: ");
+      Serial.print( d_phi_d_x );
+
+      Serial.print(",   d_x_hor_d_phi: ");
+      Serial.print( d_x_hor_d_phi );
+
+      //Serial.print(",   a: ");
+      //Serial.print( dap_config_st.payLoadPedalConfig_.lengthPedal_a );
+
+      //Serial.print(",   b: ");
+      //Serial.print( dap_config_st.payLoadPedalConfig_.lengthPedal_b );
+
+      //Serial.print(",   c_ver: ");
+      //Serial.print( dap_config_st.payLoadPedalConfig_.lengthPedal_c_vertical );
+
+      //Serial.print(",   c_ver: ");
+      //Serial.print( dap_config_st.payLoadPedalConfig_.lengthPedal_c_horizontal );
+
+      //Serial.print(",   d: ");
+      //Serial.print( dap_config_st.payLoadPedalConfig_.lengthPedal_d );
 
       Serial.println();
       printCntr = 0;
@@ -858,7 +880,7 @@ void pedalUpdateTask( void * pvParameters )
        
     if (dap_config_st.payLoadPedalConfig_.control_strategy_b == 2) 
     {
-      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32, forceGain);
+      Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32, d_phi_d_x, d_x_hor_d_phi);
     }
 
     

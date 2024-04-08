@@ -61,7 +61,8 @@ float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st& config_st) {
 
   // add incline due to AB incline --> result is incline realtive to horizontal 
   if (abs(c_hor)>0.01) {
-    alpha += atan(c_ver / c_hor);
+    //alpha += atan(c_ver / c_hor);
+    alpha += atan2(c_ver, c_hor); // y, x
   }
 
 
@@ -137,7 +138,7 @@ float convertToPedalForce(float F_l, float sledPositionMM, DAP_config_st& config
 
 
 
-// Calculate gradient of force with respect to sled position.
+// Calculate gradient of phi with respect to sled position.
 // This is done by taking the derivative of the force with respect to the sled position.
 float convertToPedalForceGain(float sledPositionMM, DAP_config_st& config_st) {
   // see https://de.wikipedia.org/wiki/Kosinussatz
@@ -147,6 +148,7 @@ float convertToPedalForceGain(float sledPositionMM, DAP_config_st& config_st) {
   // D: is foot rest
   //
   // a: is loadcell rod (connection CB)
+
   // b: is lower pedal plate (connection AC)
   // c: is sled line (connection AC)
   // d: is upper pedal plate  (connection AC)
@@ -160,33 +162,27 @@ float convertToPedalForceGain(float sledPositionMM, DAP_config_st& config_st) {
   float c = sqrtf(c_ver * c_ver + c_hor * c_hor);
 
 
-  float z = (b*b + c*c - a*a) / (2*b*c);
-  float dF_dz = 0;
-  if (fabs(z) < 1)
-  {
-    dF_dz = - 1. / sqrtf(1 - z*z);
-  }
-  
-  float dz_dc = 1;
-  if ( (fabs(b) > 0) && (fabs(c) > 0) )
-  {
-    dz_dc = 1.0f / b + ( b*b + c*c - a*a ) / ( 4.0f*b*b*c*c) * 2.0f*b; 
-  }
-  
-  float dc_dx = 1;
-  if (fabs(c) > 0)
-  {
-    dc_dx = 1.0f /2.0f / sqrtf(c) * 2 * c_hor;
-  }
-  
+  float alpha = acos( (b*b + c*c - a*a) / (2*b*c) );
+  float alphaPlus = atan2(c_ver, c_hor); // y, x
 
-  float dF_dx = dF_dz * dz_dc * dc_dx;
+  float sinAlpha = sin(alpha);
+  float cosAlpha = cos(alpha);
+  float sinAlphaPlus = sin(alphaPlus);
+  float cosAlphaPlus = cos(alphaPlus);
 
-  //Serial.print("dF_dx: ");    Serial.print(dF_dx);
-  //Serial.println();
+  // d_alpha_d_x
+  float d_alpha_d_x = - 1.0f / fabs( sinAlpha ) * ( 1.0f / b - cosAlpha / c) * cosAlphaPlus;
 
-  return dF_dx;
+  // d_alphaPlus_d_x
+  float d_alphaPlus_d_x = - c_ver / (c * c);
+
+  float d_phi_d_x = d_alpha_d_x + d_alphaPlus_d_x;
+
+  // return in deg/mm
+  return d_phi_d_x * RAD_TO_DEG;
 }
+
+
 
 
 

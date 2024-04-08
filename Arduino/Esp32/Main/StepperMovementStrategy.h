@@ -200,7 +200,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float forceGain) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float d_phi_d_x, float d_x_hor_d_phi) {
   
   /*
   This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
@@ -271,19 +271,29 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     gradient_normalized_force_curve_fl32 = constrain(gradient_normalized_force_curve_fl32, 0.05, 1);
     MOVE_STEPS_FOR_1KG *= gradient_normalized_force_curve_fl32;
 
+
     // The foor is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
     // This is accomplished with the forceGain variable
-    float forceGain_abs = fabs( forceGain );
+    /*float forceGain_abs = fabs( d_phi_d_x );
     if (forceGain_abs > 0)
     {
       MOVE_STEPS_FOR_1KG *= fabs( forceGain );
-    }
-    
-    float m1 = -1000;
+    }*/
+
+    float d_f_d_phi = -1000;
     if (MOVE_STEPS_FOR_1KG > 0)
     {
-      m1 = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
+      d_f_d_phi = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
     }
+
+    // angular foot model
+    // m1 = d_f_d_x dForce / dx
+    //float m1 = d_f_d_phi * (-d_phi_d_x);
+
+    // Translational foot model
+    float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x);
+    
+    
     
     float m2 = gradient_force_curve_fl32;
     
