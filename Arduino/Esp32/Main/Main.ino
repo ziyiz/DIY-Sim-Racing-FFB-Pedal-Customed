@@ -816,7 +816,7 @@ void pedalUpdateTask( void * pvParameters )
       filteredReading = filteredReading_exp_filter;
     }
 
-    filteredReading=constrain(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max_default);
+    //filteredReading=constrain(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max_default);
 
     
 
