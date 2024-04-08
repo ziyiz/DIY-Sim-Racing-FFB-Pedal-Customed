@@ -550,12 +550,12 @@
                             <styles:SHButtonPrimary x:Name="btn_test" Click="btn_toast_Click" Width="30" Content="TEST" Height="20" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
 
                         </StackPanel>
-                        
+
                     </Border>
                 </TabItem>
-                
+
             </TabControl>
-            
+
             <StackPanel HorizontalAlignment="Center" Height="535" Grid.Row="3" VerticalAlignment="Top" Width="168" Grid.RowSpan="4">
 
                 <Border Background="#7F4E4E4E" Height="391" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
@@ -682,11 +682,11 @@
                                 <styles:SHToggleButton x:Name="checkbox_enable_ABS" Content="" Checked="checkbox_enable_ABS_Checked" Unchecked="checkbox_enable_ABS_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for ABS/TC effect, the trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="ABS/TC Effect" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
-               
-                                <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
-                                    <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
-                                </Canvas>
+                            <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                                <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+
+                            </Canvas>
 
                             <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                 <Label Content="Effect Profile:" Height="20" Width="65" FontSize="10" Padding="0,0,0,0" VerticalContentAlignment="Center" Margin="70,0,0,0"/>
@@ -709,7 +709,7 @@
                                     <styles:SHToggleButton x:Name="Simulate_ABS_check" Content="" Checked="Simulate_ABS_check_Checked" Unchecked="Simulate_ABS_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="the effect will trigger by the setup force range." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                     <Label Content="Simulate ABS" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                 </StackPanel>
-                                
+
                             </StackPanel>
                             <Canvas x:Name="canvas_horz_ABS" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
                                 <Canvas.RenderTransform>
@@ -1060,7 +1060,7 @@
                                 <styles:SHToggleButton x:Name="checkbox_enable_wheelslip" Content="" Checked="checkbox_enable_WS_Checked" Unchecked="checkbox_enable_WS_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
                                 <Label Content="Wheel Slip Notification" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
 
-                                
+
                             </StackPanel>
                             <Canvas x:Name="canvas_plot_WS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
                                 <Polyline x:Name="Polyline_plot_WS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
@@ -1198,7 +1198,7 @@
 
                             </Canvas>
 
-                            
+
                         </StackPanel>
                     </Border>
                 </TabItem>
@@ -1364,7 +1364,7 @@
                                         </TransformGroup>
 
                                     </Canvas.RenderTransform>
-                                    
+
 
                                     <StackPanel x:Name="Panel_max_game" Height="10" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
                                         <TextBox x:Name="textbox_max_game" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
@@ -1447,7 +1447,7 @@
 
                                 </Canvas.RenderTransform>
                                 <TextBox x:Name="text_KF" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-                                
+
                                 <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Height="10" Text="Loadcell Denoising Factor (slow to fast)" Canvas.Left="5">
                                     <TextBlock.RenderTransform>
                                         <TransformGroup>
@@ -1468,7 +1468,7 @@
 
                             </Canvas>
 
-                            
+
 
                         </StackPanel>
 
@@ -1635,7 +1635,7 @@
                 <TabItem Width="90" Height="30" Padding="0,0,0,0">
                     <TabItem.Header>
                         <Border  Width="90" Height="30" Margin="0,0,0,0" >
-                            <Label Content="MPC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                            <Label Content="MPC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
 
@@ -1658,9 +1658,9 @@
                                 </Canvas.RenderTransform>
                                 <StackPanel x:Name="Panel_MPC_0th_order_gain" Height="10" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
                                     <TextBox x:Name="textBox_MPC_0th_order_gain" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
-                                    <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="mm/kg" Margin="-3,0,0,0" />
+                                    <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg/mm" Margin="-3,0,0,0" />
                                 </StackPanel>
-                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Foot spring stiffness (inv):" Width="120" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10"/>
+                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Foot spring stiffness:" Width="120" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10"/>
 
 
                                 <Line x:Name="Line_H_MPC_0th_order_gain"

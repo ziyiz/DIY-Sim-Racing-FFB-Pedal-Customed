@@ -201,7 +201,9 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float d_phi_d_x, float d_x_hor_d_phi) {
-  
+  // see https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/Movement-control-strategies#mpc
+
+
   /*
   This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
   The force resulting from that model is F1 = k1 * x. 
@@ -253,26 +255,29 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // this can be tuned for responsiveness vs oscillation
     float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
+
+    // foot spring stiffness
+    float d_f_d_phi = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+
     float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+    float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
+    
 
-    
-    
-
-    float MOVE_STEPS_FOR_1KG = 0;
-    if (mm_per_motor_rev>0)
-    {
-      MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
-    }
-    
 
     // make stiffness dependent on force curve gradient
     // less steps per kg --> steeper line
     float gradient_normalized_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, true);
     gradient_normalized_force_curve_fl32 = constrain(gradient_normalized_force_curve_fl32, 0.05, 1);
-    MOVE_STEPS_FOR_1KG *= gradient_normalized_force_curve_fl32;
+
+    float mmPerStep = 0;
+    if (steps_per_motor_rev > 0)
+    {
+      mmPerStep = mm_per_motor_rev / steps_per_motor_rev ;
+    }
+    
 
 
-    // The foor is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
+    // The foot is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
     // This is accomplished with the forceGain variable
     /*float forceGain_abs = fabs( d_phi_d_x );
     if (forceGain_abs > 0)
@@ -280,28 +285,34 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       MOVE_STEPS_FOR_1KG *= fabs( forceGain );
     }*/
 
-    float d_f_d_phi = -1000;
-    if (MOVE_STEPS_FOR_1KG > 0)
-    {
-      d_f_d_phi = -1. / MOVE_STEPS_FOR_1KG; // line has negative slope --> pedal moves towards the front endstop will increase the loadcell reading as it pushes more against the foot
-    }
+  
 
     // angular foot model
     // m1 = d_f_d_x dForce / dx
     //float m1 = d_f_d_phi * (-d_phi_d_x);
 
+
     // Translational foot model
-    float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x);
+    // given in kg/step
+    float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x) * mmPerStep;
+
+    // smoothen gradient with force curve gradient since it had better results w/ clutch pedal characteristic
+    //m1 /= gradient_normalized_force_curve_fl32;
     
-    
-    
-    float m2 = gradient_force_curve_fl32;
+    // gradient of the force curve
+    // given in kg/step
+    float m2 = gradient_force_curve_fl32; 
     
     // Newton update
     float denom = m1 - m2;
     if ( fabs(denom) > 0 )
     {
-      stepperPos -= ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
+      float stepUpdate = ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
+
+      // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
+      stepUpdate *= gradient_normalized_force_curve_fl32;
+
+      stepperPos -= stepUpdate;
     }
   }
     

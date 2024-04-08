@@ -1355,7 +1355,7 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
 
             //MPC 0th order gain slider
-            value_max = 4;
+            value_max = 1;
             dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
             Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
             textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
@@ -4764,7 +4764,7 @@ namespace User.PluginSdkDemo
                 if (rectangle.Name == "rect_MPC_0th_order_gain")
                 {
                     // Ensure the rectangle stays within the canvas
-                    double value_max = 4;
+                    double value_max = 1;
                     double x = e.GetPosition(canvas_horz_MPC_0th_order_gain).X - offset.X;
                     double dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
                     double min_position = 0 * dx;

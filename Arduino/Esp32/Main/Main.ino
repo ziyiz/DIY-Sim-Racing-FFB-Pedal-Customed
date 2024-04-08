@@ -745,6 +745,16 @@ void pedalUpdateTask( void * pvParameters )
     /*printCntr++;
     if (printCntr >= 100) 
     {
+      
+      Serial.print("MPC_0th_order_gain: ");
+      Serial.print(dap_config_st.payLoadPedalConfig_.MPC_0th_order_gain);
+      printCntr = 0;
+    }*/
+
+
+    /*printCntr++;
+    if (printCntr >= 100) 
+    {
       Serial.print("Angle: ");
       Serial.print(pedalInclineAngleInDeg_fl32);
 
