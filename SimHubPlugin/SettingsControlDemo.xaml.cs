@@ -497,6 +497,8 @@ namespace User.PluginSdkDemo
             //Label_reverse_LC.Visibility=Visibility.Hidden;
             //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
+            rangeslider_example.Visibility=Visibility.Hidden;
+            testslider.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
