@@ -13,6 +13,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="TestBrush" Color="White"/>
+            <DropShadowEffect x:Key="mousedragging" Color="White" BlurRadius="15" Opacity="1" ShadowDepth="0"/>
+            <DropShadowEffect x:Key="mouseoutdragging" Color="White" BlurRadius="15" Opacity="0" ShadowDepth="0"/>
             <Style x:Key="HorizontalSliderThumb" TargetType="{x:Type Thumb}">
                 <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
                 <Setter Property="BorderThickness" Value="0 0"/>
@@ -28,7 +30,16 @@
                             <Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                 <Rectangle Fill="{TemplateBinding Background}" Margin="{TemplateBinding BorderThickness}" RadiusX="0" RadiusY="0"/>
                                 <Rectangle x:Name="DisabledVisualElement" Fill="{DynamicResource DisabledWhiteBrush}" IsHitTestVisible="false" Opacity="0"/>
+                                
                             </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsDragging" Value="True">
+                                    <Setter Property="Effect" Value="{DynamicResource mousedragging}"/>
+                                </Trigger>
+                                <Trigger Property="IsDragging" Value="False">
+                                    <Setter Property="Effect" Value="{DynamicResource mouseoutdragging}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -218,7 +229,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Height="5" Margin="0 1 0 0"/>
+                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Height="4" Margin="0 1 0 0"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>

@@ -4947,6 +4947,8 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
             Line_H_HeaderTab.X2 = 1028;
+            testslider.Visibility= Visibility.Visible;
+            rangeslider_example.Visibility= Visibility.Visible;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4972,6 +4974,8 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
             Line_H_HeaderTab.X2 = 723;
+            testslider.Visibility = Visibility.Hidden;
+            rangeslider_example.Visibility = Visibility.Hidden;
         }
 
 
@@ -6090,6 +6094,10 @@ namespace User.PluginSdkDemo
         {
             updateTheGuiFromConfig();
         }
+
+
+
+
 
         /*
 private void GetRectanglePositions()
