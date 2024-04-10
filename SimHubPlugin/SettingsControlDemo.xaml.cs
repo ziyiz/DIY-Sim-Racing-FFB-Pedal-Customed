@@ -499,6 +499,7 @@ namespace User.PluginSdkDemo
             btn_test.Visibility=Visibility.Hidden;
             rangeslider_example.Visibility=Visibility.Hidden;
             testslider.Visibility=Visibility.Hidden;
+            verticaltest.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -528,7 +529,7 @@ namespace User.PluginSdkDemo
             Line_V_force.Stroke = Line_fill;
             Line_H_pos.Stroke = Line_fill;
             //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
-            Polyline_BrakeForceCurve.Stroke = Line_fill;
+            //Polyline_BrakeForceCurve.Stroke = Line_fill;
             //text_damping_text.Foreground = Line_fill;
             Line_H_damping.Stroke = Line_fill;
             text_damping.Foreground = Line_fill;
@@ -4949,6 +4950,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 1028;
             testslider.Visibility= Visibility.Visible;
             rangeslider_example.Visibility= Visibility.Visible;
+            verticaltest.Visibility= Visibility.Visible;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4976,6 +4978,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 723;
             testslider.Visibility = Visibility.Hidden;
             rangeslider_example.Visibility = Visibility.Hidden;
+            verticaltest.Visibility = Visibility.Hidden;
         }
 
 

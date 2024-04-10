@@ -17,6 +17,7 @@
             <DropShadowEffect x:Key="mouseoutdragging" Color="White" BlurRadius="15" Opacity="0" ShadowDepth="0"/>
             <Style x:Key="HorizontalSliderThumb" TargetType="{x:Type Thumb}">
                 <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
+                <Setter Property="Opacity" Value="0.9"/>
                 <Setter Property="BorderThickness" Value="0 0"/>
                 <Setter Property="IsTabStop" Value="false"/>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -52,12 +53,12 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type RepeatButton}">
                             <Grid x:Name="Root" Margin="0 -1 0 0">
-                                <Rectangle  Height="2" Margin="0 1 0 0" RadiusX="1" RadiusY="1">
+                                <Rectangle  Height="1" Margin="0 1 0 0" RadiusX="1" RadiusY="1">
                                     <Rectangle.Fill>
-                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" >
+                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.9">
                                             <GradientStop Color="{TemplateBinding Background}" Offset="0.0"/>
-                                            <GradientStop Color="{DynamicResource AccentColor}" Offset="0.25"/>
-                                            <GradientStop Color="{DynamicResource AccentColor}" Offset="0.75"/>
+                                            <GradientStop Color="Gray" Offset="0.25"/>
+                                            <GradientStop Color="Gray" Offset="0.75"/>
                                             <GradientStop Color="{TemplateBinding Background}" Offset="1.0"/>
                                         </LinearGradientBrush>
                                     </Rectangle.Fill>
@@ -75,9 +76,9 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type RepeatButton}">
                             <Grid x:Name="Root" Margin="0 -1 0 0">
-                                <Rectangle Height="2" Margin="0 1 0 0" RadiusX="1" RadiusY="1">
+                                <Rectangle Height="4" Margin="0 1 0 0" RadiusX="1" RadiusY="1">
                                     <Rectangle.Fill>
-                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.9">
                                             <GradientStop Color="{TemplateBinding Background}" Offset="0.0"/>
                                             <GradientStop Color="{DynamicResource AccentColor}" Offset="0.25"/>
                                             <GradientStop Color="{DynamicResource AccentColor}" Offset="0.75"/>
@@ -127,7 +128,7 @@
                 </ControlTemplate.Triggers>
             </ControlTemplate>
             <Style x:Key="VerticalSliderThumb" BasedOn="{StaticResource HorizontalSliderThumb}" TargetType="{x:Type Thumb}">
-                <Setter Property="BorderThickness" Value="0 1"/>
+                <Setter Property="BorderThickness" Value="0 0"/>
             </Style>
             <Style x:Key="VerticalTrackLargeDecrease" TargetType="{x:Type RepeatButton}">
                 <Setter Property="Focusable" Value="false"/>
@@ -137,7 +138,7 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type RepeatButton}">
                             <Grid x:Name="Root" Margin="-1 0 0 0">
-                                <Rectangle Fill="{DynamicResource GrayBrush3}" Margin="1 0 0 0" Width="3"/>
+                                <Rectangle Fill="Gray" Margin="1 0 0 0" Width="1" Opacity="0.8"/>
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
@@ -153,7 +154,7 @@
                             <Grid x:Name="Root" Margin="-1 0 0 0">
                                 <Rectangle Margin="0 0 0 0" Width="10">
                                     <Rectangle.Fill>
-                                        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" Opacity="0.9">
                                             <GradientStop Color="{TemplateBinding Background}" Offset="0.0"/>
                                             <GradientStop Color="{DynamicResource AccentColor}" Offset="0.25"/>
                                             <GradientStop Color="{DynamicResource AccentColor}" Offset="0.75"/>
@@ -229,7 +230,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Height="4" Margin="0 1 0 0"/>
+                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Height="4" Margin="0 1 0 0" Opacity="0.8"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -266,7 +267,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Margin="0 0 0 0" Width="5"/>
+                                                <Rectangle Fill="{DynamicResource AccentColorBrush}" Margin="0 0 0 0" Width="3" Opacity="0.7"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -605,9 +606,10 @@
                                     <TextBlock x:Name="Serial_port_text" Text="Serial port selection:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0"  Grid.Row="2" Grid.Column="1" Width="180" Height="15" FontSize="10" FontFamily="Arial" />
 
                                     <Polyline x:Name="Polyline_BrakeForceCurve"
+                                        Stroke="{DynamicResource AccentColorBrush}"
                                         Height="300" Width="400"
+                                        Opacity="0.7"
                                         Points="0,0 80,20 160,40 240,60 320,80 400,100"
-                                        Stroke="#7F87CEFA"
                                         StrokeThickness="4" RenderTransformOrigin="1,0.5" Canvas.Top="-100" HorizontalAlignment="Left" VerticalAlignment="Center" >
                                         <Polyline.RenderTransform>
                                             <TransformGroup>
@@ -826,7 +828,7 @@
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
-                        <StackPanel HorizontalAlignment="Left" Height="80" VerticalAlignment="Top" Width="510" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1" Margin="0,50,0,0">
+                        <StackPanel HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="510" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1" Margin="0,50,0,0">
                             <TextBlock HorizontalAlignment="Left" Width="510" Height="10" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" Foreground="White">           
                                 This work is licensed under a
                                         <Hyperlink NavigateUri="http://creativecommons.org/licenses/by-nc-sa/4.0/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
@@ -842,7 +844,7 @@
                             <styles:SHButtonPrimary x:Name="btn_test" Click="btn_toast_Click" Width="30" Content="TEST" Height="20" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                             <controls:RangeSlider x:Name="rangeslider_example" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="10" />
                             <Slider x:Name="testslider" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Margin="30,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="200" Height="10" Minimum="10" Maximum="50"/>
-
+                            <controls:RangeSlider x:Name="verticaltest" Height="100" Width="10" Orientation="Vertical" Style="{DynamicResource RangeSliderStyle}"/>
                         </StackPanel>
 
                     </Border>
