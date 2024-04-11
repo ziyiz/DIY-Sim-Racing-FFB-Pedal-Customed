@@ -643,14 +643,9 @@ namespace User.PluginSdkDemo
             Line_H_WS_amp.Stroke = Line_fill;
             Line_H_WS_freq.Stroke = Line_fill;
             Line_WS_trigger.Stroke = Line_fill;
-            //impact effect
-            Line_impact_multi.Stroke = Line_fill;
-            text_impact_multi.Foreground = Line_fill;
-            textbox_impact_multi.Foreground = Line_fill;
-            rect_impact_multi.Fill = defaultcolor;
-            Line_impact_window.Stroke = Line_fill;
-            text_impact_window.Foreground = Line_fill;
-            rect_impact_window.Fill = defaultcolor;
+
+
+           
 
             Polyline_plot_ABS.Stroke=Line_fill;
             Polyline_plot_BP.Stroke = Line_fill;
@@ -1049,12 +1044,10 @@ namespace User.PluginSdkDemo
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:";
             string info_text;
-            if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
-            {
-                info_text = "Connected";
-            }
-            else
-            {
+                if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+                {
+                    info_text = "Connected";
+                }
                 if (Plugin.Settings.auto_connect_flag == 1)
                 {
                     info_text = info_text_connection;
@@ -1064,7 +1057,9 @@ namespace User.PluginSdkDemo
                     info_text = "Waiting...";
                 }
 
-            }
+
+
+            
             info_text += "\n" + Constants.pedalConfigPayload_version;
             /*if ((bool)TestAbs_check.IsChecked)
             {
@@ -1075,8 +1070,12 @@ namespace User.PluginSdkDemo
 
             int debugFlagValue_0 = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0;
             textBox_debug_Flag_0.Text = debugFlagValue_0.ToString();
+            //slider setting
 
-
+            Slider_impact_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
+            label_impact_window.Content = "Impact Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
+            Slider_impact_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi;
+            label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi + "%";
 
             Update_BrakeForceCurve();
             //Simulated ABS trigger
@@ -1417,21 +1416,8 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
             Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
 
-            //impact multiplier slider
-            double impact_multi_max = 100;
-            dx = canvas_horz_impact_multi.Width / impact_multi_max;
-            Canvas.SetLeft(rect_impact_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi);
-            textbox_impact_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi) + "";
-            Canvas.SetLeft(Panel_impact_multi, Canvas.GetLeft(rect_impact_multi) + rect_impact_multi.Width / 2 - Panel_impact_multi.Width / 2);
-            Canvas.SetTop(Panel_impact_multi, Canvas.GetTop(rect_impact_multi) - Panel_impact_multi.Height);
 
-            //Impact window slider
-            value_max = 100;
-            dx = canvas_horz_impact_window.Width / value_max;
-            Canvas.SetLeft(rect_impact_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window);
-            text_impact_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window) + "";
-            Canvas.SetLeft(text_impact_window, Canvas.GetLeft(rect_impact_window) + rect_impact_window.Width / 2 - text_impact_window.Width / 2);
-            Canvas.SetTop(text_impact_window, Canvas.GetTop(rect_impact_window) - text_impact_window.Height);
+
 
             //// Select serial port accordingly
             string tmp = (string)Plugin._serialPort[indexOfSelectedPedal_u].PortName;
@@ -2170,17 +2156,6 @@ namespace User.PluginSdkDemo
                     if ((result >= 0) && (result <= 100))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (byte)(result);
-                    }
-                }
-            }
-
-            if (textbox.Name == "text_impact_window")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 100))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = (byte)(result);
                     }
                 }
             }
@@ -4837,41 +4812,7 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
-                if (rectangle.Name == "rect_impact_multi")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_impact_multi).X - offset.X;
-                    double impact_max = 100;
-                    double dx = canvas_horz_impact_multi.Width / impact_max;
-                    double min_position = 5 * dx;
-                    double max_position = impact_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = Convert.ToByte(actual_x);
-                    textbox_impact_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi) + "";
-                    Canvas.SetLeft(Panel_impact_multi, Canvas.GetLeft(rect_impact_multi) + rect_impact_multi.Width / 2 - Panel_impact_multi.Width / 2);
-                    Canvas.SetTop(Panel_impact_multi, Canvas.GetTop(rect_impact_multi) - Panel_impact_multi.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                //G_force window
-                if (rectangle.Name == "rect_impact_window")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_impact_window).X - offset.X;
-                    double Impact_window_max = 100;
-                    double dx = canvas_horz_impact_multi.Width / Impact_window_max;
-                    double min_position = 10 * dx;
-                    double max_position = Impact_window_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = Convert.ToByte(actual_x);
-                    text_impact_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window) + "";
-                    Canvas.SetLeft(text_impact_window, Canvas.GetLeft(rect_impact_window) + rect_impact_window.Width / 2 - text_impact_window.Width / 2);
-                    Canvas.SetTop(text_impact_window, Canvas.GetTop(rect_impact_window) - text_impact_window.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
+                
 
 
 
@@ -6096,6 +6037,20 @@ namespace User.PluginSdkDemo
         private void Tab_main_1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             updateTheGuiFromConfig();
+        }
+
+        private void Slider_impact_smoothness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = (Byte)Slider_impact_smoothness.Value;
+            label_impact_window.Content = "Impact Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
+
+
+        }
+
+        private void Slider_impact_multi_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (Byte)e.NewValue;
+            label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi+"%";
         }
 
 
