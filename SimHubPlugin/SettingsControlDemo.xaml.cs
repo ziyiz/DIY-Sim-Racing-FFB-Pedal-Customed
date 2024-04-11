@@ -605,16 +605,6 @@ namespace User.PluginSdkDemo
             Line_H_bite_amp.Stroke = Line_fill;
             Line_H_bite_freq.Stroke = Line_fill;
 
-            Line_G_force_multi.Stroke = Line_fill;
-            //text_G_force_multi_text.Foreground = Line_fill;
-            text_G_multi.Foreground = Line_fill;
-            textbox_G_multi.Foreground = Line_fill;
-            rect_G_force_multi.Fill = defaultcolor;
-
-            Line_G_force_window.Stroke = Line_fill;
-            //text_G_force_window_text.Foreground = Line_fill;
-            text_G_window.Foreground = Line_fill;
-            rect_G_force_window.Fill = defaultcolor;
 
             text_MPC_0th_order_gain.Foreground = Line_fill;
             //text_MPC_0th_order_gain_text.Foreground = Line_fill;
@@ -629,20 +619,7 @@ namespace User.PluginSdkDemo
             //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
             //rect_MPC_1st_order_gain.Fill = defaultcolor;
 
-            text_WS_amp.Foreground = Line_fill;
-            text_WS_freq.Foreground = Line_fill;
-            text_WS_trigger.Foreground = Line_fill;
-            textBox_WS_amp.Foreground = Line_fill;
-            textBox_WS_freq.Foreground = Line_fill;
-            textbox_WS_trigger.Foreground = Line_fill;
-            rect_WS_amp.Fill = defaultcolor;
-            rect_WS_freq.Fill = defaultcolor;
-            rect_WS_trigger.Fill = defaultcolor;
-            //text_bite_amp_text.Foreground = Line_fill;
-            //text_bite_freq_text.Foreground = Line_fill;
-            Line_H_WS_amp.Stroke = Line_fill;
-            Line_H_WS_freq.Stroke = Line_fill;
-            Line_WS_trigger.Stroke = Line_fill;
+           
 
 
            
@@ -1043,7 +1020,9 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:";
-            string info_text;
+            if (Plugin != null)
+            {
+                string info_text;
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
                 {
                     info_text = "Connected";
@@ -1056,26 +1035,33 @@ namespace User.PluginSdkDemo
                 {
                     info_text = "Waiting...";
                 }
+                info_text += "\n" + Constants.pedalConfigPayload_version;
+                info_label_2.Content = info_text;
+            }
 
-
-
-            
-            info_text += "\n" + Constants.pedalConfigPayload_version;
-            /*if ((bool)TestAbs_check.IsChecked)
-            {
-                info_text += "\nABS/TC Testing";
-            }*/
-            info_label_2.Content = info_text;
 
 
             int debugFlagValue_0 = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.debug_flags_0;
             textBox_debug_Flag_0.Text = debugFlagValue_0.ToString();
+
             //slider setting
 
             Slider_impact_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
             label_impact_window.Content = "Impact Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
             Slider_impact_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi;
             label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi + "%";
+
+            Slider_WS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
+            label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
+            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f;
+            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/100.0f + "kg";
+            Slider_WS_trigger.Value= Plugin.Settings.WS_trigger;
+            label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
+
+            Slider_G_force_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
+            label_G_force_window.Content = "G Force Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
+            Slider_G_force_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi;
+            label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
 
             Update_BrakeForceCurve();
             //Simulated ABS trigger
@@ -1377,44 +1363,11 @@ namespace User.PluginSdkDemo
             //Canvas.SetTop(text_MPC_1st_order_gain, 5);
 
 
-            //G force multiplier slider
-            double G_force_multi_max = 100;
-            dx = canvas_horz_G_force_multi.Width / G_force_multi_max;
-            Canvas.SetLeft(rect_G_force_multi, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi);
-            textbox_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "";
-            Canvas.SetLeft(Panel_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - Panel_G_multi.Width / 2);
-            Canvas.SetTop(Panel_G_multi, Canvas.GetTop(rect_G_force_multi) - Panel_G_multi.Height);
 
-            //G force window slider
-            value_max = 100;
-            dx = canvas_horz_G_force_window.Width / value_max;
-            Canvas.SetLeft(rect_G_force_window, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window);
-            text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
-            Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
-            Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
 
-            //wheel slip freq slider
-            value_max = 30;
-            dx = canvas_horz_WS_freq.Width / value_max;
-            Canvas.SetLeft(rect_WS_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq);
-            textBox_WS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "";
-            Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
-            Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
 
-            //wheel slip AMP slider
-            value_max = 200;
-            dx = canvas_horz_WS_amp.Width / value_max;
-            Canvas.SetLeft(rect_WS_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp);
-            textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
-            Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
-            Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
-            //wheel slip trigger slider
-            value_max = 50;
-            dx = canvas_horz_WS_trigger.Width / value_max;
-            Canvas.SetLeft(rect_WS_trigger, dx * Plugin.Settings.WS_trigger);
-            textbox_WS_trigger.Text = (Plugin.Settings.WS_trigger+50)  + "";
-            Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
-            Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
+
+
 
 
 
@@ -2118,47 +2071,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "textBox_WS_freq")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 30))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (byte)(result);
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_WS_amp")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 2))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (byte)(result * 100);
-                    }
-                }
-            }
-
-            if (textbox.Name == "textBox_WS_trigger")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 100))
-                    {
-                        Plugin.Settings.WS_trigger = result - 50;
-                    }
-                }
-            }
-            if (textbox.Name == "textbox_impact_multi")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 100))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (byte)(result);
-                    }
-                }
-            }
+            
             updateTheGuiFromConfig();
 
         }
@@ -4704,41 +4617,7 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
 
-                if (rectangle.Name == "rect_G_force_multi")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_G_force_multi).X - offset.X;
-                    double G_force_max = 100;
-                    double dx = canvas_horz_G_force_multi.Width / G_force_max;
-                    double min_position = 0 * dx;
-                    double max_position = G_force_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = Convert.ToByte(actual_x);
-                    textbox_G_multi.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi) + "";
-                    Canvas.SetLeft(Panel_G_multi, Canvas.GetLeft(rect_G_force_multi) + rect_G_force_multi.Width / 2 - Panel_G_multi.Width / 2);
-                    Canvas.SetTop(Panel_G_multi, Canvas.GetTop(rect_G_force_multi) - Panel_G_multi.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                //G_force window
-                if (rectangle.Name == "rect_G_force_window")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_G_force_window).X - offset.X;
-                    double G_window_max = 100;
-                    double dx = canvas_horz_G_force_multi.Width / G_window_max;
-                    double min_position = 10 * dx;
-                    double max_position = G_window_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = Convert.ToByte(actual_x);
-                    text_G_window.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window) + "";
-                    Canvas.SetLeft(text_G_window, Canvas.GetLeft(rect_G_force_window) + rect_G_force_window.Width / 2 - text_G_window.Width / 2);
-                    Canvas.SetTop(text_G_window, Canvas.GetTop(rect_G_force_window)-text_G_window.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
+                
 
 
                 //MPC 0th order gain
@@ -4760,57 +4639,7 @@ namespace User.PluginSdkDemo
                     Canvas.SetLeft(rectangle, x);
                 }
                 //Wheelslip
-                if (rectangle.Name == "rect_WS_amp")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_WS_amp).X - offset.X;
-                    double WS_amp_max = 200;
-                    double dx = canvas_horz_bite_amp.Width / WS_amp_max;
-                    double min_position = 0 * dx;
-                    double max_position = WS_amp_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = Convert.ToByte(actual_x);
-                    textBox_WS_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 100.0f + "";
-                    Canvas.SetLeft(Panel_WS_amp, Canvas.GetLeft(rect_WS_amp) + rect_WS_amp.Width / 2 - Panel_WS_amp.Width / 2);
-                    Canvas.SetTop(Panel_WS_amp, Canvas.GetTop(rect_WS_amp) - Panel_WS_amp.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                if (rectangle.Name == "rect_WS_freq")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
-                    double WS_freq_max = 30;
-                    double dx = canvas_horz_bite_freq.Width / WS_freq_max;
-                    double min_position = 0 * dx;
-                    double max_position = WS_freq_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = Convert.ToByte(actual_x);
-                    textBox_WS_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq) + "";
-                    Canvas.SetLeft(Panel_WS_freq, Canvas.GetLeft(rect_WS_freq) + rect_WS_freq.Width / 2 - Panel_WS_freq.Width / 2);
-                    Canvas.SetTop(Panel_WS_freq, Canvas.GetTop(rect_WS_freq) - Panel_WS_freq.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                if (rectangle.Name == "rect_WS_trigger")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_WS_freq).X - offset.X;
-                    double WS_trigger_max = 50;
-                    double dx = canvas_horz_bite_freq.Width / WS_trigger_max;
-                    double min_position = 0 * dx;
-                    double max_position = WS_trigger_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    Plugin.Settings.WS_trigger = Convert.ToByte(actual_x);
-                    textBox_WS_freq.Text = (Plugin.Settings.WS_trigger+50) + "";
-                    Canvas.SetLeft(Panel_WS_trigger, Canvas.GetLeft(rect_WS_trigger) + rect_WS_trigger.Width / 2 - Panel_WS_trigger.Width / 2);
-                    Canvas.SetTop(Panel_WS_trigger, Canvas.GetTop(rect_WS_trigger) - Panel_WS_trigger.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
+
 
                 
 
@@ -6051,6 +5880,43 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (Byte)e.NewValue;
             label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi+"%";
+        }
+
+        private void Slider_WS_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (Byte)e.NewValue;
+            label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
+            update_plot_WS();
+        }
+
+        private void Slider_WS_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*100);
+            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f + "kg";
+            update_plot_WS();
+        }
+
+        private void Slider_WS_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Plugin!= null)
+            {
+                Plugin.Settings.WS_trigger = (int)e.NewValue;
+                label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
+            }
+
+        }
+
+        private void Slider_G_force_smoothness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window=(Byte)e.NewValue;
+            label_G_force_window.Content = "G Force Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
+
+        }
+
+        private void Slider_G_force_multi_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi=(Byte)e.NewValue;
+            label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
         }
 
 
