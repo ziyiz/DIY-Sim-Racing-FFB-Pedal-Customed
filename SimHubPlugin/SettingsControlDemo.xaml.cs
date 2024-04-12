@@ -555,15 +555,6 @@ namespace User.PluginSdkDemo
             text_VFgain.Foreground = Line_fill;
             rect_VFgain.Fill = defaultcolor;
 
-            Line_H_ABS.Stroke = Line_fill;
-            text_ABS.Foreground = Line_fill;
-            textBox_ABS_AMP.Foreground=Line_fill;
-            rect_ABS.Fill = defaultcolor;
-            //text_ABS_text.Foreground = Line_fill;
-            Line_H_ABS_freq.Stroke = Line_fill;
-            text_ABS_freq.Foreground = Line_fill;
-            textBox_ABS_freq.Foreground = Line_fill;
-            rect_ABS_freq.Fill = defaultcolor;
             //text_ABS_freq_text.Foreground = Line_fill;
             Line_H_max_game.Stroke = Line_fill;
             text_max_game.Foreground = Line_fill;
@@ -580,30 +571,8 @@ namespace User.PluginSdkDemo
             //text_LC_rating_text.Foreground = Line_fill;
             rect_LC_rating.Fill = defaultcolor;
             textBox_LC_rating.Foreground= Line_fill;
-            text_RPM_freq_min.Foreground = Line_fill;
-            text_RPM_freq_max.Foreground = Line_fill;
-            text_RPM_AMP.Foreground = Line_fill;
-            textBox_RPM_AMP.Foreground = Line_fill;
-            Line_H_RPM_AMP.Stroke = Line_fill;
-            rect_RPM_AMP.Fill = defaultcolor;
-            //text_RPM_AMP_text.Foreground =
-            textBox_RPM_freq_min.Foreground = Line_fill;
-            textBox_RPM_freq_max.Foreground = Line_fill;
-            Line_H_RPM_freq.Stroke = Line_fill;
-            rect_RPM_max.Fill = Line_fill;
-            rect_RPM_min.Fill = defaultcolor;
-            //text_RPM_freq_text.Foreground = Line_fill;
 
-            text_bite_amp.Foreground = Line_fill;
-            text_bite_freq.Foreground = Line_fill;
-            textBox_bite_amp.Foreground = Line_fill;
-            textBox_bite_freq.Foreground = Line_fill;
-            rect_bite_amp.Fill = defaultcolor;
-            rect_bite_freq.Fill = defaultcolor;
-            //text_bite_amp_text.Foreground = Line_fill;
-            //text_bite_freq_text.Foreground = Line_fill;
-            Line_H_bite_amp.Stroke = Line_fill;
-            Line_H_bite_freq.Stroke = Line_fill;
+
 
 
             text_MPC_0th_order_gain.Foreground = Line_fill;
@@ -1063,6 +1032,32 @@ namespace User.PluginSdkDemo
             Slider_G_force_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi;
             label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
 
+            Slider_BP_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq;
+            label_BP_freq.Content = "Bite Point Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
+            Slider_BP_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f;
+            label_BP_AMP.Content = "Bite Point Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp / 100.0f + "kg";
+
+            Rangeslider_RPM_freq.LowerValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq ;
+            Rangeslider_RPM_freq.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
+            label_RPM_freq.Content = "Effect Frequency: Max: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz, Min: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+            Slider_RPM_AMP.Value= (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP)/100.0f;
+            label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+
+            Slider_ABS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
+            label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
+            Slider_ABS_AMP.Value = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) / 20.0f;
+            switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+            {
+                case 0:
+                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                    break;
+                case 1:
+                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
+                    break;
+                default:
+                    break;
+            }
+            
             Update_BrakeForceCurve();
             //Simulated ABS trigger
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Simulate_ABS_trigger == 1)
@@ -1156,19 +1151,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(text_max_pos, Canvas.GetLeft(rect7) - text_max_pos.Width / 2 + rect7.Width / 2);
             Canvas.SetTop(text_max_pos, 5);
 
-            //set for RPM freq slider;
-            dx = (canvas_horz_RPM_freq.Width - 10) / 50;
-            Canvas.SetTop(rect_RPM_min, 23);
 
-            Canvas.SetLeft(rect_RPM_min, rect_RPM_min.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq);
-            Canvas.SetLeft(Panel_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) + rect_RPM_min.Width / 2 - Panel_RPM_freq_min.Width / 2);
-            Canvas.SetTop(Panel_RPM_freq_min, Canvas.GetTop(rect_RPM_min) - Panel_RPM_freq_min.Height);
-            textBox_RPM_freq_min.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "";
-            textBox_RPM_freq_max.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "";
-            Canvas.SetTop(rect_RPM_max, 23);
-            Canvas.SetLeft(rect_RPM_max, rect_RPM_max.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq);
-            Canvas.SetLeft(Panel_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) + rect_RPM_max.Width / 2 - Panel_RPM_freq_max.Width / 2);
-            Canvas.SetTop(Panel_RPM_freq_max, Canvas.GetTop(rect_RPM_max) - Panel_RPM_freq_max.Height);
             //set for force vertical slider
             double dy = (canvas_vert_slider.Height / 250);
             Canvas.SetTop(rect8, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
@@ -1189,31 +1172,7 @@ namespace User.PluginSdkDemo
             text_damping.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
             Canvas.SetLeft(text_damping, Canvas.GetLeft(rect_damping) + rect_damping.Width / 2 - text_damping.Width / 2);
             Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping) - text_damping.Height);
-            //ABS amplitude slider
-            double abs_max = 255;
-            dx = canvas_horz_ABS.Width / abs_max;
-            Canvas.SetLeft(rect_ABS, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude);
-            textBox_ABS_AMP.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "";
-            switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
-            {
-                case 0:
-                    text_ABS.Text = "kg";
-                    break;
-                case 1:
-                    text_ABS.Text = "%";
-                    break;
-                default:
-                    break;
-            }
-            Canvas.SetLeft(Panel_ABS_AMP, Canvas.GetLeft(rect_ABS) + rect_ABS.Width / 2 - Panel_ABS_AMP.Width / 2);
-            Canvas.SetTop(Panel_ABS_AMP, Canvas.GetTop(rect_ABS) - Panel_ABS_AMP.Height);
-            //ABS freq slider
-            double abs_freq_max = 30;
-            dx = canvas_horz_ABS_freq.Width / abs_freq_max;
-            Canvas.SetLeft(rect_ABS_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency);
-            textBox_ABS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "";
-            Canvas.SetLeft(Panel_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2 - Panel_ABS_freq.Width / 2);
-            Canvas.SetTop(Panel_ABS_freq, Canvas.GetTop(rect_ABS_freq) - Panel_ABS_freq.Height);
+            
 
             // ABS pattern
             try
@@ -1282,12 +1241,7 @@ namespace User.PluginSdkDemo
 
             //RPM AMP slider
 
-            double RPM_AMP_max = 200;
-            dx = canvas_horz_RPM_AMP.Width / RPM_AMP_max;
-            Canvas.SetLeft(rect_RPM_AMP, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP);
-            textBox_RPM_AMP.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100 + "";
-            Canvas.SetLeft(Panel_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) + rect_RPM_AMP.Width / 2 - Panel_RPM_AMP.Width / 2);
-            Canvas.SetTop(Panel_RPM_AMP, Canvas.GetTop(rect_RPM_AMP) - Panel_RPM_AMP.Height);
+
 
             //Bite point control
             double BP_max = 100;
@@ -1296,21 +1250,7 @@ namespace User.PluginSdkDemo
             Canvas.SetLeft(rect_BP_Control, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_trigger_value * dx - rect_BP_Control.Width / 2);
             Canvas.SetLeft(text_BP, Canvas.GetLeft(rect_BP_Control) + rect_BP_Control.Width + 3);
             Canvas.SetTop(text_BP, canvas.Height - text_BP.Height-15);
-            //Bite point freq slider
-            double BP_freq_max = 30;
-            dx = canvas_horz_bite_freq.Width / BP_freq_max;
-            Canvas.SetLeft(rect_bite_freq, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq);
-            textBox_bite_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "";
-            Canvas.SetLeft(Panel_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - Panel_bite_freq.Width / 2);
-            Canvas.SetTop(Panel_bite_freq, Canvas.GetTop(rect_bite_freq) - Panel_bite_freq.Height);
 
-            //Bite point AMP slider
-            double BP_amp_max = 200;
-            dx = canvas_horz_bite_amp.Width / BP_amp_max;
-            Canvas.SetLeft(rect_bite_amp, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp);
-            textBox_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "";
-            Canvas.SetLeft(Panel_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - Panel_bite_amp.Width / 2);
-            Canvas.SetTop(Panel_bite_amp, Canvas.GetTop(rect_bite_amp) - Panel_bite_amp.Height);
 
             //Pgain slider
             double value_max = 2;
@@ -1976,101 +1916,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "textBox_ABS_AMP")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 12.5))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = (byte)(result*20);                       
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_ABS_freq")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 30))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = (byte)(result);
-                        
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_RPM_AMP")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 2))
-                    {
-                        double tmp = result * 100;
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(tmp);
-
-                    }
-                }
-            }
-
-            if (textbox.Name == "textBox_RPM_freq_min")
-            {
-                if (float.TryParse(textbox.Text, out float result))
-                {
-                    if ((result >= 0) && (result <= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = (byte)(result);
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_RPM_freq_max")
-            {
-                if (float.TryParse(textbox.Text, out float result))
-                {
-                    if ((result >= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq) && (result <= 50))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = (byte)(result);
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_bite_freq")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 30))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = (byte)(result);
-                    }
-                }
-            }
-            if (textbox.Name == "textBox_bite_amp")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 2))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = (byte)(result*100);
-                    }
-                }
-            }
-            if (textbox.Name == "textbox_G_multi")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 100))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi = (byte)(result);
-                    }
-                }
-            }
-
-            if (textbox.Name == "text_G_window")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 100))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window = (byte)(result);
-                    }
-                }
-            }
+            
             
             updateTheGuiFromConfig();
 
@@ -4202,47 +4048,6 @@ namespace User.PluginSdkDemo
 
             }
         }
-        private void Rectangle_MouseMove_H_RPM(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                var rectangle = sender as Rectangle;
-                double x = e.GetPosition(canvas_horz_RPM_freq).X - offset.X;
-                //double y = e.GetPosition(canvas).Y - offset.Y;
-
-                // Ensure the rectangle stays within the canvas
-
-                double min_posiiton = Canvas.GetLeft(rect_RPM_min) + rectangle.ActualWidth / 2;
-                double max_position = Canvas.GetLeft(rect_RPM_max) - rectangle.ActualWidth / 2;
-                double dx = 50 / (canvas_horz_RPM_freq.Width - 10);
-                if (rectangle.Name == "rect_RPM_min")
-                {
-                    x = Math.Max(-1 * rectangle.ActualWidth / 2, Math.Min(x, max_position));
-                    double actual_x = (x - 5) * dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = Convert.ToByte(actual_x);
-                    //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(Panel_RPM_freq_min, Canvas.GetLeft(rect_RPM_min) + rect_RPM_min.Width / 2 - Panel_RPM_freq_min.Width / 2);
-                    Canvas.SetTop(Panel_RPM_freq_min, Canvas.GetTop(rect_RPM_min) - Panel_RPM_freq_min.Height);
-                }
-                if (rectangle.Name == "rect_RPM_max")
-                {
-                    x = Math.Max(min_posiiton, Math.Min(x, canvas_horz_slider.ActualWidth - rectangle.ActualWidth));
-                    double actual_x = (x - 5) * dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = Convert.ToByte(actual_x);
-
-                    //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(Panel_RPM_freq_max, Canvas.GetLeft(rect_RPM_max) + rect_RPM_max.Width / 2 - Panel_RPM_freq_max.Width / 2);
-                    Canvas.SetTop(Panel_RPM_freq_max, Canvas.GetTop(rect_RPM_max) - Panel_RPM_freq_max.Height);
-                }
-                textBox_RPM_freq_min.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "";
-                textBox_RPM_freq_max.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "";
-
-                //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
-
-                Canvas.SetLeft(rectangle, x);
-
-            }
-        }
         private void Rectangle_MouseMove_V(object sender, MouseEventArgs e)
         {
             if (isDragging)
@@ -4357,58 +4162,7 @@ namespace User.PluginSdkDemo
                     Canvas.SetTop(text_damping, Canvas.GetTop(rect_damping)-text_damping.Height);
                     Canvas.SetLeft(rectangle, x);
                 }
-                // ABS Amplitude
-                if (rectangle.Name == "rect_ABS")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_ABS).X - offset.X;
-                    double ABS_max = 255;
-                    double dx = canvas_horz_ABS.Width / ABS_max;
-                    double min_position = 0 * dx;
-                    double max_position = ABS_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = Convert.ToByte(actual_x);
-                    textBox_ABS_AMP.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "";
-
-                    switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
-                    {
-                        case 0:
-                            
-                            text_ABS.Text = "kg";
-                            break;
-                        case 1:
-                            
-                            text_ABS.Text = "%";
-                            break;
-                        default:
-                            break;
-                    }
-
-
-                    Canvas.SetLeft(Panel_ABS_AMP, Canvas.GetLeft(rect_ABS) + rect_ABS.Width / 2 - Panel_ABS_AMP.Width / 2);
-                    Canvas.SetTop(Panel_ABS_AMP, Canvas.GetTop(rect_ABS) - Panel_ABS_AMP.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                //ABS freq
-                if (rectangle.Name == "rect_ABS_freq")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_ABS_freq).X - offset.X;
-                    double ABS_freq_max = 30;
-                    double dx = canvas_horz_ABS_freq.Width / ABS_freq_max;
-                    double min_position = 0 * dx;
-                    double max_position = ABS_freq_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = Convert.ToByte(actual_x);
-                    textBox_ABS_freq.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "";
-                    Canvas.SetLeft(Panel_ABS_freq, Canvas.GetLeft(rect_ABS_freq) + rect_ABS_freq.Width / 2 - Panel_ABS_freq.Width / 2);
-                    Canvas.SetTop(Panel_ABS_freq, Canvas.GetTop(rect_ABS_freq) - Panel_ABS_freq.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
+               
                 //max game output
                 if (rectangle.Name == "rect_max_game")
                 {
@@ -4469,25 +4223,6 @@ namespace User.PluginSdkDemo
                     //Canvas.SetTop(text_LC_rating, 5);
                     Canvas.SetLeft(rectangle, x);
                 }
-                // RPM effect AMP
-                if (rectangle.Name == "rect_RPM_AMP")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_RPM_AMP).X - offset.X;
-                    double RPM_AMP_max = 200;
-                    double dx = (canvas_horz_RPM_AMP.Width-10)/ RPM_AMP_max;
-                    double min_position = 0 * dx;
-                    double max_position = RPM_AMP_max * dx;
-
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (byte)(actual_x);
-
-                    textBox_RPM_AMP.Text = (((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) /100) +"";
-                    Canvas.SetLeft(Panel_RPM_AMP, Canvas.GetLeft(rect_RPM_AMP) + rect_RPM_AMP.Width / 2 - Panel_RPM_AMP.Width / 2);
-                    Canvas.SetTop(Panel_RPM_AMP, Canvas.GetTop(rect_RPM_AMP) - Panel_RPM_AMP.Height);                    
-                    Canvas.SetLeft(rectangle, x);
-                }
 
                 //Bite point control
                 if (rectangle.Name == "rect_BP_Control")
@@ -4510,40 +4245,6 @@ namespace User.PluginSdkDemo
 
                 }
 
-                if (rectangle.Name == "rect_bite_amp")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_bite_amp).X - offset.X;
-                    double bite_amp_max = 200;
-                    double dx = canvas_horz_bite_amp.Width / bite_amp_max;
-                    double min_position = 0 * dx;
-                    double max_position = bite_amp_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = Convert.ToByte(actual_x);
-                    textBox_bite_amp.Text = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "";
-                    Canvas.SetLeft(Panel_bite_amp, Canvas.GetLeft(rect_bite_amp) + rect_bite_amp.Width / 2 - Panel_bite_amp.Width / 2);
-                    Canvas.SetTop(Panel_bite_amp, Canvas.GetTop(rect_bite_amp) - Panel_bite_amp.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                if (rectangle.Name == "rect_bite_freq")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_bite_freq).X - offset.X;
-                    double bite_freq_max = 30;
-                    double dx = canvas_horz_bite_freq.Width / bite_freq_max;
-                    double min_position = 0 * dx;
-                    double max_position = bite_freq_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = Convert.ToByte(actual_x);
-                    textBox_bite_freq.Text = (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq) + "";
-                    Canvas.SetLeft(Panel_bite_freq, Canvas.GetLeft(rect_bite_freq) + rect_bite_freq.Width / 2 - Panel_bite_freq.Width / 2);
-                    Canvas.SetTop(Panel_bite_freq, Canvas.GetTop(rect_bite_freq) - Panel_bite_freq.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
                 //Pgain
                 if (rectangle.Name == "rect_Pgain")
                 {
@@ -4860,15 +4561,15 @@ namespace User.PluginSdkDemo
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = (byte)EffectAppliedOnForceOrTravel_combobox.SelectedIndex;
 
-                if (text_ABS != null)
+                if (label_ABS_AMP != null)
                 {
                     switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
                     {
                         case 0:
-                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "kg";
+                            label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
                             break;
                         case 1:
-                            text_ABS.Text = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20 + "%";
+                            label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
                             break;
                         default:
                             break;
@@ -5918,6 +5619,67 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi=(Byte)e.NewValue;
             label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
         }
+
+        private void Slider_BP_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = (Byte)e.NewValue;
+            label_BP_freq.Content = "Bite Point Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
+            update_plot_BP();
+        }
+
+        private void Slider_BP_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = (Byte)(e.NewValue * 100);
+            label_BP_AMP.Content = "Bite Point Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
+            update_plot_BP();
+        }
+
+        private void Slider_RPM_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (Byte)(e.NewValue * 100);
+            label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+            update_plot_RPM();
+        }
+
+        private void Rangeslider_RPM_freq_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = (byte)e.NewValue;
+            label_RPM_freq.Content = "Effect Frequency: Max: "+ dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq+"Hz, Min: "+ dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq+"Hz";
+            update_plot_RPM();
+        }
+
+        private void Rangeslider_RPM_freq_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = (byte)e.NewValue;
+            label_RPM_freq.Content = "Effect Frequency: Max: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz, Min: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+            update_plot_RPM();
+        }
+
+        private void Slider_ABS_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = (Byte)(e.NewValue);
+            label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
+            update_plot_ABS();
+        }
+
+        private void Slider_ABS_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude = (Byte)(e.NewValue * 20);
+            switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
+            {
+                case 0:
+                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                    break;
+                case 1:
+                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
+                    break;
+                default:
+                    break;
+            }
+            update_plot_ABS();
+        }
+
+
 
 
 
