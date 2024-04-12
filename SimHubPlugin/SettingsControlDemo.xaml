@@ -654,97 +654,20 @@
 
 
                                 </Canvas>
-                                <Canvas x:Name="canvas_vert_slider" Height="200" Width="20                     " Background="#00333333" RenderTransformOrigin="0.5,0.5" Margin="2,0,0,0" VerticalAlignment="Top" >
-                                    <Canvas.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                            <SkewTransform/>
-                                            <RotateTransform/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-
-                                    </Canvas.RenderTransform>
-
-
-                                    <TextBlock x:Name="text_min_force" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Preload:" Width="45" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="95" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20"/>
-                                    <TextBlock x:Name="text_max_force" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Max Force:" Width="50" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="12" FontSize="8" FontFamily="Arial Black" Canvas.Left="28" Height="20"/>
-                                    <Line x:Name="Line_V_force"
-                                        X1="9" Y1="0"
-                                        X2="9" Y2="200"
-                                        Stroke="#7E87CEFA"
-                                        StrokeThickness="2" HorizontalAlignment="Left" Canvas.Left="0" VerticalAlignment="Center" />
-                                    <Rectangle x:Name="rect8" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="98" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect9" Width="12" Height="6" Fill="LightSkyBlue" Canvas.Left="11" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_V" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                                </Canvas>
+                                
+                                <StackPanel Width="50" Height="200">
+                                    <Label x:Name="Label_max_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                    <controls:RangeSlider x:Name="Rangeslider_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="160" LowerValueChanged="Rangeslider_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_force_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30" Width="20" Orientation="Vertical" Maximum="200" HorizontalAlignment="Left" LargeChange="10"/>
+                                    <Label x:Name="Label_min_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                </StackPanel>
                             </StackPanel>
 
-                            <Canvas x:Name="canvas_horz_slider" Height="40" Width="410" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-
-
-                                <TextBlock x:Name="text_min_pos" HorizontalAlignment="Left" 
-                                    VerticalAlignment="Center" 
-                                    Text="Pedal min" 
-                                    Width="60" 
-                                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="-25">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock x:Name="text_max_pos" HorizontalAlignment="Left" 
-                                    VerticalAlignment="Top" 
-                                    Text="Pedal max" 
-                                    Width="60" 
-                                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="27" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="375">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock x:Name="text_position" HorizontalAlignment="Left" 
-                                    VerticalAlignment="Top" 
-                                    Text="Pedal Range" 
-                                    Width="60" 
-                                    Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="170" Height="10">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-
-
-
-                                <Line x:Name="Line_H_pos"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect6" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="0" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                <Rectangle x:Name="rect7" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="400" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
+                            
+                            <StackPanel Width="400" Height="40" Orientation="Horizontal">
+                                <Label x:Name="Label_min_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                <controls:RangeSlider x:Name="Rangeslider_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30" Width="340" VerticalAlignment="Top"/>
+                                <Label x:Name="Label_max_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </TabItem>

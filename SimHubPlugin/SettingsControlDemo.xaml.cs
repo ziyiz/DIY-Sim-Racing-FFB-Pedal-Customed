@@ -511,23 +511,17 @@ namespace User.PluginSdkDemo
             defaultcolor = new SolidColorBrush(color);
             lightcolor = new SolidColorBrush(color_3);
             //Plugin.simhub_theme_color=defaultcolor.ToString();
-            text_min_force.Foreground = Line_fill;
-            text_max_force.Foreground = Line_fill;
-            text_max_pos.Foreground = Line_fill;
-            text_min_pos.Foreground = Line_fill;
-            text_position.Foreground = Line_fill;
+
+            
             rect0.Fill = defaultcolor;
             rect1.Fill = defaultcolor;
             rect2.Fill = defaultcolor;
             rect3.Fill = defaultcolor;
             rect4.Fill = defaultcolor;
             rect5.Fill = defaultcolor;
-            rect6.Fill = defaultcolor;
-            rect7.Fill = defaultcolor;
-            rect8.Fill = defaultcolor;
-            rect9.Fill = defaultcolor;
-            Line_V_force.Stroke = Line_fill;
-            Line_H_pos.Stroke = Line_fill;
+            
+
+            
             //Polyline_BrakeForceCurve.Stroke = new SolidColorBrush(Line_fill);
             //Polyline_BrakeForceCurve.Stroke = Line_fill;
             //text_damping_text.Foreground = Line_fill;
@@ -1046,6 +1040,21 @@ namespace User.PluginSdkDemo
             Slider_ABS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
             label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
             Slider_ABS_AMP.Value = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) / 20.0f;
+
+            Rangeslider_travel_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
+            Rangeslider_travel_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
+            Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
+            Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
+
+            
+            Rangeslider_force_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
+            Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
+            if (Plugin != null)
+            {
+                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
+                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+            }
+
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
                 case 0:
@@ -1138,33 +1147,11 @@ namespace User.PluginSdkDemo
                 text_SABS.Visibility = Visibility.Hidden;
             }
             //set for travel slider;
-            double dx = (canvas_horz_slider.Width - 10) / 100;
-            Canvas.SetTop(rect6, 15);
-            //TextBox_debugOutput.Text= Convert.ToString(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition);
-            Canvas.SetLeft(rect6, rect6.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition);
-            Canvas.SetLeft(text_min_pos, Canvas.GetLeft(rect6) - text_min_pos.Width / 2 + rect6.Width / 2);
-            Canvas.SetTop(text_min_pos, 5);
-            text_min_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
-            text_max_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
-            Canvas.SetTop(rect7, 15);
-            Canvas.SetLeft(rect7, rect7.Width / 2 + dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition);
-            Canvas.SetLeft(text_max_pos, Canvas.GetLeft(rect7) - text_max_pos.Width / 2 + rect7.Width / 2);
-            Canvas.SetTop(text_max_pos, 5);
+            double dx = 0;
+           
 
 
-            //set for force vertical slider
-            double dy = (canvas_vert_slider.Height / 250);
-            Canvas.SetTop(rect8, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce);
-            Canvas.SetLeft(rect8, canvas_vert_slider.Width / 2 - rect8.Width / 2 - Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_min_force, rect8.Width + 3);
-            Canvas.SetTop(text_min_force, Canvas.GetTop(rect8));
-            Canvas.SetTop(rect9, canvas_vert_slider.Height - dy * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce);
-            Canvas.SetLeft(rect9, canvas_vert_slider.Width / 2 - rect9.Width / 2 - Line_V_force.StrokeThickness / 2);
-            Canvas.SetLeft(text_max_force, rect9.Width + 3);
-            Canvas.SetTop(text_max_force, Canvas.GetTop(rect9) - 6 - text_max_force.Height / 2);
 
-            text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
-            text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
             //damping slider
             double damping_max = 255;
             dx = canvas_horz_damping.Width / damping_max;
@@ -3994,121 +3981,8 @@ namespace User.PluginSdkDemo
             }
         }
 
-        private void Rectangle_MouseMove_H(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                var rectangle = sender as Rectangle;
-                double x = e.GetPosition(canvas_horz_slider).X - offset.X;
-                //double y = e.GetPosition(canvas).Y - offset.Y;
-
-                // Ensure the rectangle stays within the canvas
-
-                double min_posiiton = Canvas.GetLeft(rect6) + rectangle.Width / 2;
-                double max_position = Canvas.GetLeft(rect7) - rectangle.Width / 2;
-                double min_pedal_position = (canvas_horz_slider.Width - 10) * 0.05 + rect6.Width;
-                double max_pedal_position = (canvas_horz_slider.Width - 10) * 0.95 + rect7.Width;
-                double dx = 100 / (canvas_horz_slider.Width - 10);
-                if (rectangle.Name == "rect6")
-                {
-                    x = Math.Max(min_pedal_position - 1 * rectangle.Width / 2, Math.Min(x, max_position));
-                    double actual_x = (x - 5) * dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = Convert.ToByte(actual_x);
-
-                    if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition)
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                        //PedalMinPos_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    }
-                    TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(text_min_pos, x - text_min_pos.Width / 2 + rect6.Width / 2);
-                    Canvas.SetTop(text_min_pos, 5);
-                }
-                if (rectangle.Name == "rect7")
-                {
-                    x = Math.Max(min_posiiton, Math.Min(x, max_pedal_position - rectangle.Width / 2));
-                    double actual_x = (x - 5) * dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = Convert.ToByte(actual_x);
-
-                    if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition < dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition)
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                        //PedalMaxPos_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    }
-                    TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(text_max_pos, x - text_max_pos.Width / 2 + rect7.Width / 2);
-                    Canvas.SetTop(text_max_pos, 5);
-                }
-                text_min_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
-                text_max_pos.Text = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
-
-                //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
-
-                Canvas.SetLeft(rectangle, x);
-
-            }
-        }
-        private void Rectangle_MouseMove_V(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                var rectangle = sender as Rectangle;
-                double y = e.GetPosition(canvas_vert_slider).Y - offset.Y;
-                //double y = e.GetPosition(canvas).Y - offset.Y;
-
-                // Ensure the rectangle stays within the canvas
-                double dy = 250 / (canvas_vert_slider.Height);
-                double min_position =  Canvas.GetTop(rect8) - rectangle.Height / 2;
-                double max_position = Canvas.GetTop(rect9) + rectangle.Height / 2;
-                double min_limit = canvas_vert_slider.Height-0 / dy;
-                double max_limit = canvas_vert_slider.Height-250 / dy;
-                
-                if (rectangle.Name == "rect8")
-                {
-                    y = Math.Max(max_position, Math.Min(y, canvas_vert_slider.Height - rectangle.Height / 2));
-                    
-                    double actual_y = (canvas_vert_slider.Height- y-rectangle.Height/2)  * dy;
-                    actual_y=Math.Max(0, Math.Min(actual_y, 250));
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Convert.ToByte(actual_y);
-
-                    if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce > dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce)
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
-                        //PedalMinForce_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
-                    }
-                    
-                    //TextBox_debugOutput.Text = "Pedal min position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
-                    Canvas.SetLeft(text_min_force, rect8.Width+3);
-                    Canvas.SetTop(text_min_force, Canvas.GetTop(rect8));
-                }
-                if (rectangle.Name == "rect9")
-                {
-                    y = Math.Max(-1 * rectangle.Height / 2, Math.Min(y, min_position ));
-                    
-                    double actual_y = (canvas_vert_slider.Height - y - rectangle.Height / 2) * dy;
-                    actual_y = Math.Max(0, Math.Min(actual_y, 250));
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = Convert.ToByte(actual_y);
-                    if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce < dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce)
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
-                        //PedalMaxForce_Slider.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
-                    }
-                    
-                    //TextBox_debugOutput.Text = "Pedal max position:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-                    Canvas.SetLeft(text_max_force,  rect9.Width+3);
-                    Canvas.SetTop(text_max_force, Canvas.GetTop(rect9) - 6-text_max_force.Height/2);
-                    
-                    
-                }
-                text_min_force.Text = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
-                text_max_force.Text = "Max Force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
-                
-                //y = Math.Max(-1 * rectangle.ActualHeight / 2, Math.Min(y, canvas.ActualHeight - rectangle.ActualHeight / 2));
-
-                Canvas.SetTop(rectangle, y);
-
-            }
-        }
+       
+        
 
         private void Rectangle_MouseMove_ABS(object sender, MouseEventArgs e)
         {
@@ -5677,6 +5551,44 @@ namespace User.PluginSdkDemo
                     break;
             }
             update_plot_ABS();
+        }
+
+        private void Rangeslider_travel_range_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = (byte)e.NewValue;
+            if (Plugin != null)
+            {
+                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
+            }
+            
+
+        }
+
+        private void Rangeslider_travel_range_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)e.NewValue;
+            if (Plugin != null)
+            { 
+                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
+            }
+        }
+
+        private void Rangeslider_force_range_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = (byte)e.NewValue;
+            if (Plugin != null)
+            {
+                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
+            }
+        }
+
+        private void Rangeslider_force_range_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = (byte)e.NewValue;
+            if (Plugin != null)
+            {
+                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+            }
         }
 
 
