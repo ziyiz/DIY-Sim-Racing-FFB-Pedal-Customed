@@ -4199,6 +4199,7 @@ namespace User.PluginSdkDemo
             testslider.Visibility= Visibility.Visible;
             rangeslider_example.Visibility= Visibility.Visible;
             verticaltest.Visibility= Visibility.Visible;
+            Slider_LC_rate.TickFrequency = 1;
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -4227,6 +4228,7 @@ namespace User.PluginSdkDemo
             testslider.Visibility = Visibility.Hidden;
             rangeslider_example.Visibility = Visibility.Hidden;
             verticaltest.Visibility = Visibility.Hidden;
+            Slider_LC_rate.TickFrequency = 10;
         }
 
 
