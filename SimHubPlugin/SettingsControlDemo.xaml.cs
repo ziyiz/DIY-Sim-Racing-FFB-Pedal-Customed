@@ -511,84 +511,7 @@ namespace User.PluginSdkDemo
             //SolidColorBrush rect_fill = new SolidColorBrush(color);
             defaultcolor = new SolidColorBrush(color);
             lightcolor = new SolidColorBrush(color_3);
-            //Plugin.simhub_theme_color=defaultcolor.ToString();
-
-            
-            rect0.Fill = defaultcolor;
-            rect1.Fill = defaultcolor;
-            rect2.Fill = defaultcolor;
-            rect3.Fill = defaultcolor;
-            rect4.Fill = defaultcolor;
-            rect5.Fill = defaultcolor;
-            
-
-            
-
-
-            //text_Pgain_text.Foreground = Line_fill;
-            Line_H_Pgain.Stroke = Line_fill;
-            text_Pgain.Foreground = Line_fill;
-            rect_Pgain.Fill = defaultcolor;
-
-            //text_Igain_text.Foreground = Line_fill;
-            Line_H_Igain.Stroke = Line_fill;
-            text_Igain.Foreground = Line_fill;
-            rect_Igain.Fill = defaultcolor;
-
-            //text_Dgain_text.Foreground = Line_fill;
-            Line_H_Dgain.Stroke = Line_fill;
-            text_Dgain.Foreground = Line_fill;
-            rect_Dgain.Fill = defaultcolor;
-
-            //text_VFgain_text.Foreground = Line_fill;
-            Line_H_VFgain.Stroke = Line_fill;
-            text_VFgain.Foreground = Line_fill;
-            rect_VFgain.Fill = defaultcolor;
-
-
-
-            Line_H_KF.Stroke = Line_fill;
-            text_KF.Foreground = Line_fill;
-            rect_KF.Fill = defaultcolor;
-            //text_KF_text.Foreground = Line_fill;
-
-
-
-
-
-            text_MPC_0th_order_gain.Foreground = Line_fill;
-            //text_MPC_0th_order_gain_text.Foreground = Line_fill;
-            textBox_MPC_0th_order_gain.Foreground= Line_fill;
-            Line_H_MPC_0th_order_gain.Stroke = Line_fill;
-            rect_MPC_0th_order_gain.Fill = defaultcolor;
-
-            Line_H_HeaderTab.Stroke = Line_fill;
-
-            //text_MPC_1st_order_gain.Foreground = Line_fill;
-            //text_MPC_1st_order_gain_text.Foreground = Line_fill;
-            //Line_H_MPC_1st_order_gain.Stroke = Line_fill;
-            //rect_MPC_1st_order_gain.Fill = defaultcolor;
-
-           
-
-
-           
-
-            Polyline_plot_ABS.Stroke=Line_fill;
-            Polyline_plot_BP.Stroke = Line_fill;
-            Polyline_plot_WS.Stroke = Line_fill;
-            Polyline_plot_RPM.Stroke = Line_fill;
-
-            Line_OA.Stroke = Line_fill;
-            Line_OB.Stroke = Line_fill;
-            Line_BC.Stroke = Line_fill;
-            Line_AD.Stroke = Line_fill;
-            Line_CA.Stroke = Line_fill;
-            rect_joint_A.Fill=defaultcolor;
-            rect_joint_B.Fill = defaultcolor;
-            rect_joint_C.Fill = defaultcolor;
-            rect_joint_D.Fill = defaultcolor;
-            rect_joint_O.Fill = defaultcolor;
+            //Plugin.simhub_theme_color=defaultcolor.ToString();            
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
             DrawGridLines_kinematicCanvas(100,20,1.5);
@@ -1030,12 +953,11 @@ namespace User.PluginSdkDemo
 
             Rangeslider_travel_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
             Rangeslider_travel_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
-            Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
-            Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
+            
             if (Plugin != null)
             {
-                Label_min_pos.Content = Label_min_pos.Content + "\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";
-                Label_max_pos.Content = Label_max_pos.Content + "\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";
+                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
             }
 
 
@@ -1063,6 +985,23 @@ namespace User.PluginSdkDemo
             Slider_maxgame_output.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
             label_maxgame_output.Content = "Max Game Output: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
 
+            Slider_KF.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+            label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+
+            Slider_MPC_0th_gain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain;
+            label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+
+            Slider_Pgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
+            label_Pgain.Content = "P-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
+
+            Slider_Igain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
+            label_Igain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
+
+            Slider_Dgain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
+            label_Dgain.Content = "D-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
+
+            Slider_VFgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain;
+            label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
 
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
@@ -1195,15 +1134,6 @@ namespace User.PluginSdkDemo
 
 
 
-            //KF SLider
-            double KF_max = 255;
-            dx = canvas_horz_KF.Width / KF_max;
-            Canvas.SetLeft(rect_KF, dx * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise);
-            text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
-            Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-            Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF) - text_KF.Height);
-
-
             // Filter type
             try
             {
@@ -1228,55 +1158,12 @@ namespace User.PluginSdkDemo
             Canvas.SetTop(text_BP, canvas.Height - text_BP.Height-15);
 
 
-            //Pgain slider
-            double value_max = 2;
-            dx = canvas_horz_Pgain.Width / value_max;
-            Canvas.SetLeft(rect_Pgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain * dx);
-            text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
-            Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-            Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
-
-            //Igain slider
-
-            value_max = 500;
-            dx = canvas_horz_Igain.Width / value_max;
-            Canvas.SetLeft(rect_Igain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain * dx);
-            text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
-            Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-            Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
-
-            //Dgain slider
-            value_max = 0.01;
-            dx = canvas_horz_Dgain.Width / value_max;
-            Canvas.SetLeft(rect_Dgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain * dx);
-            text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
-            Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-            Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
-
-            //VF gain slider
-            value_max = 20;
-            dx = canvas_horz_VFgain.Width / value_max;
-            Canvas.SetLeft(rect_VFgain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain * dx);
-            text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 4);
-            Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-            Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
-
-            //MPC 0th order gain slider
-            value_max = 1;
-            dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
-            Canvas.SetLeft(rect_MPC_0th_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain * dx);
-            textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2);
-            Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
-            Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
 
 
-            ////MPC 1st order gain slider
-            //value_max = 0.01;
-            //dx = canvas_horz_MPC_1st_order_gain.Width / (2 * value_max);
-            //Canvas.SetLeft(rect_MPC_1st_order_gain, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain * dx - value_max);
-            //text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2);
-            //Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - rect_MPC_1st_order_gain.Width / 2);
-            //Canvas.SetTop(text_MPC_1st_order_gain, 5);
+
+
+
+
 
 
 
@@ -1785,89 +1672,7 @@ namespace User.PluginSdkDemo
 
 
 
-        private void Control_TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //labelEingabe.Content = "Sie haben '" + textBox_debug_Flag_0.Text + "' eingegeben!";
-            //TextBox_debugOutput.Text = textBox_debug_Flag_0.Text;
-            var textbox = sender as System.Windows.Controls.TextBox;
 
-
-
-
- 
-
-            if (textbox.Name == "text_KF")
-            {
-                if (int.TryParse(textbox.Text, out int result))
-                {
-                    if ((result >= 0) && (result <= 255))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = (byte)(result);
-
-                    }
-                }
-            }
-            if (textbox.Name == "text_Pgain")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 2))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)(result);
-
-                    }
-                }
-            }
-            if (textbox.Name == "text_Igain")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 500))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)(result);
-
-                    }
-                }
-            }
-            if (textbox.Name == "text_Dgain")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 0.01))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)(result);
-
-                    }
-                }
-            }
-            if (textbox.Name == "text_VFgain")
-            {
-                if (double.TryParse(textbox.Text, out double result))
-                {
-                    if ((result >= 0) && (result <= 20))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)(result);
-
-                    }
-                }
-            }
-            
-            if (textbox.Name == "textBox_MPC_0th_order_gain")
-            {
-                if (float.TryParse(textbox.Text, out float result))
-                {
-                    if ((result >= 0) && (result <= 4))
-                    {
-                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)(result);
-
-                    }
-                }
-            }
-            
-            
-            updateTheGuiFromConfig();
-
-        }
 
 
 
@@ -3838,28 +3643,6 @@ namespace User.PluginSdkDemo
             var rectangle = sender as Rectangle;
             offset = e.GetPosition(rectangle);
             rectangle.CaptureMouse();
-            //SolidColorBrush buttonBackground = btn_update.Background as SolidColorBrush;
-            //Color light = Color.FromArgb(255, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
-            //Color middle_light= Color.FromArgb(235, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
-            //Color dark = Color.FromArgb(100, buttonBackground.Color.R, buttonBackground.Color.G, buttonBackground.Color.B);
-            //
-            /*
-            RadialGradientBrush myRadialGradientBrush = new RadialGradientBrush();
-            myRadialGradientBrush.GradientOrigin = new Point(0.5, 0.5);
-            myRadialGradientBrush.Center = new Point(0.5, 0.5);
-            myRadialGradientBrush.RadiusX = 0.5;
-            myRadialGradientBrush.RadiusY = 0.5;
-            myRadialGradientBrush.GradientStops.Add(
-                new GradientStop(light, 0.0));
-            myRadialGradientBrush.GradientStops.Add(
-                new GradientStop(middle_light, 0.75));
-            myRadialGradientBrush.GradientStops.Add(
-                new GradientStop(dark, 1.0));
-            */
-            //
-            //rectangle.Fill = new SolidColorBrush(light);
-            //rectangle.Fill = myRadialGradientBrush;
-            //Color light = Color.FromArgb(128, 128, 128, 128);
             if(rectangle.Name != "rect_SABS_Control" & rectangle.Name != "rect_BP_Control")
             {
                 var dropShadowEffect = new DropShadowEffect
@@ -3975,32 +3758,6 @@ namespace User.PluginSdkDemo
             if (isDragging)
             {
                 var rectangle = sender as Rectangle;
-
-
-                
-              
-                //KF Slider
-
-                if (rectangle.Name == "rect_KF")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double x = e.GetPosition(canvas_horz_KF).X - offset.X;
-                    double KF_max = 255;
-                    double dx = canvas_horz_KF.Width / KF_max;
-                    double min_position = 1 * dx;
-                    double max_position = KF_max * dx;
-
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = Convert.ToByte(actual_x);
-
-                    text_KF.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
-                    Canvas.SetLeft(text_KF, Canvas.GetLeft(rect_KF) + rect_KF.Width / 2 - text_KF.Width / 2);
-                    Canvas.SetTop(text_KF, Canvas.GetTop(rect_KF)-text_KF.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-
-
                 //Bite point control
                 if (rectangle.Name == "rect_BP_Control")
                 {
@@ -4021,128 +3778,6 @@ namespace User.PluginSdkDemo
                     Canvas.SetTop(text_BP, canvas.Height - text_BP.Height-15);
 
                 }
-
-                //Pgain
-                if (rectangle.Name == "rect_Pgain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 2;
-                    double x = e.GetPosition(canvas_horz_Pgain).X - offset.X;
-                    double dx = canvas_horz_Pgain.Width / value_max;
-                    double min_position = 0 * dx;
-                    double max_position = value_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)actual_x;
-                    text_Pgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
-                    Canvas.SetLeft(text_Pgain, Canvas.GetLeft(rect_Pgain) + rect_Pgain.Width / 2 - text_Pgain.Width / 2);
-                    Canvas.SetTop(text_Pgain, Canvas.GetTop(rect_Pgain) - text_Pgain.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-
-                if (rectangle.Name == "rect_Igain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 500;
-                    double x = e.GetPosition(canvas_horz_Igain).X - offset.X;
-                    double dx = canvas_horz_Igain.Width / value_max;
-                    double min_position = 0 * dx;
-                    double max_position = value_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)actual_x;
-                    text_Igain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 1);
-                    Canvas.SetLeft(text_Igain, Canvas.GetLeft(rect_Igain) + rect_Igain.Width / 2 - text_Igain.Width / 2);
-                    Canvas.SetTop(text_Igain, Canvas.GetTop(rect_Igain) - text_Igain.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-
-                if (rectangle.Name == "rect_Dgain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 0.01;
-                    double x = e.GetPosition(canvas_horz_Dgain).X - offset.X;
-                    double dx = canvas_horz_Dgain.Width / value_max;
-                    double min_position = 0 * dx;
-                    double max_position = value_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)actual_x;
-                    text_Dgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
-                    Canvas.SetLeft(text_Dgain, Canvas.GetLeft(rect_Dgain) + rect_Dgain.Width / 2 - text_Dgain.Width / 2);
-                    Canvas.SetTop(text_Dgain, Canvas.GetTop(rect_Dgain) - text_Dgain.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-
-                if (rectangle.Name == "rect_VFgain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 20;
-                    double x = e.GetPosition(canvas_horz_VFgain).X - offset.X;
-                    double dx = canvas_horz_VFgain.Width / value_max;
-                    double min_position = 0 * dx;
-                    double max_position = value_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)actual_x;
-                    text_VFgain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 2);
-                    Canvas.SetLeft(text_VFgain, Canvas.GetLeft(rect_VFgain) + rect_VFgain.Width / 2 - text_VFgain.Width / 2);
-                    Canvas.SetTop(text_VFgain, Canvas.GetTop(rect_VFgain) - text_VFgain.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-
-                
-
-
-                //MPC 0th order gain
-                if (rectangle.Name == "rect_MPC_0th_order_gain")
-                {
-                    // Ensure the rectangle stays within the canvas
-                    double value_max = 1;
-                    double x = e.GetPosition(canvas_horz_MPC_0th_order_gain).X - offset.X;
-                    double dx = canvas_horz_MPC_0th_order_gain.Width / value_max;
-                    double min_position = 0 * dx;
-                    double max_position = value_max * dx;
-                    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                    x = Math.Max(min_position, Math.Min(x, max_position));
-                    double actual_x = x / dx;
-                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)actual_x;
-                    textBox_MPC_0th_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) ;
-                    Canvas.SetLeft(Panel_MPC_0th_order_gain, Canvas.GetLeft(rect_MPC_0th_order_gain) + rect_MPC_0th_order_gain.Width / 2 - Panel_MPC_0th_order_gain.Width / 2);
-                    Canvas.SetTop(Panel_MPC_0th_order_gain, Canvas.GetTop(rect_MPC_0th_order_gain) - Panel_MPC_0th_order_gain.Height);
-                    Canvas.SetLeft(rectangle, x);
-                }
-                //Wheelslip
-
-
-                
-
-
-
-                ////MPC 1st order gain
-                //if (rectangle.Name == "rect_MPC_1st_order_gain")
-                //{
-                //    // Ensure the rectangle stays within the canvas
-                //    double value_max = 0.01;
-                //    double x = e.GetPosition(canvas_horz_MPC_1st_order_gain).X - offset.X;
-                //    double dx = canvas_horz_MPC_1st_order_gain.Width / (2*value_max);
-                //    double min_position = 0 * dx;
-                //    double max_position = value_max * 2 * dx;
-                //    //double dx = 100 / (canvas_horz_slider.Width - 10);
-                //    x = Math.Max(min_position, Math.Min(x, max_position));
-                //    double actual_x = x / dx;
-                //    actual_x -= value_max;
-                //    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)actual_x;
-                //    text_MPC_1st_order_gain.Text = "" + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 4);
-                //    Canvas.SetLeft(text_MPC_1st_order_gain, Canvas.GetLeft(rect_MPC_1st_order_gain) + rect_MPC_1st_order_gain.Width / 2 - text_MPC_1st_order_gain.Width / 2);
-                //    Canvas.SetTop(text_MPC_1st_order_gain, 5);
-                //    Canvas.SetLeft(rectangle, x);
-                //}
-
             }
         }
         private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -5463,8 +5098,7 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = (byte)e.NewValue;
             if (Plugin != null)
             {
-                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%";
-                Label_min_pos.Content = Label_min_pos.Content + "\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";               
+                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";         
             }
             
 
@@ -5475,8 +5109,7 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)e.NewValue;
             if (Plugin != null)
             { 
-                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%";
-                Label_max_pos.Content = Label_max_pos.Content + "\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
 
             }
         }
@@ -5516,6 +5149,42 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = (Byte)(e.NewValue);
             label_maxgame_output.Content = "Max Game Output: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
+        }
+
+        private void Slider_KF_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = (byte)e.NewValue;
+            label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+        }
+
+        private void Slider_MPC_0th_gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)e.NewValue;
+            label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2)+ "kg/mm";
+        }
+
+        private void Slider_Pgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)e.NewValue;
+            label_Pgain.Content = "P-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
+        }
+
+        private void Slider_Igain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)e.NewValue;
+            label_Pgain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
+        }
+
+        private void Slider_Dgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)e.NewValue;
+            label_Dgain.Content = "D-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
+        }
+
+        private void Slider_VFgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)e.NewValue;
+            label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
         }
 
 

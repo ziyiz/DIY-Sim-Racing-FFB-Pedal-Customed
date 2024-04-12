@@ -400,7 +400,7 @@
                     </TransformGroup>
 
                 </Canvas.RenderTransform>
-                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="723" Y2="3" Stroke="#7F87CEFA" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="723" Y2="3" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
             </Canvas>
 
 
@@ -542,7 +542,7 @@
                                 <styles:SHButtonPrimary x:Name="btn_logcurve" Click="btn_logcurve_Click" Width="50" Content="Logarithm" Height="15" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" FontFamily="Arial" FontSize="10" MinHeight="15" VerticalContentAlignment="Center" />
 
                             </StackPanel>
-                            <StackPanel Height="205" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0">
+                            <StackPanel Height="220" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0">
 
 
                                 <!-- Travel vs Force curve GUI elements -->
@@ -635,12 +635,12 @@
                                     <Rectangle x:Name="rect_BP_Control" Width="32" Height="200" Fill="#990954CE" Canvas.Left="200" Canvas.Top="0" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                                     <Rectangle x:Name="rect_State" Width="10" Height="10" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#FFEF0707" />
                                     <TextBlock x:Name="text_state" Width="20" Height="10" Foreground="#7FFFFFFF" Text="10%" FontSize="8" FontFamily="Arial"/>
-                                    <Rectangle x:Name="rect0" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect1" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="75" Canvas.Top="155" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect2" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="155" Canvas.Top="115" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect3" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="235" Canvas.Top="75" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect4" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect5" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+                                    <Rectangle x:Name="rect0" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                    <Rectangle x:Name="rect1" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="75" Canvas.Top="155" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                    <Rectangle x:Name="rect2" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="155" Canvas.Top="115" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                    <Rectangle x:Name="rect3" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="235" Canvas.Top="75" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                    <Rectangle x:Name="rect4" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                    <Rectangle x:Name="rect5" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
                                     <TextBlock x:Name="text_BP" Text="BitePoint:" Width="120" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="235" Canvas.Top="187" FontSize="8" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
                                         <TextBlock.RenderTransform>
                                             <TransformGroup>
@@ -655,17 +655,17 @@
 
                                 </Canvas>
                                 
-                                <StackPanel Width="50" Height="200" Margin="10,0,0,0">
-                                    <Label x:Name="Label_max_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
-                                    <controls:RangeSlider x:Name="Rangeslider_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="160" LowerValueChanged="Rangeslider_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_force_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30" Width="20" Orientation="Vertical" Maximum="200" HorizontalAlignment="Left" LargeChange="10"/>
+                                <StackPanel Width="50" Height="230" Margin="10,-10,0,0">
+                                    <Label x:Name="Label_max_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-5,0,0"/>
+                                    <controls:RangeSlider x:Name="Rangeslider_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="180" LowerValueChanged="Rangeslider_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_force_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30" Width="20" Orientation="Vertical" Maximum="200" HorizontalAlignment="Left" LargeChange="10"/>
                                     <Label x:Name="Label_min_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
                                 </StackPanel>
                             </StackPanel>
 
                             
-                            <StackPanel Width="400" Height="40" Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel Width="430" Height="40" Orientation="Horizontal" Margin="0,-10,0,0">
                                 <Label x:Name="Label_min_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
-                                <controls:RangeSlider x:Name="Rangeslider_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" UpperValue="30" Width="340" VerticalAlignment="Top"/>
+                                <controls:RangeSlider x:Name="Rangeslider_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" UpperValue="30" Width="370" VerticalAlignment="Top"/>
                                 <Label x:Name="Label_max_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
@@ -685,20 +685,20 @@
                             <StackPanel Height="205" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0">
                                 <!-- Travel vs Force curve GUI elements -->
                                 <Canvas x:Name="canvas_kinematic" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,0,0,0" >
-                                    <Line x:Name="Line_OA" X1="5" Y1="28" X2="405" Y2="28" Stroke="#7F87CEFA" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
-                                    <Line x:Name="Line_OB" X1="5" Y1="28" X2="405" Y2="28" Stroke="#7F87CEFA" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
-                                    <Line x:Name="Line_BC" X1="5" Y1="28" X2="405" Y2="28" Stroke="#7F87CEFA" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
-                                    <Line x:Name="Line_CA" X1="5" Y1="28" X2="405" Y2="28" Stroke="#7F87CEFA" StrokeThickness="5" StrokeDashCap="Round" StrokeStartLineCap="Round" />
-                                    <Line x:Name="Line_AD" X1="5" Y1="28" X2="405" Y2="28" Stroke="#7F87CEFA" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                                    <Line x:Name="Line_OA" X1="5" Y1="28" X2="405" Y2="28" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Opacity="0.7"/>
+                                    <Line x:Name="Line_OB" X1="5" Y1="28" X2="405" Y2="28" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Opacity="0.7"/>
+                                    <Line x:Name="Line_BC" X1="5" Y1="28" X2="405" Y2="28" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Opacity="0.7"/>
+                                    <Line x:Name="Line_CA" X1="5" Y1="28" X2="405" Y2="28" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="5" StrokeDashCap="Round" StrokeStartLineCap="Round" Opacity="0.7"/>
+                                    <Line x:Name="Line_AD" X1="5" Y1="28" X2="405" Y2="28" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Opacity="0.7"/>
                                     <Line x:Name="Line_Pedal_Travel" X1="5" Y1="28" X2="405" Y2="28" Stroke="#CCFA8787" StrokeThickness="5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                                    <Rectangle x:Name="rect_joint_O" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect_joint_A" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect_joint_B" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect_joint_C" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Rectangle x:Name="rect_joint_D" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Label x:Name="Label_joint_A" Content="A" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
-                                    <Label x:Name="Label_joint_B" Content="B" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
-                                    <Label x:Name="Label_joint_C" Content="C" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
+                                    <Rectangle x:Name="rect_joint_O" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.9"/>
+                                    <Rectangle x:Name="rect_joint_A" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.9"/>
+                                    <Rectangle x:Name="rect_joint_B" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.9"/>
+                                    <Rectangle x:Name="rect_joint_C" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.9"/>
+                                    <Rectangle x:Name="rect_joint_D" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="rect_joint_MouseMove" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.9"/>
+                                    <Label x:Name="Label_joint_A" Content="C" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
+                                    <Label x:Name="Label_joint_B" Content="A" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
+                                    <Label x:Name="Label_joint_C" Content="B" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
                                     <Label x:Name="Label_joint_D" Content="D" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
                                     <Label x:Name="Label_joint_O" Content="O" Width="10" Foreground="White" FontFamily="Arial" HorizontalAlignment="Center" Height="10" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontSize="10" HorizontalContentAlignment="Center" FontStyle="Italic"/>
                                     <StackPanel x:Name="SP_OA_canvas" Height="20" Width="60" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="SP_canvas_MouseEnter" MouseLeave="SP_canvas_MouseLeave">
@@ -903,7 +903,7 @@
                             </StackPanel>
 
                             <Canvas x:Name="canvas_plot_ABS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
-                                <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+                                <Polyline x:Name="Polyline_plot_ABS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="{DynamicResource AccentColorBrush}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
                             </Canvas>
 
@@ -961,7 +961,7 @@
                                 <Label Content="Engine RPM / Speed Rumble Effect" Height="15" Width="300" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
                             <Canvas x:Name="canvas_plot_RPM" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
-                                <Polyline x:Name="Polyline_plot_RPM" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <Polyline x:Name="Polyline_plot_RPM" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="{DynamicResource AccentColorBrush}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                             </Canvas>
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Width="540" Height="30">
@@ -1002,7 +1002,7 @@
                                 <Label Content="Bite Point Vibration" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
                             <Canvas x:Name="canvas_plot_BP" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
-                                <Polyline x:Name="Polyline_plot_BP" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+                                <Polyline x:Name="Polyline_plot_BP" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="{DynamicResource AccentColorBrush}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
                             </Canvas>
                             
@@ -1067,7 +1067,7 @@
 
                             </StackPanel>
                             <Canvas x:Name="canvas_plot_WS" Height="50" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
-                                <Polyline x:Name="Polyline_plot_WS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="#7F87CEFA"  HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+                                <Polyline x:Name="Polyline_plot_WS" Height="50" Width="400" Points="0,25 80,25 160,25 240,25 320,25 400,25" Stroke="{DynamicResource AccentColorBrush}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
 
                             </Canvas>
                             <StackPanel  Height="30" Width="540" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -1274,41 +1274,15 @@
                                     <ComboBoxItem Content="NONE"/>
                                 </ComboBox>
                             </StackPanel>
-
-                            <Canvas x:Name="canvas_horz_KF" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <TextBox x:Name="text_KF" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-
-                                <TextBlock x:Name="text_KF_text" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Height="10" Text="Loadcell Denoising Factor (slow to fast)" Canvas.Left="5">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform></TextBlock>
-
-
-                                <Line x:Name="Line_H_KF"
-                                    X1="5" Y1="28"
-                                    X2="405" Y2="28"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_KF" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" ToolTip="Smaller value make the pedal smooth but slow response, larger value make the pedal quick response but more noise."/>
-
-                            </Canvas>
-
-
-
+                            <StackPanel Width="400" Height="50">
+                                <StackPanel Width="400" Height="10" Orientation="Horizontal">
+                                    <Label  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Denoising Factor (slow to fast)" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_KF"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="KF:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_KF" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="255" ValueChanged="Slider_KF_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
+                            </StackPanel>
                         </StackPanel>
 
                     </Border>
@@ -1350,118 +1324,31 @@
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <Label Content="PID Tuning" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
-                            <Canvas x:Name="canvas_horz_Pgain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
+                            <StackPanel Width="400" Height="40">
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_Pgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="P-Gain:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_Pgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" ValueChanged="Slider_Pgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
+                            </StackPanel>
+                            <StackPanel Width="400" Height="40">
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_Igain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="I-Gain:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_Igain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="500" ValueChanged="Slider_Igain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1" LargeChange="10"/>
+                            </StackPanel>
+                            <StackPanel Width="400" Height="40">
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_Dgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="D-Gain:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_Dgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.01" ValueChanged="Slider_Dgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.0001" LargeChange="0.001" TickFrequency="0.0001"/>
+                            </StackPanel>
 
-                                </Canvas.RenderTransform>
-                                <TextBox x:Name="text_Pgain" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-                                <TextBlock x:Name="text_Pgain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="P-Gain:" Width="60" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-
-                                <Line x:Name="Line_H_Pgain"
-                                    X1="5" Y1="28"
-                                    X2="405" Y2="28"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_Pgain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
-                            <Canvas x:Name="canvas_horz_Igain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <TextBox x:Name="text_Igain" Width="40" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-                                <TextBlock x:Name="text_Igain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="I-Gain:" Width="60" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-
-                                <Line x:Name="Line_H_Igain"
-                                        X1="5" Y1="28"
-                                        X2="405" Y2="28"
-                                        Stroke="#7F87CEFA"
-                                        StrokeThickness="2" />
-                                <Rectangle x:Name="rect_Igain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
-                            <Canvas x:Name="canvas_horz_Dgain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <TextBox x:Name="text_Dgain" Width="40" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-                                <TextBlock x:Name="text_Dgain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="D-Gain:" Width="60" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5">
-                                </TextBlock>
-
-                                <Line x:Name="Line_H_Dgain"
-                                    X1="5" Y1="28"
-                                    X2="405" Y2="28"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_Dgain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
-                            <Canvas x:Name="canvas_horz_VFgain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <TextBox x:Name="text_VFgain" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold" Margin="0,5,0,0" TextAlignment="Center"/>
-                                <TextBlock x:Name="text_VFgain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feed Forward Gain:" Width="120" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3"  FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-
-                                <Line x:Name="Line_H_VFgain"
-                                    X1="5" Y1="28"
-                                    X2="405" Y2="28"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_VFgain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
+                            <StackPanel Width="400" Height="40">
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_VFgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Feed Forward Gain:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_VFgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="20" ValueChanged="Slider_VFgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.1"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </TabItem>
@@ -1484,76 +1371,12 @@
                             <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                 <Label Content="MPC gain tuning" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                             </StackPanel>
-
-                            <Canvas x:Name="canvas_horz_MPC_0th_order_gain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <StackPanel x:Name="Panel_MPC_0th_order_gain" Height="10" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" >
-                                    <TextBox x:Name="textBox_MPC_0th_order_gain" Width="25" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="Control_TextBox_TextChanged" HorizontalAlignment="Left" MinHeight="20" FontSize="8" VerticalContentAlignment="Center" Margin="-3,-5,0,0" BorderThickness="0,0,0,0" Background="#00252525" HorizontalContentAlignment="Right" FontFamily="Arial" FontWeight="Bold"/>
-                                    <TextBlock x:Name="text_MPC_0th_order_gain" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Height="10" Text="kg/mm" Margin="-3,0,0,0" />
+                            <StackPanel Width="400" Height="40">
+                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_MPC_0th_gain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="10" Padding="0,0,0,0"/>
                                 </StackPanel>
-                                <TextBlock x:Name="text_MPC_0th_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Foot spring stiffness:" Width="120" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" Height="10"/>
-
-
-                                <Line x:Name="Line_H_MPC_0th_order_gain"
-                                    X1="5" Y1="28"
-                                    X2="405" Y2="28"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_MPC_0th_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="23" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-
-                            </Canvas>
-
-
-
-                            <Canvas x:Name="canvas_horz_MPC_1st_order_gain" Height="40" Width="400" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="65,0,0,0" >
-                                <Canvas.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-
-                                </Canvas.RenderTransform>
-                                <!--<TextBlock x:Name="text_MPC_1st_order_gain" HorizontalAlignment="Left" VerticalAlignment="Top" Text="1st order gain:" Width="60" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="6" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="2">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock x:Name="text_MPC_1st_order_gain_text" HorizontalAlignment="Left" VerticalAlignment="Center" Text="1st order gain" Width="66" Foreground="LightSkyBlue" RenderTransformOrigin="0.5,0.5" Canvas.Top="30" FontSize="8" FontFamily="Arial Black" TextAlignment="Center" Canvas.Left="170">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>-->
-
-                                <!--<Line x:Name="Line_H_MPC_1st_order_gain"
-                                    X1="5" Y1="20"
-                                    X2="405" Y2="20"
-                                    Stroke="#7F87CEFA"
-                                    StrokeThickness="2" />
-                                <Rectangle x:Name="rect_MPC_1st_order_gain" Width="10" Height="10" Fill="LightSkyBlue" Canvas.Left="20" Canvas.Top="15" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>-->
-
-                            </Canvas>
-
-
+                                <Slider x:Name="Slider_MPC_0th_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1" ValueChanged="Slider_MPC_0th_gain_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
