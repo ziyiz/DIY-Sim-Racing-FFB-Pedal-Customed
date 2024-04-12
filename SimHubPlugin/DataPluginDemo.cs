@@ -1529,7 +1529,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadHeader_.storeToEeprom = 0;
             dap_config_initial_st.payloadPedalConfig_.pedalStartPosition = 35;
             dap_config_initial_st.payloadPedalConfig_.pedalEndPosition = 80;
-            dap_config_initial_st.payloadPedalConfig_.maxForce = 90;
+            dap_config_initial_st.payloadPedalConfig_.maxForce = 50;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p000 = 0;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p020 = 20;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p040 = 40;
