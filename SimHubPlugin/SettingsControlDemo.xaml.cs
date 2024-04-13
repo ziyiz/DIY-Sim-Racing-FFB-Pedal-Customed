@@ -893,24 +893,30 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:";
+
+            string info_text;
             if (Plugin != null)
             {
-                string info_text;
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
                 {
                     info_text = "Connected";
                 }
-                if (Plugin.Settings.auto_connect_flag == 1)
-                {
-                    info_text = info_text_connection;
-                }
                 else
                 {
-                    info_text = "Waiting...";
+                    if (Plugin.Settings.auto_connect_flag == 1)
+                    {
+                        info_text = info_text_connection;
+                    }
+                    else
+                    {
+                        info_text = "Waiting...";
+                    }
                 }
                 info_text += "\n" + Constants.pedalConfigPayload_version;
                 info_label_2.Content = info_text;
             }
+
+            
 
 
 
@@ -2399,7 +2405,7 @@ namespace User.PluginSdkDemo
                                     //UpdateSerialPortList_click();
                                     openSerialAndAddReadCallback(pedalIdx);
                                     //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
-                                    System.Threading.Thread.Sleep(100);
+                                    System.Threading.Thread.Sleep(200);
                                     if (Plugin.Settings.reading_config == 1)
                                     {
                                         Reading_config_auto(pedalIdx);
