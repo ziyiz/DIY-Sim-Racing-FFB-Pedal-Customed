@@ -4448,13 +4448,17 @@ namespace User.PluginSdkDemo
 
         private void Pedal_joint_draw()
         {
+            //A= kinematic joint C
+            //B= Kinematic joint A
+            //C= Kinematic joint B
+            //O=O
+            //D=D
 
-
-            Label_OA_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
-            Label_OB_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
-            Label_BC_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
-            Label_CA_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            Label_AD_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
+            Label_kinematic_b_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
+            Label_kinematic_c_hort_canvas.Text = ""+dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
+            Label_kinematic_c_vert_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
+            Label_kinematic_a_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
+            Label_kinematic_d_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
             Label_travel_canvas.Text = "" + Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
             Label_kinematic_scale.Content = Math.Round(Plugin.Settings.kinematicDiagram_zeroPos_scale,1);
             
@@ -4520,63 +4524,63 @@ namespace User.PluginSdkDemo
             //set rect position
             Canvas.SetLeft(rect_joint_O, shifting_OX - rect_joint_O.Width / 2);
             Canvas.SetTop(rect_joint_O, canvas_kinematic.Height - shifting_OY - rect_joint_O.Height / 2);
-            Canvas.SetLeft(rect_joint_A, A_X / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
-            Canvas.SetTop(rect_joint_A, canvas_kinematic.Height - A_Y / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
-            Canvas.SetLeft(rect_joint_B, OB_length / scale_factor - rect_joint_B.Width / 2 + shifting_OX);
-            Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - 0 / scale_factor - rect_joint_B.Height / 2 - shifting_OY);
-            Canvas.SetLeft(rect_joint_C, OB_length / scale_factor - rect_joint_A.Width / 2 + Current_travel_position / scale_factor + shifting_OX);
-            Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - BC_length / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_C, A_X / scale_factor - rect_joint_C.Width / 2 + shifting_OX);
+            Canvas.SetTop(rect_joint_C, canvas_kinematic.Height - A_Y / scale_factor - rect_joint_C.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_A, OB_length / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
+            Canvas.SetTop(rect_joint_A, canvas_kinematic.Height - 0 / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
+            Canvas.SetLeft(rect_joint_B, OB_length / scale_factor - rect_joint_B.Width / 2 + Current_travel_position / scale_factor + shifting_OX);
+            Canvas.SetTop(rect_joint_B, canvas_kinematic.Height - BC_length / scale_factor - rect_joint_B.Height / 2 - shifting_OY);
             Canvas.SetLeft(rect_joint_D, D_X / scale_factor - rect_joint_A.Width / 2 + shifting_OX);
             Canvas.SetTop(rect_joint_D, canvas_kinematic.Height - D_Y / scale_factor - rect_joint_A.Height / 2 - shifting_OY);
 
-            Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A) - Label_joint_A.Width);
-            Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A));
-            Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B)+rect_joint_B.Width/2-Label_joint_B.Width/2);
-            Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B)-Label_joint_B.Height);
-            Canvas.SetLeft(Label_joint_C, Canvas.GetLeft(rect_joint_C) + Label_joint_C.Width);
+            Canvas.SetLeft(Label_joint_C, Canvas.GetLeft(rect_joint_C) - Label_joint_C.Width);
             Canvas.SetTop(Label_joint_C, Canvas.GetTop(rect_joint_C));
+            Canvas.SetLeft(Label_joint_A, Canvas.GetLeft(rect_joint_A)+rect_joint_A.Width/2-Label_joint_A.Width/2);
+            Canvas.SetTop(Label_joint_A, Canvas.GetTop(rect_joint_A)-Label_joint_A.Height);
+            Canvas.SetLeft(Label_joint_B, Canvas.GetLeft(rect_joint_B) + Label_joint_B.Width);
+            Canvas.SetTop(Label_joint_B, Canvas.GetTop(rect_joint_B));
             Canvas.SetLeft(Label_joint_D, Canvas.GetLeft(rect_joint_D) - Label_joint_D.Width);
             Canvas.SetTop(Label_joint_D, Canvas.GetTop(rect_joint_D));
             Canvas.SetLeft(Label_joint_O, Canvas.GetLeft(rect_joint_O) - Label_joint_O.Width);
             Canvas.SetTop(Label_joint_O, Canvas.GetTop(rect_joint_O));
 
-            Canvas.SetLeft(SP_OA_canvas, (Canvas.GetLeft(rect_joint_A) + shifting_OX) / 2 - SP_OA_canvas.Width / 2 - Label_OA_canvas.Width / 2);
-            Canvas.SetTop(SP_OA_canvas, (Canvas.GetTop(rect_joint_A) + canvas_kinematic.Height - shifting_OY) / 2 - Label_OA_canvas.Height / 2);
-            Canvas.SetLeft(SP_OB_canvas, (Canvas.GetLeft(rect_joint_B) + shifting_OX) / 2 - SP_OB_canvas.Width / 2 -5);
-            Canvas.SetTop(SP_OB_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + Label_OB_canvas.Height / 2 -5);
-            Canvas.SetLeft(SP_BC_canvas, Canvas.GetLeft(rect_joint_C) - rect_joint_C.Width - SP_BC_canvas.Width / 2 + Label_BC_canvas.Width);
-            Canvas.SetTop(SP_BC_canvas, (Canvas.GetTop(rect_joint_B) + Canvas.GetTop(rect_joint_C)) / 2 - Label_BC_canvas.Height / 2 +5);
-            Canvas.SetLeft(SP_CA_canvas, (Canvas.GetLeft(rect_joint_C) + Canvas.GetLeft(rect_joint_A)) / 2 - SP_CA_canvas.Width / 2 + Label_CA_canvas.Width / 2);
-            Canvas.SetTop(SP_CA_canvas, (Canvas.GetTop(rect_joint_C) + Canvas.GetTop(rect_joint_A)) / 2 - Label_CA_canvas.Height);
-            Canvas.SetLeft(SP_AD_canvas, (Canvas.GetLeft(rect_joint_A) + Canvas.GetLeft(rect_joint_D)) / 2 - SP_AD_canvas.Width / 2 - Label_AD_canvas.Width / 2);
-            Canvas.SetTop(SP_AD_canvas, (Canvas.GetTop(rect_joint_A) + +Canvas.GetTop(rect_joint_D)) / 2 - Label_AD_canvas.Height / 2 );
-            Canvas.SetLeft(SP_travel_canvas, (Canvas.GetLeft(rect_joint_B) + (OB_length + Travel_length) / scale_factor + shifting_OX) / 2 - SP_travel_canvas.Width / 2);
-            Canvas.SetTop(SP_travel_canvas, (Canvas.GetTop(rect_joint_B) + canvas_kinematic.Height - shifting_OY) / 2 + Label_travel_canvas.Height / 2 -5);
+            Canvas.SetLeft(SP_kinematic_b_canvas, (Canvas.GetLeft(rect_joint_C) + shifting_OX) / 2 - SP_kinematic_b_canvas.Width / 2 - Label_kinematic_b_canvas.Width / 2);
+            Canvas.SetTop(SP_kinematic_b_canvas, (Canvas.GetTop(rect_joint_C) + canvas_kinematic.Height - shifting_OY) / 2 - Label_kinematic_b_canvas.Height / 2);
+            Canvas.SetLeft(SP_kinematic_c_hort_canvas, (Canvas.GetLeft(rect_joint_A) + shifting_OX) / 2 - SP_kinematic_c_hort_canvas.Width / 2 -5);
+            Canvas.SetTop(SP_kinematic_c_hort_canvas, (Canvas.GetTop(rect_joint_A) + canvas_kinematic.Height - shifting_OY) / 2 + Label_kinematic_c_hort_canvas.Height / 2 -5);
+            Canvas.SetLeft(SP_kinematic_c_vert_canvas, Canvas.GetLeft(rect_joint_B) - rect_joint_B.Width - SP_kinematic_c_vert_canvas.Width / 2 + Label_kinematic_c_vert_canvas.Width);
+            Canvas.SetTop(SP_kinematic_c_vert_canvas, (Canvas.GetTop(rect_joint_A) + Canvas.GetTop(rect_joint_B)) / 2 - Label_kinematic_c_vert_canvas.Height / 2 +5);
+            Canvas.SetLeft(SP_kinematic_a_canvas, (Canvas.GetLeft(rect_joint_A) + Canvas.GetLeft(rect_joint_C)) / 2 - SP_kinematic_a_canvas.Width / 2 + Label_kinematic_a_canvas.Width / 2);
+            Canvas.SetTop(SP_kinematic_a_canvas, (Canvas.GetTop(rect_joint_A) + Canvas.GetTop(rect_joint_C)) / 2 - Label_kinematic_a_canvas.Height);
+            Canvas.SetLeft(SP_kinematic_d_canvas, (Canvas.GetLeft(rect_joint_C) + Canvas.GetLeft(rect_joint_D)) / 2 - SP_kinematic_d_canvas.Width / 2 - Label_kinematic_d_canvas.Width / 2);
+            Canvas.SetTop(SP_kinematic_d_canvas, (Canvas.GetTop(rect_joint_C) + +Canvas.GetTop(rect_joint_D)) / 2 - Label_kinematic_d_canvas.Height / 2 );
+            Canvas.SetLeft(SP_travel_canvas, (Canvas.GetLeft(rect_joint_A) + (OB_length + Travel_length) / scale_factor + shifting_OX) / 2 - SP_travel_canvas.Width / 2);
+            Canvas.SetTop(SP_travel_canvas, (Canvas.GetTop(rect_joint_A) + canvas_kinematic.Height - shifting_OY) / 2 + Label_travel_canvas.Height / 2 -5);
 
-            this.Line_OA.X1 = shifting_OX;
-            this.Line_OA.Y1 = canvas_kinematic.Height - shifting_OY;
-            this.Line_OA.X2 = A_X / scale_factor + shifting_OX;
-            this.Line_OA.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+            this.Line_kinematic_b.X1 = shifting_OX;
+            this.Line_kinematic_b.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_kinematic_b.X2 = A_X / scale_factor + shifting_OX;
+            this.Line_kinematic_b.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
 
-            this.Line_OB.X1 = shifting_OX;
-            this.Line_OB.Y1 = canvas_kinematic.Height - shifting_OY;
-            this.Line_OB.X2 = OB_length / scale_factor + shifting_OX;
-            this.Line_OB.Y2 = canvas_kinematic.Height - shifting_OY;
+            this.Line_kinematic_c_hort.X1 = shifting_OX;
+            this.Line_kinematic_c_hort.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_kinematic_c_hort.X2 = OB_length / scale_factor + shifting_OX;
+            this.Line_kinematic_c_hort.Y2 = canvas_kinematic.Height - shifting_OY;
 
-            this.Line_BC.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-            this.Line_BC.Y1 = canvas_kinematic.Height - shifting_OY;
-            this.Line_BC.X2 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-            this.Line_BC.Y2 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
+            this.Line_kinematic_c_vert.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_kinematic_c_vert.Y1 = canvas_kinematic.Height - shifting_OY;
+            this.Line_kinematic_c_vert.X2 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_kinematic_c_vert.Y2 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
 
-            this.Line_CA.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
-            this.Line_CA.Y1 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
-            this.Line_CA.X2 = A_X / scale_factor + shifting_OX;
-            this.Line_CA.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+            this.Line_kinematic_a.X1 = (OB_length + Current_travel_position) / scale_factor + shifting_OX;
+            this.Line_kinematic_a.Y1 = canvas_kinematic.Height - BC_length / scale_factor - shifting_OY;
+            this.Line_kinematic_a.X2 = A_X / scale_factor + shifting_OX;
+            this.Line_kinematic_a.Y2 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
 
-            this.Line_AD.X1 = A_X / scale_factor + shifting_OX;
-            this.Line_AD.Y1 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
-            this.Line_AD.X2 = D_X / scale_factor + shifting_OX;
-            this.Line_AD.Y2 = canvas_kinematic.Height - D_Y / scale_factor - shifting_OY;
+            this.Line_kinematic_d.X1 = A_X / scale_factor + shifting_OX;
+            this.Line_kinematic_d.Y1 = canvas_kinematic.Height - A_Y / scale_factor - shifting_OY;
+            this.Line_kinematic_d.X2 = D_X / scale_factor + shifting_OX;
+            this.Line_kinematic_d.Y2 = canvas_kinematic.Height - D_Y / scale_factor - shifting_OY;
 
             this.Line_Pedal_Travel.X1 = OB_length / scale_factor + shifting_OX;
             this.Line_Pedal_Travel.Y1 = canvas_kinematic.Height - shifting_OY;
@@ -4822,31 +4826,31 @@ namespace User.PluginSdkDemo
 
         private void SP_canvas_MouseEnter(object sender, MouseEventArgs e)
         {
-            btn_plus_OA_canvas.Visibility = Visibility.Visible;
-            btn_minus_OA_canvas.Visibility = Visibility.Visible;
-            btn_plus_OB_canvas.Visibility = Visibility.Visible;
-            btn_minus_OB_canvas.Visibility = Visibility.Visible;
-            btn_plus_BC_canvas.Visibility = Visibility.Visible;
-            btn_minus_BC_canvas.Visibility = Visibility.Visible;
-            btn_plus_CA_canvas.Visibility = Visibility.Visible;
-            btn_minus_CA_canvas.Visibility = Visibility.Visible;
-            btn_plus_AD_canvas.Visibility = Visibility.Visible;
-            btn_minus_AD_canvas.Visibility = Visibility.Visible;
+            btn_plus_kinematic_b_canvas.Visibility = Visibility.Visible;
+            btn_minus_kinematic_b_canvas.Visibility = Visibility.Visible;
+            btn_plus_kinematic_c_hort_canvas.Visibility = Visibility.Visible;
+            btn_minus_kinematic_c_hort_canvas.Visibility = Visibility.Visible;
+            btn_plus_kinematic_c_vert_canvas.Visibility = Visibility.Visible;
+            btn_minus_kinematic_c_vert_canvas.Visibility = Visibility.Visible;
+            btn_plus_kinematic_a_canvas.Visibility = Visibility.Visible;
+            btn_minus_kinematic_a_canvas.Visibility = Visibility.Visible;
+            btn_plus_kinematic_d_canvas.Visibility = Visibility.Visible;
+            btn_minus_kinematic_d_canvas.Visibility = Visibility.Visible;
             btn_plus_travel_canvas.Visibility = Visibility.Visible;
             btn_minus_travel_canvas.Visibility = Visibility.Visible;
         }
         private void SP_canvas_MouseLeave(object sender, MouseEventArgs e)
         {
-            btn_plus_OA_canvas.Visibility = Visibility.Hidden;
-            btn_minus_OA_canvas.Visibility = Visibility.Hidden;
-            btn_plus_OB_canvas.Visibility = Visibility.Hidden;
-            btn_minus_OB_canvas.Visibility = Visibility.Hidden;
-            btn_plus_BC_canvas.Visibility = Visibility.Hidden;
-            btn_minus_BC_canvas.Visibility = Visibility.Hidden;
-            btn_plus_CA_canvas.Visibility = Visibility.Hidden;
-            btn_minus_CA_canvas.Visibility = Visibility.Hidden;
-            btn_plus_AD_canvas.Visibility = Visibility.Hidden;
-            btn_minus_AD_canvas.Visibility = Visibility.Hidden;
+            btn_plus_kinematic_b_canvas.Visibility = Visibility.Hidden;
+            btn_minus_kinematic_b_canvas.Visibility = Visibility.Hidden;
+            btn_plus_kinematic_c_hort_canvas.Visibility = Visibility.Hidden;
+            btn_minus_kinematic_c_hort_canvas.Visibility = Visibility.Hidden;
+            btn_plus_kinematic_c_vert_canvas.Visibility = Visibility.Hidden;
+            btn_minus_kinematic_c_vert_canvas.Visibility = Visibility.Hidden;
+            btn_plus_kinematic_a_canvas.Visibility = Visibility.Hidden;
+            btn_minus_kinematic_a_canvas.Visibility = Visibility.Hidden;
+            btn_plus_kinematic_d_canvas.Visibility = Visibility.Hidden;
+            btn_minus_kinematic_d_canvas.Visibility = Visibility.Hidden;
             btn_plus_travel_canvas.Visibility = Visibility.Hidden;
             btn_minus_travel_canvas.Visibility = Visibility.Hidden;
         }
@@ -4876,7 +4880,7 @@ namespace User.PluginSdkDemo
         private void Kinematic_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var textbox = sender as System.Windows.Controls.TextBox;
-            if (textbox.Name == "Label_OA_canvas")
+            if (textbox.Name == "Label_kinematic_b_canvas")
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
@@ -4895,7 +4899,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "Label_OB_canvas")
+            if (textbox.Name == "Label_kinematic_c_hort_canvas")
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
@@ -4914,7 +4918,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "Label_BC_canvas")
+            if (textbox.Name == "Label_kinematic_c_vert_canvas")
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
@@ -4933,7 +4937,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "Label_CA_canvas")
+            if (textbox.Name == "Label_kinematic_a_canvas")
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
@@ -4952,7 +4956,7 @@ namespace User.PluginSdkDemo
                     }
                 }
             }
-            if (textbox.Name == "Label_AD_canvas")
+            if (textbox.Name == "Label_kinematic_d_canvas")
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
