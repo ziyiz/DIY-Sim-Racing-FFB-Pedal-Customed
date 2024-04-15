@@ -5182,7 +5182,7 @@ namespace User.PluginSdkDemo
         private void Slider_Igain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)e.NewValue;
-            label_Pgain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
+            label_Igain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
         }
 
         private void Slider_Dgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
