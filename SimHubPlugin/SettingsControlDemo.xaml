@@ -979,9 +979,13 @@
                                 </StackPanel>
                                 <Slider x:Name="Slider_RPM_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_RPM_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
                             </StackPanel>
-                            <StackPanel Width="400" Height="40">
-                                <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                            <StackPanel Width="400" Height="50">
+                                <StackPanel Width="400" Height="10" Orientation="Horizontal">
                                     <Label x:Name="label_RPM_freq"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <StackPanel Width="400" Height="10" Orientation="Horizontal">
+                                    <Label x:Name="label_RPM_freq_min"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                    <Label x:Name="label_RPM_freq_max"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
                                 </StackPanel>
                                 <controls:RangeSlider x:Name="Rangeslider_RPM_freq" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="10" LowerValueChanged="Rangeslider_RPM_freq_LowerValueChanged" UpperValueChanged="Rangeslider_RPM_freq_UpperValueChanged" MinRange="1" SmallChange="1" Maximum="50" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30"/>
                             </StackPanel>

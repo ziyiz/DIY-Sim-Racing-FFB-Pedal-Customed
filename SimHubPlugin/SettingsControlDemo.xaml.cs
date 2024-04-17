@@ -949,7 +949,10 @@ namespace User.PluginSdkDemo
 
             Rangeslider_RPM_freq.LowerValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq ;
             Rangeslider_RPM_freq.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
-            label_RPM_freq.Content = "Effect Frequency: Max: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz, Min: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+            label_RPM_freq_max.Content = "MAX:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
+            label_RPM_freq_min.Content = "MIN:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+
+
             Slider_RPM_AMP.Value= (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP)/100.0f;
             label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
 
@@ -5068,14 +5071,15 @@ namespace User.PluginSdkDemo
         private void Rangeslider_RPM_freq_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq = (byte)e.NewValue;
-            label_RPM_freq.Content = "Effect Frequency: Max: "+ dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq+"Hz, Min: "+ dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq+"Hz";
+            label_RPM_freq_min.Content = "MIN:"+ dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq+"Hz";
+
             update_plot_RPM();
         }
 
         private void Rangeslider_RPM_freq_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq = (byte)e.NewValue;
-            label_RPM_freq.Content = "Effect Frequency: Max: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz, Min: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
+            label_RPM_freq_max.Content = "MAX:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
             update_plot_RPM();
         }
 
