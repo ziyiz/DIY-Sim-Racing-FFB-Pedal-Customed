@@ -8,7 +8,8 @@ The one which has 25.4mm/1" spacing between the pins, see<br>
 
 
 # Flash settings
-see ![](ArduinoIdeSettings.png)
+see <br> ![image](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/assets/21274895/dc73cd64-73c5-4bd5-ba5f-7b06a87677b7)
+
 
 # When the Esp32 S3 board does not output 5V
 https://forum.arduino.cc/t/chinese-esp32-s3-5v-pin-warning/1192758
