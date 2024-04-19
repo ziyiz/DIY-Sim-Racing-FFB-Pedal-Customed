@@ -213,6 +213,9 @@
 
 
 // V3 version of dev PCB for ESP32 S3
+// flash instructions, see https://hutscape.com/tutorials/hello-arduino-esp32s3
+// 1. ESP32S3 Dev Module
+// 2. USB CDC On Boot Enabled
 #if PCB_VERSION == 6
   // ADC defines
   #define PIN_DRDY 15//19// 19 --> DRDY
@@ -235,8 +238,8 @@
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
-  #define ISV57_TXPIN 9//27 //17
-  #define ISV57_RXPIN 10//26 // 16
+  #define ISV57_TXPIN 10//27 //17
+  #define ISV57_RXPIN 9//26 // 16
 
   //#define Using_analog_output
 
