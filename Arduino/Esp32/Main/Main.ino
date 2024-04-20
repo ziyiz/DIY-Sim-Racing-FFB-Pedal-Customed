@@ -122,6 +122,7 @@ bool resetPedalPosition = false;
 
 static SemaphoreHandle_t semaphore_readServoValues=NULL;
 
+static SemaphoreHandle_t semaphore_updatePedalStates=NULL;
 
 /**********************************************************************************************/
 /*                                                                                            */
@@ -221,6 +222,7 @@ void setup()
 {
   //Serial.begin(115200);
   Serial.begin(921600);
+  //Serial.begin(512000);
   Serial.setTimeout(5);
 
   Serial.println(" ");
@@ -405,6 +407,7 @@ void setup()
   semaphore_updateJoystick = xSemaphoreCreateMutex();
   semaphore_updateConfig = xSemaphoreCreateMutex();
   semaphore_resetServoPos = xSemaphoreCreateMutex();
+  semaphore_updatePedalStates = xSemaphoreCreateMutex();
   delay(10);
 
 
@@ -455,7 +458,7 @@ void setup()
                     NULL,      
                     1,         
                     &Task2,    
-                    0);     
+                    1);     
   delay(500);
 
   #ifdef ISV_COMMUNICATION
@@ -1025,13 +1028,13 @@ void pedalUpdateTask( void * pvParameters )
 
 
 
-    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT) )
+    // update pedal states
+    if(semaphore_updatePedalStates!=NULL)
     {
-      printCycleCounter++;
-
-      if (printCycleCounter >= 2)
+      if(xSemaphoreTake(semaphore_updatePedalStates, (TickType_t)1)==pdTRUE) 
       {
-        printCycleCounter = 0;
+        
+        // update basic pedal state struct
         dap_state_basic_st.payloadPedalState_Basic_.pedalForce_u16 =  normalizedPedalReading_fl32 * 65535;
         dap_state_basic_st.payloadPedalState_Basic_.pedalPosition_u16 = constrain(stepperPosFraction, 0, 1) * 65535;
         dap_state_basic_st.payloadPedalState_Basic_.joystickOutput_u16 = (float)joystickNormalizedToInt32 / 10000. * 32767.0;//65535;
@@ -1040,21 +1043,8 @@ void pedalUpdateTask( void * pvParameters )
         dap_state_basic_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_basic_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_basic_st.payLoadHeader_)), sizeof(dap_state_basic_st.payLoadHeader_) + sizeof(dap_state_basic_st.payloadPedalState_Basic_));
 
-        DAP_state_basic_st * dap_state_basic_st_local_ptr;
-        dap_state_basic_st_local_ptr = &dap_state_basic_st;
-        Serial.write((char*)dap_state_basic_st_local_ptr, sizeof(DAP_state_basic_st));
-        Serial.print("\r\n");
-      }
-    }
 
-
-    if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT) )
-    {
-      //printCycleCounter++;
-
-      //if (printCycleCounter >= 2)
-      {
-        printCycleCounter = 0;
+        // update extended struct 
         dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
         dap_state_extended_st.payloadPedalState_Extended_.pedalForce_raw_fl32 =  loadcellReading;;
         dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_fl32 =  filteredReading;
@@ -1076,18 +1066,25 @@ void pedalUpdateTask( void * pvParameters )
         }
 
         dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPositionFromMin();
-
-        
         dap_state_extended_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_EXTENDED;
         dap_state_extended_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_extended_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_extended_st.payLoadHeader_)), sizeof(dap_state_extended_st.payLoadHeader_) + sizeof(dap_state_extended_st.payloadPedalState_Extended_));
 
-        DAP_state_extended_st * dap_state_extended_st_local_ptr;
-        dap_state_extended_st_local_ptr = &dap_state_extended_st;
-        Serial.write((char*)dap_state_extended_st_local_ptr, sizeof(DAP_state_extended_st));
-        Serial.print("\r\n");
+        // release semaphore
+        xSemaphoreGive(semaphore_updatePedalStates);
       }
     }
+    else
+    {
+      semaphore_updatePedalStates = xSemaphoreCreateMutex();
+    }
+    
+
+
+    
+
+
+    
 
 
     #ifdef PRINT_USED_STACK_SIZE
@@ -1315,6 +1312,48 @@ void serialCommunicationTask( void * pvParameters )
       }
     }
 
+
+    // send pedal state structs
+    // update pedal states
+    printCycleCounter++;
+    if(semaphore_updatePedalStates!=NULL)
+    {
+      if(xSemaphoreTake(semaphore_updatePedalStates, (TickType_t)1)==pdTRUE) 
+      {
+      
+        // send basic pedal state struct
+        if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT) )
+        {
+          if (printCycleCounter >= 2)
+          {
+            printCycleCounter = 0;
+            DAP_state_basic_st * dap_state_basic_st_local_ptr;
+            dap_state_basic_st_local_ptr = &dap_state_basic_st;
+            Serial.write((char*)dap_state_basic_st_local_ptr, sizeof(DAP_state_basic_st));
+            Serial.print("\r\n");
+          }
+        }
+          
+        // send extended pedal state struct
+        if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT) )
+        {
+          DAP_state_extended_st * dap_state_extended_st_local_ptr;
+          dap_state_extended_st_local_ptr = &dap_state_extended_st;
+          Serial.write((char*)dap_state_extended_st_local_ptr, sizeof(DAP_state_extended_st));
+          Serial.print("\r\n");
+        }
+          
+        // release semaphore
+        xSemaphoreGive(semaphore_updatePedalStates);
+      }
+    }
+    else
+    {
+      semaphore_updatePedalStates = xSemaphoreCreateMutex();
+    }
+
+    // wait until transmission is finished
+    Serial.flush();
 
 
     // transmit controller output
