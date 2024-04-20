@@ -13,3 +13,7 @@ see <br> ![image](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/assets/2127
 
 # When the Esp32 S3 board does not output 5V
 https://forum.arduino.cc/t/chinese-esp32-s3-5v-pin-warning/1192758
+
+# ESP hangs w/ closed serial monitor
+Update to ESP core >=3
+[here](https://github.com/espressif/arduino-esp32/issues/9004)
