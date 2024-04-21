@@ -1363,7 +1363,8 @@ void serialCommunicationTask( void * pvParameters )
 
 
     // wait until transmission is finished
-    Serial.flush();
+    // flush argument = true, do not clear Rx buffer
+    Serial.flush(true);
 
 
     // transmit controller output
