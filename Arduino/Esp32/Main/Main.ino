@@ -447,7 +447,7 @@ void setup()
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
                     &Task1,      /* Task handle to keep track of created task */
-                    1);          /* pin task to core 1 */
+                    0);          /* pin task to core 1 */
   delay(500);
 
   xTaskCreatePinnedToCore(
@@ -471,7 +471,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task3,    
-                      0);     
+                      1);     
     delay(500);
 #endif
 
@@ -1316,41 +1316,51 @@ void serialCommunicationTask( void * pvParameters )
     // send pedal state structs
     // update pedal states
     printCycleCounter++;
+    DAP_state_basic_st dap_state_basic_st_lcl;
+    DAP_state_extended_st dap_state_extended_st_lcl;
+
     if(semaphore_updatePedalStates!=NULL)
     {
+      
       if(xSemaphoreTake(semaphore_updatePedalStates, (TickType_t)1)==pdTRUE) 
       {
       
-        // send basic pedal state struct
-        if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT) )
-        {
-          if (printCycleCounter >= 2)
-          {
-            printCycleCounter = 0;
-            DAP_state_basic_st * dap_state_basic_st_local_ptr;
-            dap_state_basic_st_local_ptr = &dap_state_basic_st;
-            Serial.write((char*)dap_state_basic_st_local_ptr, sizeof(DAP_state_basic_st));
-            Serial.print("\r\n");
-          }
-        }
-          
-        // send extended pedal state struct
-        if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT) )
-        {
-          DAP_state_extended_st * dap_state_extended_st_local_ptr;
-          dap_state_extended_st_local_ptr = &dap_state_extended_st;
-          Serial.write((char*)dap_state_extended_st_local_ptr, sizeof(DAP_state_extended_st));
-          Serial.print("\r\n");
-        }
+        // UPDATE basic pedal state struct
+        dap_state_basic_st_lcl = dap_state_basic_st;
+
+        // UPDATE extended pedal state struct
+        dap_state_extended_st_lcl = dap_state_extended_st;
           
         // release semaphore
         xSemaphoreGive(semaphore_updatePedalStates);
+
       }
     }
     else
     {
       semaphore_updatePedalStates = xSemaphoreCreateMutex();
     }
+
+
+
+    // send the pedal state structs
+    // send basic pedal state struct
+    if ( !(dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT) )
+    {
+      if (printCycleCounter >= 2)
+      {
+        printCycleCounter = 0;
+        Serial.write((char*)&dap_state_basic_st_lcl, sizeof(DAP_state_basic_st));
+        Serial.print("\r\n");
+      }
+    }
+
+    if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT) )
+    {
+      Serial.write((char*)&dap_state_extended_st_lcl, sizeof(DAP_state_extended_st));
+      Serial.print("\r\n");
+    }
+
 
     // wait until transmission is finished
     Serial.flush();
@@ -1411,7 +1421,7 @@ void servoCommunicationTask( void * pvParameters )
 
     if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_CYCLE_TIMER) 
     {
-      static CycleTimer timerServoCommunication("SC cycle time");
+      static CycleTimer timerServoCommunication("Servo Com. cycle time");
       timerServoCommunication.Bump();
     }
 
