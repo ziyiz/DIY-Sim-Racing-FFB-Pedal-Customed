@@ -224,6 +224,7 @@ void setup()
   Serial.begin(921600);
   //Serial.begin(512000);
   Serial.setTimeout(5);
+  //Serial.setTxTimeoutMs(0);
 
   Serial.println(" ");
   Serial.println(" ");
@@ -1364,7 +1365,8 @@ void serialCommunicationTask( void * pvParameters )
 
     // wait until transmission is finished
     // flush argument = true, do not clear Rx buffer
-    Serial.flush(true);
+    Serial.flush();
+    //Serial.flush(true);
 
 
     // transmit controller output

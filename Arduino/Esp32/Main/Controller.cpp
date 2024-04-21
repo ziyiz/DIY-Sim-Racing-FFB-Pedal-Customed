@@ -19,7 +19,16 @@ static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
   void SetupController() {
     Joystick.setBrakeRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
     delay(100);
+  
     Joystick.begin();
+
+    // rename HID device name, see e.g. https://github.com/schnoog/Joystick_ESP32S2/issues/8
+    USB.PID(0x8211);
+    USB.VID(0x303b);
+    USB.productName("DIY FFB pedal");
+    USB.manufacturerName("Open source");
+    USB.begin();
+
   }
   bool IsControllerReady() { return true; }
   void SetControllerOutputValue(int32_t value) {
