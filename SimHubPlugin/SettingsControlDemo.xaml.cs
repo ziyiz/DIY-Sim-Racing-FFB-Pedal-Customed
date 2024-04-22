@@ -2315,7 +2315,13 @@ namespace User.PluginSdkDemo
                 // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
                 Plugin._serialPort[pedalIdx].Encoding = System.Text.Encoding.GetEncoding(28591);
 
-                Plugin._serialPort[pedalIdx].DtrEnable = false;
+                // regular ESP
+                //Plugin._serialPort[pedalIdx].DtrEnable = false;
+
+                // ESP32 S3
+                Plugin._serialPort[pedalIdx].RtsEnable = false;
+                Plugin._serialPort[pedalIdx].DtrEnable = true;
+
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
@@ -2638,6 +2644,9 @@ namespace User.PluginSdkDemo
 
                     if (receivedLength > 0)
                     {
+
+                        //TextBox_serialMonitor.Text += "Received:" + receivedLength + "\n";
+                        //TextBox_serialMonitor.ScrollToEnd();
 
 
                         timeCntr[pedalSelected] += 1;
