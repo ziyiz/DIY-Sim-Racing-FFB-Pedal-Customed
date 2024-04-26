@@ -244,7 +244,7 @@
   #define ISV57_TXPIN 10//27 //17
   #define ISV57_RXPIN 9//26 // 16
 
-  #define Using_analog_output_ESP32_S3
+  //#define Using_analog_output_ESP32_S3
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK

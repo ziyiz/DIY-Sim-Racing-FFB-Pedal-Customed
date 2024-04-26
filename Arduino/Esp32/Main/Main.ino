@@ -26,12 +26,13 @@ bool isv57LifeSignal_b = false;
 #include "Main.h"
 
 #ifdef Using_analog_output_ESP32_S3
-#include "Wire.h"
-#include "MCP4725.h"
-TwoWire MCP4725_I2C= TwoWire(1);
-MCP4725 MCP(0x60, &MCP4725_I2C);
-int current_use_mcp_index;
-bool MCP_status =false;
+#include <Wire.h>
+#include <Adafruit_MCP4725.h>
+  TwoWire MCP4725_I2C= TwoWire(1);
+  //MCP4725 MCP(0x60, &MCP4725_I2C);
+  Adafruit_MCP4725 dac;
+  int current_use_mcp_index;
+  bool MCP_status =false;
 #endif
 
 //#define ALLOW_SYSTEM_IDENTIFICATION
@@ -525,7 +526,30 @@ void setup()
   //MCP setup
   #ifdef Using_analog_output_ESP32_S3
     Wire.begin(MCP_SDA,MCP_SCL,400000);
-    if(MCP.begin()==false)
+    uint8_t i2c_address[8]={0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67};
+    int index_address=0;
+    int found_address=0;
+    int error;
+    for(index_address=0;index_address<8;index_address++)
+    {
+      Wire.beginTransmission(i2c_address[index_address]);
+      error = Wire.endTransmission();
+      if (error == 0)
+      {
+        Serial.print("I2C device found at address");
+        Serial.print(i2c_address[index_address]);
+        Serial.println("  !");
+        found_address=index_address;
+        break;
+        
+      }
+      else
+      {
+        Serial.print("try address");
+        Serial.println(i2c_address[index_address]);
+      }
+    }
+    if(dac.begin(i2c_address[found_address], &MCP4725_I2C)==false)
     {
       Serial.println("Couldn't find MCP, will not have analog output");
       MCP_status=false;
@@ -534,7 +558,7 @@ void setup()
     {
       Serial.println("MCP founded");
       MCP_status=true;
-      MCP.begin();
+      //MCP.begin();
     }
   #endif
 
@@ -1041,7 +1065,7 @@ void pedalUpdateTask( void * pvParameters )
       if(MCP_status)
       {
         int dac_value=(int)(joystickNormalizedToInt32*4096/10000);
-        MCP.setValue(dac_value);
+        dac.setVoltage(dac_value, false);
       }
     #endif
 
