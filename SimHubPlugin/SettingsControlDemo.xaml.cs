@@ -498,9 +498,6 @@ namespace User.PluginSdkDemo
             //Label_reverse_LC.Visibility=Visibility.Hidden;
             //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
-            rangeslider_example.Visibility=Visibility.Hidden;
-            testslider.Visibility=Visibility.Hidden;
-            verticaltest.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -3849,9 +3846,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
             Line_H_HeaderTab.X2 = 1028;
-            testslider.Visibility= Visibility.Visible;
-            rangeslider_example.Visibility= Visibility.Visible;
-            verticaltest.Visibility= Visibility.Visible;
+
             Slider_LC_rate.TickFrequency = 1;
 
         }
@@ -3878,9 +3873,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
             Line_H_HeaderTab.X2 = 723;
-            testslider.Visibility = Visibility.Hidden;
-            rangeslider_example.Visibility = Visibility.Hidden;
-            verticaltest.Visibility = Visibility.Hidden;
+
             Slider_LC_rate.TickFrequency = 10;
         }
 
