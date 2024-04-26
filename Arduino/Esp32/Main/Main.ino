@@ -25,6 +25,15 @@ bool isv57LifeSignal_b = false;
 
 #include "Main.h"
 
+#ifdef Using_analog_output_ESP32_S3
+#include "Wire.h"
+#include "MCP4725.h"
+TwoWire MCP4725_I2C= TwoWire(1);
+MCP4725 MCP(0x60, &MCP4725_I2C);
+int current_use_mcp_index;
+bool MCP_status =false;
+#endif
+
 //#define ALLOW_SYSTEM_IDENTIFICATION
 
 /**********************************************************************************************/
@@ -512,6 +521,24 @@ void setup()
       delay(500);
     }
   #endif
+
+  //MCP setup
+  #ifdef Using_analog_output_ESP32_S3
+    Wire.begin(MCP_SDA,MCP_SCL,400000);
+    if(MCP.begin()==false)
+    {
+      Serial.println("Couldn't find MCP, will not have analog output");
+      MCP_status=false;
+    }
+    else
+    {
+      Serial.println("MCP founded");
+      MCP_status=true;
+      MCP.begin();
+    }
+  #endif
+
+
   Serial.println("Setup end");
   
 }
@@ -1008,6 +1035,14 @@ void pedalUpdateTask( void * pvParameters )
     #ifdef Using_analog_output
       int dac_value=(int)(joystickNormalizedToInt32*255/10000);
       dacWrite(D_O,dac_value);
+    #endif
+
+    #ifdef Using_analog_output_ESP32_S3
+      if(MCP_status)
+      {
+        int dac_value=(int)(joystickNormalizedToInt32*4096/10000);
+        MCP.setValue(dac_value);
+      }
     #endif
 
     

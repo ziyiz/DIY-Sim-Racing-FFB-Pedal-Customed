@@ -230,7 +230,10 @@
   #define stepPinStepper   38//23
 
   //analog output pin
-  #define D_O 25   
+  //#define D_O 25   
+  //MCP4725 SDA SCL
+  #define MCP_SDA 48
+  #define MCP_SCL 47
   
   // endstop pins
   #define minPin 12
@@ -241,7 +244,7 @@
   #define ISV57_TXPIN 10//27 //17
   #define ISV57_RXPIN 9//26 // 16
 
-  //#define Using_analog_output
+  #define Using_analog_output_ESP32_S3
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
