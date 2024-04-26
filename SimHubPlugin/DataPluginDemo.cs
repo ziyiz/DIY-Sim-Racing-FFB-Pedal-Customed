@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 132;
+    public const uint pedalConfigPayload_version = 134;
 
 
     // pyload types
@@ -56,6 +56,7 @@ public struct payloadPedalAction
     public byte RPM_u8;
     public byte G_value;
     public byte WS_u8;
+    public byte impact_value;
 };
 
 public struct payloadPedalState_Basic
@@ -113,10 +114,13 @@ public struct payloadPedalConfig
 
     // geometric properties of the pedal
     // in mm
-    public byte lengthPedal_AC;
-    public byte horPos_AB;
-    public byte verPos_AB;
-    public byte lengthPedal_CB;
+    public Int16 lengthPedal_a;
+    public Int16 lengthPedal_b;
+    public Int16 lengthPedal_d;
+    public Int16 lengthPedal_c_horizontal;
+    public Int16 lengthPedal_c_vertical;
+    
+
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value
     public byte RPM_max_freq;
@@ -130,6 +134,8 @@ public struct payloadPedalConfig
     public byte G_window;
     public byte WS_amp;
     public byte WS_freq;
+    public byte Impact_multi;
+    public byte Impact_window;
     // cubic spline params
     public float cubic_spline_param_a_0;
     public float cubic_spline_param_a_1;
@@ -242,6 +248,7 @@ namespace User.PluginSdkDemo
 		public DAP_config_st dap_config_initial_st;
         public byte rpm_last_value = 0 ;
         public double g_force_last_value = 128;
+        public byte Road_impact_last = 0;
         public byte game_running_index = 0 ;
         public uint testValue = 0;
         public uint[] profile_flag = new uint[4] { 0,0,0,0};
@@ -263,6 +270,7 @@ namespace User.PluginSdkDemo
         public bool Page_update_flag =false;
         public uint overlay_display = 0;
         public string simhub_theme_color = "#7E87CEFA";
+        public uint debug_value = 0;
 
 
 
@@ -274,6 +282,10 @@ namespace User.PluginSdkDemo
         //G force timer
         DateTime GTrigger_currentTime = DateTime.Now;
         DateTime GTrigger_lastTime = DateTime.Now;
+
+        //Road effect
+        DateTime RoadTrigger_currentTime = DateTime.Now;
+        DateTime RoadTrigger_lastTime = DateTime.Now;
 
         //// payload revisiom
         //public uint pedalConfigPayload_version = 110;
@@ -373,6 +385,7 @@ namespace User.PluginSdkDemo
             double RPM_MAX = 0;
             double _G_force = 128;
             byte WS_value = 0;
+            byte Road_impact_value = 0;
             //bool WS_flag = false;
 
             if (data.GamePaused | (!data.GameRunning))
@@ -503,6 +516,7 @@ namespace User.PluginSdkDemo
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
                         
                         tmp.payloadPedalAction_.WS_u8 = 0;
+                        tmp.payloadPedalAction_.impact_value = 0;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -580,6 +594,40 @@ namespace User.PluginSdkDemo
                             
 
                         }
+                        //Road impact
+                        if (Settings.Road_impact_enable_flag[pedalIdx] == 1)
+                        {
+                            if (pluginManager.GetPropertyValue(Settings.Road_impact_bind) != null)
+                            {
+                                Road_impact_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.Road_impact_bind));
+
+                                RoadTrigger_currentTime = DateTime.Now;
+                                TimeSpan diff_Road = RoadTrigger_currentTime - RoadTrigger_lastTime;
+                                int millisceonds_G = (int)diff_Road.TotalMilliseconds;
+                                if (millisceonds <= 10)
+                                {
+                                    Road_impact_value = Road_impact_last;
+                                }
+                                else
+                                {
+                                    RoadTrigger_lastTime = DateTime.Now;
+                                }
+                                if (true)
+                                {
+                                    //double value_check_g = 1 - _G_force / ((double)g_force_last_value);
+                                    double value_check_road = Road_impact_value - Road_impact_last;
+                                    if (Math.Abs(value_check_road) > 2)
+                                    {
+                                        tmp.payloadPedalAction_.impact_value = Road_impact_value;
+                                        update_flag = true;
+                                        Road_impact_last = Road_impact_value;
+                                        debug_value = Road_impact_value;
+                                    }
+
+                                }
+                            }
+                        }
+                        
                         
 
 
@@ -643,7 +691,10 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.RPM_u8 = 0;
                     tmp.payloadPedalAction_.G_value = 128;
                     tmp.payloadPedalAction_.WS_u8 = 0;
+                    tmp.payloadPedalAction_.impact_value = 0;
                     rpm_last_value = 0;
+                    Road_impact_last = 0;
+                    debug_value = 0;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -676,6 +727,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.RPM_u8 = 0;
                 tmp.payloadPedalAction_.G_value = 128;
                 tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -708,10 +760,12 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.SetPropertyValue("RoadImpact_effect_status", this.GetType(), Settings.Road_impact_enable_flag[Settings.table_selected]);
             pluginManager.SetPropertyValue("Overlay_display", this.GetType(), overlay_display);
             pluginManager.SetPropertyValue("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.SetPropertyValue("ProfileIndex", this.GetType(), profile_index);
-
+            pluginManager.SetPropertyValue("debugvalue", this.GetType(), debug_value);
+            
 
 
 
@@ -1113,8 +1167,10 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("RPM_effect_status", this.GetType(), Settings.RPM_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("Gforce_effect_status", this.GetType(), Settings.G_force_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("WheelSlip_effect_status", this.GetType(), Settings.WS_enable_flag[Settings.table_selected]);
+            pluginManager.AddProperty("RoadImpact_effect_status", this.GetType(), Settings.Road_impact_enable_flag[Settings.table_selected]);
             pluginManager.AddProperty("Overlay_display", this.GetType(), overlay_display);
             pluginManager.AddProperty("Theme_color", this.GetType(), simhub_theme_color);
+            pluginManager.AddProperty("debugvalue", this.GetType(), debug_value);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
@@ -1318,6 +1374,23 @@ namespace User.PluginSdkDemo
                 Page_update_flag = true;
             });
 
+            this.AddAction("RoadImpacttoggle", (a, b) =>
+            {
+                if (Settings.Road_impact_enable_flag[Settings.table_selected] == 0)
+                {
+                    Settings.Road_impact_enable_flag[Settings.table_selected] = 1;
+                    SimHub.Logging.Current.Info("RoadImpact on");
+                    current_action = "Wheel Slip On";
+                }
+                else
+                {
+                    Settings.Road_impact_enable_flag[Settings.table_selected] = 0;
+                    SimHub.Logging.Current.Info("RoadImpact off");
+                    current_action = "RoadImpact Off";
+                }
+                Page_update_flag = true;
+            });
+
             this.AddAction("OverlayToggle", (a, b) =>
             {
                 Page_update_flag = true;
@@ -1456,7 +1529,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadHeader_.storeToEeprom = 0;
             dap_config_initial_st.payloadPedalConfig_.pedalStartPosition = 35;
             dap_config_initial_st.payloadPedalConfig_.pedalEndPosition = 80;
-            dap_config_initial_st.payloadPedalConfig_.maxForce = 90;
+            dap_config_initial_st.payloadPedalConfig_.maxForce = 50;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p000 = 0;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p020 = 20;
             dap_config_initial_st.payloadPedalConfig_.relativeForce_p040 = 40;
@@ -1469,10 +1542,13 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.absAmplitude = 100;
             dap_config_initial_st.payloadPedalConfig_.absPattern = 0;
             dap_config_initial_st.payloadPedalConfig_.absForceOrTarvelBit = 0;
-            dap_config_initial_st.payloadPedalConfig_.lengthPedal_AC = 150;
-            dap_config_initial_st.payloadPedalConfig_.horPos_AB = 215;
-            dap_config_initial_st.payloadPedalConfig_.verPos_AB = 80;
-            dap_config_initial_st.payloadPedalConfig_.lengthPedal_CB = 200;
+
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_a = 205;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_b = 220;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_d = 60;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_c_horizontal = 215;
+            dap_config_initial_st.payloadPedalConfig_.lengthPedal_c_vertical = 60;
+
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_trigger = 0;
             dap_config_initial_st.payloadPedalConfig_.Simulate_ABS_value = 50;
             dap_config_initial_st.payloadPedalConfig_.RPM_max_freq = 40;

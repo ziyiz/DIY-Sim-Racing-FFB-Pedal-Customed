@@ -20,9 +20,11 @@ static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 10000000000. );
 
 
 
-float sledPositionInMM(StepperWithLimits* stepper) {
+float sledPositionInMM(StepperWithLimits* stepper, DAP_config_st& config_st) {
   float currentPos = stepper->getCurrentPositionFromMin();
-  return (currentPos / STEPS_PER_MOTOR_REVOLUTION) * TRAVEL_PER_ROTATION_IN_MM;
+  //return (currentPos / STEPS_PER_MOTOR_REVOLUTION) * TRAVEL_PER_ROTATION_IN_MM;
+  return (currentPos / STEPS_PER_MOTOR_REVOLUTION) * config_st.payLoadPedalConfig_.spindlePitch_mmPerRev_u8;
+  
 }
 
 float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st& config_st) {
@@ -30,10 +32,10 @@ float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st& config_st) {
   // A: is lower pedal pivot
   // C: is upper pedal pivot
   // B: is rear pedal pivot
-  float a = config_st.payLoadPedalConfig_.lengthPedal_CB;
-  float b = config_st.payLoadPedalConfig_.lengthPedal_AC;
-  float c_ver = config_st.payLoadPedalConfig_.verPos_AB;
-  float c_hor = config_st.payLoadPedalConfig_.horPos_AB + sledPositionMM;
+  float a = config_st.payLoadPedalConfig_.lengthPedal_a;
+  float b = config_st.payLoadPedalConfig_.lengthPedal_b;
+  float c_ver = config_st.payLoadPedalConfig_.lengthPedal_c_vertical;
+  float c_hor = config_st.payLoadPedalConfig_.lengthPedal_c_horizontal + sledPositionMM;
   float c = sqrtf(c_ver * c_ver + c_hor * c_hor);
 
 //#define DEBUG_PEDAL_INCLINE
@@ -59,7 +61,8 @@ float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st& config_st) {
 
   // add incline due to AB incline --> result is incline realtive to horizontal 
   if (abs(c_hor)>0.01) {
-    alpha += atan(c_ver / c_hor);
+    //alpha += atan(c_ver / c_hor);
+    alpha += atan2(c_ver, c_hor); // y, x
   }
 
 
@@ -74,6 +77,113 @@ float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st& config_st) {
   
   return alpha * RAD_TO_DEG;
 }
+
+
+
+float convertToPedalForce(float F_l, float sledPositionMM, DAP_config_st& config_st) {
+  // see https://de.wikipedia.org/wiki/Kosinussatz
+  // A: is lower pedal pivot
+  // B: is rear pedal pivot
+  // C: is upper pedal pivot
+  // D: is foot rest
+  //
+  // a: is loadcell rod (connection CB)
+  // b: is lower pedal plate (connection AC)
+  // c: is sled line (connection AC)
+  // d: is upper pedal plate  (connection AC)
+
+  float a = config_st.payLoadPedalConfig_.lengthPedal_a;
+  float b = config_st.payLoadPedalConfig_.lengthPedal_b;
+  float d = config_st.payLoadPedalConfig_.lengthPedal_d;
+
+  float c_ver = config_st.payLoadPedalConfig_.lengthPedal_c_vertical;
+  float c_hor = config_st.payLoadPedalConfig_.lengthPedal_c_horizontal + sledPositionMM;
+  float c = sqrtf(c_ver * c_ver + c_hor * c_hor);
+
+
+  //Serial.print("a: ");    Serial.print(a);
+  //Serial.print(", b: ");  Serial.print(b);
+  //Serial.print(", c: ");  Serial.print(c);
+  //Serial.print(", d: ");  Serial.print(d);
+  //Serial.print(", sled: ");  Serial.print(sledPositionMM);
+  //Serial.print(", b_hor: ");  Serial.print(b_hor);
+  //Serial.println();
+
+
+  // lower plus upper pedal plate length
+  float b_plus_d = fabs(b + d);
+
+  // compute gamma angle, see https://de.wikipedia.org/wiki/Kosinussatz
+  float nom = a*a + b*b - c*c;
+  float den = 2 * a * b;
+  
+  float arg = 0;
+  if (abs(den) > 0.01) {
+    arg = nom / den;
+    arg *= arg;
+  }
+
+  // apply conversion factor to loadcell reading 
+  float one_minus_arg = 1 - arg;
+  float F_b  = F_l;
+  if ( (b_plus_d > 0) && (one_minus_arg > 0) )
+  {
+     F_b *= b / (b_plus_d) * sqrt( one_minus_arg );
+  }
+  
+  
+  return F_b;
+}
+
+
+
+
+// Calculate gradient of phi with respect to sled position.
+// This is done by taking the derivative of the force with respect to the sled position.
+float convertToPedalForceGain(float sledPositionMM, DAP_config_st& config_st) {
+  // see https://de.wikipedia.org/wiki/Kosinussatz
+  // A: is lower pedal pivot
+  // B: is rear pedal pivot
+  // C: is upper pedal pivot
+  // D: is foot rest
+  //
+  // a: is loadcell rod (connection CB)
+
+  // b: is lower pedal plate (connection AC)
+  // c: is sled line (connection AC)
+  // d: is upper pedal plate  (connection AC)
+
+  float a = config_st.payLoadPedalConfig_.lengthPedal_a;
+  float b = config_st.payLoadPedalConfig_.lengthPedal_b;
+  float d = config_st.payLoadPedalConfig_.lengthPedal_d;
+
+  float c_ver = config_st.payLoadPedalConfig_.lengthPedal_c_vertical;
+  float c_hor = config_st.payLoadPedalConfig_.lengthPedal_c_horizontal + sledPositionMM;
+  float c = sqrtf(c_ver * c_ver + c_hor * c_hor);
+
+
+  float alpha = acos( (b*b + c*c - a*a) / (2*b*c) );
+  float alphaPlus = atan2(c_ver, c_hor); // y, x
+
+  float sinAlpha = sin(alpha);
+  float cosAlpha = cos(alpha);
+  float sinAlphaPlus = sin(alphaPlus);
+  float cosAlphaPlus = cos(alphaPlus);
+
+  // d_alpha_d_x
+  float d_alpha_d_x = - 1.0f / fabs( sinAlpha ) * ( 1.0f / b - cosAlpha / c) * cosAlphaPlus;
+
+  // d_alphaPlus_d_x
+  float d_alphaPlus_d_x = - c_ver / (c * c);
+
+  float d_phi_d_x = d_alpha_d_x + d_alphaPlus_d_x;
+
+  // return in deg/mm
+  return d_phi_d_x * RAD_TO_DEG;
+}
+
+
+
 
 
 float pedalInclineAngleAccel(float pedalInclineAngleDeg_global) {

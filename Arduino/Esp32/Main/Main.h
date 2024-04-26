@@ -11,6 +11,7 @@
   #define PCB_VERSION 3 // V3 for regular ESP32
   //#define PCB_VERSION 4 // speedcrafter PCB V1.3
   //#define PCB_VERSION 5 // speedcrafter PCB V1.4
+  //#define PCB_VERSION 6 // V1 for ESP32 S3
 #endif
 
 
@@ -83,6 +84,9 @@
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
+
+  #define BLUETOOTH_GAMEPAD
+  //#define USB_JOYSTICK
 #endif
 
 
@@ -106,6 +110,9 @@
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
+
+  //#define BLUETOOTH_GAMEPAD
+  #define USB_JOYSTICK
 #endif
 
 
@@ -137,6 +144,9 @@
 
   #define Using_analog_output
 
+  #define BLUETOOTH_GAMEPAD
+  //#define USB_JOYSTICK
+
 #endif
 
 
@@ -163,6 +173,9 @@
   #define SENSORLESS_HOMING true
   #define ISV57_TXPIN 27 //17
   #define ISV57_RXPIN 26 // 16
+
+  #define BLUETOOTH_GAMEPAD
+  //#define USB_JOYSTICK
 
 #endif
 
@@ -192,5 +205,48 @@
   #define ISV57_TXPIN 26 //17
   #define ISV57_RXPIN 27 // 16
 
+  #define BLUETOOTH_GAMEPAD
+  //#define USB_JOYSTICK
+#endif
+
+
+
+
+// V3 version of dev PCB for ESP32 S3
+// flash instructions, see https://hutscape.com/tutorials/hello-arduino-esp32s3
+// 1. ESP32S3 Dev Module
+// 2. USB CDC On Boot Enabled
+#if PCB_VERSION == 6
+  // ADC defines
+  #define PIN_DRDY 15//19// 19 --> DRDY
+  #define PIN_RST  6 // X --> X
+  #define PIN_SCK 16//16 // 16 -->SCLK
+  #define PIN_MISO 18 // 18 --> DOUT
+  #define PIN_MOSI 17 // 17 --> DIN
+  #define PIN_CS 7//21 // 21 --> CS
+
+  // stepper pins
+  #define dirPinStepper    37//22
+  #define stepPinStepper   38//23
+
+  //analog output pin
+  //#define D_O 25   
+  //MCP4725 SDA SCL
+  #define MCP_SDA 48
+  #define MCP_SCL 47
+  
+  // endstop pins
+  #define minPin 12
+  #define maxPin 13
+
+  // level shifter is present on this PCB design
+  #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 10//27 //17
+  #define ISV57_RXPIN 9//26 // 16
+
+  //#define Using_analog_output_ESP32_S3
+
+  //#define BLUETOOTH_GAMEPAD
+  #define USB_JOYSTICK
 #endif
 

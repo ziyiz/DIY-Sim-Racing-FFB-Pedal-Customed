@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 132
+#define DAP_VERSION_CONFIG 134
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -32,6 +32,7 @@ struct payloadPedalAction {
   uint8_t RPM_u8;
   uint8_t G_value;
   uint8_t WS_u8;
+  uint8_t impact_value_u8;
 };
 
 
@@ -87,10 +88,13 @@ struct payloadPedalConfig {
 
   // geometric properties of the pedal
   // in mm
-  uint8_t lengthPedal_AC;
-  uint8_t horPos_AB;
-  uint8_t verPos_AB;
-  uint8_t lengthPedal_CB;
+  int16_t lengthPedal_a;
+  int16_t lengthPedal_b;
+  int16_t lengthPedal_d;
+  int16_t lengthPedal_c_horizontal;
+  int16_t lengthPedal_c_vertical;
+  
+
   //Simulate ABS trigger
   uint8_t Simulate_ABS_trigger;
   uint8_t Simulate_ABS_value;
@@ -104,12 +108,15 @@ struct payloadPedalConfig {
   uint8_t BP_amp;
   uint8_t BP_freq;
   uint8_t BP_trigger;
-    //G force effect
+  //G force effect
   uint8_t G_multi;
   uint8_t G_window;
   //wheel slip
   uint8_t WS_amp;
   uint8_t WS_freq;
+  //Road impact effect
+  uint8_t Road_multi;
+  uint8_t Road_window;
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
@@ -156,6 +163,7 @@ struct payloadPedalConfig {
   uint8_t pedal_type;
   //OTA flag
   uint8_t OTA_flag;
+  
 
 };
 

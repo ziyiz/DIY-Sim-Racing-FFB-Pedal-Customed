@@ -300,7 +300,7 @@ class G_force_effect
     
   }
 };
-
+//Wheel slip
 class WSOscillation {
 private:
   long _timeLastTriggerMillis;
@@ -358,5 +358,28 @@ public:
     //return RPMForceOffset;
     
 
+  }
+};
+//Road impact
+MovingAverageFilter movingAverageFilter_roadimpact(100);
+class Road_impact_effect
+{
+  public:
+  float Road_Impact_force=0;
+  float Road_Impact_force_raw=0;
+  uint8_t Road_Impact_value=0;
+
+  void forceOffset(DAP_calculationVariables_st* calcVars_st, uint8_t Road_impact_multi)
+  {
+    uint32_t Force_Range;
+    float Road_multiplier=((float)Road_impact_multi)/100;
+    Force_Range=calcVars_st->Force_Range;
+    //Road_multiplier=0.1;
+    Road_Impact_force_raw=0.3*Road_multiplier*((float)Force_Range)*((float)Road_Impact_value)/100;
+
+    //apply filter
+    Road_Impact_force=movingAverageFilter_roadimpact.process(Road_Impact_force_raw);
+    
+    
   }
 };
