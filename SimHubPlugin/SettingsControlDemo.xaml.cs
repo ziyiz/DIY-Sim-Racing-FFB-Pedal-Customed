@@ -967,14 +967,16 @@ namespace User.PluginSdkDemo
             }
 
 
-            if (indexOfSelectedPedal_u != 1)
-            {
-                Rangeslider_force_range.Maximum = 50;
-            }
-            else
-            {
-                Rangeslider_force_range.Maximum = 200;
-            }
+            //if (indexOfSelectedPedal_u != 1)
+            //{
+            //    Rangeslider_force_range.Maximum = 50;
+            //}
+            //else
+            //{
+            //    Rangeslider_force_range.Maximum = 200;
+            //}
+
+
             Rangeslider_force_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
             Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
             if (Plugin != null)
