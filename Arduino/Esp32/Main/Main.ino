@@ -231,11 +231,16 @@ TaskHandle_t Task4;
 void setup()
 {
   //Serial.begin(115200);
-  Serial.begin(921600);
+  //Serial.begin(921600);
   //Serial.begin(512000);
-  Serial.setTimeout(5);
-  //Serial.setTxTimeoutMs(0);
-
+  //
+  #ifdef SERIAL_TIMEOUT
+    //Serial.setTxTimeoutMs(0);
+    Serial.begin(921600);
+  #else
+    Serial.begin(921600);
+    Serial.setTimeout(5);
+  #endif
   Serial.println(" ");
   Serial.println(" ");
   Serial.println(" ");
@@ -1211,9 +1216,13 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
-    delay(1);
-    // read serial input 
-    byte n = Serial.available();
+    delay( SERIAL_COOMUNICATION_TASK_DELAY_IN_MS );
+
+
+    //if (Serial)
+    { 
+      // read serial input 
+      byte n = Serial.available();
 
     bool structChecker = true;
     
@@ -1427,6 +1436,7 @@ void serialCommunicationTask( void * pvParameters )
     Serial.flush();
     //Serial.flush(true);
 
+    }
 
     // transmit controller output
     if (IsControllerReady()) 
@@ -1442,8 +1452,10 @@ void serialCommunicationTask( void * pvParameters )
       SetControllerOutputValue(joystickNormalizedToInt32_local);
     }
 
-
-
+  /*#ifdef SERIAL_TIMEOUT
+    delay(10);
+  #endif
+*/
 
   }
 }
