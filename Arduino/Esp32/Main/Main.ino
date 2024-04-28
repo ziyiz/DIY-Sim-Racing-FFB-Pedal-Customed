@@ -530,15 +530,16 @@ void setup()
 
   //MCP setup
   #ifdef Using_analog_output_ESP32_S3
-    Wire.begin(MCP_SDA,MCP_SCL,400000);
+    //Wire.begin(MCP_SDA,MCP_SCL,400000);
+    MCP4725_I2C.begin(MCP_SDA,MCP_SCL,400000);
     uint8_t i2c_address[8]={0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67};
     int index_address=0;
     int found_address=0;
     int error;
     for(index_address=0;index_address<8;index_address++)
     {
-      Wire.beginTransmission(i2c_address[index_address]);
-      error = Wire.endTransmission();
+      MCP4725_I2C.beginTransmission(i2c_address[index_address]);
+      error = MCP4725_I2C.endTransmission();
       if (error == 0)
       {
         Serial.print("I2C device found at address");
@@ -554,6 +555,7 @@ void setup()
         Serial.println(i2c_address[index_address]);
       }
     }
+    
     if(dac.begin(i2c_address[found_address], &MCP4725_I2C)==false)
     {
       Serial.println("Couldn't find MCP, will not have analog output");
