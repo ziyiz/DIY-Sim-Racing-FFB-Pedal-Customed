@@ -2478,6 +2478,10 @@ namespace User.PluginSdkDemo
             
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
+                // ESP32 S3
+                Plugin._serialPort[pedalIdx].RtsEnable = false;
+                Plugin._serialPort[pedalIdx].DtrEnable = false;
+
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
                 Plugin._serialPort[pedalIdx].DiscardOutBuffer();
                 Plugin._serialPort[pedalIdx].Close();
