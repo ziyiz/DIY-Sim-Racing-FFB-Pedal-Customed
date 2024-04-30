@@ -18,12 +18,12 @@ private:
     int mode_ = -1;
     uint32_t timeout_ = 20;
     HardwareSerial* s ;
-    byte rawRx[512];
+    uint8_t rawRx[512];
     int  lenRx = 0;
-    byte dataRx[512];
+    uint8_t dataRx[512];
     int  datalen = 0;
     int  SlaveID = 0x01;
-    byte txout[9] = {0,0,0,0,0,0,0,0,0};
+    uint8_t txout[9] = {0,0,0,0,0,0,0,0,0};
     #define Coil_Register       0x01
     #define Discret_Register    0x02
     #define Holding_Register    0x03
@@ -41,7 +41,7 @@ public:
     void setTimeout(uint16_t timeout);
 
 
-    byte byteRead(int nb);
+    uint8_t byteRead(int nb);
     int blockRead(int index);
     int coilRead(int address);                                      //Return 1 byte = 8 bit coil
     int coilRead(int id, int address);
@@ -56,8 +56,8 @@ public:
     int coilWrite(int id, int address, uint8_t value);
     int holdingRegisterWrite(int address, uint16_t value);
     int holdingRegisterWrite(int id, int address, uint16_t value);
-    void RxRaw(byte *raw, uint8_t &rlen);
-    void TxRaw(byte *raw, uint8_t &rlen);
+    void RxRaw(uint8_t *raw, uint8_t &rlen);
+    void TxRaw(uint8_t *raw, uint8_t &rlen);
     //Read multiple coils, discrete inputs, holding registers, or input register values.
     //int requestFrom(int type, int address, int nb, byte *ret,int len);
     int requestFrom(int slaveId, int type, int address,int nb);

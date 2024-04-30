@@ -27,7 +27,7 @@ void Modbus::setTimeout(uint16_t timeout)
   timeout_ = timeout;
 }
 
-byte Modbus::byteRead(int index)
+uint8_t Modbus::byteRead(int index)
 {
   return rawRx[index+3];
 }
@@ -45,7 +45,7 @@ int Modbus::coilRead(int address){
 int Modbus::coilRead(int id, int address){
    if(requestFrom(id,Coil_Register,address,1))
    {
-    byte x = byteRead(0);
+    uint8_t x = byteRead(0);
     return bitRead(x,0);
    }else
    {
@@ -62,7 +62,7 @@ int Modbus::discreteInputRead(int id, int address)
 {
    if(requestFrom(id,Discret_Register,address,1))
    {
-    byte x = byteRead(0);
+    uint8_t x = byteRead(0);
     return bitRead(x,0);
    }else
    {
@@ -78,7 +78,7 @@ void Modbus::readParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress)
   bool retValue_b = false;
 
   // check if value at address is already target value
-  byte  raw2[2];
+  uint8_t raw2[2];
   uint8_t len;
   int16_t regArray[4];
 
@@ -111,7 +111,7 @@ bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t param
   bool retValue_b = false;
 
   // check if value at address is already target value
-  byte  raw2[2];
+  uint8_t raw2[2];
   uint8_t len;
   int16_t regArray[4];
 
@@ -237,7 +237,7 @@ int Modbus::requestFrom(int slaveId, int type, int address, int nb)
     datalen = 0;
     int ll = 0;
     int rx;
-    byte found = 0;
+    uint8_t found = 0;
   
     while((millis() - t) < timeout_){
        if(this->s->available())
@@ -431,7 +431,7 @@ uint32_t Modbus::uint32(int add, bool byteHL)
     return val;
 }
 
-void Modbus::RxRaw(byte *raw, uint8_t &rlen)
+void Modbus::RxRaw(uint8_t*raw, uint8_t &rlen)
 {
    
    
@@ -449,7 +449,7 @@ void Modbus::RxRaw(byte *raw, uint8_t &rlen)
 }
 
 
-void Modbus::TxRaw(byte *raw, uint8_t &rlen)
+void Modbus::TxRaw(uint8_t*raw, uint8_t &rlen)
 {
    
    
@@ -467,7 +467,7 @@ void Modbus::TxRaw(byte *raw, uint8_t &rlen)
 }
 
 
-int Modbus::CheckCRC(byte *buf, int len)
+int Modbus::CheckCRC(uint8_t*buf, int len)
 {
   int nominal = 0xA001;
   int crc = 0xFFFF;

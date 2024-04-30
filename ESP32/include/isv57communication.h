@@ -69,7 +69,7 @@ class isv57communication {
 
   private:
     // declare variables
-    byte  raw[200];
+    uint8_t  raw[200];
     uint8_t len;
     int16_t zeroPos;
     //Modbus modbus;
