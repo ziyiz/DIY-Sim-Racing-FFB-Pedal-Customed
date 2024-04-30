@@ -86,11 +86,11 @@ bool splineDebug_b = false;
 
 #include "ABSOscillation.h"
 ABSOscillation absOscillation;
-RPMOscillation RPMOscillation;
-BitePointOscillation BitePointOscillation;
+RPMOscillation _RPMOscillation;
+BitePointOscillation _BitePointOscillation;
 G_force_effect _G_force_effect;
-WSOscillation WSOscillation;
-Road_impact_effect Road_impact_effect;
+WSOscillation _WSOscillation;
+Road_impact_effect _Road_impact_effect;
 #define ABS_OSCILLATION
 
 
@@ -763,12 +763,12 @@ void pedalUpdateTask( void * pvParameters )
     float absPosOffset = 0;
     #ifdef ABS_OSCILLATION
       absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
-      RPMOscillation.trigger();
-      RPMOscillation.forceOffset(&dap_calculationVariables_st);
-      BitePointOscillation.forceOffset(&dap_calculationVariables_st);
+      _RPMOscillation.trigger();
+      _RPMOscillation.forceOffset(&dap_calculationVariables_st);
+      _BitePointOscillation.forceOffset(&dap_calculationVariables_st);
       _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
-      WSOscillation.forceOffset(&dap_calculationVariables_st);
-      Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
+      _WSOscillation.forceOffset(&dap_calculationVariables_st);
+      _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
     #endif
 
     //update max force with G force effect
@@ -776,7 +776,7 @@ void pedalUpdateTask( void * pvParameters )
     movingAverageFilter_roadimpact.dataPointsCount=dap_config_st.payLoadPedalConfig_.Road_window;
     dap_calculationVariables_st.reset_maxforce();
     dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
-    dap_calculationVariables_st.Force_Max+=Road_impact_effect.Road_Impact_force;
+    dap_calculationVariables_st.Force_Max+=_Road_impact_effect.Road_Impact_force;
     dap_calculationVariables_st.dynamic_update();
     dap_calculationVariables_st.updateStiffness();
 
@@ -929,7 +929,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
     //Add effect by force
-    float effect_force=absForceOffset+ BitePointOscillation.BitePoint_Force_offset+WSOscillation.WS_Force_offset;
+    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset;
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
@@ -975,7 +975,7 @@ void pedalUpdateTask( void * pvParameters )
 
   
     //Adding effects
-    Position_Next +=RPMOscillation.RPM_position_offset;
+    Position_Next +=_RPMOscillation.RPM_position_offset;
     Position_Next +=absPosOffset;
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
     
@@ -993,7 +993,7 @@ void pedalUpdateTask( void * pvParameters )
       {
         if(Position_check < BP_trigger_max)
         {
-          BitePointOscillation.trigger();
+          _BitePointOscillation.trigger();
         }
       }
     }
@@ -1307,16 +1307,16 @@ void serialCommunicationTask( void * pvParameters )
                 absOscillation.trigger();
               }
               //RPM effect
-              RPMOscillation.RPM_value=dap_actions_st.payloadPedalAction_.RPM_u8;
+              _RPMOscillation.RPM_value=dap_actions_st.payloadPedalAction_.RPM_u8;
               //G force effect
               _G_force_effect.G_value=dap_actions_st.payloadPedalAction_.G_value-128;       
               //wheel slip
               if (dap_actions_st.payloadPedalAction_.WS_u8)
               {
-                WSOscillation.trigger();
+                _WSOscillation.trigger();
               }     
               //Road impact
-              Road_impact_effect.Road_Impact_value=dap_actions_st.payloadPedalAction_.impact_value_u8;
+              _Road_impact_effect.Road_Impact_value=dap_actions_st.payloadPedalAction_.impact_value_u8;
               // trigger system identification
               if (dap_actions_st.payloadPedalAction_.startSystemIdentification_u8)
               {
@@ -1625,7 +1625,7 @@ void servoCommunicationTask( void * pvParameters )
         if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_SERVO_READINGS) 
         {
           static RTDebugOutput<int16_t, 4> rtDebugFilter({ "pos_p", "pos_error_p", "curr_per", "offset"});
-          rtDebugFilter.offerData({ isv57.servo_pos_given_p, isv57.servo_pos_error_p, isv57.servo_current_percent, servo_offset_compensation_steps_i32});
+          rtDebugFilter.offerData({ isv57.servo_pos_given_p, isv57.servo_pos_error_p, isv57.servo_current_percent, (int16_t)servo_offset_compensation_steps_i32});
         }
 
        
