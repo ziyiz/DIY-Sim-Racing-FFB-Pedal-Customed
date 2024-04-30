@@ -93,7 +93,7 @@ public:
     
 
 
-    int CheckCRC(byte *buf, int len);
+    int CheckCRC(uint8_t *buf, int len);
 };
 
 //  #else

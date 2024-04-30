@@ -1202,7 +1202,7 @@ void serialCommunicationTask( void * pvParameters )
     //if (Serial)
     { 
       // read serial input 
-      byte n = Serial.available();
+      uint8_t n = Serial.available();
 
       bool structChecker = true;
       
