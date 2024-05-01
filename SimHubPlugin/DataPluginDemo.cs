@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 134;
+    public const uint pedalConfigPayload_version = 135;
 
 
     // pyload types
@@ -57,6 +57,8 @@ public struct payloadPedalAction
     public byte G_value;
     public byte WS_u8;
     public byte impact_value;
+    public byte Rudder_position;
+    public byte Rudder_trigger;
 };
 
 public struct payloadPedalState_Basic
@@ -193,6 +195,7 @@ public struct payloadPedalConfig
 
     // OTA update flag
     public byte OTA_flag;
+    
 
 }
 
@@ -271,6 +274,10 @@ namespace User.PluginSdkDemo
         public uint overlay_display = 0;
         public string simhub_theme_color = "#7E87CEFA";
         public uint debug_value = 0;
+        public bool Rudder_enable_flag = false;
+        public bool Rudder_update = false;
+        public byte Rudder_position_percent = 0;
+        public bool Rudder_reset = false;
 
 
 
@@ -517,6 +524,8 @@ namespace User.PluginSdkDemo
                         
                         tmp.payloadPedalAction_.WS_u8 = 0;
                         tmp.payloadPedalAction_.impact_value = 0;
+                        tmp.payloadPedalAction_.Rudder_position = 0;
+                        tmp.payloadPedalAction_.Rudder_trigger = 0;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -692,6 +701,8 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.G_value = 128;
                     tmp.payloadPedalAction_.WS_u8 = 0;
                     tmp.payloadPedalAction_.impact_value = 0;
+                    tmp.payloadPedalAction_.Rudder_position = 0;
+                    tmp.payloadPedalAction_.Rudder_trigger = 0;
                     rpm_last_value = 0;
                     Road_impact_last = 0;
                     debug_value = 0;
@@ -728,6 +739,8 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.G_value = 128;
                 tmp.payloadPedalAction_.WS_u8 = 0;
                 tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Rudder_position = 0;
+                tmp.payloadPedalAction_.Rudder_trigger = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -751,6 +764,125 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
+            if (Rudder_enable_flag)
+            {
+                if (Rudder_update)
+                {
+                    DAP_action_st tmp;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = 0;
+                    tmp.payloadPedalAction_.G_value = 128;
+                    tmp.payloadPedalAction_.WS_u8 = 0;
+                    tmp.payloadPedalAction_.impact_value = 0;
+                    tmp.payloadPedalAction_.Rudder_position = 0;
+                    tmp.payloadPedalAction_.Rudder_trigger = 1;
+                    int Pedal_update_index = 0;
+                    if (Rudder_position_percent > 50)
+                    {
+                        tmp.payloadPedalAction_.Rudder_position = (byte)(Rudder_position_percent - 50);
+                        Pedal_update_index = 1;
+                    }
+                    else
+                    {
+                        if (Rudder_position_percent < 50)
+                        {
+                            tmp.payloadPedalAction_.Rudder_position = (byte)(50 - Rudder_position_percent);
+                            Pedal_update_index = 2;
+                        }
+                        else
+                        {
+                            tmp.payloadPedalAction_.Rudder_position = 0;
+                            Pedal_update_index = 4;
+                        }
+                    }
+
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    if (Pedal_update_index == 2)
+                    {
+                        if (_serialPort[2].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[2].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                    }
+                    if (Pedal_update_index == 1)
+                    {
+                        if (_serialPort[1].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[1].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                    }
+                    if (Pedal_update_index == 4)
+                    {
+                        if (_serialPort[1].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[1].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                        if (_serialPort[2].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[2].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                    }
+
+
+                }
+                if (Rudder_reset)
+                {
+                    DAP_action_st tmp;
+                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                    tmp.payloadPedalAction_.RPM_u8 = 0;
+                    tmp.payloadPedalAction_.G_value = 128;
+                    tmp.payloadPedalAction_.WS_u8 = 0;
+                    tmp.payloadPedalAction_.impact_value = 0;
+                    tmp.payloadPedalAction_.Rudder_position = 0;
+                    tmp.payloadPedalAction_.Rudder_trigger = 0;
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    for (uint index=0; index < 3; index++)
+                    {
+                        if (_serialPort[index].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[index].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[index].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                    }
+                    Rudder_reset = false;
+                }
+                
+                
+            }
+            
 
 
             this.AttachDelegate("CurrentProfile", () => current_profile);

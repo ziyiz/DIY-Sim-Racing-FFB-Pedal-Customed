@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 134
+#define DAP_VERSION_CONFIG 135
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -33,6 +33,8 @@ struct payloadPedalAction {
   uint8_t G_value;
   uint8_t WS_u8;
   uint8_t impact_value_u8;
+  uint8_t Rudder_position;
+  uint8_t Rudder_trigger;
 };
 
 
