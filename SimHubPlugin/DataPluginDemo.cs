@@ -271,6 +271,7 @@ namespace User.PluginSdkDemo
         public uint overlay_display = 0;
         public string simhub_theme_color = "#7E87CEFA";
         public uint debug_value = 0;
+        public bool Rudder_enable_flag=false;
 
 
 
