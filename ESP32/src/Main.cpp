@@ -91,7 +91,6 @@ BitePointOscillation _BitePointOscillation;
 G_force_effect _G_force_effect;
 WSOscillation _WSOscillation;
 Road_impact_effect _Road_impact_effect;
-Rudder _Rudder;
 #define ABS_OSCILLATION
 
 
@@ -770,7 +769,6 @@ void pedalUpdateTask( void * pvParameters )
       _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
       _WSOscillation.forceOffset(&dap_calculationVariables_st);
       _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
-      _Rudder.forceOffset(&dap_calculationVariables_st);
     #endif
 
     //update max force with G force effect
@@ -931,7 +929,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
     //Add effect by force
-    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset+_Rudder.Rudder_force;
+    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset;
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
@@ -1324,9 +1322,7 @@ void serialCommunicationTask( void * pvParameters )
               {
                 systemIdentificationMode_b = true;
               }
-              //rudder setting
-              _Rudder.Rudder_position=dap_actions_st.payloadPedalAction_.Rudder_position;
-              _Rudder.Rudder_trigger=dap_actions_st.payloadPedalAction_.Rudder_trigger;
+
               // trigger return pedal position
               if (dap_actions_st.payloadPedalAction_.returnPedalConfig_u8)
               {

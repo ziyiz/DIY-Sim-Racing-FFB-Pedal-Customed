@@ -383,33 +383,3 @@ class Road_impact_effect
     
   }
 };
-MovingAverageFilter movingAverageFilter_rudder(60);
-class Rudder
-{
-  public:
-  float Rudder_force=0;
-  float Rudder_force_raw=0;
-  uint8_t Rudder_position=0;
-  uint8_t Rudder_trigger=0;
-
-  void forceOffset(DAP_calculationVariables_st* calcVars_st)
-  {
-    if(Rudder_trigger==1)
-    {
-      uint32_t Force_Range;
-      Force_Range=calcVars_st->Force_Range;
-      
-      Rudder_force_raw=0.5*Force_Range-Rudder_position/100*Force_Range;
-
-      //apply filter
-      Rudder_force=movingAverageFilter_rudder.process(Rudder_force_raw);
-    }
-    else
-    {
-      Rudder_force=0;
-    }
-
-    
-    
-  }
-};

@@ -103,7 +103,6 @@ namespace User.PluginSdkDemo
         private string info_text_connection;
         private int current_pedal_travel_state= 0;
         private int gridline_kinematic_count_original = 0;
-        private double[] Pedal_position_reading= new double[3];
 
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -2764,66 +2763,27 @@ namespace User.PluginSdkDemo
                                 if ((check_payload_state_b) && check_crc_state_b)
                                 {
 
-                                    // write vJoy data 
-                                    Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
+                                    // write vJoy data
                                     if (Plugin.Settings.vjoy_output_flag == 1)
                                     {
-                                        if (Plugin.Rudder_enable_flag == false)
+                                        switch (pedalSelected)
                                         {
-                                            switch (pedalSelected)
-                                            {
 
-                                                case 0:
-                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
-                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
-                                                    break;
-                                                case 1:
-                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
-                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
-                                                    break;
-                                                case 2:
-                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
-                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
+                                            case 0:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
+                                                break;
+                                            case 1:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
+                                                break;
+                                            case 2:
+                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                                break;
+                                            default:
+                                                break;
                                         }
-                                        else
-                                        {
-                                            //Brk move
-                                            Plugin.Rudder_update = true;
-                                            if (Pedal_position_reading[1] > Pedal_position_reading[2])
-                                            {
-                                                double Rudder_axis_value = 16384;
-                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[1];
-                                                Plugin.Rudder_position_percent = (byte)(Rudder_axis_value / 32767*100);
-                                                joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                            }
-                                            else
-                                            {
-                                                if (Pedal_position_reading[2] > Pedal_position_reading[1])
-                                                {
-                                                    double Rudder_axis_value = 16384;
-                                                    Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[2];
-                                                    Plugin.Rudder_position_percent = (byte)(Rudder_axis_value/32767*100);
-                                                    joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                                }
-                                                else
-                                                {
-                                                    joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);
-                                                    Plugin.Rudder_position_percent = 50;
-                                                }
-
-                                            }
-
-
-
-
-                                        }
-
-
-
 
                                     }
 
@@ -5248,18 +5208,6 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)e.NewValue;
             label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
-        }
-
-        private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)
-        {
-            Plugin.Rudder_enable_flag = true;
-            
-        }
-
-        private void CheckBox_rudder_Unchecked(object sender, RoutedEventArgs e)
-        {
-            Plugin.Rudder_enable_flag = false;
-            Plugin.Rudder_reset = true;
         }
 
 
