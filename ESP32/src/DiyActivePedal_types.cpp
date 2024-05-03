@@ -98,6 +98,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.invertMotorDirection_u8 = 0;
   payLoadPedalConfig_.pedal_type=0;
   payLoadPedalConfig_.OTA_flag=0;
+  payLoadPedalConfig_.enableReboot_u8=1;
 }
 
 

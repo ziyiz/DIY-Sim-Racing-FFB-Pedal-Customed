@@ -250,6 +250,7 @@ void setup()
   //Serial.begin(921600);
   //Serial.begin(512000);
   //
+  
 
   #if PCB_VERSION == 6
     Serial.setTxTimeoutMs(0);
@@ -311,7 +312,14 @@ void setup()
   EEPROM.begin(2048);
   dap_config_st.loadConfigFromEprom(dap_config_st_local);
 
+  // enable or disable reboot
+  #if PCB_VERSION == 6
+    bool enReb = dap_config_st.payLoadPedalConfig_.enableReboot_u8 >= 1;
+    Serial.enableReboot(enReb);
 
+    Serial.print( "Enable reboot: " );
+    Serial.println( enReb );
+  #endif
   // check validity of data from EEPROM  
   bool structChecker = true;
   uint16_t crc;
@@ -703,6 +711,13 @@ void pedalUpdateTask( void * pvParameters )
           dap_config_st = dap_config_st_local;
           configWasUpdated_b = true;
           xSemaphoreGive(semaphore_updateConfig);
+
+          #if PCB_VERSION == 6
+            bool enReb = dap_config_st.payLoadPedalConfig_.enableReboot_u8 >= 1;
+            Serial.print("Enable reboot after update:");
+            Serial.println(enReb);
+            Serial.enableReboot(enReb);
+          #endif
         }
 
         // update the calc params
@@ -1419,16 +1434,21 @@ void serialCommunicationTask( void * pvParameters )
     }
 
     // transmit controller output
+    //Serial.print("Joy 1");
     if (IsControllerReady()) 
     {
+      //Serial.print(" 2");
       if(semaphore_updateJoystick!=NULL)
       {
         if(xSemaphoreTake(semaphore_updateJoystick, (TickType_t)1)==pdTRUE)
         {
+          //Serial.print(" 3");
           joystickNormalizedToInt32_local = joystickNormalizedToInt32;
           xSemaphoreGive(semaphore_updateJoystick);
         }
       }
+      //Serial.print(" 4");
+      //Serial.print("\r\n");
       SetControllerOutputValue(joystickNormalizedToInt32_local);
     }
 

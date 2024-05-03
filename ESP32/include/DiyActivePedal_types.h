@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 134
+#define DAP_VERSION_CONFIG 135
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -163,6 +163,8 @@ struct payloadPedalConfig {
   uint8_t pedal_type;
   //OTA flag
   uint8_t OTA_flag;
+
+  uint8_t enableReboot_u8;
   
 
 };

@@ -464,6 +464,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 1;
         }
 
 
@@ -1347,6 +1348,17 @@ namespace User.PluginSdkDemo
             { 
                 OTA_update_check.IsChecked = false;
             }
+
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 == 1)
+            {
+                EnableReboot_check.IsChecked = true;
+            }
+            else
+            {
+                EnableReboot_check.IsChecked = false;
+            }
+
+
 
             if (Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] == 1)
             {
@@ -2320,8 +2332,8 @@ namespace User.PluginSdkDemo
                 //Plugin._serialPort[pedalIdx].DtrEnable = false;
 
                 // ESP32 S3
-                Plugin._serialPort[pedalIdx].RtsEnable = false;
-                Plugin._serialPort[pedalIdx].DtrEnable = true;
+                //Plugin._serialPort[pedalIdx].RtsEnable = false;
+                //Plugin._serialPort[pedalIdx].DtrEnable = true;
 
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
@@ -2348,6 +2360,10 @@ namespace User.PluginSdkDemo
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
                     Plugin._serialPort[pedalIdx].Open();
+                    // ESP32 S3
+                    Plugin._serialPort[pedalIdx].RtsEnable = false;
+                    Plugin._serialPort[pedalIdx].DtrEnable = true;
+
                     Plugin.Settings.connect_status[pedalIdx] = 1;
                     // read callback
                     pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
@@ -4439,6 +4455,16 @@ namespace User.PluginSdkDemo
         private void OTA_update_check_Checked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 1;
+        }
+
+        private void EnableReboot_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 = 0;
+        }
+
+        private void EnableReboot_check_Checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 = 1;
         }
 
         private void btn_serial_clear_Click(object sender, RoutedEventArgs e)

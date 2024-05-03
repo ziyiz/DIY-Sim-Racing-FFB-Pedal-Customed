@@ -1211,6 +1211,10 @@
                                     <styles:SHToggleButton x:Name="OTA_update_check" Content="" Checked="OTA_update_check_Checked" Unchecked="OTA_update_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Enable for  OTA, restart pedal after send the config in." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                     <Label Content="Pedal firmware OTA upload" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                 </StackPanel>
+                                <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <styles:SHToggleButton x:Name="EnableReboot_check" Content="" Checked="EnableReboot_check_Checked" Unchecked="EnableReboot_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Enable for  OTA, restart pedal after send the config in." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                    <Label Content="Enable reboot" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                </StackPanel>
 
                             </StackPanel>
                             <StackPanel Width="400" Height="40">
