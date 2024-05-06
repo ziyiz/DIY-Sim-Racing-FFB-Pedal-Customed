@@ -23,7 +23,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
 
 void setup() {
 
-  Serial.setTxTimeoutMs(500);
+  Serial.setTxTimeoutMs(0);
   
   
   Joystick.setBrakeRange(0, 1000);
@@ -36,7 +36,7 @@ void setup() {
 uint64_t counter = 0;
 void loop() {
 
-  delay(5);
+  delay(2);
 
   // increment joystick output
   counter+=100;
@@ -51,7 +51,7 @@ void loop() {
   uint8_t tmp[100];
   Serial.write((char*)&tmp[0], sizeof(uint8_t) * 100 );
 
-  delay(5); // <-- This helped a lot!
+  delay(2); // <-- This helped a lot!
 
   // send USB HID output
   Joystick.setBrake(counter);
