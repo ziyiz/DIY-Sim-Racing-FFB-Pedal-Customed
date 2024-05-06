@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------
 
 #include <Joystick_ESP32S2.h>
-USBCDC USBSerial;
+//USBCDC USBSerial;
 
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
                    0, 0,                 // Button Count, Hat Switch Count
@@ -23,8 +23,8 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
 
 void setup() {
 
-  Serial.setTxTimeoutMs(0);
-
+  Serial.setTxTimeoutMs(500);
+  
   
   Joystick.setBrakeRange(0, 1000);
 
@@ -36,19 +36,24 @@ void setup() {
 uint64_t counter = 0;
 void loop() {
 
-  delay(2);
-  counter+=1;
+  delay(5);
+
+  // increment joystick output
+  counter+=100;
   if (counter > 1000)
   {
     counter = 0;
   }
-  Serial.println(counter);
-  
 
+  Serial.println(counter);
+
+  // write large packet
   uint8_t tmp[100];
   Serial.write((char*)&tmp[0], sizeof(uint8_t) * 100 );
 
-  //Serial.flush(); 
+  delay(5); // <-- This helped a lot!
+
+  // send USB HID output
   Joystick.setBrake(counter);
 }
 
