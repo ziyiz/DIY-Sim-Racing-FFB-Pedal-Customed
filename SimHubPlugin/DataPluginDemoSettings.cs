@@ -36,6 +36,7 @@
         public double kinematicDiagram_zeroPos_OX = 100;
         public double kinematicDiagram_zeroPos_OY = 20;
         public double kinematicDiagram_zeroPos_scale = 1.5;
+        public bool[] RTSDTR_False = new bool[3] { true,true,true};
 
 
     }

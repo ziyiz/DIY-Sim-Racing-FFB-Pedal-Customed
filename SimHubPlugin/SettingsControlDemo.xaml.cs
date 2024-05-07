@@ -464,7 +464,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
-            dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 1;
+            dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 0;
         }
 
 
@@ -1367,6 +1367,15 @@ namespace User.PluginSdkDemo
             else
             {
                 checkbox_enable_impact.IsChecked = false;
+            }
+
+            if (Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] == true)
+            {
+                CheckBox_RTSDTR.IsChecked = true;
+            }
+            else
+            { 
+                CheckBox_RTSDTR.IsChecked = false;
             }
 
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
@@ -2496,8 +2505,12 @@ namespace User.PluginSdkDemo
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
                 // ESP32 S3
-                Plugin._serialPort[pedalIdx].RtsEnable = false;
-                Plugin._serialPort[pedalIdx].DtrEnable = false;
+                if (Plugin.Settings.RTSDTR_False[pedalIdx] == true)
+                {
+                    Plugin._serialPort[pedalIdx].RtsEnable = false;
+                    Plugin._serialPort[pedalIdx].DtrEnable = false;
+                }
+
 
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
                 Plugin._serialPort[pedalIdx].DiscardOutBuffer();
@@ -4029,6 +4042,7 @@ namespace User.PluginSdkDemo
             joystick.AcquireVJD(vJoystickId);
             //joystick.Aquire();
             vjoy_axis_initialize();
+            CheckBox_rudder.IsEnabled = true;
 
         }
 
@@ -4038,6 +4052,7 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 0;
             //joystick.Release();
             joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
+            CheckBox_rudder.IsEnabled = false;
         }
 
 
@@ -5284,6 +5299,16 @@ namespace User.PluginSdkDemo
         {
             Plugin.Rudder_enable_flag = false;
            
+        }
+
+        private void CheckBox_RTSDTR_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] = true;
+        }
+
+        private void CheckBox_RTSDTR_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] = false;
         }
 
 
