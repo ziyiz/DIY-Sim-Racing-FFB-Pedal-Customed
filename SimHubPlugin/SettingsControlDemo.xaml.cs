@@ -368,6 +368,9 @@ namespace User.PluginSdkDemo
 
             var SerialPortSelectionArray = new List<SerialPortChoice>();
             string[] comPorts = SerialPort.GetPortNames();
+
+            comPorts = comPorts.Distinct().ToArray(); // unique
+
             if (comPorts.Length > 0)
             {
 
