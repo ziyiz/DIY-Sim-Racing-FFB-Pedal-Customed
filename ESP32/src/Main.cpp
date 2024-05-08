@@ -1062,7 +1062,7 @@ void pedalUpdateTask( void * pvParameters )
     #ifdef Using_analog_output_ESP32_S3
       if(MCP_status)
       {
-        int dac_value=(int)(joystickNormalizedToInt32*4096/10000);
+        int dac_value=(int)(joystickNormalizedToInt32*4096*0.9/10000);//limit the max to 5V*0.9=4.5V to prevent the overvolatage
         dac.setVoltage(dac_value, false);
       }
     #endif
