@@ -1455,7 +1455,7 @@ namespace User.PluginSdkDemo
                     }
                     
                     //try connect back to com port
-                    if (Settings.auto_connect_flag == 1)
+                    if (Settings.auto_connect_flag[pedalIdx] == 1)
                     {
 
                         if (Settings.connect_status[pedalIdx] == 1)

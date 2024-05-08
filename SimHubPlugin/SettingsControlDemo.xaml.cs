@@ -812,7 +812,7 @@ namespace User.PluginSdkDemo
             MyTab.SelectedIndex = (int)indexOfSelectedPedal_u;
 
             //reconnect to com port
-            if (plugin.Settings.auto_connect_flag == 1)
+            if (plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
             {
                 checkbox_auto_connect.IsChecked = true;
             }
@@ -905,7 +905,7 @@ namespace User.PluginSdkDemo
                 }
                 else
                 {
-                    if (Plugin.Settings.auto_connect_flag == 1)
+                    if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
                     {
                         info_text = info_text_connection;
                     }
@@ -1322,17 +1322,6 @@ namespace User.PluginSdkDemo
                 Label_gas_file.Content = "";
                 Gas_file_check.IsChecked = false;
             }
-            /*
-            if (Plugin.binding_check == true)
-            {
-                checkbox_enable_wheelslip.IsEnabled = true;
-            }
-            else
-            { 
-                checkbox_enable_wheelslip.IsEnabled= false;
-                Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
-
-            }*/
             
             if (Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] == 1)
             {
@@ -1379,6 +1368,15 @@ namespace User.PluginSdkDemo
             else
             { 
                 CheckBox_RTSDTR.IsChecked = false;
+            }
+
+            if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_auto_connect.IsChecked = true;
+            }
+            else
+            {
+                checkbox_auto_connect.IsChecked= false;
             }
 
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
@@ -2350,7 +2348,7 @@ namespace User.PluginSdkDemo
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-                if (Plugin.Settings.auto_connect_flag == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
+                if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
                 {
                     if (Plugin.Settings.autoconnectComPortNames[pedalIdx] == "NA")
                     {
@@ -2428,11 +2426,12 @@ namespace User.PluginSdkDemo
             count_timmer_count++;
             if (count_timmer_count > 1)
             {
-                if (Plugin.Settings.auto_connect_flag == 1)
-                {
-                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
-                    {
 
+
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+                    if (Plugin.Settings.auto_connect_flag[pedalIdx] == 1)
+                    {
 
                         if (Plugin.Settings.connect_flag[pedalIdx] == 1)
                         {
@@ -2456,7 +2455,7 @@ namespace User.PluginSdkDemo
                                             Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
                                             break;
                                         case 1:
-                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
+                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
                                             break;
                                         case 2:
                                             Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
@@ -2466,7 +2465,7 @@ namespace User.PluginSdkDemo
                                     updateTheGuiFromConfig();
                                     //System.Threading.Thread.Sleep(2000);
                                     //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
-                                    
+
 
                                 }
                             }
@@ -2482,8 +2481,10 @@ namespace User.PluginSdkDemo
 
                         }
                     }
-
                 }
+                    
+
+                
             }
             if (count_timmer_count > 200)
             {
@@ -3998,12 +3999,12 @@ namespace User.PluginSdkDemo
 
         private void checkbox_auto_connect_Checked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.auto_connect_flag = 1;
+            Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] = 1;
         }
 
         private void checkbox_auto_connect_Unchecked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.auto_connect_flag = 0 ;
+            Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] = 0 ;
         }
 
         private void checkbox_enable_ABS_Checked(object sender, RoutedEventArgs e)
