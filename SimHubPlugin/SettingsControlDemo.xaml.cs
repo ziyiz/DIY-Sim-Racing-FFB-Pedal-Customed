@@ -2399,6 +2399,7 @@ namespace User.PluginSdkDemo
                 {
                     Plugin.Settings.connect_status[pedalIdx] = 0;
                     Plugin.connectSerialPort[pedalIdx] = false;
+                    Serial_connect_status[pedalIdx] = false;
 
                 }
             }
