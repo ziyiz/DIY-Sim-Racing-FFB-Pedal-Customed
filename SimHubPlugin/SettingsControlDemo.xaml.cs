@@ -104,6 +104,7 @@ namespace User.PluginSdkDemo
         private int current_pedal_travel_state= 0;
         private int gridline_kinematic_count_original = 0;
         private double[] Pedal_position_reading=new double[3];
+        private bool[] Serial_connect_status = new bool[3] { false,false,false};
 
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -2348,7 +2349,7 @@ namespace User.PluginSdkDemo
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-                if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
+                if (Plugin.Settings.auto_connect_flag[pedalIdx] == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
                 {
                     if (Plugin.Settings.autoconnectComPortNames[pedalIdx] == "NA")
                     {
@@ -2369,19 +2370,30 @@ namespace User.PluginSdkDemo
                 
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
-                    Plugin._serialPort[pedalIdx].Open();
-                    // ESP32 S3
-                    Plugin._serialPort[pedalIdx].RtsEnable = false;
-                    Plugin._serialPort[pedalIdx].DtrEnable = true;
+                    try
+                    {
+                        Plugin._serialPort[pedalIdx].Open();
+                        // ESP32 S3
+                        Plugin._serialPort[pedalIdx].RtsEnable = false;
+                        Plugin._serialPort[pedalIdx].DtrEnable = true;
 
-                    Plugin.Settings.connect_status[pedalIdx] = 1;
-                    // read callback
-                    pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-                    pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
-                    pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-                    pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
-                    pedal_serial_read_timer[pedalIdx].Start();
-                    System.Threading.Thread.Sleep(100);
+                        Plugin.Settings.connect_status[pedalIdx] = 1;
+                        // read callback
+                        pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                        pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
+                        pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+                        pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
+                        pedal_serial_read_timer[pedalIdx].Start();
+                        System.Threading.Thread.Sleep(100);
+                        Serial_connect_status[pedalIdx] = true;
+                    }
+                    catch(Exception ex)
+                    { 
+                        TextBox2.Text = ex.Message;
+                        Serial_connect_status[pedalIdx] = false;
+                    }
+                    
+
                 }
                 else
                 {
@@ -2443,28 +2455,32 @@ namespace User.PluginSdkDemo
                                     openSerialAndAddReadCallback(pedalIdx);
                                     //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
                                     System.Threading.Thread.Sleep(200);
-                                    if (Plugin.Settings.reading_config == 1)
+                                    if (Serial_connect_status[pedalIdx])
                                     {
-                                        Reading_config_auto(pedalIdx);
+                                        if (Plugin.Settings.reading_config == 1)
+                                        {
+                                            Reading_config_auto(pedalIdx);
+                                        }
+                                        System.Threading.Thread.Sleep(100);
+                                        //add toast notificaiton
+                                        switch (pedalIdx)
+                                        {
+                                            case 0:
+                                                Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                            case 1:
+                                                Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                            case 2:
+                                                Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                        }
+                                        ToastNotification(Toast_tmp, "Connected");
+                                        updateTheGuiFromConfig();
+                                        //System.Threading.Thread.Sleep(2000);
+                                        //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
                                     }
-                                    System.Threading.Thread.Sleep(100);
-                                    //add toast notificaiton
-                                    switch (pedalIdx)
-                                    {
-                                        case 0:
-                                            Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
-                                            break;
-                                        case 1:
-                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
-                                            break;
-                                        case 2:
-                                            Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
-                                            break;
-                                    }
-                                    ToastNotification(Toast_tmp, "Connected");
-                                    updateTheGuiFromConfig();
-                                    //System.Threading.Thread.Sleep(2000);
-                                    //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
+
 
 
                                 }
