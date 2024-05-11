@@ -2849,7 +2849,7 @@ namespace User.PluginSdkDemo
                                         if (Pedal_position_reading[1] > Pedal_position_reading[2])
                                         {
                                             double Rudder_axis_value = 16384;
-                                            Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[1];
+                                            Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[1];
 
                                             joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
                                         }
@@ -2858,7 +2858,7 @@ namespace User.PluginSdkDemo
                                             if (Pedal_position_reading[2] > Pedal_position_reading[1])
                                             {
                                                 double Rudder_axis_value = 16384;
-                                                Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[2];
+                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[2];
 
                                                 joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
                                             }

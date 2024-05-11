@@ -823,7 +823,7 @@
                         </StackPanel>
                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,4,0,0">
                             <styles:SHToggleButton x:Name="CheckBox_rudder" Content="" Checked="CheckBox_rudder_Checked" Unchecked="CheckBox_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" IsEnabled="False" />
-                            <Label Content="Rudder" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                            <Label Content="Combine Axis" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                         </StackPanel>
                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,4,0,0">
                             <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
