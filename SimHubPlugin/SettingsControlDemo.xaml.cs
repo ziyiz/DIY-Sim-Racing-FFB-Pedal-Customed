@@ -2379,6 +2379,11 @@ namespace User.PluginSdkDemo
 
                         Plugin.Settings.connect_status[pedalIdx] = 1;
                         // read callback
+                        if (pedal_serial_read_timer[pedalIdx] != null)
+                        {
+                            pedal_serial_read_timer[pedalIdx].Stop();
+                            pedal_serial_read_timer[pedalIdx].Dispose();
+                        }
                         pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
                         pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
                         pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
