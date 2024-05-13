@@ -2373,6 +2373,14 @@ namespace User.PluginSdkDemo
                     try
                     {
                         Plugin._serialPort[pedalIdx].Open();
+
+                        // ESP32 S3
+                        Plugin._serialPort[pedalIdx].RtsEnable = false;
+                        Plugin._serialPort[pedalIdx].DtrEnable = false;
+
+
+                        System.Threading.Thread.Sleep(200);
+
                         // ESP32 S3
                         Plugin._serialPort[pedalIdx].RtsEnable = false;
                         Plugin._serialPort[pedalIdx].DtrEnable = true;
