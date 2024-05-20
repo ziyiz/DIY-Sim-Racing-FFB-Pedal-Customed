@@ -897,6 +897,10 @@ namespace User.PluginSdkDemo
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
             string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (plugin_version == "1.0.0.0")
+            {
+                plugin_version = "Dev.";
+            }
             string info_text;
             if (Plugin != null)
             {
