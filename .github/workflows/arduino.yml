@@ -188,7 +188,9 @@ jobs:
     #- name: List files in dir 2
     #  run: |
     #    ls ${{ github.workspace }}
-          
+    - name: Edit version
+      run: sed -i "s/\(AssemblyVersion(""\([0-9]\+\.\)\{3\}\)\([0-9]\+\)/\1${{github.run_number}}/" "SimHubPlugin/Properties/AssemblyInfo.cs"
+      
     - name: Restore Packages
       run: nuget restore "SimHubPlugin/User.PluginSdkDemo.sln"
 
