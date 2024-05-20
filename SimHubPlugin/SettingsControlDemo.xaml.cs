@@ -895,8 +895,8 @@ namespace User.PluginSdkDemo
             update_plot_BP();
             update_plot_WS();
             update_plot_RPM();
-            info_label.Content = "State:\nDAP Version:";
-
+            info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
             string info_text;
             if (Plugin != null)
             {
@@ -915,7 +915,7 @@ namespace User.PluginSdkDemo
                         info_text = "Waiting...";
                     }
                 }
-                info_text += "\n" + Constants.pedalConfigPayload_version;
+                info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
                 info_label_2.Content = info_text;
             }
 
