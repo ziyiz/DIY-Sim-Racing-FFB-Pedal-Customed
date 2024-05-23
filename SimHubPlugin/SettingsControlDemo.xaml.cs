@@ -2736,7 +2736,7 @@ namespace User.PluginSdkDemo
 
 
                         // check if buffer is large enough otherwise discard in buffer and set offset to 0
-                        if (bufferSize > currentBufferLength)
+                        if ((bufferSize > currentBufferLength) && (appendedBufferOffset[pedalSelected] >= 0))
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
                         }
