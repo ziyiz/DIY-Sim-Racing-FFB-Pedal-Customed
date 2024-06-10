@@ -800,8 +800,8 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="#7F4E4E4E" Height="185" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Left" Margin="0,3,0,0" >
-                    <StackPanel HorizontalAlignment="Center" Height="185" VerticalAlignment="Top" Width="168">
+                <Border Background="#7F4E4E4E" Height="145" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Left" Margin="0,3,0,0" >
+                    <StackPanel HorizontalAlignment="Center" Height="145" VerticalAlignment="Top" Width="168">
                         <Label Content="Plugin Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
                             <styles:SHToggleButton x:Name="checkbox_auto_connect" Content="" Checked="checkbox_auto_connect_Checked" Unchecked="checkbox_auto_connect_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Auto connect with scan the port every 5s, and connect back the pedal you have connect until you press disconnect" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
@@ -821,14 +821,7 @@
                             <Button x:Name="btn_minus"  Click="vjoy_minus_click" Content="-" Height="15" Width="15" BorderThickness="0,0,0,0" MinHeight="10" Padding="0,-3,0,0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Yu Gothic UI" HorizontalContentAlignment="Center" FontSize="10"/>
 
                         </StackPanel>
-                        <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,4,0,0">
-                            <styles:SHToggleButton x:Name="CheckBox_rudder" Content="" Checked="CheckBox_rudder_Checked" Unchecked="CheckBox_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" IsEnabled="False" />
-                            <Label Content="Combine Axis" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,4,0,0">
-                            <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
-                            <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                        </StackPanel>
+
                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
                             <styles:SHToggleButton x:Name="Debug_check" Content="" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Some opttions were hidden..." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                             <Label Content="Advanced Mode" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
@@ -837,8 +830,8 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="228" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,45,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
-                <StackPanel HorizontalAlignment="Left" Height="255" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
+            <Border x:Name="debug_border" Background="#7F4E4E4E" Height="268" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="5" Grid.RowSpan="3" VerticalAlignment="Top" >
+                <StackPanel HorizontalAlignment="Left" Height="268" Grid.Row="4" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
                     <Label x:Name="debug_label_text" Content="Advanced Area" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                     <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <Label Content="Debug flag 0:" Height="20" Width="60" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
@@ -847,6 +840,14 @@
                     <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
                         <styles:SHToggleButton x:Name="dump_pedal_response_to_file" Content="" Checked="dump_pedal_response_to_file_checked" Unchecked="dump_pedal_response_to_file_unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                         <Label Content="Dump Pedal Resonse" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
+                        <styles:SHToggleButton x:Name="CheckBox_rudder" Content="" Checked="CheckBox_rudder_Checked" Unchecked="CheckBox_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Combie Brk and Acc into 1 axis Rz, use as Rudder, only work in vjoy" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" IsEnabled="False" />
+                        <Label Content="Combine Axis" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
+                        <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                        <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                     </StackPanel>
                     <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Center" />
                     <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
@@ -1218,7 +1219,7 @@
                                     <Label Content="Pedal firmware OTA upload" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Height="20" Width="130" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
-                                    <styles:SHToggleButton x:Name="EnableReboot_check" Content="" Checked="EnableReboot_check_Checked" Unchecked="EnableReboot_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Enable for  OTA, restart pedal after send the config in." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                    <styles:SHToggleButton x:Name="EnableReboot_check" Content="" Checked="EnableReboot_check_Checked" Unchecked="EnableReboot_check_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option only work in S3 board" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                     <Label Content="Enable reboot" Height="20" Width="100" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                 </StackPanel>
 
