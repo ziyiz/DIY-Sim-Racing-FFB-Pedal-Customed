@@ -1,6 +1,7 @@
 #include "StepperWithLimits.h"
 #include "RTDebugOutput.h"
 #include "Main.h"
+#include "Math.h"
 
 
 #define STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT 20
@@ -54,7 +55,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 }
 
 
-void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57)
+void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57, DAP_config_st dap_config_st)
 {
 
   if (! hasValidStepper()) return;
@@ -93,6 +94,15 @@ void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57)
   endPosDetected = 0;//abs( isv57->servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 
   setPosition = _stepper->getCurrentPosition();
+
+  // calculate max steps for endstop limit
+  float spindlePitch = max( dap_config_st.payLoadPedalConfig_.spindlePitch_mmPerRev_u8, (uint8_t)1 );
+  float maxRevToReachEndPos = (float)dap_config_st.payLoadPedalConfig_.lengthPedal_travel / spindlePitch;
+  float maxStepsToReachEndPos = maxRevToReachEndPos * STEPS_PER_MOTOR_REVOLUTION;
+
+  Serial.print("Max travel steps: ");
+  Serial.println(maxStepsToReachEndPos);
+
   while (!endPosDetected) {
     delay(10);
     isv57->readServoStates();
@@ -101,6 +111,12 @@ void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57)
     if (setPosition > MIN_POS_MAX_ENDSTOP)
     {
       endPosDetected = abs( isv57->servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;  
+    }
+
+    // trigger endstop if configured max travel is reached 
+    if (setPosition > maxStepsToReachEndPos)
+    {
+      endPosDetected = true;
     }
     
 

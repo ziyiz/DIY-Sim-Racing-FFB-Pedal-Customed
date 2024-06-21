@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 135;
+    public const uint pedalConfigPayload_version = 136;
 
 
     // pyload types
@@ -119,7 +119,8 @@ public struct payloadPedalConfig
     public Int16 lengthPedal_d;
     public Int16 lengthPedal_c_horizontal;
     public Int16 lengthPedal_c_vertical;
-    
+    public Int16 lengthPedal_travel;
+
 
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value

@@ -394,7 +394,8 @@ void setup()
   Serial.print("Start homing");
   if (isv57LifeSignal_b && SENSORLESS_HOMING)
   {
-    stepper->findMinMaxSensorless(&isv57);
+    
+    stepper->findMinMaxSensorless(&isv57, dap_config_st);
   }
   else
   {
