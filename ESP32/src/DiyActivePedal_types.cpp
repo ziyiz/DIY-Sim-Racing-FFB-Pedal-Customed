@@ -174,7 +174,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   BP_trigger_value=(float)config_st.payLoadPedalConfig_.BP_trigger_value;
   BP_amp=((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
   BP_freq=(float)config_st.payLoadPedalConfig_.BP_freq;
-  WS_amp=((float)config_st.payLoadPedalConfig_.WS_amp) / 100.0f;
+  WS_amp=((float)config_st.payLoadPedalConfig_.WS_amp) / 20.0f;
   WS_freq=(float)config_st.payLoadPedalConfig_.WS_freq;
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);

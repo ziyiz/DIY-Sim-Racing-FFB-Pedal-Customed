@@ -940,8 +940,8 @@ namespace User.PluginSdkDemo
 
             Slider_WS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
             label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
-            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f;
-            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/100.0f + "kg";
+            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f;
+            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/20.0f + "kg";
             Slider_WS_trigger.Value= Plugin.Settings.WS_trigger;
             label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
 
@@ -1580,7 +1580,7 @@ namespace User.PluginSdkDemo
             double dx = canvas_plot_WS.Width / x_quantity;
             double dy = canvas_plot_WS.Height / y_max;
             double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
-            double max_force = 200 / 20;
+            double max_force = 250 / 20;
             double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20;
             double peroid = x_quantity / freq;
             System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
@@ -5154,8 +5154,8 @@ namespace User.PluginSdkDemo
 
         private void Slider_WS_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*100);
-            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f + "kg";
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*20);
+            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f + "kg";
             update_plot_WS();
         }
 
