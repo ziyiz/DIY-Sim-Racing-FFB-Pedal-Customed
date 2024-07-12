@@ -45,24 +45,24 @@ jobs:
         
         
         
-    # zip plugin binaries
-    - name: ZIP files
-      run: | 
-        7z a ./Helper/zip/esp32.zip @Helper/zip/filelist_esp32.txt
-        7z a ./Helper/zip/esp32s3.zip @Helper/zip/filelist_esp32s3.txt
-        7z a ./Helper/zip/esp32_speedcrafter.zip @Helper/zip/filelist_esp32_speedcrafter.txt
+    ## zip plugin binaries
+    #- name: ZIP files
+    #  run: | 
+    #    7z a ./Helper/zip/esp32.zip @Helper/zip/filelist_esp32.txt
+    #    7z a ./Helper/zip/esp32s3.zip @Helper/zip/filelist_esp32s3.txt
+    #    7z a ./Helper/zip/esp32_speedcrafter.zip @Helper/zip/filelist_esp32_speedcrafter.txt
        
 
 
 
        
-    # Publish as build artifact
-      - name: Attach artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: firmware_esp32
-          path: | 
-            ./Helper/zip/esp32.zip
+    ## Publish as build artifact
+    #  - name: Attach artifact
+    #    uses: actions/upload-artifact@v2
+    #    with:
+    #      name: firmware_esp32
+    #      path: | 
+    #        ./Helper/zip/esp32.zip
         
         
         
