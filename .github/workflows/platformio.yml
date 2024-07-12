@@ -1,0 +1,38 @@
+name: PlatformIO CI
+
+on: [push]
+
+
+# see e.g. https://cgrotz.github.io/2020-08-24-esp32_ci_cd_part2/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+
+      - name: Build PlatformIO Project
+        run: pio run -d "./ESP32"
+        
+        
+      - name: Attach artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware_esp32
+          path: .pio/build/esp32/firmware.bin
+        
+        
+        
