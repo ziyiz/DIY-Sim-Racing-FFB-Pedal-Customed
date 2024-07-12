@@ -4,7 +4,9 @@ name: build_release
 # Only trigger, when the build workflow succeeded, see https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
 on:
   workflow_run:
-    workflows: ["build_firmware","build_simhub_plugin"]
+    workflows: 
+      - build_firmware
+      - build_simhub_plugin
     types:
       - completed
       
