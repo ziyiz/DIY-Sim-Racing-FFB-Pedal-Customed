@@ -103,6 +103,8 @@ namespace User.PluginSdkDemo
         private string info_text_connection;
         private int current_pedal_travel_state= 0;
         private int gridline_kinematic_count_original = 0;
+        private double[] Pedal_position_reading=new double[3];
+        private bool[] Serial_connect_status = new bool[3] { false,false,false};
 
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -367,6 +369,9 @@ namespace User.PluginSdkDemo
 
             var SerialPortSelectionArray = new List<SerialPortChoice>();
             string[] comPorts = SerialPort.GetPortNames();
+
+            comPorts = comPorts.Distinct().ToArray(); // unique
+
             if (comPorts.Length > 0)
             {
 
@@ -413,6 +418,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_d = 60;
             dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_c_horizontal = 215;
             dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_c_vertical = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.lengthPedal_travel = 100;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_trigger = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.Simulate_ABS_value = 80;
@@ -463,6 +469,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 0;
         }
 
 
@@ -498,9 +505,6 @@ namespace User.PluginSdkDemo
             //Label_reverse_LC.Visibility=Visibility.Hidden;
             //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
-            rangeslider_example.Visibility=Visibility.Hidden;
-            testslider.Visibility=Visibility.Hidden;
-            verticaltest.Visibility=Visibility.Hidden;
             //setting drawing color with Simhub theme workaround
             SolidColorBrush buttonBackground_ = btn_update.Background as SolidColorBrush;
 
@@ -810,7 +814,7 @@ namespace User.PluginSdkDemo
             MyTab.SelectedIndex = (int)indexOfSelectedPedal_u;
 
             //reconnect to com port
-            if (plugin.Settings.auto_connect_flag == 1)
+            if (plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
             {
                 checkbox_auto_connect.IsChecked = true;
             }
@@ -892,8 +896,12 @@ namespace User.PluginSdkDemo
             update_plot_BP();
             update_plot_WS();
             update_plot_RPM();
-            info_label.Content = "State:\nDAP Version:";
-
+            info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (plugin_version == "1.0.0.0")
+            {
+                plugin_version = "Dev.";
+            }
             string info_text;
             if (Plugin != null)
             {
@@ -903,7 +911,7 @@ namespace User.PluginSdkDemo
                 }
                 else
                 {
-                    if (Plugin.Settings.auto_connect_flag == 1)
+                    if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
                     {
                         info_text = info_text_connection;
                     }
@@ -912,7 +920,7 @@ namespace User.PluginSdkDemo
                         info_text = "Waiting...";
                     }
                 }
-                info_text += "\n" + Constants.pedalConfigPayload_version;
+                info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
                 info_label_2.Content = info_text;
             }
 
@@ -932,8 +940,8 @@ namespace User.PluginSdkDemo
 
             Slider_WS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
             label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
-            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f;
-            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/100.0f + "kg";
+            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f;
+            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/20.0f + "kg";
             Slider_WS_trigger.Value= Plugin.Settings.WS_trigger;
             label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
 
@@ -965,11 +973,16 @@ namespace User.PluginSdkDemo
             
             if (Plugin != null)
             {
-                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";
-                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";
+                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
             }
 
 
+
+
+
+            Rangeslider_force_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
+            Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
             if (indexOfSelectedPedal_u != 1)
             {
                 Rangeslider_force_range.Maximum = 50;
@@ -978,8 +991,6 @@ namespace User.PluginSdkDemo
             {
                 Rangeslider_force_range.Maximum = 200;
             }
-            Rangeslider_force_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
-            Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
             if (Plugin != null)
             {
                 Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
@@ -1317,17 +1328,6 @@ namespace User.PluginSdkDemo
                 Label_gas_file.Content = "";
                 Gas_file_check.IsChecked = false;
             }
-            /*
-            if (Plugin.binding_check == true)
-            {
-                checkbox_enable_wheelslip.IsEnabled = true;
-            }
-            else
-            { 
-                checkbox_enable_wheelslip.IsEnabled= false;
-                Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] = 0;
-
-            }*/
             
             if (Plugin.Settings.WS_enable_flag[indexOfSelectedPedal_u] == 1)
             {
@@ -1347,6 +1347,17 @@ namespace User.PluginSdkDemo
                 OTA_update_check.IsChecked = false;
             }
 
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 == 1)
+            {
+                EnableReboot_check.IsChecked = true;
+            }
+            else
+            {
+                EnableReboot_check.IsChecked = false;
+            }
+
+
+
             if (Plugin.Settings.Road_impact_enable_flag[indexOfSelectedPedal_u] == 1)
             {
                 checkbox_enable_impact.IsChecked = true;
@@ -1354,6 +1365,24 @@ namespace User.PluginSdkDemo
             else
             {
                 checkbox_enable_impact.IsChecked = false;
+            }
+
+            if (Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] == true)
+            {
+                CheckBox_RTSDTR.IsChecked = true;
+            }
+            else
+            { 
+                CheckBox_RTSDTR.IsChecked = false;
+            }
+
+            if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
+            {
+                checkbox_auto_connect.IsChecked = true;
+            }
+            else
+            {
+                checkbox_auto_connect.IsChecked= false;
             }
 
             textBox_wheelslip_effect_string.Text = Plugin.Settings.WSeffect_bind;
@@ -1551,7 +1580,7 @@ namespace User.PluginSdkDemo
             double dx = canvas_plot_WS.Width / x_quantity;
             double dy = canvas_plot_WS.Height / y_max;
             double freq = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
-            double max_force = 200 / 20;
+            double max_force = 250 / 20;
             double amp = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20;
             double peroid = x_quantity / freq;
             System.Windows.Media.PointCollection myPointCollection2 = new System.Windows.Media.PointCollection();
@@ -2319,13 +2348,13 @@ namespace User.PluginSdkDemo
                 //Plugin._serialPort[pedalIdx].DtrEnable = false;
 
                 // ESP32 S3
-                Plugin._serialPort[pedalIdx].RtsEnable = false;
-                Plugin._serialPort[pedalIdx].DtrEnable = true;
+                //Plugin._serialPort[pedalIdx].RtsEnable = false;
+                //Plugin._serialPort[pedalIdx].DtrEnable = true;
 
 
                 Plugin._serialPort[pedalIdx].NewLine = "\r\n";
                 Plugin._serialPort[pedalIdx].ReadBufferSize = 10000;
-                if (Plugin.Settings.auto_connect_flag == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
+                if (Plugin.Settings.auto_connect_flag[pedalIdx] == 1 & Plugin.Settings.connect_flag[pedalIdx] == 1 )
                 {
                     if (Plugin.Settings.autoconnectComPortNames[pedalIdx] == "NA")
                     {
@@ -2346,20 +2375,51 @@ namespace User.PluginSdkDemo
                 
                 if (Plugin.PortExists(Plugin._serialPort[pedalIdx].PortName))
                 {
-                    Plugin._serialPort[pedalIdx].Open();
-                    Plugin.Settings.connect_status[pedalIdx] = 1;
-                    // read callback
-                    pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
-                    pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
-                    pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
-                    pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
-                    pedal_serial_read_timer[pedalIdx].Start();
-                    System.Threading.Thread.Sleep(100);
+                    try
+                    {
+                        Plugin._serialPort[pedalIdx].Open();
+
+                        // ESP32 S3
+                        if (Plugin.Settings.RTSDTR_False[pedalIdx] == true)
+                        {
+                            Plugin._serialPort[pedalIdx].RtsEnable = false;
+                            Plugin._serialPort[pedalIdx].DtrEnable = false;
+                        }
+
+                        System.Threading.Thread.Sleep(200);
+
+                        // ESP32 S3
+                        Plugin._serialPort[pedalIdx].RtsEnable = false;
+                        Plugin._serialPort[pedalIdx].DtrEnable = true;
+
+                        Plugin.Settings.connect_status[pedalIdx] = 1;
+                        // read callback
+                        if (pedal_serial_read_timer[pedalIdx] != null)
+                        {
+                            pedal_serial_read_timer[pedalIdx].Stop();
+                            pedal_serial_read_timer[pedalIdx].Dispose();
+                        }
+                        pedal_serial_read_timer[pedalIdx] = new System.Windows.Forms.Timer();
+                        pedal_serial_read_timer[pedalIdx].Tick += new EventHandler(timerCallback_serial);
+                        pedal_serial_read_timer[pedalIdx].Tag = pedalIdx;
+                        pedal_serial_read_timer[pedalIdx].Interval = 16; // in miliseconds
+                        pedal_serial_read_timer[pedalIdx].Start();
+                        System.Threading.Thread.Sleep(100);
+                        Serial_connect_status[pedalIdx] = true;
+                    }
+                    catch(Exception ex)
+                    { 
+                        TextBox2.Text = ex.Message;
+                        Serial_connect_status[pedalIdx] = false;
+                    }
+                    
+
                 }
                 else
                 {
                     Plugin.Settings.connect_status[pedalIdx] = 0;
                     Plugin.connectSerialPort[pedalIdx] = false;
+                    Serial_connect_status[pedalIdx] = false;
 
                 }
             }
@@ -2399,11 +2459,12 @@ namespace User.PluginSdkDemo
             count_timmer_count++;
             if (count_timmer_count > 1)
             {
-                if (Plugin.Settings.auto_connect_flag == 1)
-                {
-                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
-                    {
 
+
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+                    if (Plugin.Settings.auto_connect_flag[pedalIdx] == 1)
+                    {
 
                         if (Plugin.Settings.connect_flag[pedalIdx] == 1)
                         {
@@ -2415,29 +2476,33 @@ namespace User.PluginSdkDemo
                                     openSerialAndAddReadCallback(pedalIdx);
                                     //Plugin.Settings.autoconnectComPortNames[pedalIdx] = Plugin._serialPort[pedalIdx].PortName;
                                     System.Threading.Thread.Sleep(200);
-                                    if (Plugin.Settings.reading_config == 1)
+                                    if (Serial_connect_status[pedalIdx])
                                     {
-                                        Reading_config_auto(pedalIdx);
+                                        if (Plugin.Settings.reading_config == 1)
+                                        {
+                                            Reading_config_auto(pedalIdx);
+                                        }
+                                        System.Threading.Thread.Sleep(100);
+                                        //add toast notificaiton
+                                        switch (pedalIdx)
+                                        {
+                                            case 0:
+                                                Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                            case 1:
+                                                Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                            case 2:
+                                                Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
+                                                break;
+                                        }
+                                        ToastNotification(Toast_tmp, "Connected");
+                                        updateTheGuiFromConfig();
+                                        //System.Threading.Thread.Sleep(2000);
+                                        //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
                                     }
-                                    System.Threading.Thread.Sleep(100);
-                                    //add toast notificaiton
-                                    switch (pedalIdx)
-                                    {
-                                        case 0:
-                                            Toast_tmp = "Clutch Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
-                                            break;
-                                        case 1:
-                                            Toast_tmp = "Brake Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx] ;
-                                            break;
-                                        case 2:
-                                            Toast_tmp = "Throttle Pedal:" + Plugin.Settings.autoconnectComPortNames[pedalIdx];
-                                            break;
-                                    }
-                                    ToastNotification(Toast_tmp, "Connected");
-                                    updateTheGuiFromConfig();
-                                    //System.Threading.Thread.Sleep(2000);
-                                    //ToastNotificationManager.History.Clear("FFB Pedal Dashboard");
-                                    
+
+
 
                                 }
                             }
@@ -2453,8 +2518,10 @@ namespace User.PluginSdkDemo
 
                         }
                     }
-
                 }
+                    
+
+                
             }
             if (count_timmer_count > 200)
             {
@@ -2478,6 +2545,14 @@ namespace User.PluginSdkDemo
             
             if (Plugin._serialPort[pedalIdx].IsOpen)
             {
+                // ESP32 S3
+                if (Plugin.Settings.RTSDTR_False[pedalIdx] == true)
+                {
+                    Plugin._serialPort[pedalIdx].RtsEnable = false;
+                    Plugin._serialPort[pedalIdx].DtrEnable = false;
+                }
+
+
                 Plugin._serialPort[pedalIdx].DiscardInBuffer();
                 Plugin._serialPort[pedalIdx].DiscardOutBuffer();
                 Plugin._serialPort[pedalIdx].Close();
@@ -2662,7 +2737,7 @@ namespace User.PluginSdkDemo
 
 
                         // check if buffer is large enough otherwise discard in buffer and set offset to 0
-                        if (bufferSize > currentBufferLength)
+                        if ((bufferSize > currentBufferLength) && (appendedBufferOffset[pedalSelected] >= 0))
                         {
                             sp.Read(buffer_appended[pedalSelected], appendedBufferOffset[pedalSelected], receivedLength);
                         }
@@ -2760,26 +2835,63 @@ namespace User.PluginSdkDemo
                                 {
 
                                     // write vJoy data
-                                    if (Plugin.Settings.vjoy_output_flag == 1)
+                                    Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
+                                    if (Plugin.Rudder_enable_flag == false)
                                     {
-                                        switch (pedalSelected)
+                                        if (Plugin.Settings.vjoy_output_flag == 1)
                                         {
+                                            switch (pedalSelected)
+                                            {
 
-                                            case 0:
-                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
-                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
-                                                break;
-                                            case 1:
-                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
-                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
-                                                break;
-                                            case 2:
-                                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
-                                                joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                                break;
-                                            default:
-                                                break;
+                                                case 0:
+                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
+                                                    break;
+                                                case 1:
+                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
+                                                    break;
+                                                case 2:
+                                                    //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                                    joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+
                                         }
+                                        
+                                    }
+                                    else
+                                    {
+                                        //Brk move
+
+                                        if (Pedal_position_reading[1] > Pedal_position_reading[2])
+                                        {
+                                            double Rudder_axis_value = 16384;
+                                            Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[1];
+
+                                            joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                        }
+                                        else
+                                        {
+                                            if (Pedal_position_reading[2] > Pedal_position_reading[1])
+                                            {
+                                                double Rudder_axis_value = 16384;
+                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[2];
+
+                                                joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                            }
+                                            else
+                                            {
+                                                joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);
+
+                                            }
+
+                                        }
+
+
+
 
                                     }
 
@@ -3533,6 +3645,10 @@ namespace User.PluginSdkDemo
                         {
                             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = 60;
                         }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel == 0)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 100;
+                        }
                     }
 
                     updateTheGuiFromConfig();
@@ -3849,9 +3965,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
             Line_H_HeaderTab.X2 = 1028;
-            testslider.Visibility= Visibility.Visible;
-            rangeslider_example.Visibility= Visibility.Visible;
-            verticaltest.Visibility= Visibility.Visible;
+
             Slider_LC_rate.TickFrequency = 1;
 
         }
@@ -3878,9 +3992,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
             Line_H_HeaderTab.X2 = 723;
-            testslider.Visibility = Visibility.Hidden;
-            rangeslider_example.Visibility = Visibility.Hidden;
-            verticaltest.Visibility = Visibility.Hidden;
+
             Slider_LC_rate.TickFrequency = 10;
         }
 
@@ -3928,12 +4040,12 @@ namespace User.PluginSdkDemo
 
         private void checkbox_auto_connect_Checked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.auto_connect_flag = 1;
+            Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] = 1;
         }
 
         private void checkbox_auto_connect_Unchecked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.auto_connect_flag = 0 ;
+            Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] = 0 ;
         }
 
         private void checkbox_enable_ABS_Checked(object sender, RoutedEventArgs e)
@@ -3975,6 +4087,7 @@ namespace User.PluginSdkDemo
             joystick.AcquireVJD(vJoystickId);
             //joystick.Aquire();
             vjoy_axis_initialize();
+            CheckBox_rudder.IsEnabled = true;
 
         }
 
@@ -3984,6 +4097,7 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 0;
             //joystick.Release();
             joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
+            CheckBox_rudder.IsEnabled = false;
         }
 
 
@@ -4403,6 +4517,16 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 1;
         }
 
+        private void EnableReboot_check_Unchecked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 = 0;
+        }
+
+        private void EnableReboot_check_Checked(object sender, RoutedEventArgs e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableReboot_u8 = 1;
+        }
+
         private void btn_serial_clear_Click(object sender, RoutedEventArgs e)
         {
             TextBox_serialMonitor.Clear();
@@ -4471,14 +4595,14 @@ namespace User.PluginSdkDemo
             Label_kinematic_c_vert_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             Label_kinematic_a_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
             Label_kinematic_d_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
-            Label_travel_canvas.Text = "" + Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
+            Label_travel_canvas.Text = "" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel;
             Label_kinematic_scale.Content = Math.Round(Plugin.Settings.kinematicDiagram_zeroPos_scale,1);
             
             //parameter calculation
             double OA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b;
             double OB_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
-            double Travel_length = Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u];
+            double Travel_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel;
             double CA_length = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
             double OD_length = OA_length + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_d;
             double Current_travel_position;
@@ -4651,7 +4775,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA + 1, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA + 1, OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b + 1);
@@ -4669,7 +4793,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA -1 , OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA -1 , OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b - 1);
                 updateTheGuiFromConfig();
@@ -4686,7 +4810,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA , OB+1, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA , OB+1, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal + 1);
                 updateTheGuiFromConfig();
@@ -4703,7 +4827,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA , OB-1, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA , OB-1, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal - 1);
                 updateTheGuiFromConfig();
@@ -4720,7 +4844,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC+1, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA, OB, BC+1, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical + 1);
                 updateTheGuiFromConfig();
@@ -4737,7 +4861,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC-1, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA, OB, BC-1, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical - 1);
                 updateTheGuiFromConfig();
@@ -4754,7 +4878,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC, CA+1, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA, OB, BC, CA+1, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a + 1);
                 updateTheGuiFromConfig();
@@ -4771,7 +4895,7 @@ namespace User.PluginSdkDemo
             double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
             double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
             double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-            if (Kinematic_check(OA, OB, BC, CA-1, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+            if (Kinematic_check(OA, OB, BC, CA-1, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a - 1);
                 updateTheGuiFromConfig();
@@ -4811,28 +4935,30 @@ namespace User.PluginSdkDemo
 
         private void btn_plus_travel_Click(object sender, RoutedEventArgs e)
         {
-            if (Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] <= 100)
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel <= 100)
             {
-                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]++;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel + 1);
                 updateTheGuiFromConfig();
             }
             else
             {
-                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = 100;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 100;
             }
+
         }
 
         private void btn_minus_travel_Click(object sender, RoutedEventArgs e)
         {
-            if (Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] >=30)
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel >= 30)
             {
-                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]--;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel - 1);
                 updateTheGuiFromConfig();
             }
             else
             {
-                Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = 30;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 30;
             }
+
         }
 
 
@@ -4900,7 +5026,7 @@ namespace User.PluginSdkDemo
                     double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
                     double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
                     double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    if (Kinematic_check(OA, OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_b = (Int16)(result);
                         Pedal_joint_draw();
@@ -4919,7 +5045,7 @@ namespace User.PluginSdkDemo
                     double OB = result;
                     double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
                     double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    if (Kinematic_check(OA, OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal = (Int16)(result);
                         Pedal_joint_draw();
@@ -4938,7 +5064,7 @@ namespace User.PluginSdkDemo
                     double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
                     double BC = result;
                     double CA = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a;
-                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    if (Kinematic_check(OA, OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical = (Int16)(result);
                         Pedal_joint_draw();
@@ -4957,7 +5083,7 @@ namespace User.PluginSdkDemo
                     double OB = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_horizontal;
                     double BC = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_c_vertical;
                     double CA = result;
-                    if (Kinematic_check(OA, OB, BC, CA, Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u]))
+                    if (Kinematic_check(OA, OB, BC, CA, dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel))
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_a = (Int16)(result);
                         Pedal_joint_draw();
@@ -4989,7 +5115,7 @@ namespace User.PluginSdkDemo
                 {
                     if (result >= 10 && result <= 100)
                     {
-                        Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] = result;
+                        dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = (Int16)result;
                         Pedal_joint_draw();
                     }
                     else
@@ -5028,8 +5154,8 @@ namespace User.PluginSdkDemo
 
         private void Slider_WS_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*100);
-            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/100.0f + "kg";
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*20);
+            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f + "kg";
             update_plot_WS();
         }
 
@@ -5121,7 +5247,7 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = (byte)e.NewValue;
             if (Plugin != null)
             {
-                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";         
+                Label_min_pos.Content = "MIN\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition) / 100) + "mm";         
             }
             
 
@@ -5132,7 +5258,7 @@ namespace User.PluginSdkDemo
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)e.NewValue;
             if (Plugin != null)
             { 
-                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(Plugin.Settings.Pedal_travel[indexOfSelectedPedal_u] * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_max_pos.Content = "MAX\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel * dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
 
             }
         }
@@ -5210,7 +5336,27 @@ namespace User.PluginSdkDemo
             label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
         }
 
+        private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Rudder_enable_flag = true;
 
+        }
+
+        private void CheckBox_rudder_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Rudder_enable_flag = false;
+           
+        }
+
+        private void CheckBox_RTSDTR_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] = true;
+        }
+
+        private void CheckBox_RTSDTR_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] = false;
+        }
 
 
 

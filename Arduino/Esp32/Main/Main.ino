@@ -231,11 +231,16 @@ TaskHandle_t Task4;
 void setup()
 {
   //Serial.begin(115200);
-  Serial.begin(921600);
+  //Serial.begin(921600);
   //Serial.begin(512000);
-  Serial.setTimeout(5);
-  //Serial.setTxTimeoutMs(0);
-
+  //
+  #ifdef SERIAL_TIMEOUT
+    //Serial.setTxTimeoutMs(0);
+    Serial.begin(921600);
+  #else
+    Serial.begin(921600);
+    Serial.setTimeout(5);
+  #endif
   Serial.println(" ");
   Serial.println(" ");
   Serial.println(" ");
@@ -525,15 +530,16 @@ void setup()
 
   //MCP setup
   #ifdef Using_analog_output_ESP32_S3
-    Wire.begin(MCP_SDA,MCP_SCL,400000);
+    //Wire.begin(MCP_SDA,MCP_SCL,400000);
+    MCP4725_I2C.begin(MCP_SDA,MCP_SCL,400000);
     uint8_t i2c_address[8]={0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67};
     int index_address=0;
     int found_address=0;
     int error;
     for(index_address=0;index_address<8;index_address++)
     {
-      Wire.beginTransmission(i2c_address[index_address]);
-      error = Wire.endTransmission();
+      MCP4725_I2C.beginTransmission(i2c_address[index_address]);
+      error = MCP4725_I2C.endTransmission();
       if (error == 0)
       {
         Serial.print("I2C device found at address");
@@ -549,6 +555,7 @@ void setup()
         Serial.println(i2c_address[index_address]);
       }
     }
+    
     if(dac.begin(i2c_address[found_address], &MCP4725_I2C)==false)
     {
       Serial.println("Couldn't find MCP, will not have analog output");
@@ -1211,9 +1218,13 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
-    delay(1);
-    // read serial input 
-    byte n = Serial.available();
+    delay( SERIAL_COOMUNICATION_TASK_DELAY_IN_MS );
+
+
+    //if (Serial)
+    { 
+      // read serial input 
+      byte n = Serial.available();
 
     bool structChecker = true;
     
@@ -1427,6 +1438,7 @@ void serialCommunicationTask( void * pvParameters )
     Serial.flush();
     //Serial.flush(true);
 
+    }
 
     // transmit controller output
     if (IsControllerReady()) 
@@ -1442,8 +1454,10 @@ void serialCommunicationTask( void * pvParameters )
       SetControllerOutputValue(joystickNormalizedToInt32_local);
     }
 
-
-
+  /*#ifdef SERIAL_TIMEOUT
+    delay(10);
+  #endif
+*/
 
   }
 }

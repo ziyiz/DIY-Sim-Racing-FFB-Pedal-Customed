@@ -17,7 +17,7 @@
         public uint[] connect_flag = new uint[3] { 0, 0, 0 };
         public uint RPM_effect_type = 0;
         public uint table_selected = 0;
-        public int auto_connect_flag = 0;
+        public int[] auto_connect_flag = new int[3] { 0,0,0};
         public int[] selectedComPortNamesInt = new int[3] { -1, -1, -1 };
         public int[] ABS_enable_flag = new int[3] { 0, 0, 0 };
         public int[] RPM_enable_flag = new int[3] { 0, 0, 0 };
@@ -32,10 +32,10 @@
         public string Road_impact_bind = "";
         public int WS_trigger = 30;
         public string[] Profile_name = new string[6] { "", "", "", "", "", "" };
-        public int[] Pedal_travel = new int[3] { 40, 40, 40 };
         public double kinematicDiagram_zeroPos_OX = 100;
         public double kinematicDiagram_zeroPos_OY = 20;
         public double kinematicDiagram_zeroPos_scale = 1.5;
+        public bool[] RTSDTR_False = new bool[3] { true,true,true};
 
 
     }

@@ -87,6 +87,7 @@
 
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
 #endif
 
 
@@ -113,6 +114,7 @@
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
 #endif
 
 
@@ -146,7 +148,7 @@
 
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
-
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
 #endif
 
 
@@ -177,6 +179,7 @@
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
 
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
 #endif
 
 
@@ -207,6 +210,7 @@
 
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
 #endif
 
 
@@ -248,5 +252,7 @@
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
+
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 15
 #endif
 

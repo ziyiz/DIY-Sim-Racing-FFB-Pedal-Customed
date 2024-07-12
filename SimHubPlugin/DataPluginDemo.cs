@@ -23,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 134;
+    public const uint pedalConfigPayload_version = 136;
 
 
     // pyload types
@@ -119,7 +119,8 @@ public struct payloadPedalConfig
     public Int16 lengthPedal_d;
     public Int16 lengthPedal_c_horizontal;
     public Int16 lengthPedal_c_vertical;
-    
+    public Int16 lengthPedal_travel;
+
 
     public byte Simulate_ABS_trigger; //simulateABS
     public byte Simulate_ABS_value; //simulated ABS value
@@ -193,6 +194,9 @@ public struct payloadPedalConfig
 
     // OTA update flag
     public byte OTA_flag;
+
+    // OTA update flag
+    public byte enableReboot_u8;
 
 }
 
@@ -271,6 +275,7 @@ namespace User.PluginSdkDemo
         public uint overlay_display = 0;
         public string simhub_theme_color = "#7E87CEFA";
         public uint debug_value = 0;
+        public bool Rudder_enable_flag=false;
 
 
 
@@ -303,6 +308,15 @@ namespace User.PluginSdkDemo
         public SerialPort[] _serialPort = new SerialPort[3] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+
+        //for (byte pedalIdx_lcl = 0; pedalIdx_lcl< 3; pedalIdx_lcl++)
+        //{
+        //    _serialPortt[pedalIdx_lcl].RtsEnable = false;
+        //    _serialPort[pedalIdx_lcl].DtrEnable = true;
+        //}   
+
+
+
 
 
 
@@ -1421,6 +1435,12 @@ namespace User.PluginSdkDemo
                 // prepare serial port interfaces
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
+
+                    _serialPort[pedalIdx].Handshake = Handshake.None;
+                    _serialPort[pedalIdx].RtsEnable = false;
+                    _serialPort[pedalIdx].DtrEnable = false;
+
+
                     if (_serialPort[pedalIdx].IsOpen)
                     {
                         System.Threading.Thread.Sleep(300);
@@ -1436,7 +1456,7 @@ namespace User.PluginSdkDemo
                     }
                     
                     //try connect back to com port
-                    if (Settings.auto_connect_flag == 1)
+                    if (Settings.auto_connect_flag[pedalIdx] == 1)
                     {
 
                         if (Settings.connect_status[pedalIdx] == 1)
@@ -1601,6 +1621,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
             dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
+            dap_config_initial_st.payloadPedalConfig_.enableReboot_u8 = 1;
 
 
 
