@@ -1,4 +1,4 @@
-name: PlatformIO CI
+name: build_firmware
 
 on: [push]
 
@@ -6,7 +6,7 @@ on: [push]
 # see e.g. https://cgrotz.github.io/2020-08-24-esp32_ci_cd_part2/
 
 jobs:
-  build:
+  buildFirmware:
     #runs-on: ubuntu-latest
     runs-on: windows-latest
 
