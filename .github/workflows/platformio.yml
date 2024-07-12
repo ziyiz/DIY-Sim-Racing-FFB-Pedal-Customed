@@ -34,10 +34,10 @@ jobs:
       - name: Build PlatformIO Project ESP32
         working-directory: ./ESP32
         run: | 
-        pio system info
-        pio run --environment esp32 
-        pio run --environment esp32s3usbotg
-        pio run --environment esp32-speedcrafter
+          pio system info
+          pio run --environment esp32 
+          pio run --environment esp32s3usbotg
+          pio run --environment esp32-speedcrafter
              
         
         
@@ -49,9 +49,9 @@ jobs:
         with:
           name: firmware_esp32
           path: | 
-          .pio\build\esp32\firmware.bin
-          .pio\build\esp32\bootloader.bin
-          .pio\build\esp32\partitions.bin
+            .pio\build\esp32\firmware.bin
+            .pio\build\esp32\bootloader.bin
+            .pio\build\esp32\partitions.bin
         
         
         
