@@ -59,6 +59,8 @@ jobs:
           name: firmware_esp32
           path: | 
             ./Helper/zip/esp32.zip
+            ./Helper/zip/esp32s3.zip
+            ./Helper/zip/esp32_speedcrafter.zip
         
         
         
