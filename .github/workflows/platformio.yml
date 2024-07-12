@@ -40,17 +40,13 @@ jobs:
           pio run --environment esp32-speedcrafter
              
         
-        
-        
-        
-        
-        
+
     # zip plugin binaries
     - name: ZIP files
       run: | 
-        7z a ./Helper/zip/esp32.zip @Helper/zip/filelist_esp32.txt
-        7z a ./Helper/zip/esp32s3.zip @Helper/zip/filelist_esp32s3.txt
-        7z a ./Helper/zip/esp32_speedcrafter.zip @Helper/zip/filelist_esp32_speedcrafter.txt
+        7z a "./Helper/zip/esp32.zip @Helper/zip/filelist_esp32.txt"
+    #7z a ./Helper/zip/esp32s3.zip @Helper/zip/filelist_esp32s3.txt
+    #7z a ./Helper/zip/esp32_speedcrafter.zip @Helper/zip/filelist_esp32_speedcrafter.txt
        
 
 
