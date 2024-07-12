@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    
+    # Prepare environment
+      - uses: actions/checkout@main
       - uses: actions/cache@v3
         with:
           path: |
@@ -24,10 +26,14 @@ jobs:
         run: pip install --upgrade platformio
 
 
+    # Build ESP code
       - name: Build PlatformIO Project
-        run: pio run -d "./ESP32"
+        run: pio run -d "./ESP32" --environment esp32 
         
+      - name: Build PlatformIO Project
+        run: pio run -d "./ESP32" --environment esp32s3usbotg 
         
+    # Publish as build artifact
       - name: Attach artifact
         uses: actions/upload-artifact@v2
         with:
