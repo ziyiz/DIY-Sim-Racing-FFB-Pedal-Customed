@@ -49,11 +49,20 @@ jobs:
     # copy files to dir
       - name: Copy files to packing dir
         run: | 
-          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/firmware.bin  ${{ github.workspace }}./Helper/bins/esp32
-          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/bootloader.bin  ${{ github.workspace }}./Helper/bins/esp32
-          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/partitions.bin  ${{ github.workspace }}./Helper/bins/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/firmware.bin  ${{ github.workspace }}/Helper/bins/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/bootloader.bin  ${{ github.workspace }}/Helper/bins/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/partitions.bin  ${{ github.workspace }}/Helper/bins/esp32
     
     
+    
+    
+    
+    
+    
+    # copy files to dir
+      - name: List files in dir
+        run: | 
+          dir ${{ github.workspace }}/Helper/bins/esp32
     
     
     
@@ -63,7 +72,7 @@ jobs:
     # zip plugin binaries
       - name: ZIP files
         run: | 
-          7z a ./Helper/zip/esp32.zip ${{ github.workspace }}./Helper/bins/esp32/
+          7z a ${{ github.workspace }}/Helper/zip/esp32.zip ${{ github.workspace }}/Helper/bins/esp32/
     #      7z a ./Helper/zip/esp32.zip @./Helper/zip/filelist_esp32.txt
     #      7z a ./Helper/zip/esp32s3.zip @Helper/zip/filelist_esp32s3.txt
     #      7z a./Helper/zip/esp32_speedcrafter.zip @Helper/zip/filelist_esp32_speedcrafter.txt
