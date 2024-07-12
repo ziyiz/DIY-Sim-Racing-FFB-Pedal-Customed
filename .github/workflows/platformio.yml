@@ -1,10 +1,10 @@
-name: PlatformIO CI
+name: working-directory: ./ESP32PlatformIO CI
 
 on: [push]
 
 
 # see e.g. https://cgrotz.github.io/2020-08-24-esp32_ci_cd_part2/
-
+# see https://community.platformio.org/t/github-action-fails-with-no-such-file-or-directory/20160
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,12 +26,26 @@ jobs:
         run: pip install --upgrade platformio
 
 
+
+
+
     # Build ESP code
-      - name: Build PlatformIO Project
-        run: pio run -d "./ESP32" --environment esp32 
+      - name: Build PlatformIO Project ESP32
+        working-directory: ./ESP32
+        run: pio run --environment esp32 
         
-      - name: Build PlatformIO Project
-        run: pio run -d "./ESP32" --environment esp32s3usbotg 
+      - name: Build PlatformIO Project ESP32S3
+        working-directory: ./ESP32
+        run: pio run --environment esp32s3usbotg
+
+      - name: Build PlatformIO Project SpeedcradterPcbV1p4
+        working-directory: ./ESP32
+        run: pio run --environment esp32-speedcrafter
+        
+        
+        
+        
+        
         
     # Publish as build artifact
       - name: Attach artifact
