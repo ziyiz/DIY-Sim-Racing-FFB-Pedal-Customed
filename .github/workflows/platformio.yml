@@ -36,8 +36,8 @@ jobs:
         run: | 
           pio system info
           pio run --environment esp32 
-    #      pio run --environment esp32s3usbotg
-    #      pio run --environment esp32-speedcrafter
+          pio run --environment esp32s3usbotg
+          pio run --environment esp32-speedcrafter
              
         
         
