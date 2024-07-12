@@ -1,0 +1,3 @@
+.pio\build\esp32-speedcrafter\firmware.bin
+.pio\build\esp32-speedcrafter\bootloader.bin
+.pio\build\esp32-speedcrafter\partitions.bin
