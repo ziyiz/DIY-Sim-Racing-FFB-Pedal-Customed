@@ -2,13 +2,13 @@ name: build_release
 
 
 # Only trigger, when the build workflow succeeded, see https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
-#on:
-#  workflow_run:
-#    workflows: ["build_firmware","build_simhub_plugin"]
-#    types:
-#      - completed
+on:
+  workflow_run:
+    workflows: ["build_firmware","build_simhub_plugin"]
+    types:
+      - completed
       
-on: [push]     
+      
       
 # This is the list of jobs that will be run concurrently.
 # Since we use a build matrix, the actual number of jobs
@@ -18,7 +18,8 @@ on: [push]
 # https://docs.github.com/de/actions/using-workflows/storing-workflow-data-as-artifacts
 
 jobs:
-  generateRelase:
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Download math result for job 2
