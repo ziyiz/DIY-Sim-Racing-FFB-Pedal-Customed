@@ -54,7 +54,7 @@ jobs:
        
     # Publish as build artifact
       - name: Attach artifact
-        uses: actions/upload-artissfact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: firmware_esp32
           path: | 
