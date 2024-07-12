@@ -81,6 +81,6 @@ jobs:
     - name: Attach artifact
       uses: actions/upload-artifact@v2
       with:
-      name: simhub_plugin
-      path: | 
-            ./SimHubPlugin/bin/SimHub_plugin.zip
+        name: simhub_plugin
+        path: | 
+          ./SimHubPlugin/bin/SimHub_plugin.zip
