@@ -1,10 +1,10 @@
-name: working-directory: ./ESP32PlatformIO CI
+name: PlatformIO CI
 
 on: [push]
 
 
 # see e.g. https://cgrotz.github.io/2020-08-24-esp32_ci_cd_part2/
-# see https://community.platformio.org/t/github-action-fails-with-no-such-file-or-directory/20160
+
 jobs:
   build:
     runs-on: ubuntu-latest
