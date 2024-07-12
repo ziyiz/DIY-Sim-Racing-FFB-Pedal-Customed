@@ -33,17 +33,12 @@ jobs:
     # Build ESP code
       - name: Build PlatformIO Project ESP32
         working-directory: ./ESP32
-        run: pio run --environment esp32 
-        
-      - name: Build PlatformIO Project ESP32S3
-        working-directory: ./ESP32
-        run: pio run --environment esp32s3usbotg
-
-      - name: Build PlatformIO Project SpeedcradterPcbV1p4
-        working-directory: ./ESP32
-        run: pio run --environment esp32-speedcrafter
-        
-        
+        run: | 
+        pio system info
+        pio run --environment esp32 
+        pio run --environment esp32s3usbotg
+        pio run --environment esp32-speedcrafter
+             
         
         
         
@@ -53,7 +48,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: firmware_esp32
-          path: .pio/build/esp32/firmware.bin
+          path: | 
+          .pio\build\esp32\firmware.bin
+          .pio\build\esp32\bootloader.bin
+          .pio\build\esp32\partitions.bin
         
         
         
