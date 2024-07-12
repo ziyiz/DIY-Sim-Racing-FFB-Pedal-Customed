@@ -13,7 +13,6 @@ on:
 # Since we use a build matrix, the actual number of jobs
 # started depends on how many configurations the matrix
 # will produce.
-jobs:
 
 # https://docs.github.com/de/actions/using-workflows/storing-workflow-data-as-artifacts
 
