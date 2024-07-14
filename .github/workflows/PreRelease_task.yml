@@ -257,7 +257,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: '${{ github.workspace }}\SimHubPlugin\bin\DiyActivePedal.dll'
-        prerelease: ${{ github.event.inputs.is-pre-release }}
+        prerelease: true
         replacesArtifacts: true
         allowUpdates: true
         name: develop_package_not_stable  ${{ github.run_number }}
