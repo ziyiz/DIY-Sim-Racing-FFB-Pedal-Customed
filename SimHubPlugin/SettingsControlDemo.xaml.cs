@@ -519,6 +519,7 @@ namespace User.PluginSdkDemo
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
             DrawGridLines_kinematicCanvas(100,20,1.5);
+            CustomEffectTab.Visibility = Visibility.Hidden;
 
 
 
@@ -3964,8 +3965,8 @@ namespace User.PluginSdkDemo
            // Label_reverse_LC.Visibility = Visibility.Visible;
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
-            Line_H_HeaderTab.X2 = 1028;
-
+            Line_H_HeaderTab.X2 = 1088;
+            CustomEffectTab.Visibility = Visibility.Visible;
             Slider_LC_rate.TickFrequency = 1;
 
         }
@@ -3992,7 +3993,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
             Line_H_HeaderTab.X2 = 723;
-
+            CustomEffectTab.Visibility = Visibility.Hidden;
             Slider_LC_rate.TickFrequency = 10;
         }
 
