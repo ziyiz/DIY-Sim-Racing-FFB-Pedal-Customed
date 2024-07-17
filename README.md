@@ -134,7 +134,12 @@ Without the capacitor these fluctuations would be much higher eventually trigger
 
 
 ## Mechanical design
-Here are some examples of mechanical designs awesome DIYers have done: 
+A mostly pritnable mechanical design can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md)
+
+![DiyFfbPedalAssembly v61](https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7)
+
+
+Examples other awesome DIYers have done are listed below:
 
 | Design           |  Link |
 :------------------------- | :-------------------------
