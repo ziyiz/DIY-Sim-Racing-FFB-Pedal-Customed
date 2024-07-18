@@ -1582,7 +1582,35 @@
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="240" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540">
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="360">
+                            <StackPanel Height="20" Width="360" Orientation="Horizontal">
+                                <styles:SHToggleButton x:Name="checkbox_enable_CV1" Content="" Checked="checkbox_enable_CV_1_Checked" Unchecked="checkbox_enable_CV_1_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
+                                <Label Content="Custom Effect 1" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel  Height="30" Width="360" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10"/>
+                                <TextBox x:Name="textBox_CV1_string" Width="220" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
+                                <styles:SHButtonPrimary x:Name="Bind_CV1" Click="Bind_CV1_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                <styles:SHButtonPrimary x:Name="Clear_CV1" Click="Clear_CV1_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV1_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV1_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="360" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_CV1_trigger_ValueChanged" LargeChange="0" IsSnapToTickEnabled="True"/>
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV1_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV1_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="360" Height="10" Maximum="12.5" SmallChange="0.05" ValueChanged="Slider_CV1_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05"/>
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV1_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV1_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_CV1_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </TabItem>
@@ -1593,11 +1621,39 @@
                         </Border>
                     </TabItem.Header>
                     <Border Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="240" BorderThickness="0,2,0,0" >
-                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="540">
+                        <StackPanel HorizontalAlignment="Left" Height="240" VerticalAlignment="Top" Width="360">
+                            <StackPanel Height="20" Width="360" Orientation="Horizontal">
+                                <styles:SHToggleButton x:Name="checkbox_enable_CV2" Content="" Checked="checkbox_enable_CV2_Checked" Unchecked="checkbox_enable_CV2_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
+                                <Label Content="Custom Effect 2" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel  Height="30" Width="360" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10"/>
+                                <TextBox x:Name="textBox_CV2_string" Width="220" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
+                                <styles:SHButtonPrimary x:Name="Bind_CV2" Click="Bind_CV2_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                <styles:SHButtonPrimary x:Name="Clear_CV2" Click="Clear_CV2_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV2_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV2_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="360" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_CV2_trigger_ValueChanged" LargeChange="0" IsSnapToTickEnabled="True"/>
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV2_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV2_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="360" Height="10" Maximum="12.5" SmallChange="0.05" ValueChanged="Slider_CV2_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05"/>
+                            </StackPanel>
+                            <StackPanel Width="360" Height="40">
+                                <StackPanel Width="360" Height="20" Orientation="Horizontal">
+                                    <Label x:Name="label_CV2_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="10" Padding="0,0,0,0"/>
+                                </StackPanel>
+                                <Slider x:Name="Slider_CV2_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_CV2_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem Width="90" Height="30" Padding="0,0,0,0">
+                <TabItem Width="90" Height="30" Padding="0,0,0,0" Visibility="Hidden">
                     <TabItem.Header>
                         <Border  Width="90" Height="30" Margin="0,0,0,0" >
                             <Label Content="Custom-3"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of the ABS/TC effect "  />
@@ -1608,7 +1664,7 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem Width="90" Height="30" Padding="0,0,0,0">
+                <TabItem Width="90" Height="30" Padding="0,0,0,0" Visibility="Hidden">
                     <TabItem.Header>
                         <Border  Width="90" Height="30" Margin="0,0,0,0" >
                             <Label Content="Custom-4"  FontFamily="Arial Black" FontSize="12" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" ToolTip="Parameter of the ABS/TC effect "  />

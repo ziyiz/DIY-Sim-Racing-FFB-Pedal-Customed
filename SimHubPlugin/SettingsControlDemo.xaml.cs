@@ -435,6 +435,10 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.WS_freq = 15;
             dap_config_st[pedalIdx].payloadPedalConfig_.Impact_multi = 50;
             dap_config_st[pedalIdx].payloadPedalConfig_.Impact_window = 60;
+            dap_config_st[pedalIdx].payloadPedalConfig_.CV_amp_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.CV_freq_1 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.CV_amp_2 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.CV_freq_2 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.maxGameOutput = 100;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 128;
             dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelOrder = 0;
@@ -1023,6 +1027,45 @@ namespace User.PluginSdkDemo
 
             Slider_VFgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain;
             label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
+
+            
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] == true)
+                {
+                    checkbox_enable_CV1.IsChecked = true;
+                }
+                else
+                {
+                    checkbox_enable_CV1.IsChecked = false;
+                }
+
+                if (Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] == true)
+                {
+                    checkbox_enable_CV2.IsChecked = true;
+                }
+                else
+                {
+                    checkbox_enable_CV2.IsChecked = false;
+                }
+                Slider_CV1_trigger.Value = Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
+                Slider_CV1_AMP.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1;
+                Slider_CV1_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1;
+                Slider_CV2_trigger.Value = Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
+                Slider_CV2_AMP.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2;
+                Slider_CV2_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2;
+                label_CV1_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
+                label_CV1_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f + "kg";
+                label_CV1_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 + "Hz";
+                label_CV2_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
+                label_CV2_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2 / 20.0f + "kg";
+                label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+                textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
+                textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
+            }
+           
+
+
 
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
@@ -5359,20 +5402,89 @@ namespace User.PluginSdkDemo
             Plugin.Settings.RTSDTR_False[indexOfSelectedPedal_u] = false;
         }
 
+        private void Bind_CV1_Click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u] = (string)textBox_CV1_string.Text;
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+            //updateTheGuiFromConfig();
+        }
 
+        private void checkbox_enable_CV_1_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+        }
 
+        private void checkbox_enable_CV_1_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = false;
+        }
 
+        private void Clear_CV1_Click(object sender, RoutedEventArgs e)
+        {
+            textBox_CV1_string.Text = "";
+            Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u] = (string)textBox_CV1_string.Text;
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = false;
+            //updateTheGuiFromConfig();
+        }
 
-        /*
-private void GetRectanglePositions()
-{
-foreach (var kvp in rectanglePositions)
-{
-Console.WriteLine($"{kvp.Key}: X={kvp.Value.X}, Y={kvp.Value.Y}");
-}
-}
-*/
+        private void Slider_CV2_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2 = (Byte)(e.NewValue*20);
+            label_CV2_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2/20.0f + "kg";
+        }
 
+        private void Slider_CV1_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1 = (Byte)(e.NewValue*20);
+            label_CV1_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f+"kg";
+        }
+
+        private void Slider_CV1_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u]= (Byte)e.NewValue;
+            label_CV1_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
+        }
+
+        private void Slider_CV1_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 = (Byte)e.NewValue;
+            label_CV1_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 + "Hz";
+        }
+
+        private void checkbox_enable_CV2_Checked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+        }
+
+        private void checkbox_enable_CV2_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = false;
+        }
+
+        private void Bind_CV2_Click(object sender, RoutedEventArgs e)
+        {
+            Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u] = (string)textBox_CV2_string.Text;
+            Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = true;
+        }
+
+        private void Clear_CV2_Click(object sender, RoutedEventArgs e)
+        {
+            textBox_CV2_string.Text = "";
+            Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u] = (string)textBox_CV2_string.Text;
+            Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = false;
+        }
+
+        private void Slider_CV2_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u] = (Byte)e.NewValue;
+            label_CV2_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
+        }
+
+        private void Slider_CV2_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 = (Byte)e.NewValue;
+            label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+        }
     }
     
 }

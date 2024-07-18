@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 136
+#define DAP_VERSION_CONFIG 137
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -33,6 +33,8 @@ struct payloadPedalAction {
   uint8_t G_value;
   uint8_t WS_u8;
   uint8_t impact_value_u8;
+  uint8_t Trigger_CV_1;
+  uint8_t Trigger_CV_2;
 };
 
 
@@ -118,6 +120,12 @@ struct payloadPedalConfig {
   //Road impact effect
   uint8_t Road_multi;
   uint8_t Road_window;
+  //Custom Vibration 1
+  uint8_t CV_amp_1;
+  uint8_t CV_freq_1;
+  //Custom Vibration 2
+  uint8_t CV_amp_2;
+  uint8_t CV_freq_2;
   // cubic spline parameters
   float cubic_spline_param_a_array[5];
   float cubic_spline_param_b_array[5];
