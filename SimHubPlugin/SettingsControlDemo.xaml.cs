@@ -1049,10 +1049,10 @@ namespace User.PluginSdkDemo
                     checkbox_enable_CV2.IsChecked = false;
                 }
                 Slider_CV1_trigger.Value = Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
-                Slider_CV1_AMP.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1;
+                Slider_CV1_AMP.Value = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f;
                 Slider_CV1_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1;
                 Slider_CV2_trigger.Value = Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
-                Slider_CV2_AMP.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2;
+                Slider_CV2_AMP.Value = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2/20.0f;
                 Slider_CV2_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2;
                 label_CV1_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
                 label_CV1_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f + "kg";
@@ -5453,12 +5453,12 @@ namespace User.PluginSdkDemo
 
         private void checkbox_enable_CV2_Checked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+            Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = true;
         }
 
         private void checkbox_enable_CV2_Unchecked(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = false;
+            Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = false;
         }
 
         private void Bind_CV2_Click(object sender, RoutedEventArgs e)
