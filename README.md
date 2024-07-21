@@ -36,6 +36,8 @@ The joystick/gamepad data is provided via three redundant channels
 2) 0V-3.3V output analog signal. Can be read by e.g. https://gp2040-ce.info/. The pin 25 was used for analog output.
 3) vJoy gamecontroller (only available when SimHub runs, also need enable control map plugin).
 
+To provide native USB HID output, development with ESP32 S3 started, it's working, but not stable yet, [see](https://github.com/espressif/arduino-esp32/issues/9582#issuecomment-2219722111).
+
 ## Pedals in action
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/i2e1ukc1ylA/0.jpg)](https://www.youtube.com/watch?v=i2e1ukc1ylA)
 
