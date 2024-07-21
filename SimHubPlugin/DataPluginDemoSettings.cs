@@ -1,4 +1,6 @@
-﻿namespace User.PluginSdkDemo
+﻿using System.Linq.Expressions;
+
+namespace User.PluginSdkDemo
 {
     /// <summary>
     /// Settings class, make sure it can be correctly serialized using JSON.net
@@ -36,7 +38,12 @@
         public double kinematicDiagram_zeroPos_OY = 20;
         public double kinematicDiagram_zeroPos_scale = 1.5;
         public bool[] RTSDTR_False = new bool[3] { true,true,true};
-
+        public bool[] CV1_enable_flag = new bool[3] { false,false, false };
+        public int[] CV1_trigger = new int[3] { 0, 0, 0 };
+        public string[] CV1_bindings = new string[3] { "","",""};
+        public bool[] CV2_enable_flag = new bool[3] { false, false, false };
+        public int[] CV2_trigger = new int[3] { 0, 0, 0 };
+        public string[] CV2_bindings = new string[3] { "", "", "" };
 
     }
         

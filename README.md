@@ -36,8 +36,12 @@ The joystick/gamepad data is provided via three redundant channels
 2) 0V-3.3V output analog signal. Can be read by e.g. https://gp2040-ce.info/. The pin 25 was used for analog output.
 3) vJoy gamecontroller (only available when SimHub runs, also need enable control map plugin).
 
+To provide native USB HID output, development with ESP32 S3 started, it's working, but not stable yet, [see](https://github.com/espressif/arduino-esp32/issues/9582#issuecomment-2219722111).
+
 ## Pedals in action
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/i2e1ukc1ylA/0.jpg)](https://www.youtube.com/watch?v=i2e1ukc1ylA)
+
+More pedal action examples can be found in the Discord.
 
 
 # Contributions
@@ -107,7 +111,10 @@ It is recommended to use a Schottky diode in the positive line from the PSU to t
 
 
 ## Power PCB
-Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection from the PSU and the servo. To prevent the reverse current flow to the PSU and thus prevent over-voltage protection from the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over-voltage protection from the servo a large capacitor was added in the power-line. The other power circuit with brake-resistor can be found [Here](https://github.com/tcfshcrw/Brake_resistor_Control_Circuit).
+Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection from the PSU and the servo. To prevent the reverse current flow to the PSU and thus prevent over-voltage protection from the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over-voltage protection from the servo a large capacitor was added in the power-line. 
+
+A deeper analysis of the reverse current flow and investigation of smaller power circuits can be found [here](https://github.com/tcfshcrw/Brake_resistor_Control_Circuit).
+
 | Component           |  Link |
 :------------------------- | :-------------------------
 | SR5100 Schottky diode | [Amazon.de](https://www.amazon.de/Packung-20-SR5100-Schottky-Barriere-Gleichrichterdioden-DO-201AD/dp/B079KK7QL5/ref=sr_1_3?keywords=sr+5100+diode&qid=1691820234&sr=8-3) |
@@ -134,7 +141,12 @@ Without the capacitor these fluctuations would be much higher eventually trigger
 
 
 ## Mechanical design
-Here are some examples of mechanical designs awesome DIYers have done: 
+A mostly pritnable mechanical design can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md)
+
+![DiyFfbPedalAssembly v61](https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7)
+
+
+Examples other awesome DIYers have done are listed below:
 
 | Design           |  Link |
 :------------------------- | :-------------------------
@@ -160,18 +172,10 @@ A Doxygen report of the sources can be found [here](https://chrgri.github.io/DIY
 The drivers can be found here [here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
 
 ### Firmware generation and flashing
-Firmware can be built and flashed via Arduino-IDE or Arduino-CLI.
+Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed e.g. via ESP32 webflasher.
 
-#### Built from source (via Arduino-IDE)
-1. Install the ESP32 dependencies in Arduino-IDE, see e.g. [here](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/)
-2. Install the [libraries](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Arduino/libs)
-3. Flash the [code](Arduino/Esp32/Main), e.g. via Ardiuno-IDE to esp32.
-
-#### Built from source (via Arduino-CLI)
-1. Install the [Arduino CLI](https://github.com/arduino/arduino-cli/releases)
-2. Install the libraries `git submodule update --init --recursive`
-3. Execute the [build script](Arduino/Esp32/arduinoCliBuildScript.bat) from a local repo.
-4. Flash the binaries via e.g. web installer, see [below](#flash-prebuilt-binaries-via-webflasher).
+#### Built from source (via VS Code)
+See this [guide](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/VScode-IDE-setup).
 
 #### Flash prebuilt binaries via web flasher
 The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
@@ -224,12 +228,6 @@ Install a SimHub plugin matching the ESP firmware you installed and send a confi
 Check the arduino plugin scan setting, please use scan only specfiec port as below.<br>
 <img src="Images/ArduinoPlugin_0.png" width="800">
 
-# Misc
-## Pedal kinematics calculation
-To get a better understanding of the motion and forces, a [python](Validation/PedalKinematics/main.py) script for simulation of the pedal angle, the pedal angular velocity and maximum pedal force has been written. Feel free to tune the pedal geometry as needed. The simulation result for my pedal geometry looks as follows:
-
-<img src="Validation/PedalKinematics/pedalKinematics.png" width="300">
-
 
 
 # Todo
@@ -237,12 +235,12 @@ To get a better understanding of the motion and forces, a [python](Validation/Pe
 ESP code:
 - [ ] Add automatic system identification of pedal response
 - [ ] Add model-predictive-control to the ESP code for the improved pedal response
-- [ ] Add field to invert motor and losdcell direction
+- [x] Add field to invert motor and losdcell direction
 - [x] send joystick data to simhub plugin and provide data as vJoy gamecontroller
 - [x] allow effects to move stepper beyond configured max/min position, but not the measured homing positions
-- [ ] Optimize iSV57 communication
+- [x] Optimize iSV57 communication
   - [ ] Let the communication task run from the beginning of the setup routine
-  - [ ] Read pedal state every cycle (currently, the pedal performance is degraded)
+  - [x] Read pedal state every cycle (currently, the pedal performance is degraded)
 
       
 SimHub plugin:

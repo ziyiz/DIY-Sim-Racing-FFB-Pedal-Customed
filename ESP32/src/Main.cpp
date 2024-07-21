@@ -91,6 +91,8 @@ BitePointOscillation _BitePointOscillation;
 G_force_effect _G_force_effect;
 WSOscillation _WSOscillation;
 Road_impact_effect _Road_impact_effect;
+Custom_vibration CV1;
+Custom_vibration CV2;
 #define ABS_OSCILLATION
 
 
@@ -770,6 +772,8 @@ void pedalUpdateTask( void * pvParameters )
       _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
       _WSOscillation.forceOffset(&dap_calculationVariables_st);
       _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
+      CV1.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_1,dap_config_st.payLoadPedalConfig_.CV_amp_1);
+      CV2.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_2,dap_config_st.payLoadPedalConfig_.CV_amp_2);
     #endif
 
     //update max force with G force effect
@@ -930,7 +934,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
     //Add effect by force
-    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset;
+    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset+CV1.CV_Force_offset+CV2.CV_Force_offset;
 
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
@@ -1322,7 +1326,16 @@ void serialCommunicationTask( void * pvParameters )
               {
                 systemIdentificationMode_b = true;
               }
-
+              // trigger Custom effect effect 1
+              if (dap_actions_st.payloadPedalAction_.Trigger_CV_1)
+              {
+                CV1.trigger();
+              }
+              // trigger Custom effect effect 2
+              if (dap_actions_st.payloadPedalAction_.Trigger_CV_2)
+              {
+                CV2.trigger();
+              }
               // trigger return pedal position
               if (dap_actions_st.payloadPedalAction_.returnPedalConfig_u8)
               {

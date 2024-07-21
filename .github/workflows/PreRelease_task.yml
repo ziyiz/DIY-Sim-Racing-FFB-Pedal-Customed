@@ -1,11 +1,11 @@
 # This is the name of the workflow, visible on GitHub UI.
-name: Release_Build_Task
+name: PreRelease_Build_Task
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ develop ] 
   #pull_request:
   #  branches: [ main ]
 
@@ -103,16 +103,18 @@ jobs:
             ./Helper/zip/esp32.zip
             ./Helper/zip/esp32s3.zip
             ./Helper/zip/esp32_speedcrafter.zip
-      # create a release
+            
+      # create a Prerelease
       # see https://www.youtube.com/watch?v=_ueJ3LrRqPU
-      - name: Create Release
-        id: create-new-release
+      - name: Create PreRelease
+        id: create-new-PreRelease
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          tag_name: PreRelease${{ github.run_number }}
+          release_name: develop_package_not_stable ${{ github.run_number }}
+          prerelease: true
 
       # upload release asset
       # Arduino binaries
@@ -122,7 +124,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./Helper/zip/esp32.zip
           asset_name: esp32_0.zip
           asset_content_type: application/zip
@@ -133,7 +135,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./Helper/zip/esp32s3.zip
           asset_name: esp32s3.zip
           asset_content_type: application/zip
@@ -144,7 +146,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./Helper/zip/esp32_speedcrafter.zip
           asset_name: esp32_speedcrafter.zip
           asset_content_type: application/zip
@@ -197,9 +199,6 @@ jobs:
     #- name: List files in dir 2
     #  run: |
     #    ls ${{ github.workspace }}
-    - name: Edit version
-      run: sed -i "s/\(AssemblyVersion(""\([0-9]\+\.\)\{3\}\)\([0-9]\+\)/\1${{github.run_number}}/" "SimHubPlugin/Properties/AssemblyInfo.cs"
-      
     - name: Restore Packages
       run: nuget restore "SimHubPlugin/User.PluginSdkDemo.sln"
 
@@ -258,11 +257,11 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: '${{ github.workspace }}\SimHubPlugin\bin\DiyActivePedal.dll'
-        prerelease: ${{ github.event.inputs.is-pre-release }}
+        prerelease: true
         replacesArtifacts: true
         allowUpdates: true
-        name: ${{ github.run_number }}
-        tag: ${{ github.run_number }}
+        name: develop_package_not_stable  ${{ github.run_number }}
+        tag: PreRelease${{ github.run_number }}
 
     # SimHub plugin binaries
     #- name: Upload SimHub release assets

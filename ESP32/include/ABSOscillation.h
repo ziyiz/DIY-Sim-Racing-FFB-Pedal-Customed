@@ -7,6 +7,7 @@ static const long ABS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long RPM_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long BP_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static const long WS_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
+static const long CV_ACTIVE_TIME_PER_TRIGGER_MILLIS = 100;
 static int RPM_VALUE_LAST = 0;
 
 class ABSOscillation {
@@ -381,5 +382,53 @@ class Road_impact_effect
     Road_Impact_force=movingAverageFilter_roadimpact.process(Road_Impact_force_raw);
     
     
+  }
+};
+//Wheel slip
+class Custom_vibration {
+private:
+  long _timeLastTriggerMillis;
+  long _CVTimeMillis;
+  long _lastCallTimeMillis = 0;
+  
+
+public:
+  Custom_vibration()
+    : _timeLastTriggerMillis(0)
+  {}
+  //float RPM_value =0;
+  float CV_Force_offset = 0;
+public:
+  void trigger() {
+    _timeLastTriggerMillis = millis();
+  }
+  
+  void forceOffset(float CV_freq, float CV_amp) {
+
+
+    long timeNowMillis = millis();
+    float timeSinceTrigger = (timeNowMillis - _timeLastTriggerMillis);
+    float CVForceOffset = 0;
+
+
+    if (timeSinceTrigger > CV_ACTIVE_TIME_PER_TRIGGER_MILLIS)
+    {
+      _CVTimeMillis = 0;
+      CVForceOffset = 0;
+    }
+    else
+    {
+      _CVTimeMillis += timeNowMillis - _lastCallTimeMillis;
+      float CVTimeSeconds = _CVTimeMillis / 1000.0f;
+
+      CVForceOffset = CV_amp/20.0f * sin( 2*PI* CV_freq* CVTimeSeconds);
+
+            
+          
+    }
+    CV_Force_offset=CVForceOffset;
+    _lastCallTimeMillis = timeNowMillis;
+    
+
   }
 };
