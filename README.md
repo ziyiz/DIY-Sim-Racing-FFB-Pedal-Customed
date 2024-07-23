@@ -120,7 +120,7 @@ A deeper analysis of the reverse current flow and investigation of smaller power
 | SR5100 Schottky diode | [Amazon.de](https://www.amazon.de/Packung-20-SR5100-Schottky-Barriere-Gleichrichterdioden-DO-201AD/dp/B079KK7QL5/ref=sr_1_3?keywords=sr+5100+diode&qid=1691820234&sr=8-3) |
 | 100V 10kF capacitor| [Amazon.de](https://www.amazon.de/dp/B07QWTMKWZ?ref_=cm_sw_r_apan_dp_ANE55Z4BEQEJHQBQSDVM&language=de-DE) |
 
-To hold the components, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Wiring/PowerPcb) was developed, which also featured a port to hold XT30 connectors. The 
+To hold the components, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Wiring/PowerPcb) was developed, which also featured a port to hold XT30 connectors. 
 
 Here is an image of the plain PCB:
 ![](Wiring/PowerPcb/front.svg)
@@ -128,6 +128,7 @@ Here is an image of the plain PCB:
 Here is an image of the assembled PCB:
 ![](Wiring/PowerPcb/PCB_assembled.jpg)
 
+The xt30 on the left hand side connects to the PSU. The ports on the right hand side connects ro the servo.
 
 A graph of the voltage fluctuations introduced by generative current flow from the servo can be seen here:
 <img src="Images/servo_voltage_fluctuation.png" height="200">
