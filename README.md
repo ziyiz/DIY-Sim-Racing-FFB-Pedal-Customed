@@ -125,10 +125,11 @@ To hold the components, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-F
 Here is an image of the plain PCB:
 ![](Wiring/PowerPcb/front.svg)
 
+The xt30 on the left hand side connects to the PSU. The ports on the right hand side connects ro the servo.
+
 Here is an image of the assembled PCB:
 ![](Wiring/PowerPcb/PCB_assembled.jpg)
 
-The xt30 on the left hand side connects to the PSU. The ports on the right hand side connects ro the servo.
 
 A graph of the voltage fluctuations introduced by generative current flow from the servo can be seen here:
 <img src="Images/servo_voltage_fluctuation.png" height="200">
