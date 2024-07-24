@@ -59,7 +59,6 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.WS_freq=15;
   payLoadPedalConfig_.Road_multi = 50;
   payLoadPedalConfig_.Road_window=60;
-  payLoadPedalConfig_.rudder_flag=0;
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;

@@ -8,7 +8,6 @@ using System.IO.Ports;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Windows.UI.Notifications;
@@ -24,7 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 138;
+    public const uint pedalConfigPayload_version = 137;
 
 
     // pyload types
@@ -60,7 +59,6 @@ public struct payloadPedalAction
     public byte impact_value;
     public byte Trigger_CV_1;
     public byte Trigger_CV_2;
-    public byte rudder_value;
 };
 
 public struct payloadPedalState_Basic
@@ -286,9 +284,6 @@ namespace User.PluginSdkDemo
         public string simhub_theme_color = "#7E87CEFA";
         public uint debug_value = 0;
         public bool Rudder_enable_flag=false;
-        public byte _rudder_position = 50;
-        public bool flag_clear_action=false;
-        
 
 
 
@@ -549,7 +544,6 @@ namespace User.PluginSdkDemo
                         tmp.payloadPedalAction_.impact_value = 0;
                         tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                         tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                        tmp.payloadPedalAction_.rudder_value = 255;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -750,7 +744,6 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.impact_value = 0;
                     tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                     tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                    tmp.payloadPedalAction_.rudder_value = 255;
                     rpm_last_value = 0;
                     Road_impact_last = 0;
                     debug_value = 0;
@@ -789,7 +782,6 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.impact_value = 0;
                 tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                tmp.payloadPedalAction_.rudder_value = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -813,72 +805,7 @@ namespace User.PluginSdkDemo
                     _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
                 }
             }
-            if (Rudder_enable_flag==true && flag_clear_action==false)
-            {
 
-
-                DAP_action_st tmp;
-                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                tmp.payloadPedalAction_.RPM_u8 = 0;
-                tmp.payloadPedalAction_.G_value = 128;
-                tmp.payloadPedalAction_.WS_u8 = 0;
-                tmp.payloadPedalAction_.impact_value = 0;
-                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                tmp.payloadPedalAction_.rudder_value = _rudder_position;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
-                for (uint pedalidx = 1; pedalidx < 3; pedalidx++)
-                {
-                    if (_serialPort[pedalidx].IsOpen)
-                    {
-                            // clear inbuffer 
-                         _serialPort[pedalidx].DiscardInBuffer();
-
-                            // send query command
-                        _serialPort[pedalidx].Write(newBuffer, 0, newBuffer.Length);
-                    }
-                }
-            
-            }
-            if (flag_clear_action)
-            {
-                DAP_action_st tmp;
-                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                tmp.payloadPedalAction_.RPM_u8 = 0;
-                tmp.payloadPedalAction_.G_value = 128;
-                tmp.payloadPedalAction_.WS_u8 = 0;
-                tmp.payloadPedalAction_.impact_value = 0;
-                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                tmp.payloadPedalAction_.rudder_value = 0;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
-                for (uint pedalidx = 0; pedalidx < 3; pedalidx++)
-                {
-                    if (_serialPort[pedalidx].IsOpen)
-                    {
-                        // clear inbuffer 
-                        _serialPort[pedalidx].DiscardInBuffer();
-
-                        // send query command
-                        _serialPort[pedalidx].Write(newBuffer, 0, newBuffer.Length);
-                    }
-                }
-                flag_clear_action = false;
-            }
 
             this.AttachDelegate("CurrentProfile", () => current_profile);
             pluginManager.SetPropertyValue("SelectedPedal", this.GetType(), current_pedal);
