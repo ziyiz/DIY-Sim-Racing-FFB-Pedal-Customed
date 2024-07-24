@@ -93,6 +93,7 @@ WSOscillation _WSOscillation;
 Road_impact_effect _Road_impact_effect;
 Custom_vibration CV1;
 Custom_vibration CV2;
+Rudder _rudder;
 #define ABS_OSCILLATION
 
 
@@ -765,26 +766,32 @@ void pedalUpdateTask( void * pvParameters )
     float absForceOffset = 0;
     float absPosOffset = 0;
     #ifdef ABS_OSCILLATION
-      absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
-      _RPMOscillation.trigger();
-      _RPMOscillation.forceOffset(&dap_calculationVariables_st);
-      _BitePointOscillation.forceOffset(&dap_calculationVariables_st);
-      _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
-      _WSOscillation.forceOffset(&dap_calculationVariables_st);
-      _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
-      CV1.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_1,dap_config_st.payLoadPedalConfig_.CV_amp_1);
-      CV2.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_2,dap_config_st.payLoadPedalConfig_.CV_amp_2);
+
+        _rudder.offset_calculate(&dap_calculationVariables_st,dap_config_st.payLoadPedalConfig_.pedal_type);
+      
+        
+        absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
+        _RPMOscillation.trigger();
+        _RPMOscillation.forceOffset(&dap_calculationVariables_st);
+        _BitePointOscillation.forceOffset(&dap_calculationVariables_st);
+        _G_force_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.G_multi);
+        _WSOscillation.forceOffset(&dap_calculationVariables_st);
+        _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
+        CV1.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_1,dap_config_st.payLoadPedalConfig_.CV_amp_1);
+        CV2.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_2,dap_config_st.payLoadPedalConfig_.CV_amp_2);
+
+
     #endif
 
-    //update max force with G force effect
-    movingAverageFilter.dataPointsCount=dap_config_st.payLoadPedalConfig_.G_window;
-    movingAverageFilter_roadimpact.dataPointsCount=dap_config_st.payLoadPedalConfig_.Road_window;
-    dap_calculationVariables_st.reset_maxforce();
-    dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
-    dap_calculationVariables_st.Force_Max+=_Road_impact_effect.Road_Impact_force;
-    dap_calculationVariables_st.dynamic_update();
-    dap_calculationVariables_st.updateStiffness();
 
+        //update max force with G force effect
+        movingAverageFilter.dataPointsCount=dap_config_st.payLoadPedalConfig_.G_window;
+        movingAverageFilter_roadimpact.dataPointsCount=dap_config_st.payLoadPedalConfig_.Road_window;
+        dap_calculationVariables_st.reset_maxforce();
+        dap_calculationVariables_st.Force_Max+=_G_force_effect.G_force;
+        dap_calculationVariables_st.Force_Max+=_Road_impact_effect.Road_Impact_force;
+        dap_calculationVariables_st.dynamic_update();
+        dap_calculationVariables_st.updateStiffness();
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
     #ifdef COMPUTE_PEDAL_INCLINE_ANGLE
@@ -934,11 +941,14 @@ void pedalUpdateTask( void * pvParameters )
 
 
     //Add effect by force
-    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset+CV1.CV_Force_offset+CV2.CV_Force_offset;
+    float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset+CV1.CV_Force_offset+CV2.CV_Force_offset+_rudder.force_offset_filter;
 
+    
+    
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     int32_t Position_Next = 0;
+
 
     // select control loop algo
     if (dap_config_st.payLoadPedalConfig_.control_strategy_b <= 1)
@@ -950,6 +960,19 @@ void pedalUpdateTask( void * pvParameters )
     {
       Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, effect_force, changeVelocity, stepper_vel_filtered_fl32, stepper_accel_filtered_fl32, d_phi_d_x, d_x_hor_d_phi);
     }
+    /*
+    if(dap_calculationVariables_st.rudder_status)
+    {
+      Serial.print("next:");
+      Serial.println(Position_Next);
+      //Position_Next=Position_Next+dap_calculationVariables_st.stepperPosRange*0.5;
+      Serial.print("positionnext:");
+      Serial.println(Position_Next);
+      Serial.print("stepper range*0.5");
+      Serial.println(dap_calculationVariables_st.stepperPosRange*0.5);
+      
+    }
+    */
 
     
     
@@ -982,6 +1005,8 @@ void pedalUpdateTask( void * pvParameters )
     //Adding effects
     Position_Next +=_RPMOscillation.RPM_position_offset;
     Position_Next +=absPosOffset;
+    
+    
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
     
     
@@ -1045,8 +1070,18 @@ void pedalUpdateTask( void * pvParameters )
         else
         {
           //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
-          
-          joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          if(dap_calculationVariables_st.rudder_status)
+          {
+            //filteredReading=filteredReading+_rudder.force_offset_filter;
+            filteredReading=constrain(filteredReading,dap_calculationVariables_st.Force_Min,dap_calculationVariables_st.Force_Max-_rudder.basic_support_force);
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max-_rudder.basic_support_force, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+        
+          }
+          else
+          {
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+                  
+          }
         }
         
         xSemaphoreGive(semaphore_updateJoystick);
@@ -1347,6 +1382,20 @@ void serialCommunicationTask( void * pvParameters )
                 Serial.write((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
                 Serial.print("\r\n");
               }
+              if(dap_actions_st.payloadPedalAction_.rudder_value>0&&dap_actions_st.payloadPedalAction_.rudder_value<102)
+              {
+                dap_calculationVariables_st.rudder=dap_actions_st.payloadPedalAction_.rudder_value-1;
+                dap_calculationVariables_st.rudder_status=true;
+                //Serial.println("action:");
+                //Serial.println(dap_actions_st.payloadPedalAction_.rudder_value);
+              }
+              else
+              {
+                //dap_calculationVariables_st.rudder=0;
+                dap_calculationVariables_st.rudder_status=false;
+              }
+              
+              
 
 
             }

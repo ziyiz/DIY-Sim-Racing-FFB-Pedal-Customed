@@ -474,6 +474,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 0;
+            
         }
 
 
@@ -2084,54 +2085,7 @@ namespace User.PluginSdkDemo
         {
 
             Sendconfig(indexOfSelectedPedal_u);
-            /*
-            if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
-            {
-
-                // compute checksum
-                //getBytes(this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_)
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
-                this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.storeToEeprom = 1;
-                DAP_config_st tmp = this.dap_config_st[indexOfSelectedPedal_u];
-
-                //payloadPedalConfig tmp = this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
-                DAP_config_st* v = &tmp;
-                byte* p = (byte*)v;
-                this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
-
-
-                //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";
-
-                TextBox_debugOutput.Text = String.Empty;
-
-                try
-                {
-                    int length = sizeof(DAP_config_st);
-                    //int val = this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.checkSum;
-                    //string msg = "CRC value: " + val.ToString();
-                    byte[] newBuffer = new byte[length];
-                    newBuffer = getBytes(this.dap_config_st[indexOfSelectedPedal_u]);
-
-                    //TextBox_debugOutput.Text = "ConfigLength" + length;
-
-                    // clear inbuffer 
-                    Plugin._serialPort[indexOfSelectedPedal_u].DiscardInBuffer();
-                    Plugin._serialPort[indexOfSelectedPedal_u].DiscardOutBuffer();
-
-
-                    // send data
-                    Plugin._serialPort[indexOfSelectedPedal_u].Write(newBuffer, 0, newBuffer.Length);
-                    //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
-                }
-                catch (Exception caughtEx)
-                {
-                    string errorMessage = caughtEx.Message;
-                    TextBox_debugOutput.Text = errorMessage;
-                }
-
-            }
-            */
+            
         }
 
 
@@ -2909,31 +2863,41 @@ namespace User.PluginSdkDemo
                                     else
                                     {
                                         //Brk move
-
+                                        Plugin.Rudder_enable_flag = true;
+                                        double Rudder_axis_value = 16384;
                                         if (Pedal_position_reading[1] > Pedal_position_reading[2])
                                         {
-                                            double Rudder_axis_value = 16384;
-                                            Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[1];
+                                            
+                                            Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[1]/2;
 
                                             joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                            //rudder movement code 
+                                            //TextBox2.Text = "Rudder:" + Rudder_axis_value;
+                                            //TextBox2.Text = "Rudder:" + Rudder_axis_value + "/";
+
+
                                         }
                                         else
                                         {
                                             if (Pedal_position_reading[2] > Pedal_position_reading[1])
                                             {
-                                                double Rudder_axis_value = 16384;
-                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[2];
+                                                
+                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[2]/2;
 
                                                 joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                                //TextBox2.Text = "Rudder:" + Rudder_axis_value;
+                                                //TextBox2.Text = "Rudder:" + Rudder_axis_value + "/";
                                             }
                                             else
                                             {
                                                 joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);
+                                                //TextBox2.Text = "Rudder:" + Rudder_axis_value+"/";
 
                                             }
 
                                         }
-
+                                        Plugin._rudder_position = (byte)(Rudder_axis_value / 32768 * 100+1);
+                                        //TextBox2.Text += Plugin._rudder_position;
 
 
 
@@ -5383,13 +5347,16 @@ namespace User.PluginSdkDemo
         private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Rudder_enable_flag = true;
+            Plugin.flag_clear_action = true;
 
         }
 
         private void CheckBox_rudder_Unchecked(object sender, RoutedEventArgs e)
         {
             Plugin.Rudder_enable_flag = false;
-           
+            
+            Plugin.flag_clear_action = true;
+            
         }
 
         private void CheckBox_RTSDTR_Checked(object sender, RoutedEventArgs e)

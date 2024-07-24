@@ -432,3 +432,66 @@ public:
 
   }
 };
+MovingAverageFilter movingAverageFilter_rudder(70);
+class Rudder{
+public:
+  float force_offset;
+  float force_offset_filter;
+  float Force_Range;
+  float _rudder_value;
+  float basic_support_force;
+  bool rudder_status;
+  float min_force;
+  void offset_calculate(DAP_calculationVariables_st* calcVars_st, uint8_t pedaltype)
+  {
+    force_offset=0;
+    Force_Range=calcVars_st->Force_Range;
+    basic_support_force=0;
+    rudder_status=calcVars_st->rudder_status;
+    min_force=calcVars_st->Force_Min;
+    if(rudder_status)
+    {
+      _rudder_value=calcVars_st->rudder;
+      basic_support_force=0.5*Force_Range+min_force;
+      if(pedaltype==1)
+      {
+        // if brake
+        if(calcVars_st->rudder>50)
+        {
+          //offset=-1*(calcVars_st->rudder/100*calcVars_st->stepperPosRange-0.5*calcVars_st->stepperPosRange);
+          //offset=calcVars_st->stepperPosRange-calcVars_st->rudder/100*calcVars_st->stepperPosRange;
+          force_offset=-1*(_rudder_value-50)/100.0f*Force_Range;
+        }
+        if(calcVars_st->rudder<=50)
+        {
+          force_offset=0;
+        }
+
+      }
+      if(pedaltype==2)
+      {
+        //if gas
+        if(calcVars_st->rudder<50)
+        {
+          //offset=-1*(0.5*calcVars_st->stepperPosRange-calcVars_st->rudder/100*calcVars_st->stepperPosRange);
+          //force_offset=calcVars_st->rudder/100*calcVars_st->stepperPosRange;
+          force_offset=-1*(50-_rudder_value)/100.0f*Force_Range;
+        }
+        if(calcVars_st->rudder>=50)
+        {
+          force_offset=0;
+        }
+      }
+      force_offset_filter=movingAverageFilter_rudder.process(force_offset+basic_support_force);
+    }
+    else
+    {
+      force_offset_filter=0;
+      
+      //rudder_status=false;
+    }
+
+  }
+
+
+};
