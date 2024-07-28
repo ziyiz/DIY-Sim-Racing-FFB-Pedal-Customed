@@ -181,6 +181,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
   Force_Range = Force_Max - Force_Min;
   Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
+  pedal_type=config_st.payLoadPedalConfig_.pedal_type;
 }
 
 void DAP_calculationVariables_st::dynamic_update()

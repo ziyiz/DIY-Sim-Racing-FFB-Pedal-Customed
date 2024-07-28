@@ -432,3 +432,141 @@ public:
 
   }
 };
+MovingAverageFilter averagefilter_rudder(30);
+MovingAverageFilter averagefilter_rudder_force(50);
+class Rudder{
+  public:
+  int32_t Center_offset;
+  int32_t offset_raw;
+  int32_t offset_filter;
+  int32_t stepper_range;
+  int32_t dead_zone_upper;
+  int32_t dead_zone_lower;
+  int32_t dead_zone;
+  int16_t sync_pedal_position;
+  int16_t current_pedal_position;
+  float endpos_travel;
+  float force_range;  
+  float force_offset_raw;
+  float force_offset_filter;
+  float force_center_offset;
+  float position_ratio_sync;
+  float position_ratio_current;
+  int debug_count=0;
+
+  void offset_calculate(DAP_calculationVariables_st* calcVars_st)
+  {
+    dead_zone=20;
+    Center_offset=calcVars_st->stepperPosRange/2;
+    dead_zone_upper=Center_offset+dead_zone/2;
+    dead_zone_lower=Center_offset-dead_zone/2;
+    sync_pedal_position=calcVars_st->sync_pedal_position;
+    current_pedal_position=calcVars_st->current_pedal_position;
+    stepper_range=calcVars_st->stepperPosRange;
+    force_range=calcVars_st->Force_Range;
+    force_center_offset=force_range/2;
+    if(calcVars_st->Rudder_status)
+    {
+      if(calcVars_st->pedal_type==1)
+      {
+        //pedal as brake
+        if(sync_pedal_position>dead_zone_upper)
+        {
+          offset_raw=-1*(sync_pedal_position-Center_offset)/65536*stepper_range;
+        }
+        else
+        {
+          offset_raw=0;
+        }
+      }
+      if(calcVars_st->pedal_type==2)
+      {
+        //pedal as gas
+        if(sync_pedal_position>dead_zone_upper)
+        {
+          offset_raw=-1*(sync_pedal_position-Center_offset)/65536*stepper_range;
+        }
+        else
+        {
+          offset_raw=0;
+        }
+      }
+      offset_filter=averagefilter_rudder.process(offset_raw+Center_offset);
+    }
+    else
+    {
+      offset_filter=0;
+    }
+  }
+  void force_offset_calculate(DAP_calculationVariables_st* calcVars_st)
+  {
+    dead_zone=20;
+    Center_offset=calcVars_st->stepperPosRange/2;
+    dead_zone_upper=Center_offset+dead_zone/2;
+    dead_zone_lower=Center_offset-dead_zone/2;
+    sync_pedal_position=calcVars_st->sync_pedal_position;
+    current_pedal_position=calcVars_st->current_pedal_position;
+    stepper_range=calcVars_st->stepperPosRange;
+    force_range=calcVars_st->Force_Range;
+    force_center_offset=force_range/2+calcVars_st->Force_Min;
+    endpos_travel=(float)calcVars_st->stepperPosRange;
+    //endpos_travel=((float)(calcVars_st->current_pedal_position-calcVars_st->stepperPosMin))/((float)calcVars_st->stepperPosRange);
+    position_ratio_sync=calcVars_st->Sync_pedal_position_ratio;
+    position_ratio_current=((float)(current_pedal_position-calcVars_st->stepperPosMin))/endpos_travel;
+    /*
+    if(calcVars_st->Rudder_status)
+    {
+      if(debug_count>2000)
+      {
+        Serial.print(calcVars_st->pedal_type);
+        Serial.print("--sync_ratio----:");
+        Serial.print(position_ratio_sync);
+        Serial.print("---sync position---");
+        Serial.println(sync_pedal_position);     
+        debug_count=0;
+      }
+      else
+      {
+        debug_count++;
+      }
+    }
+    */
+    
+
+    float center_deadzone = 0.51;
+    if(calcVars_st->Rudder_status)
+    {
+      if(calcVars_st->pedal_type==1)
+      {
+        //pedal as brake
+        if(position_ratio_sync>center_deadzone)
+        {
+          force_offset_raw=(float)(-1*(position_ratio_sync-0.50)*force_range);
+          //Serial.println(force_offset_raw);
+        }
+        else
+        {
+          force_offset_raw=0;
+        }
+      }
+      if(calcVars_st->pedal_type==2)
+      {
+        //pedal as gas
+        if(position_ratio_sync>center_deadzone)
+        {
+          force_offset_raw=(float)(-1*(position_ratio_sync-0.50)*force_range);
+          //Serial.println(force_offset_raw);
+        }
+        else
+        {
+          force_offset_raw=0;
+        }
+      }
+      force_offset_filter=averagefilter_rudder_force.process(force_offset_raw+force_center_offset);
+    }
+    else
+    {
+      force_offset_filter=0;
+    }
+  }
+};

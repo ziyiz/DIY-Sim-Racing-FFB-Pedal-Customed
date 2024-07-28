@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 137
+#define DAP_VERSION_CONFIG 138
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -35,6 +35,7 @@ struct payloadPedalAction {
   uint8_t impact_value_u8;
   uint8_t Trigger_CV_1;
   uint8_t Trigger_CV_2;
+  uint8_t Rudder_action;
 };
 
 
@@ -245,6 +246,12 @@ struct DAP_calculationVariables_st
   float Force_Max_default;
   float WS_amp;
   float WS_freq;
+  bool Rudder_status;
+  uint8_t pedal_type;
+  uint16_t sync_pedal_position;
+  uint16_t current_pedal_position;
+  float current_pedal_position_ratio;
+  float Sync_pedal_position_ratio;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);

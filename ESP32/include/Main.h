@@ -133,7 +133,10 @@
   #define dirPinStepper    22
   #define stepPinStepper   23
   //analog output pin
-  #define D_O 25   
+  #define D_O 25 
+  //I2Cpins
+  #define I2C_SDA 32
+  #define I2C_SCL 33
   
   // endstop pins
   #define minPin 12
@@ -145,7 +148,9 @@
   #define ISV57_RXPIN 26 // 16
 
   #define Using_analog_output
-
+  //#define Using_I2C_Sync
+  #define ESPNOW_Enable
+  #define I2C_slave_address 0x15
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1

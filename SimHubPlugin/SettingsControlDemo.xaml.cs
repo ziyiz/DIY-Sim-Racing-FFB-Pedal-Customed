@@ -902,6 +902,7 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            
             string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
             if (plugin_version == "1.0.0.0")
             {
@@ -926,6 +927,11 @@ namespace User.PluginSdkDemo
                     }
                 }
                 info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
+                if (Plugin.Rudder_status)
+                {
+                    info_text += "\nIn Action";
+                    info_label.Content += "\nRudder:";
+                }
                 info_label_2.Content = info_text;
             }
 
@@ -1063,6 +1069,8 @@ namespace User.PluginSdkDemo
                 textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
                 textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
             }
+
+            
            
 
 
@@ -2880,8 +2888,8 @@ namespace User.PluginSdkDemo
 
                                     // write vJoy data
                                     Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
-                                    if (Plugin.Rudder_enable_flag == false)
-                                    {
+                                    //if (Plugin.Rudder_enable_flag == false)
+                                    //{
                                         if (Plugin.Settings.vjoy_output_flag == 1)
                                         {
                                             switch (pedalSelected)
@@ -2905,7 +2913,8 @@ namespace User.PluginSdkDemo
 
                                         }
                                         
-                                    }
+                                    //}
+                                    /*
                                     else
                                     {
                                         //Brk move
@@ -2938,6 +2947,7 @@ namespace User.PluginSdkDemo
 
 
                                     }
+                                    */
 
 
 
@@ -4131,7 +4141,7 @@ namespace User.PluginSdkDemo
             joystick.AcquireVJD(vJoystickId);
             //joystick.Aquire();
             vjoy_axis_initialize();
-            CheckBox_rudder.IsEnabled = true;
+            //CheckBox_rudder.IsEnabled = true;
 
         }
 
@@ -4141,7 +4151,7 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 0;
             //joystick.Release();
             joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
-            CheckBox_rudder.IsEnabled = false;
+            //CheckBox_rudder.IsEnabled = false;
         }
 
 
@@ -5383,13 +5393,13 @@ namespace User.PluginSdkDemo
         private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Rudder_enable_flag = true;
+            
 
         }
 
         private void CheckBox_rudder_Unchecked(object sender, RoutedEventArgs e)
         {
-            Plugin.Rudder_enable_flag = false;
-           
+            Plugin.Rudder_enable_flag = true;
         }
 
         private void CheckBox_RTSDTR_Checked(object sender, RoutedEventArgs e)
