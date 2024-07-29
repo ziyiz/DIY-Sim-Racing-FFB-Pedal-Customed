@@ -882,7 +882,7 @@ namespace User.PluginSdkDemo
                 DAP_action_st tmp;
                 tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                 tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                 tmp.payloadPedalAction_.RPM_u8 = 0;
                 tmp.payloadPedalAction_.G_value = 128;
                 tmp.payloadPedalAction_.WS_u8 = 0;
