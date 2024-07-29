@@ -639,7 +639,7 @@ void setup()
 
   //enable ESP-NOW
   #ifdef ESPNOW_Enable
-  
+  dap_calculationVariables_st.rudder_brake_status=false;
   if(dap_config_st.payLoadPedalConfig_.OTA_flag==0)
   {
     /*
@@ -1168,15 +1168,34 @@ void pedalUpdateTask( void * pvParameters )
     {
       if(xSemaphoreTake(semaphore_updateJoystick, (TickType_t)1)==pdTRUE) {
 
-        if (1 == dap_config_st.payLoadPedalConfig_.travelAsJoystickOutput_u8)
+        
+        if(dap_calculationVariables_st.Rudder_status&&dap_calculationVariables_st.rudder_brake_status)
         {
-          joystickNormalizedToInt32 = NormalizeControllerOutputValue(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          if (1 == dap_config_st.payLoadPedalConfig_.travelAsJoystickOutput_u8)
+          {
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue((Position_Next-dap_calculationVariables_st.stepperPosRange/2), dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMin+dap_calculationVariables_st.stepperPosRange/2, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+            joystickNormalizedToInt32 = constrain(joystickNormalizedToInt32,0,JOYSTICK_MAX_VALUE);
+          }
+          else
+          {
+            //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+            
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue((filteredReading-0.5*dap_calculationVariables_st.Force_Range), dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Min+0.5*dap_calculationVariables_st.Force_Range, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+
+          }
         }
         else
         {
-          //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
-          
-          joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          if (1 == dap_config_st.payLoadPedalConfig_.travelAsJoystickOutput_u8)
+          {
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          }
+          else
+          {
+            //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+            
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue(filteredReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+          }
         }
         
         xSemaphoreGive(semaphore_updateJoystick);
@@ -1494,6 +1513,23 @@ void serialCommunicationTask( void * pvParameters )
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
                 }
               }
+              if(dap_actions_st.payloadPedalAction_.Rudder_brake_action==1)
+              {
+                if(dap_calculationVariables_st.rudder_brake_status==false&&dap_calculationVariables_st.Rudder_status==true)
+                {
+                  dap_calculationVariables_st.rudder_brake_status=true;
+                  Serial.println("Rudder brake on");
+                  //Serial.print("status:");
+                  //Serial.println(dap_calculationVariables_st.Rudder_status);
+                }
+                else
+                {
+                  dap_calculationVariables_st.rudder_brake_status=false;
+                  Serial.println("Rudder brake off");
+                  //Serial.print("status:");
+                  //Serial.println(dap_calculationVariables_st.Rudder_status);
+                }
+              }
 
 
             }
@@ -1595,7 +1631,15 @@ void serialCommunicationTask( void * pvParameters )
       }
       //Serial.print(" 4");
       //Serial.print("\r\n");
-      SetControllerOutputValue(joystickNormalizedToInt32_local);
+      if(dap_calculationVariables_st.rudder_brake_status&&dap_calculationVariables_st.Rudder_status)
+      {
+        SetControllerOutputValue_rudder(JOYSTICK_RANGE/2,joystickNormalizedToInt32_local);
+      }
+      else
+      {
+        SetControllerOutputValue(joystickNormalizedToInt32_local);
+      }
+      
     }
 
   /*#ifdef SERIAL_TIMEOUT

@@ -36,6 +36,7 @@ struct payloadPedalAction {
   uint8_t Trigger_CV_1;
   uint8_t Trigger_CV_2;
   uint8_t Rudder_action;
+  uint8_t Rudder_brake_action;
 };
 
 
@@ -252,6 +253,7 @@ struct DAP_calculationVariables_st
   uint16_t current_pedal_position;
   float current_pedal_position_ratio;
   float Sync_pedal_position_ratio;
+  bool rudder_brake_status;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);

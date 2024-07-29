@@ -536,32 +536,22 @@ class Rudder{
     float center_deadzone = 0.51;
     if(calcVars_st->Rudder_status)
     {
-      if(calcVars_st->pedal_type==1)
-      {
-        //pedal as brake
+      
+        
         if(position_ratio_sync>center_deadzone)
         {
           force_offset_raw=(float)(-1*(position_ratio_sync-0.50)*force_range);
-          //Serial.println(force_offset_raw);
+          
         }
         else
         {
           force_offset_raw=0;
         }
-      }
-      if(calcVars_st->pedal_type==2)
-      {
-        //pedal as gas
-        if(position_ratio_sync>center_deadzone)
-        {
-          force_offset_raw=(float)(-1*(position_ratio_sync-0.50)*force_range);
-          //Serial.println(force_offset_raw);
-        }
-        else
+        if(calcVars_st->rudder_brake_status)
         {
           force_offset_raw=0;
         }
-      }
+     
       force_offset_filter=averagefilter_rudder_force.process(force_offset_raw+force_center_offset);
     }
     else

@@ -4507,7 +4507,8 @@ namespace User.PluginSdkDemo
 
         private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotification("Hello World","Connected");
+            ToastNotification("Rudder Brake","Test");
+            Plugin.Rudder_brake_enable_flag = true;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

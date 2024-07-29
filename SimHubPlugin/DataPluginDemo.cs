@@ -5,6 +5,7 @@ using SimHub.Plugins.DataPlugins.ShakeItV3.UI.Effects;
 using SimHub.Plugins.OutputPlugins.Dash.GLCDTemplating;
 using System;
 using System.IO.Ports;
+using System.Media;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -60,6 +61,7 @@ public struct payloadPedalAction
     public byte Trigger_CV_1;
     public byte Trigger_CV_2;
     public byte Rudder_action;
+    public byte Rudder_brake_action;
 };
 
 public struct payloadPedalState_Basic
@@ -287,6 +289,8 @@ namespace User.PluginSdkDemo
         public bool Rudder_enable_flag=false;
         public bool clear_action = false;
         public bool Rudder_status = false;
+        public bool Rudder_brake_enable_flag = false;
+        public bool Rudder_brake_status = false;
         
 
 
@@ -549,6 +553,7 @@ namespace User.PluginSdkDemo
                         tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                         tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                         tmp.payloadPedalAction_.Rudder_action = 0;
+                        tmp.payloadPedalAction_.Rudder_brake_action = 0;
                         if (Settings.G_force_enable_flag[pedalIdx] == 1)
                         {
                             tmp.payloadPedalAction_.G_value = (Byte)g_force_last_value;
@@ -792,6 +797,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                 tmp.payloadPedalAction_.Rudder_action = 0;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
                 DAP_action_st* v = &tmp;
                 byte* p = (byte*)v;
                 tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
@@ -836,7 +842,8 @@ namespace User.PluginSdkDemo
                     tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                     tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                     tmp.payloadPedalAction_.Rudder_action = 1;
-                    DAP_action_st* v = &tmp;
+                    tmp.payloadPedalAction_.Rudder_brake_action = 0;
+                DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
                     int length = sizeof(DAP_action_st);
@@ -857,7 +864,56 @@ namespace User.PluginSdkDemo
                     }   
 
             }
-            
+
+
+
+            if (Rudder_brake_enable_flag)
+            {
+                if (Rudder_brake_status == false)
+                {
+                    Rudder_brake_status = true;
+                    
+                }
+                else
+                {
+                    Rudder_brake_status = false;
+                }
+                SystemSounds.Beep.Play();
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                tmp.payloadPedalAction_.Rudder_action = 0;
+                tmp.payloadPedalAction_.Rudder_brake_action = 1;
+                DAP_action_st* v = &tmp;
+                byte* p = (byte*)v;
+                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                int length = sizeof(DAP_action_st);
+                byte[] newBuffer = new byte[length];
+                newBuffer = getBytes_Action(tmp);
+                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                {
+                    if (_serialPort[PIDX].IsOpen)
+                    {
+                        // clear inbuffer 
+                        _serialPort[PIDX].DiscardInBuffer();
+
+                        // send query command
+                        _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    Rudder_brake_enable_flag = false;
+                    System.Threading.Thread.Sleep(50);
+                }
+
+            }
+
+
             if (clear_action)
             {
                 
@@ -872,6 +928,7 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                 tmp.payloadPedalAction_.Rudder_action = 0;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
                 rpm_last_value = 0;
                 Road_impact_last = 0;
                 debug_value = 0;
@@ -1547,6 +1604,13 @@ namespace User.PluginSdkDemo
                 {
                     overlay_display = 1;
                 }
+            });
+            this.AddAction("Rudder Brake", (a, b) =>
+            {
+                
+                Rudder_brake_enable_flag = true;
+                SimHub.Logging.Current.Info("Rudder Brake");
+
             });
 
             //Settings.selectedJsonIndexLast[0]
