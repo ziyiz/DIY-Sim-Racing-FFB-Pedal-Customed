@@ -499,7 +499,7 @@ void setup()
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
                     &Task1,      /* Task handle to keep track of created task */
-                    0);          /* pin task to core 1 */
+                    1);          /* pin task to core 1 */
   delay(500);
 
   xTaskCreatePinnedToCore(
@@ -510,7 +510,7 @@ void setup()
                     NULL,      
                     1,         
                     &Task2,    
-                    1);     
+                    0);     
   delay(500);
 
   #ifdef ISV_COMMUNICATION
@@ -523,7 +523,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task3,    
-                      1);     
+                      0);     
     delay(500);
 #endif
 
@@ -559,7 +559,7 @@ void setup()
                     NULL,      
                     1,         
                     &Task4,    
-                    1);     
+                    0);     
       delay(500);
     }
   #endif
@@ -632,7 +632,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task5,    
-                      1);     
+                      0);     
         delay(500);
 
   #endif
@@ -642,51 +642,7 @@ void setup()
   dap_calculationVariables_st.rudder_brake_status=false;
   if(dap_config_st.payLoadPedalConfig_.OTA_flag==0)
   {
-    /*
-    WiFi.mode(WIFI_MODE_STA);
-    Serial.print("MAC Address:  ");  
-    Serial.println(WiFi.macAddress());
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==0)
-    {
-      esp_wifi_set_mac(WIFI_IF_STA, &Clu_mac[0]);
-    }
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==1)
-    {
-      esp_wifi_set_mac(WIFI_IF_STA, &Brk_mac[0]);
-    }
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==2)
-    {
-      esp_wifi_set_mac(WIFI_IF_STA, &Gas_mac[0]);
-    }
-    delay(300);
-    Serial.print("new MAC Address:  ");  
-    Serial.println(WiFi.macAddress());
-    ESPNow.init();
-    Serial.println("wait for ESPNOW initialized");
-    delay(10000);
-
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==1)
-    {
-      Recv_mac=Gas_mac;      
-    }
-
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==2)
-    {
-      Recv_mac=Brk_mac;
-    }
-    if(ESPNow.add_peer(Recv_mac)== ESP_OK)
-    {
-      ESPNOW_status=true;
-      Serial.println("Sucess to add peer");
-    }
-    else
-    {
-      ESPNOW_status=false;
-      Serial.println("Fail to add peer");
-    }
-    ESPNow.reg_recv_cb(onRecv);
-    ESPNow.reg_send_cb(OnSent);
-    */
+    
     xTaskCreatePinnedToCore(
                       ESPNOW_SyncTask,   
                       "ESPNOW_update_Task", 
@@ -695,7 +651,7 @@ void setup()
                       NULL,      
                       1,         
                       &Task6,    
-                      1);     
+                      0);     
     delay(500);
       
     
