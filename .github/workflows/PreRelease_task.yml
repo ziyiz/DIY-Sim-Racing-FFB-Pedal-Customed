@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       Version_date: ${{ steps.output_version_date.outputs.Version_date }}
+      Upload_URL: ${{ steps.create-new-PreRelease.outputs.upload_url }}
     steps:
       # get date
       - name: Dynamically set MY_DATE environment variable
@@ -27,6 +28,18 @@ jobs:
       - name: output_version_date
         id: output_version_date
         run: echo "Version_date=Develop_Package_v${{ env.MY_DATE }}" >> "$GITHUB_OUTPUT"
+      # create a Prerelease
+      # see https://www.youtube.com/watch?v=_ueJ3LrRqPU
+      - name: Create PreRelease
+        id: create-new-PreRelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+        with:
+          tag_name: ${{ steps.output_version_date.outputs.Version_date }}
+          release_name: ${{ steps.output_version_date.outputs.Version_date }}
+          prerelease: true
   
   BuildFirmware:
     #runs-on: ubuntu-latest
@@ -113,18 +126,7 @@ jobs:
             ./Helper/zip/esp32s3.zip
             ./Helper/zip/esp32_speedcrafter.zip
 
-      # create a Prerelease
-      # see https://www.youtube.com/watch?v=_ueJ3LrRqPU
-      - name: Create PreRelease
-        id: create-new-PreRelease
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DATE: ${{needs.Build-date.outputs.Version_date}}
-        with:
-          tag_name: ${{ env.DATE }}
-          release_name: ${{ env.DATE }}
-          prerelease: true
+
 
       # upload release asset
       # Arduino binaries
@@ -133,8 +135,9 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{needs.Build-date.outputs.Upload_URL}}
         with:
-          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ env.url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./Helper/zip/esp32.zip
           asset_name: esp32_0.zip
           asset_content_type: application/zip
@@ -144,8 +147,9 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{needs.Build-date.outputs.Upload_URL}}
         with:
-          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ env.url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./Helper/zip/esp32s3.zip
           asset_name: esp32s3.zip
           asset_content_type: application/zip
@@ -155,8 +159,9 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{needs.Build-date.outputs.Upload_URL}}
         with:
-          upload_url: ${{ steps.create-new-PreRelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ env.url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./Helper/zip/esp32_speedcrafter.zip
           asset_name: esp32_speedcrafter.zip
           asset_content_type: application/zip
@@ -263,17 +268,28 @@ jobs:
       #    args: zip -qq -r ./SimHubPlugin/bin/SimHub_plugin.zip ./SimHubPlugin/bin/
   
   
-      - name: Upload Artifact
+      #- name: Upload Artifact
+       # env:
+       #     DATE: ${{needs.Build-date.outputs.Version_date}}
+       # uses: ncipollo/release-action@v1
+       #   with:
+       #     artifacts: '${{ github.workspace }}\SimHubPlugin\bin\DiyActivePedal.dll'
+       #     prerelease: true
+        #    replacesArtifacts: true
+       #     allowUpdates: true
+       #     name: ${{ env.DATE }}
+       #     tag: ${{ env.DATE }}
+      - name: Upload ESP release assets speedcrafter PCB V1p4
+        id: upload-release-asset-simhub_plugin
+        uses: actions/upload-release-asset@v1
         env:
-          DATE: ${{needs.Build-date.outputs.Version_date}}
-        uses: ncipollo/release-action@v1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{needs.Build-date.outputs.Upload_URL}}
         with:
-          artifacts: '${{ github.workspace }}\SimHubPlugin\bin\DiyActivePedal.dll'
-          prerelease: true
-          replacesArtifacts: true
-          allowUpdates: true
-          name: ${{ env.DATE }}
-          tag: ${{ env.DATE }}
+          upload_url: ${{ env.url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: '${{ github.workspace }}\SimHubPlugin\bin\DiyActivePedal.dll'
+          asset_name: DiyActivePedal.dll
+          asset_content_type: application/octet-stream
 
     # SimHub plugin binaries
     #- name: Upload SimHub release assets
