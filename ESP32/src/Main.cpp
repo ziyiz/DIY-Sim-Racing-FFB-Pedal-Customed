@@ -313,6 +313,9 @@ void setup()
     ESP.restart();
   }
 
+  // reset iSV57 alarms
+  bool servoAlarmsCleared = isv57.clearServoAlarms();
+  delay(500);
 
   Serial.print("iSV57 communication state:  ");
   Serial.println(isv57LifeSignal_b);
