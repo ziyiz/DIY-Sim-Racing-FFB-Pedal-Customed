@@ -2,7 +2,6 @@
 /* Todo*/
 // https://github.com/espressif/arduino-esp32/issues/7779
 
-
 #define ESTIMATE_LOADCELL_VARIANCE
 #define ISV_COMMUNICATION
 //#define PRINT_SERVO_STATES
@@ -287,7 +286,10 @@ void setup()
   delay(3000);
   Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
   Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
+  //printout the github releasing version
 
+
+  
 // check whether iSV57 communication can be established
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
 #ifdef ISV_COMMUNICATION
@@ -1587,12 +1589,28 @@ void serialCommunicationTask( void * pvParameters )
       }
       //Serial.print(" 4");
       //Serial.print("\r\n");
-      if(dap_calculationVariables_st.rudder_brake_status&&dap_calculationVariables_st.Rudder_status)
+      if(dap_calculationVariables_st.Rudder_status)
       {
-        SetControllerOutputValue_rudder(JOYSTICK_RANGE/2,joystickNormalizedToInt32_local);
+        if(dap_calculationVariables_st.rudder_brake_status)
+        {
+          SetControllerOutputValue_rudder(JOYSTICK_RANGE/2,joystickNormalizedToInt32_local);
+        }
+        else
+        {
+          //deadzone 2%
+          if(joystickNormalizedToInt32_local<=(int32_t)(JOYSTICK_RANGE*0.48)||joystickNormalizedToInt32_local>=(int32_t)(JOYSTICK_RANGE*0.52))
+          {
+            SetControllerOutputValue(joystickNormalizedToInt32_local);
+          }
+          else
+          {
+            SetControllerOutputValue(JOYSTICK_RANGE/2);
+          }
+        }       
       }
       else
       {
+        //general output
         SetControllerOutputValue(joystickNormalizedToInt32_local);
       }
       

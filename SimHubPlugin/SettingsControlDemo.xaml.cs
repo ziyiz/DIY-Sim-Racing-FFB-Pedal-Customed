@@ -3563,6 +3563,8 @@ namespace User.PluginSdkDemo
                     {
                         dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 5;
                     }
+                    dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
+
                 }
                 
             }
