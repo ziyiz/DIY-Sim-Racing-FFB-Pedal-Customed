@@ -231,6 +231,8 @@ StepperWithLimits* stepper = NULL;
 //static const int32_t MIN_STEPS = 5;
 
 #include "StepperMovementStrategy.h"
+
+bool moveSlowlyToPosition_b = false;
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         OTA                                                                */
@@ -800,6 +802,7 @@ void pedalUpdateTask( void * pvParameters )
           }
           
           updatePedalCalcParameters(); // update the calc parameters
+          moveSlowlyToPosition_b = true;
         }
 
       }
@@ -1114,10 +1117,19 @@ void pedalUpdateTask( void * pvParameters )
     //int32_t stepperPosCurrent = stepper->getCurrentPositionFromMin();
     //int32_t stepperPosCurrent = stepper->getTargetPositionSteps();
     //int32_t movement = abs(stepperPosCurrent - Position_Next);
-    //if (movement > MIN_STEPS)
+    if (!moveSlowlyToPosition_b)
     {
       stepper->moveTo(Position_Next, false);
     }
+    else
+    {
+      moveSlowlyToPosition_b = false;
+      stepper->moveSlowlyToPos(Position_Next);
+    }
+
+    // move slowly to target position
+
+
 
     
 
