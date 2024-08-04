@@ -176,6 +176,8 @@ struct payloadPedalConfig {
   uint8_t OTA_flag;
 
   uint8_t enableReboot_u8;
+  //joystick out flag
+  //uint8_t Joystick_ESPsync_to_ESP;
   
 
 };
