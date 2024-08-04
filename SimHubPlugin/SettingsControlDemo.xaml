@@ -525,10 +525,10 @@
                         </Setter>
                     </Style>
                 </TabControl.Resources>
-                <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                <TabItem Width="150" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="FORCE-TRAVEL CURVE"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="170" Height="30" Margin="0,0,0,0" >
+                            <Label Content="FORCE-TRAVEL CURVE"  FontFamily="Arial Black" FontSize="11" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" Margin="0,0,20,0"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -671,10 +671,25 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem x:Name="pedalKinematicTab" Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+
+                <TabItem Width="170" Height="30" Padding="0,0,0,0" ToolTip="Joystick settings, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="PEDAL KINEMATIC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="170" Height="30" Margin="0,0,0,0" >
+                            <Label Content="JOYSTICK-OUTPUT CURVE"  FontFamily="Arial Black" FontSize="11" Height="30" Width="170" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        </Border>
+                    </TabItem.Header>
+                    <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
+
+
+                    </Border>
+
+
+                </TabItem>
+
+                <TabItem x:Name="pedalKinematicTab" Width="130" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                    <TabItem.Header>
+                        <Border  Width="130" Height="30" Margin="0,0,0,0" >
+                            <Label Content="PEDAL KINEMATIC"  FontFamily="Arial Black" FontSize="11" Height="30" Width="130" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -744,10 +759,10 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                <TabItem Width="80" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="80" Height="30" Margin="0,0,0,0" >
+                            <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="11" Height="30" Width="80" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
