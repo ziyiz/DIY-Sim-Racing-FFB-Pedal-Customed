@@ -180,15 +180,22 @@ Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed 
 See this [guide](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/VScode-IDE-setup).
 
 #### Flash prebuilt binaries via web flasher
-The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
-
+The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). Another [Webflasher](https://nabucasa.github.io/esp-web-flasher/).
+##### ESP32
 Memory address            |  File
 :-------------------------:|:-------------------------:
-| 0x1000 | Main.ino.bootloader.bin |
-| 0x8000 | Main.ino.partitions.bin | 
+| 0x1000 | bootloader.bin |
+| 0x8000 | partitions.bin | 
 | 0xe000 | boot_app0.bin |
-| 0x10000 | Main.ino.bin |
+| 0x10000 | firmware.bin |
 
+##### ESP32S3
+Memory address            |  File
+:-------------------------:|:-------------------------:
+| 0x0000 | bootloader.bin |
+| 0x8000 | partitions.bin | 
+| 0xe000 | boot_app0.bin |
+| 0x10000 | firmware.bin |
 
 ## iSV57T-130 servo config tuning
 The iSV57T allows parameter tuning via its RS232 interface. To tune the servo towards this application, I executed the following [steps](StepperParameterization/StepperTuning.md).
