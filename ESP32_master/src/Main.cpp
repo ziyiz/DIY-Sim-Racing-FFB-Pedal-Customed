@@ -219,6 +219,7 @@ void setup()
 	delay(300);
 	ESPNow.init();
     Serial.println("wait 10s for ESPNOW initialized");
+	esp_wifi_config_espnow_rate(WIFI_IF_STA, WIFI_PHY_RATE_MCS0_LGI);
 	delay(3000);
 	ESPNow.add_peer(Clu_mac);
 	ESPNow.add_peer(Brk_mac);
@@ -275,7 +276,7 @@ int32_t joystickNormalizedToInt32_local = 0;
 /**********************************************************************************************/
 uint64_t cycleCntr_u64 = 0;
 void loop() {
-	delay(10);
+	delay(2);
 	cycleCntr_u64++;
 	//Serial.println(cycleCntr_u64);
 	

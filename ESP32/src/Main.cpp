@@ -1817,7 +1817,7 @@ void ESPNOW_SyncTask( void * pvParameters )
 {
   for(;;)
   {
-      if(ESPNOW_count>10)
+      //if(ESPNOW_count>10)
       {
         //send the data to master
         //if(dap_config_st.payLoadPedalConfig_.Joystick_ESPsync_to_ESP==1)
@@ -1859,10 +1859,10 @@ void ESPNOW_SyncTask( void * pvParameters )
         }
         ESPNOW_count=0;
       } 
-      else
-      {
-        ESPNOW_count++;          
-      }
+      //else
+      //{
+        //ESPNOW_count++;          
+      //}
       
       #ifdef ESPNow_debug
           if(print_count>1500)

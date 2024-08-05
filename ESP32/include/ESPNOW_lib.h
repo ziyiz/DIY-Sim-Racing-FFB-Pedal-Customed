@@ -120,7 +120,7 @@ void ESPNow_initialize()
     ESPNow.init();
     Serial.println("wait  for ESPNOW initialized");
     delay(3000);
-
+    esp_wifi_config_espnow_rate(WIFI_IF_STA, WIFI_PHY_RATE_MCS0_LGI);
     if(dap_config_st.payLoadPedalConfig_.pedal_type==1)
     {
       Recv_mac=Gas_mac;      
@@ -140,6 +140,7 @@ void ESPNow_initialize()
       ESPNOW_status=false;
       Serial.println("Fail to add peer");
     }
+    
     if(ESPNow.add_peer(esp_master)== ESP_OK)
     {
       ESPNOW_status=true;
