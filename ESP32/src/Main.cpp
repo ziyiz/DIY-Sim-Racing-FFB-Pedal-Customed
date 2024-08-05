@@ -1607,6 +1607,12 @@ void serialCommunicationTask( void * pvParameters )
 
       //Serial.print(" 4");
       //Serial.print("\r\n");
+      if(dap_calculationVariables_st.Rudder_status==false)
+      {
+        //general output
+        SetControllerOutputValue(joystickNormalizedToInt32_local);
+      }
+      /*
       if(dap_calculationVariables_st.Rudder_status)
       {
         if(dap_calculationVariables_st.rudder_brake_status)
@@ -1631,6 +1637,7 @@ void serialCommunicationTask( void * pvParameters )
         //general output
         SetControllerOutputValue(joystickNormalizedToInt32_local);
       }
+      */
       
     }
 
@@ -1812,19 +1819,24 @@ void I2C_SyncTask( void * pvParameters )
 int ESPNOW_count=0;
 int error_count=0;
 int print_count=0;
+int ESPNow_no_device_count=0;
 uint8_t error_out;
 void ESPNOW_SyncTask( void * pvParameters )
 {
   for(;;)
   {
-      //if(ESPNOW_count>10)
+      //if(ESPNOW_status)
       {
         //send the data to master
         //if(dap_config_st.payLoadPedalConfig_.Joystick_ESPsync_to_ESP==1)
         //always send message to ESP reciever
-        {
-          sendMessageToMaster(joystickNormalizedToInt32);
-        }
+        //{
+        sendMessageToMaster(joystickNormalizedToInt32);
+        
+        
+        
+
+        //}
         
         //rudder sync
         if(dap_calculationVariables_st.Rudder_status)
@@ -1888,7 +1900,7 @@ void ESPNOW_SyncTask( void * pvParameters )
           
                
       #endif
-      delay(1);
+      delay(2);
   }
 }
 #endif

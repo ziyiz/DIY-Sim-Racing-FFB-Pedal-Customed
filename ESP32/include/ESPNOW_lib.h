@@ -17,6 +17,7 @@ uint16_t ESPNow_recieve=0;
 bool ESPNOW_status =false;
 bool ESPNow_initial_status=false;
 bool ESPNow_update= false;
+bool ESPNow_no_device=false;
 //https://github.com/nickgammon/I2C_Anything/tree/master
 struct ESPNow_Send_Struct
 { 
@@ -58,12 +59,24 @@ void sendMessageToMaster(int32_t controllerValue)
     myData.pedal_status=0;
   }
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(esp_master, (uint8_t *) &myData, sizeof(myData));
+  if(ESPNOW_status)
+  {
+    esp_err_t result = esp_now_send(esp_master, (uint8_t *) &myData, sizeof(myData));
+  }
+  
+  //esp_now_send(esp_master, (uint8_t *) &myData, sizeof(myData));
   /*
-  if (result != ESP_OK) {
-    Serial.println("Failed send data to ESP_Master");
+  if (result != ESP_OK) 
+  {
+    ESPNow_no_device=true;
+    //Serial.println("Failed send data to ESP_Master");
+  }
+  else
+  {
+    ESPNow_no_device=false;
   }
   */
+  
   /*if (result == ESP_OK) {
     Serial.println("Sent with success");
   }
