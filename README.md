@@ -113,11 +113,12 @@ The PCB has three connectors with the following wiring:
 
 
 ## Optional: Power PCB
-Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection of the PSU and the servo. The iSV57 has a "bleeding/braking resistor" method to dissipate EMF flow as heat. The method will be activated when a predefined bus voltage is exceeded (currently 40V). A plot of the voltage fluctuations can be found can be found here:
+Depending on the load direction, the servo will act as a generator. It will produce an additional (reverse) current flow from the servo to the PSU which could trigger the over-voltage protection of the PSU and the servo. The iSV57 has a "bleeding/braking resistor" method to dissipate the current flow as heat and thus reduce voltage spikes causing overvoltage protection trigger. The method will be activated when a predefined bus voltage is exceeded (currently 40V). A plot of the voltage fluctuations can be found can be found here:
 <img src="Wiring/PowerPcb/V2/voltageFluctuations.png" height="200">
-The trigger voltage was varied (blue: 62V; red: 42V; green: 40V). The horizontal axis shows the time, the vertical axis shows the bus voltage. The pedal was activated a few times, resultig in voltage spikes due to EMF. It can be seen, that the height of the voltage spikes correlate with the trigger voltage. Since the trigger voltage is set to 40V, it is strongly recommended to use a PSU with less than 40V output.
 
-To prevent reverse current flow to the PSU and thus prevent triggering the over-voltage protection of the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over/under-voltage protection of the servo, a small capacitor was added in the power-line. 
+The trigger voltage was varied in the test (blue: 62V; red: 42V; green: 40V). The horizontal axis shows the time, the vertical axis shows the bus voltage. The pedal was activated a few times, resultig in voltage spikes due to EMF. It can be seen, that the height of the voltage spikes correlate with the trigger voltage. Since the trigger voltage is set to 40V, it is strongly recommended to use a PSU with less than 40V output.
+
+Although the iSV57s internal braking resistor method is reliably and mostly sufficient, a power PCB was developed to prevent reverse current flow to the PSU and thus prevent triggering the over-voltage protection of the PSU, by adding a Schottky diode to the power line. To prevent the trigger of the over/under-voltage protection of the servo, a small capacitor was added in the power-line. 
 
 | Component           |  Link |
 :------------------------- | :-------------------------
