@@ -432,7 +432,7 @@ public:
 
   }
 };
-MovingAverageFilter averagefilter_rudder(30);
+MovingAverageFilter averagefilter_rudder(50);
 MovingAverageFilter averagefilter_rudder_force(50);
 class Rudder{
   public:
@@ -456,47 +456,35 @@ class Rudder{
 
   void offset_calculate(DAP_calculationVariables_st* calcVars_st)
   {
-    dead_zone=20;
-    Center_offset=calcVars_st->stepperPosRange/2;
-    dead_zone_upper=Center_offset+dead_zone/2;
-    dead_zone_lower=Center_offset-dead_zone/2;
-    sync_pedal_position=calcVars_st->sync_pedal_position;
     current_pedal_position=calcVars_st->current_pedal_position;
-    stepper_range=calcVars_st->stepperPosRange;
-    force_range=calcVars_st->Force_Range;
-    force_center_offset=force_range/2;
+    position_ratio_sync=calcVars_st->Sync_pedal_position_ratio;
+    endpos_travel=(float)calcVars_st->stepperPosRange;
+    position_ratio_current=((float)(current_pedal_position-calcVars_st->stepperPosMin))/endpos_travel;    
+    dead_zone=20;
+    Center_offset=calcVars_st->stepperPosMin+ calcVars_st->stepperPosRange/2;
+    float center_deadzone = 0.51;
     if(calcVars_st->Rudder_status)
     {
-      if(calcVars_st->pedal_type==1)
+      if(position_ratio_sync>center_deadzone)
       {
-        //pedal as brake
-        if(sync_pedal_position>dead_zone_upper)
-        {
-          offset_raw=-1*(sync_pedal_position-Center_offset)/65536*stepper_range;
-        }
-        else
-        {
-          offset_raw=0;
-        }
+        offset_raw=(int32_t)(-1*(position_ratio_sync-0.50)*endpos_travel);
+          
       }
-      if(calcVars_st->pedal_type==2)
+      else
       {
-        //pedal as gas
-        if(sync_pedal_position>dead_zone_upper)
-        {
-          offset_raw=-1*(sync_pedal_position-Center_offset)/65536*stepper_range;
-        }
-        else
-        {
-          offset_raw=0;
-        }
+        offset_raw=0;
+      }
+      if(calcVars_st->rudder_brake_status)
+      {
+        offset_raw=0;
       }
       offset_filter=averagefilter_rudder.process(offset_raw+Center_offset);
     }
     else
     {
-      offset_filter=0;
+      offset_filter=calcVars_st->stepperPosMin;
     }
+
   }
   void force_offset_calculate(DAP_calculationVariables_st* calcVars_st)
   {
@@ -513,24 +501,6 @@ class Rudder{
     //endpos_travel=((float)(calcVars_st->current_pedal_position-calcVars_st->stepperPosMin))/((float)calcVars_st->stepperPosRange);
     position_ratio_sync=calcVars_st->Sync_pedal_position_ratio;
     position_ratio_current=((float)(current_pedal_position-calcVars_st->stepperPosMin))/endpos_travel;
-    /*
-    if(calcVars_st->Rudder_status)
-    {
-      if(debug_count>2000)
-      {
-        Serial.print(calcVars_st->pedal_type);
-        Serial.print("--sync_ratio----:");
-        Serial.print(position_ratio_sync);
-        Serial.print("---sync position---");
-        Serial.println(sync_pedal_position);     
-        debug_count=0;
-      }
-      else
-      {
-        debug_count++;
-      }
-    }
-    */
     
 
     float center_deadzone = 0.51;

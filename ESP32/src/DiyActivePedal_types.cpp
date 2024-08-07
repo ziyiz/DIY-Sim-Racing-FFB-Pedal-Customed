@@ -208,7 +208,7 @@ void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMax
   
   stepperPosMin = stepperPosEndstopRange * startPosRel;
   stepperPosMax = stepperPosEndstopRange * endPosRel;
-
+  stepperPosMin_default = stepperPosMin;
   stepperPosRange = stepperPosMax - stepperPosMin;
 }
 
@@ -225,5 +225,22 @@ void DAP_calculationVariables_st::updateStiffness() {
   
   }
 
+void DAP_calculationVariables_st::StepperPos_setback()
+{
+  stepperPosMin=stepperPosMin_default;
+  stepperPosRange = stepperPosRange_default;
+}
+
+void DAP_calculationVariables_st::update_stepperpos(long newMinstop)
+{
+  stepperPosMin=newMinstop;
+  stepperPosRange = stepperPosMax - stepperPosMin;
+}
+
+void DAP_calculationVariables_st::Default_pos()
+{
+  stepperPosMin_default = stepperPosMin;
+  stepperPosRange_default=stepperPosRange;
+}
 
 

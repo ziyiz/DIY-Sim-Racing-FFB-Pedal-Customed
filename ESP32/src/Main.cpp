@@ -850,6 +850,7 @@ void pedalUpdateTask( void * pvParameters )
 
     float absForceOffset = 0;
     float absPosOffset = 0;
+    dap_calculationVariables_st.Default_pos();
     #ifdef ABS_OSCILLATION
       absOscillation.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.absPattern, dap_config_st.payLoadPedalConfig_.absForceOrTarvelBit, &absForceOffset, &absPosOffset);
       _RPMOscillation.trigger();
@@ -860,8 +861,8 @@ void pedalUpdateTask( void * pvParameters )
       _Road_impact_effect.forceOffset(&dap_calculationVariables_st, dap_config_st.payLoadPedalConfig_.Road_multi);
       CV1.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_1,dap_config_st.payLoadPedalConfig_.CV_amp_1);
       CV2.forceOffset(dap_config_st.payLoadPedalConfig_.CV_freq_2,dap_config_st.payLoadPedalConfig_.CV_amp_2);
-      //_rudder.offset_calculate(&dap_calculationVariables_st);
-      _rudder.force_offset_calculate(&dap_calculationVariables_st);
+      _rudder.offset_calculate(&dap_calculationVariables_st);
+      //_rudder.force_offset_calculate(&dap_calculationVariables_st);
     #endif
 
     //update max force with G force effect
@@ -872,6 +873,7 @@ void pedalUpdateTask( void * pvParameters )
     dap_calculationVariables_st.Force_Max+=_Road_impact_effect.Road_Impact_force;
     dap_calculationVariables_st.dynamic_update();
     dap_calculationVariables_st.updateStiffness();
+    dap_calculationVariables_st.update_stepperpos(_rudder.offset_filter);
 
     // compute the pedal incline angle 
     //#define COMPUTE_PEDAL_INCLINE_ANGLE
@@ -1023,7 +1025,7 @@ void pedalUpdateTask( void * pvParameters )
 
     //Add effect by force
     float effect_force=absForceOffset+ _BitePointOscillation.BitePoint_Force_offset+_WSOscillation.WS_Force_offset+CV1.CV_Force_offset+CV2.CV_Force_offset;
-    effect_force=effect_force+_rudder.force_offset_filter;
+    //effect_force=effect_force+_rudder.force_offset_filter;
     // use interpolation to determine local linearized spring stiffness
     double stepperPosFraction = stepper->getCurrentPositionFraction();
     int32_t Position_Next = 0;
@@ -1139,6 +1141,7 @@ void pedalUpdateTask( void * pvParameters )
     dap_calculationVariables_st.reset_maxforce();
     dap_calculationVariables_st.dynamic_update();
     dap_calculationVariables_st.updateStiffness();
+    dap_calculationVariables_st.StepperPos_setback();
     if(semaphore_updateJoystick!=NULL)
     {
       if(xSemaphoreTake(semaphore_updateJoystick, (TickType_t)1)==pdTRUE) {
@@ -1148,14 +1151,16 @@ void pedalUpdateTask( void * pvParameters )
         {
           if (1 == dap_config_st.payLoadPedalConfig_.travelAsJoystickOutput_u8)
           {
+            //joystickNormalizedToInt32 = NormalizeControllerOutputValue((Position_Next-dap_calculationVariables_st.stepperPosRange/2), dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMin+dap_calculationVariables_st.stepperPosRange/2, dap_config_st.payLoadPedalConfig_.maxGameOutput);
             joystickNormalizedToInt32 = NormalizeControllerOutputValue((Position_Next-dap_calculationVariables_st.stepperPosRange/2), dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMin+dap_calculationVariables_st.stepperPosRange/2, dap_config_st.payLoadPedalConfig_.maxGameOutput);
             joystickNormalizedToInt32 = constrain(joystickNormalizedToInt32,0,JOYSTICK_MAX_VALUE);
           }
           else
           {
             //joystickNormalizedToInt32 = NormalizeControllerOutputValue(loadcellReading, dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
-            
-            joystickNormalizedToInt32 = NormalizeControllerOutputValue((filteredReading-0.5*dap_calculationVariables_st.Force_Range), dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Min+0.5*dap_calculationVariables_st.Force_Range, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+            joystickNormalizedToInt32 = NormalizeControllerOutputValue((filteredReading), dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Max, dap_config_st.payLoadPedalConfig_.maxGameOutput);
+
+            //joystickNormalizedToInt32 = NormalizeControllerOutputValue((filteredReading-0.5*dap_calculationVariables_st.Force_Range), dap_calculationVariables_st.Force_Min, dap_calculationVariables_st.Force_Min+0.5*dap_calculationVariables_st.Force_Range, dap_config_st.payLoadPedalConfig_.maxGameOutput);
 
           }
         }
@@ -1477,6 +1482,7 @@ void serialCommunicationTask( void * pvParameters )
                 {
                   dap_calculationVariables_st.Rudder_status=true;
                   Serial.println("Rudder on");
+                  moveSlowlyToPosition_b=true;
                   //Serial.print("status:");
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
                 }
@@ -1484,6 +1490,7 @@ void serialCommunicationTask( void * pvParameters )
                 {
                   dap_calculationVariables_st.Rudder_status=false;
                   Serial.println("Rudder off");
+                  moveSlowlyToPosition_b=true;
                   //Serial.print("status:");
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
                 }
@@ -1847,7 +1854,7 @@ void ESPNOW_SyncTask( void * pvParameters )
           }
           else
           {
-            dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin))/((float)dap_calculationVariables_st.stepperPosRange);
+            dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
             _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
             _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
             //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 

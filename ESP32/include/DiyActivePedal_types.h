@@ -256,10 +256,15 @@ struct DAP_calculationVariables_st
   float current_pedal_position_ratio;
   float Sync_pedal_position_ratio;
   bool rudder_brake_status;
+  long stepperPosMin_default;
+  float stepperPosRange_default;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);
   void updateStiffness();
   void dynamic_update();
   void reset_maxforce();
+  void StepperPos_setback();
+  void Default_pos();
+  void update_stepperpos(long newMinstop);
 };
