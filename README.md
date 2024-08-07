@@ -102,39 +102,40 @@ The PCB has three connectors with the following wiring:
 | S-| S-|
 
 #### Servo power port 
-It is recommended to use a Schottky diode in the positive line from the PSU to the servo. The plated side faces the servo.
 | PSU           |  Servo |
 :------------------------- | :-------------------------
-| 36V/48V| Vdd+|
+| 36V| Vdd+|
 | Gnd| Gnd|
 
 
 
-## Power PCB
-Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection from the PSU and the servo. To prevent the reverse current flow to the PSU and thus prevent over-voltage protection from the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over-voltage protection from the servo a large capacitor was added in the power-line. 
 
-A deeper analysis of the reverse current flow and investigation of smaller power circuits can be found [here](https://github.com/tcfshcrw/Brake_resistor_Control_Circuit).
+
+
+## Optional: Power PCB
+Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection of the PSU and the servo. The iSV57 has a "bleeding/braking resistor" method to dissipate EMF flow as heat. The method will be activated when a predefined bus voltage is exceeded (currently 40V). A plot of the voltage fluctuations can be found can be found here:
+<img src="Wiring/PowerPcb/V2/voltageFluctuations.png" height="200">
+The trigger voltage was varied (blue: 62V; red: 42V; green: 40V). The horizontal axis shows the time, the vertical axis shows the bus voltage. The pedal was activated a few times, resultig in voltage spikes due to EMF. It can be seen, that the height of the voltage spikes correlate with the trigger voltage. Since the trigger voltage is set to 40V, it is strongly recommended to use a PSU with less than 40V output.
+
+To prevent reverse current flow to the PSU and thus prevent triggering the over-voltage protection of the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over/under-voltage protection of the servo, a small capacitor was added in the power-line. 
 
 | Component           |  Link |
 :------------------------- | :-------------------------
 | SR5100 Schottky diode | [Amazon.de](https://www.amazon.de/Packung-20-SR5100-Schottky-Barriere-Gleichrichterdioden-DO-201AD/dp/B079KK7QL5/ref=sr_1_3?keywords=sr+5100+diode&qid=1691820234&sr=8-3) |
-| 100V 10kF capacitor| [Amazon.de](https://www.amazon.de/dp/B07QWTMKWZ?ref_=cm_sw_r_apan_dp_ANE55Z4BEQEJHQBQSDVM&language=de-DE) |
+| 80V 1mF capacitor| [Ebay.de](https://www.ebay.de/itm/175539012948?var=475312604661&widget_ver=artemis&media=COPY) |
 
-To hold the components, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Wiring/PowerPcb) was developed, which also featured a port to hold XT30 connectors. 
+To hold the components in a small package, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Wiring/PowerPcb/V2) was developed, which also featured a port to hold XT30 connectors. 
 
-Here is an image of the plain PCB:
-![](Wiring/PowerPcb/front.svg)
+A rendering of the assembled PCB is depictd below: <br>
+<img src="Wiring/PowerPcb/V2/3dRendering.png" height="200">
 
-The xt30 on the left hand side connects to the PSU. The ports on the right hand side connects ro the servo.
+Here is an image of the plain PCB:<br>
+![](Wiring/PowerPcb/V2/front.svg)
 
-Here is an image of the assembled PCB:
-![](Wiring/PowerPcb/PCB_assembled.jpg)
+A deeper analysis of the reverse current flow and investigation of brake circuits can be found [here](https://github.com/tcfshcrw/Brake_resistor_Control_Circuit).
 
 
-A graph of the voltage fluctuations introduced by generative current flow from the servo can be seen here:
-<img src="Images/servo_voltage_fluctuation.png" height="200">
 
-Without the capacitor these fluctuations would be much higher eventually triggering the servos overvoltage protection.
 
 
 
@@ -143,7 +144,7 @@ Without the capacitor these fluctuations would be much higher eventually trigger
 
 
 ## Mechanical design
-A mostly pritnable mechanical design can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md)
+A mostly printable, yet strong mechanical design can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md)
 
 ![DiyFfbPedalAssembly v61](https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7)
 
@@ -157,11 +158,6 @@ Examples other awesome DIYers have done are listed below:
 |<img src="https://media.printables.com/media/prints/557527/images/4471984_0fbfebf6-7b91-47dd-9602-44a6c7e8b851/thumbs/inside/1600x1200/png/screenshot-2023-08-19-150158.webp" height="200">  |  [GWiz's design](https://www.printables.com/de/model/557527-simucube-style-active-pedal/files)|
 |<img src="https://cdn.thingiverse.com/assets/14/7d/56/cd/03/large_display_9d83a9a8-2c8a-4940-b9ce-b4ae4f9674c6.jpg" height="200">  | [shf90's design](https://www.thingiverse.com/thing:6414587)|
 
-
-
-
-## BOM
-The [BOM](Design/BOM.md) refers to the pedal design which I have chosen, see [here](Design/MechanicalDesign.md).
 
 # Software
 
