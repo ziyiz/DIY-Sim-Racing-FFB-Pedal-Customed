@@ -103,6 +103,11 @@ void isv57communication::sendTunedServoParameters() {
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_5_00+13, 5000); // overspeed level
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_5_00+20, 1); // encoder output resolution
 
+  // Enable & tune reactive pumping. This will act like a braking resistor and reduce EMF voltage.
+  // See https://en.wikipedia.org/wiki/Bleeder_resistor
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+31, 0); // bleeder control mode; 0: is default and seems to enable braking mode, contrary to manual
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+32, 40); // bleeder braking voltage. Voltage when braking is activated
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+33, 1); // bleeder hysteresis voltage; Contrary to the manual this seems to be an offset voltage, thus Braking disabling voltage = Pr7.32 + Pr.33
   
 
   // store the settings to servos NVM if necesssary
