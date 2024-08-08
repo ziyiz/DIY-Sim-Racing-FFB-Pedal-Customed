@@ -861,7 +861,8 @@ namespace User.PluginSdkDemo
                         }
                         Rudder_enable_flag = false;
                         System.Threading.Thread.Sleep(50);
-                    }   
+                    }
+                SystemSounds.Beep.Play();
 
             }
 
@@ -965,7 +966,8 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.SetPropertyValue("ProfileIndex", this.GetType(), profile_index);
             pluginManager.SetPropertyValue("debugvalue", this.GetType(), debug_value);
-            
+            pluginManager.SetPropertyValue("rudder_status", this.GetType(), Rudder_status);
+
 
 
 
@@ -1371,6 +1373,7 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("Overlay_display", this.GetType(), overlay_display);
             pluginManager.AddProperty("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.AddProperty("debugvalue", this.GetType(), debug_value);
+            pluginManager.AddProperty("rudder_status", this.GetType(), Rudder_status);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
@@ -1607,9 +1610,15 @@ namespace User.PluginSdkDemo
             });
             this.AddAction("Rudder Brake", (a, b) =>
             {
-                
                 Rudder_brake_enable_flag = true;
                 SimHub.Logging.Current.Info("Rudder Brake");
+
+            });
+            this.AddAction("Rudder", (a, b) =>
+            {
+
+                Rudder_enable_flag=true;
+                SimHub.Logging.Current.Info("Rudder action");
 
             });
 

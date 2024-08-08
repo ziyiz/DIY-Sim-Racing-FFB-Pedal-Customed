@@ -857,13 +857,11 @@
                         <Label Content="Dump Pedal Resonse" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                     </StackPanel>
                     <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
-                        <styles:SHToggleButton x:Name="CheckBox_rudder" Content="" Checked="CheckBox_rudder_Checked" Unchecked="CheckBox_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Combie Brk and Acc into 1 axis Rz, use as Rudder" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
-                        <Label Content="Rudder" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
                         <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                         <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                     </StackPanel>
+                    <styles:SHButtonPrimary x:Name="btn_rudder" Click="btn_rudder_Click" Width="160" Height="28" Content="Rudder" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                   
                     <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Center" />
                     <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
                     <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Center" />

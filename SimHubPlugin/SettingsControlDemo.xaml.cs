@@ -1068,6 +1068,18 @@ namespace User.PluginSdkDemo
                 label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
                 textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
                 textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
+
+
+                //rudder text
+                if (Plugin.Rudder_status)
+                {
+                    btn_rudder.Content = "Click for rudder:Off";
+                }
+                else
+                {
+                    btn_rudder.Content = "Click for rudder:On";
+                }
+                
             }
 
             
@@ -5497,6 +5509,22 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 = (Byte)e.NewValue;
             label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+        }
+
+        private void btn_rudder_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Rudder_status)
+            {
+                Plugin.Rudder_enable_flag = true;
+                Plugin.Rudder_status = false;
+                btn_rudder.Content = "Click for rudder:On";
+            }
+            else
+            {
+                Plugin.Rudder_enable_flag = true;
+                Plugin.Rudder_status = true;
+                btn_rudder.Content = "Click for rudder:Off";
+            }
         }
     }
     
