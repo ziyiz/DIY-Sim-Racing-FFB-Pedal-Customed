@@ -1138,10 +1138,11 @@ void pedalUpdateTask( void * pvParameters )
     
 
     // compute controller output
+    dap_calculationVariables_st.StepperPos_setback();
     dap_calculationVariables_st.reset_maxforce();
     dap_calculationVariables_st.dynamic_update();
     dap_calculationVariables_st.updateStiffness();
-    dap_calculationVariables_st.StepperPos_setback();
+    
     if(semaphore_updateJoystick!=NULL)
     {
       if(xSemaphoreTake(semaphore_updateJoystick, (TickType_t)1)==pdTRUE) {
@@ -1833,51 +1834,53 @@ void ESPNOW_SyncTask( void * pvParameters )
   for(;;)
   {
       //if(ESPNOW_status)
-      {
+      
+        if(ESPNow_initial_status==false)
+        {
+          ESPNow_initialize();
+        }
+        else
+        {
+          bool espnow_result= sendMessageToMaster(joystickNormalizedToInt32);
+        
+          if(espnow_result)
+          {
+            //rudder sync
+            if(dap_calculationVariables_st.Rudder_status)
+            {              
+              dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
+              _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
+              _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
+              //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
+              esp_err_t result =ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));                
+              //if (result == ESP_OK) 
+              //{
+              //  Serial.println("Error sending the data");
+              //}                
+              if(ESPNow_update)
+              {
+                //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
+                dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
+                dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
+                ESPNow_update=false;
+              }                
+            }
+          }
+        }
+        //ESPNOW_count=0;
         //send the data to master
         //if(dap_config_st.payLoadPedalConfig_.Joystick_ESPsync_to_ESP==1)
         //always send message to ESP reciever
         //{
-        sendMessageToMaster(joystickNormalizedToInt32);
         
         
         
 
         //}
         
-        //rudder sync
-        if(dap_calculationVariables_st.Rudder_status)
-        {
-          if(ESPNow_initial_status==false)
-          {
-            ESPNow_initialize();
-          }
-          else
-          {
-            dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
-            _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
-            _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
-            //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
-            esp_err_t result = ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));
-            /* 
-            if (result != ESP_OK) 
-            {
-              Serial.println("Error sending the data");
-            }
-            */
-
-            if(ESPNow_update)
-            {
-              //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
-              dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
-              dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
-              ESPNow_update=false;
-            }
-            
-          }
-        }
-        ESPNOW_count=0;
-      } 
+        
+        
+      
       //else
       //{
         //ESPNOW_count++;          

@@ -37,7 +37,7 @@ struct_message myData;
 
 ESPNow_Send_Struct _ESPNow_Recv;
 ESPNow_Send_Struct _ESPNow_Send;
-void sendMessageToMaster(int32_t controllerValue)
+bool sendMessageToMaster(int32_t controllerValue)
 {
 
   myData.cycleCnt_u64++;
@@ -62,7 +62,20 @@ void sendMessageToMaster(int32_t controllerValue)
   if(ESPNOW_status)
   {
     esp_err_t result = esp_now_send(esp_master, (uint8_t *) &myData, sizeof(myData));
+    if(result == ESP_OK)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
+  else
+  {
+    return false;
+  }
+  
   
   //esp_now_send(esp_master, (uint8_t *) &myData, sizeof(myData));
   /*
