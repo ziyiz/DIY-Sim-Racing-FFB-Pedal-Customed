@@ -72,10 +72,10 @@ A [Discord](https://discord.gg/j8QhD5hCv7) server has been created to allow join
 
 # Hardware
 During the development of this project, PCBs to hold the electric components were developed, see below <br>
-<img src="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/Wiring/Esp32_V3/PCB_assembled.jpg" width="600"> .
+<img src="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/Wiring/Esp32_V3/PCB_assembled.jpg" width="400"> .
 
 Also a (mostly) 3d printable mechanical design was designed and optimized to withstand the high forces of this application, see below <br>
-<img src="https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7" width="600"> .
+<img src="https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7" width="400"> .
 
 
 Please refer to the https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main?tab=readme-ov-file#related-repos section to access the design files.
