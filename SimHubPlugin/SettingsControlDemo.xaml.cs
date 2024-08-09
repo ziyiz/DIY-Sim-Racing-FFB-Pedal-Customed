@@ -2988,7 +2988,11 @@ namespace User.PluginSdkDemo
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                             text_state.Text = Math.Round(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
-
+                                            int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
+                                            int x_showed = round_x + 1;
+                                            
+                                            current_pedal_travel_state = x_showed;
+                                            Plugin.pedal_state_in_ratio = (byte)current_pedal_travel_state;
                                         }
                                         else
                                         {
@@ -2997,6 +3001,7 @@ namespace User.PluginSdkDemo
                                             int x_showed = round_x + 1;
                                             round_x = Math.Max(0, Math.Min(round_x, 99));
                                             current_pedal_travel_state = x_showed;
+                                            Plugin.pedal_state_in_ratio = (byte)current_pedal_travel_state;
                                             Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
@@ -4452,22 +4457,22 @@ namespace User.PluginSdkDemo
             switch (profile_index)
             {
                 case 0:
-                    tmp = "A" +Plugin.Settings.Profile_name[profile_index];
+                    tmp = "A:" +Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 1:
-                    tmp = "B" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "B:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 2:
-                    tmp = "C" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "C:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 3:
-                    tmp = "D" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "D:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 4:
-                    tmp = "E" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "E:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 5:
-                    tmp = "F" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "F:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 default:
                     tmp = "No Profile";

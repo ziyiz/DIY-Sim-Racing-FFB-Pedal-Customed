@@ -291,6 +291,7 @@ namespace User.PluginSdkDemo
         public bool Rudder_status = false;
         public bool Rudder_brake_enable_flag = false;
         public bool Rudder_brake_status = false;
+        public byte pedal_state_in_ratio = 0;
         
 
 
@@ -967,6 +968,8 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("ProfileIndex", this.GetType(), profile_index);
             pluginManager.SetPropertyValue("debugvalue", this.GetType(), debug_value);
             pluginManager.SetPropertyValue("rudder_status", this.GetType(), Rudder_status);
+            pluginManager.SetPropertyValue("rudder_brake_status", this.GetType(), Rudder_brake_status);
+            pluginManager.SetPropertyValue("pedal_position", this.GetType(), pedal_state_in_ratio);
 
 
 
@@ -1374,6 +1377,8 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("Theme_color", this.GetType(), simhub_theme_color);
             pluginManager.AddProperty("debugvalue", this.GetType(), debug_value);
             pluginManager.AddProperty("rudder_status", this.GetType(), Rudder_status);
+            pluginManager.AddProperty("rudder_brake_status", this.GetType(), Rudder_brake_status);
+            pluginManager.AddProperty("pedal_position", this.GetType(), pedal_state_in_ratio);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
