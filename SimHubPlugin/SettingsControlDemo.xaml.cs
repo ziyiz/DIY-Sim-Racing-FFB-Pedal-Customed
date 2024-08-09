@@ -1073,11 +1073,11 @@ namespace User.PluginSdkDemo
                 //rudder text
                 if (Plugin.Rudder_status)
                 {
-                    btn_rudder.Content = "Click for rudder:Off";
+                    btn_rudder.Content = "Rudder Off";
                 }
                 else
                 {
-                    btn_rudder.Content = "Click for rudder:On";
+                    btn_rudder.Content = "Rudder On";
                 }
                 
             }
@@ -5522,13 +5522,13 @@ namespace User.PluginSdkDemo
             {
                 Plugin.Rudder_enable_flag = true;
                 Plugin.Rudder_status = false;
-                btn_rudder.Content = "Click for rudder:On";
+                btn_rudder.Content = "Rudder On";
             }
             else
             {
                 Plugin.Rudder_enable_flag = true;
                 Plugin.Rudder_status = true;
-                btn_rudder.Content = "Click for rudder:Off";
+                btn_rudder.Content = "Rudder Off";
             }
         }
     }
