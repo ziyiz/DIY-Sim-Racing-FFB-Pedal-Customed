@@ -1,6 +1,8 @@
 [![Arduino Build](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml/badge.svg?branch=main)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml)
 [![Doxygen Action](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml/badge.svg)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml)
 
+
+
 # DIY-Sim-Racing-FFB-Pedal
 
 # Disclaimer
@@ -68,7 +70,8 @@ During the development of this project, PCBs to hold the electric components wer
 Also a (mostly) 3d printable mechanical design was designed and optimized to withstand the high forces of this application, see below <br>
 <img src="https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7" width="600"> .
 
-The files can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md). 
+----> The files can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md). <----
+
 
 
 
