@@ -78,10 +78,7 @@ Also a (mostly) 3d printable mechanical design was designed and optimized to wit
 <img src="https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7" width="600"> .
 
 
-<img src="https://github.com/user-attachments/assets/4fa25bee-e251-4a08-88f8-212b5113e22a" height="60" width="1000">
-
-----> [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md) <----
-
+Please refer to the https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main?tab=readme-ov-file#related-repos section to access the design files.
 
 <br>
 <br>
