@@ -22,6 +22,9 @@ This work is licensed under a
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
+# Related repos
+Mechanical and electrical design: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design
+
 # Features
 ## Control of pedal parameters
 To tune the pedal parameters, a SimHub plugin was developed, which communicates with the pedal over USB.
