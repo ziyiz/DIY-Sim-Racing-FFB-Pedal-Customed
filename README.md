@@ -23,7 +23,11 @@ This work is licensed under a
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
 # Related repos
-Mechanical and electrical design: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design
+For the sake of clarity, this project is divided into multiple repositorys:
+| Description           |  Link |
+:------------------------- | :------------------------- |
+| Mechanical and electrical design | https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design |
+| Software (firmware, SimHub plugin, ...) |https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal |
 
 # Features
 ## Control of pedal parameters
