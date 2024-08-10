@@ -454,6 +454,17 @@ namespace User.PluginSdkDemo
                     {
                         sendTcSignal_local_b = true;
                     }
+
+
+                    // when test signal is activated, overwrite trigger signal
+                    if (sendAbsSignal)
+                    {
+                        sendAbsSignal_local_b = true;
+                        sendTcSignal_local_b = true;
+                    }
+
+
+
                     //fill the RPM value
                     if (Settings.RPM_effect_type == 0)
                     {
@@ -518,7 +529,7 @@ namespace User.PluginSdkDemo
             absTrigger_currentTime = DateTime.Now;
             TimeSpan diff = absTrigger_currentTime - absTrigger_lastTime;
             int millisceonds = (int)diff.TotalMilliseconds;
-            if (millisceonds <= 5)
+            if (millisceonds <= 50)
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
@@ -782,46 +793,10 @@ namespace User.PluginSdkDemo
                     
                 }
             }
-            // Send ABS test signal if requested
-            if (sendAbsSignal)
-            {
-                sendAbsSignal_local_b = true;
-                sendTcSignal_local_b = true;
-                DAP_action_st tmp;
-                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
-                tmp.payloadPedalAction_.RPM_u8 = 0;
-                tmp.payloadPedalAction_.G_value = 128;
-                tmp.payloadPedalAction_.WS_u8 = 0;
-                tmp.payloadPedalAction_.impact_value = 0;
-                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                tmp.payloadPedalAction_.Rudder_action = 0;
-                tmp.payloadPedalAction_.Rudder_brake_action = 0;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
-                if (_serialPort[2].IsOpen)
-                {
-                    // clear inbuffer 
-                    _serialPort[2].DiscardInBuffer();
+            
 
-                    // send query command
-                    _serialPort[2].Write(newBuffer, 0, newBuffer.Length);
-                }
-                if (_serialPort[1].IsOpen)
-                {
-                    // clear inbuffer 
-                    _serialPort[1].DiscardInBuffer();
 
-                    // send query command
-                    _serialPort[1].Write(newBuffer, 0, newBuffer.Length);
-                }
-            }
+
             if (Rudder_enable_flag)
             {
                 if (Rudder_status == false)
