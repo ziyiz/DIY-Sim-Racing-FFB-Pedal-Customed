@@ -103,6 +103,12 @@ void isv57communication::sendTunedServoParameters() {
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_5_00+13, 5000); // overspeed level
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_5_00+20, 1); // encoder output resolution
 
+  // Enable & tune reactive pumping. This will act like a braking resistor and reduce EMF voltage.
+  // See https://en.wikipedia.org/wiki/Bleeder_resistor
+  // Info from iSV2 manual: The external resistance is activated when the actual bus voltage is higher than Pr7.32 plus Pr7.33 and is deactivated when the actual bus voltage is lower than Pr7.32 minus Pr7.33
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+31, 0); // bleeder control mode; 0: is default and seems to enable braking mode, contrary to manual
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+32, 40); // bleeder braking voltage. Voltage when braking is activated
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+33, 1); // bleeder hysteresis voltage; Contrary to the manual this seems to be an offset voltage, thus Braking disabling voltage = Pr7.32 + Pr.33
   
 
   // store the settings to servos NVM if necesssary
@@ -206,4 +212,19 @@ void isv57communication::readServoStates() {
     Serial.println(" "); 
   }
   
+}
+
+
+
+bool isv57communication::clearServoAlarms() {
+
+  // read the alarm list
+  int8_t numberOfRegistersToRead_u8 = 0;
+  // Alarm register address: 0x02
+  //int bytesReceived_i = modbus.requestFrom(slaveId, 0x03, 0x02, numberOfRegistersToRead_u8);
+
+  // clear alarm list
+  modbus.holdingRegisterWrite(slaveId, 0x019a, 0x7777); 
+    
+  return 1;
 }

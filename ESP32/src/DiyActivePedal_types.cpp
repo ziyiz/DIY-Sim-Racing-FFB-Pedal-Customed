@@ -97,9 +97,10 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.invertLoadcellReading_u8 = 0;
 
   payLoadPedalConfig_.invertMotorDirection_u8 = 0;
-  payLoadPedalConfig_.pedal_type=0;
+  payLoadPedalConfig_.pedal_type=4;
   payLoadPedalConfig_.OTA_flag=0;
   payLoadPedalConfig_.enableReboot_u8=1;
+  //payLoadPedalConfig_.Joystick_ESPsync_to_ESP=0;
 }
 
 
@@ -181,6 +182,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
   Force_Range = Force_Max - Force_Min;
   Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
+  pedal_type=config_st.payLoadPedalConfig_.pedal_type;
 }
 
 void DAP_calculationVariables_st::dynamic_update()
@@ -206,7 +208,7 @@ void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMax
   
   stepperPosMin = stepperPosEndstopRange * startPosRel;
   stepperPosMax = stepperPosEndstopRange * endPosRel;
-
+  stepperPosMin_default = stepperPosMin;
   stepperPosRange = stepperPosMax - stepperPosMin;
 }
 
@@ -223,5 +225,22 @@ void DAP_calculationVariables_st::updateStiffness() {
   
   }
 
+void DAP_calculationVariables_st::StepperPos_setback()
+{
+  stepperPosMin=stepperPosMin_default;
+  stepperPosRange = stepperPosRange_default;
+}
+
+void DAP_calculationVariables_st::update_stepperpos(long newMinstop)
+{
+  stepperPosMin=newMinstop;
+  stepperPosRange = stepperPosMax - stepperPosMin;
+}
+
+void DAP_calculationVariables_st::Default_pos()
+{
+  stepperPosMin_default = stepperPosMin;
+  stepperPosRange_default=stepperPosRange;
+}
 
 

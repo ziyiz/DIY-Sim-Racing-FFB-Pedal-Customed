@@ -2,9 +2,7 @@
 //#include <string>
 #include "Controller.h"
 
-static const int16_t JOYSTICK_MIN_VALUE = 0;
-static const int16_t JOYSTICK_MAX_VALUE = 10000;
-static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
+
 
 #ifdef USB_JOYSTICK
   #include <Joystick_ESP32S2.h>
@@ -33,6 +31,11 @@ static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
   bool IsControllerReady() { return true; }
   void SetControllerOutputValue(int32_t value) {
     Joystick.setBrake(value);
+  }
+  void SetControllerOutputValue_rudder(int32_t value,int32_t value2)
+  {
+    Joystick.setBrake(value);
+    Joystick.setAccelerator(value2);
   }
 
 
@@ -83,6 +86,28 @@ static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
       //bleGamepad.setSimulationControls(value, 0, 0, 0, 0);
       //bleGamepad.setSliders(value,0);
       bleGamepad.sendReport();
+      
+    }
+    else
+    {
+      Serial.println("BLE not connected!");
+      delay(500);
+    }
+    
+    
+  }
+   void SetControllerOutputValue_rudder(int32_t value,int32_t value2) {
+    //bleGamepad.setBrake(value);
+
+    if (bleGamepad.isConnected() )
+    {
+      //bleGamepad.setAxes(value, 0, 0, 0, 0, 0, 0, 0);
+      bleGamepad.setX(value);
+      bleGamepad.setY(value2);
+      //bleGamepad.setSimulationControls(value, 0, 0, 0, 0);
+      //bleGamepad.setSliders(value,0);
+      bleGamepad.sendReport();
+      
     }
     else
     {
@@ -106,3 +131,4 @@ int32_t NormalizeControllerOutputValue(float value, float minVal, float maxVal, 
   int32_t controller = JOYSTICK_MIN_VALUE + (fractional * JOYSTICK_RANGE);
   return constrain(controller, JOYSTICK_MIN_VALUE, (maxGameOutput/100.) * JOYSTICK_MAX_VALUE);
 }
+

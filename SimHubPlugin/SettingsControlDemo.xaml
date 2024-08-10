@@ -525,10 +525,10 @@
                         </Setter>
                     </Style>
                 </TabControl.Resources>
-                <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                <TabItem Width="150" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="FORCE-TRAVEL CURVE"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="170" Height="30" Margin="0,0,0,0" >
+                            <Label Content="FORCE-TRAVEL CURVE"  FontFamily="Arial Black" FontSize="11" Height="30" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True" Margin="0,0,20,0"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -671,10 +671,25 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem x:Name="pedalKinematicTab" Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+
+                <TabItem Width="170" Height="30" Padding="0,0,0,0" ToolTip="Joystick settings, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="PEDAL KINEMATIC"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="170" Height="30" Margin="0,0,0,0" >
+                            <Label Content="JOYSTICK-OUTPUT CURVE"  FontFamily="Arial Black" FontSize="11" Height="30" Width="170" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        </Border>
+                    </TabItem.Header>
+                    <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
+
+
+                    </Border>
+
+
+                </TabItem>
+
+                <TabItem x:Name="pedalKinematicTab" Width="130" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                    <TabItem.Header>
+                        <Border  Width="130" Height="30" Margin="0,0,0,0" >
+                            <Label Content="PEDAL KINEMATIC"  FontFamily="Arial Black" FontSize="11" Height="30" Width="130" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -744,10 +759,10 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                <TabItem Width="80" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                     <TabItem.Header>
-                        <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                            <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="12" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                        <Border  Width="80" Height="30" Margin="0,0,0,0" >
+                            <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="11" Height="30" Width="80" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
@@ -778,11 +793,11 @@
                 <Border Background="#7F4E4E4E" Height="391" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
                     <StackPanel HorizontalAlignment="Center" Height="381" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
                         <Label Content="System Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
-                        <StackPanel Height="45" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Label x:Name="info_label" Content="" Height="45" Width="80" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>
-                            <Label x:Name="info_label_2" Content="Label" Height="45" Width="80" FontFamily="Arial" VerticalAlignment="Top" FontSize="10"/>
+                        <StackPanel Height="55" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Label x:Name="info_label" Content="" Height="55" Width="80" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>
+                            <Label x:Name="info_label_2" Content="Label" Height="55" Width="80" FontFamily="Arial" VerticalAlignment="Top" FontSize="10"/>
                         </StackPanel>
-                        <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="35" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="10" FontFamily="Arial" />
+                        <TextBox x:Name="TextBox_debugOutput" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="25" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="8" FontFamily="Arial" />
                         <StackPanel Height="30" Width="250" Orientation="Horizontal">
                             <ComboBox x:Name="SerialPortSelection" SelectionChanged="SerialPortSelectionChanged" Width="135" ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="10" Height="30"/>
                             <!--<TextBlock Text="Connect to pedal:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,10,0,0"  Grid.Row="2" Width="200" Foreground="Red" />-->
@@ -842,13 +857,11 @@
                         <Label Content="Dump Pedal Resonse" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                     </StackPanel>
                     <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
-                        <styles:SHToggleButton x:Name="CheckBox_rudder" Content="" Checked="CheckBox_rudder_Checked" Unchecked="CheckBox_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Combie Brk and Acc into 1 axis Rz, use as Rudder, only work in vjoy" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" IsEnabled="False" />
-                        <Label Content="Combine Axis" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,4,0,0">
                         <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                         <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                     </StackPanel>
+                    <styles:SHButtonPrimary x:Name="btn_rudder" Click="btn_rudder_Click" Width="160" Height="28" Content="Rudder" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                   
                     <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,4,0,0" HorizontalAlignment="Center" />
                     <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
                     <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,4,0,0" HorizontalAlignment="Center" />

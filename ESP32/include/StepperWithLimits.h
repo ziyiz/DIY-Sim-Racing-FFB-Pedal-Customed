@@ -31,6 +31,7 @@ public:
   void refindMinLimitSensorless(isv57communication * isv57);
 public:
   int8_t moveTo(int32_t position, bool blocking = false);
+  void moveSlowlyToPos(int32_t targetPos_ui32);
   void printStates();
 
 public:

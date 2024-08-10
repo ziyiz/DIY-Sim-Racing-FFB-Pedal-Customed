@@ -902,6 +902,7 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            
             string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
             if (plugin_version == "1.0.0.0")
             {
@@ -926,6 +927,11 @@ namespace User.PluginSdkDemo
                     }
                 }
                 info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
+                if (Plugin.Rudder_status)
+                {
+                    info_text += "\nIn Action";
+                    info_label.Content += "\nRudder:";
+                }
                 info_label_2.Content = info_text;
             }
 
@@ -1062,7 +1068,21 @@ namespace User.PluginSdkDemo
                 label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
                 textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
                 textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
+
+
+                //rudder text
+                if (Plugin.Rudder_status)
+                {
+                    btn_rudder.Content = "Rudder Off";
+                }
+                else
+                {
+                    btn_rudder.Content = "Rudder On";
+                }
+                
             }
+
+            
            
 
 
@@ -2880,8 +2900,8 @@ namespace User.PluginSdkDemo
 
                                     // write vJoy data
                                     Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
-                                    if (Plugin.Rudder_enable_flag == false)
-                                    {
+                                    //if (Plugin.Rudder_enable_flag == false)
+                                    //{
                                         if (Plugin.Settings.vjoy_output_flag == 1)
                                         {
                                             switch (pedalSelected)
@@ -2905,7 +2925,8 @@ namespace User.PluginSdkDemo
 
                                         }
                                         
-                                    }
+                                    //}
+                                    /*
                                     else
                                     {
                                         //Brk move
@@ -2938,6 +2959,7 @@ namespace User.PluginSdkDemo
 
 
                                     }
+                                    */
 
 
 
@@ -2966,7 +2988,11 @@ namespace User.PluginSdkDemo
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                             text_state.Text = Math.Round(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
-
+                                            int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
+                                            int x_showed = round_x + 1;
+                                            
+                                            current_pedal_travel_state = x_showed;
+                                            Plugin.pedal_state_in_ratio = (byte)current_pedal_travel_state;
                                         }
                                         else
                                         {
@@ -2975,6 +3001,7 @@ namespace User.PluginSdkDemo
                                             int x_showed = round_x + 1;
                                             round_x = Math.Max(0, Math.Min(round_x, 99));
                                             current_pedal_travel_state = x_showed;
+                                            Plugin.pedal_state_in_ratio = (byte)current_pedal_travel_state;
                                             Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
@@ -3553,6 +3580,8 @@ namespace User.PluginSdkDemo
                     {
                         dap_config_st[pedalIdx].payloadPedalConfig_.kf_modelNoise = 5;
                     }
+                    dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
+
                 }
                 
             }
@@ -4131,7 +4160,7 @@ namespace User.PluginSdkDemo
             joystick.AcquireVJD(vJoystickId);
             //joystick.Aquire();
             vjoy_axis_initialize();
-            CheckBox_rudder.IsEnabled = true;
+            //CheckBox_rudder.IsEnabled = true;
 
         }
 
@@ -4141,7 +4170,7 @@ namespace User.PluginSdkDemo
             Plugin.Settings.vjoy_output_flag = 0;
             //joystick.Release();
             joystick.RelinquishVJD(Plugin.Settings.vjoy_order);
-            CheckBox_rudder.IsEnabled = false;
+            //CheckBox_rudder.IsEnabled = false;
         }
 
 
@@ -4428,22 +4457,22 @@ namespace User.PluginSdkDemo
             switch (profile_index)
             {
                 case 0:
-                    tmp = "A" +Plugin.Settings.Profile_name[profile_index];
+                    tmp = "A:" +Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 1:
-                    tmp = "B" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "B:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 2:
-                    tmp = "C" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "C:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 3:
-                    tmp = "D" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "D:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 4:
-                    tmp = "E" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "E:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 case 5:
-                    tmp = "F" + Plugin.Settings.Profile_name[profile_index];
+                    tmp = "F:" + Plugin.Settings.Profile_name[profile_index];
                     break;
                 default:
                     tmp = "No Profile";
@@ -4497,7 +4526,8 @@ namespace User.PluginSdkDemo
 
         private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotification("Hello World","Connected");
+            ToastNotification("Rudder Brake","Test");
+            Plugin.Rudder_brake_enable_flag = true;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -5383,13 +5413,13 @@ namespace User.PluginSdkDemo
         private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)
         {
             Plugin.Rudder_enable_flag = true;
+            
 
         }
 
         private void CheckBox_rudder_Unchecked(object sender, RoutedEventArgs e)
         {
-            Plugin.Rudder_enable_flag = false;
-           
+            Plugin.Rudder_enable_flag = true;
         }
 
         private void CheckBox_RTSDTR_Checked(object sender, RoutedEventArgs e)
@@ -5484,6 +5514,22 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 = (Byte)e.NewValue;
             label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+        }
+
+        private void btn_rudder_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin.Rudder_status)
+            {
+                Plugin.Rudder_enable_flag = true;
+                Plugin.Rudder_status = false;
+                btn_rudder.Content = "Rudder On";
+            }
+            else
+            {
+                Plugin.Rudder_enable_flag = true;
+                Plugin.Rudder_status = true;
+                btn_rudder.Content = "Rudder Off";
+            }
         }
     }
     

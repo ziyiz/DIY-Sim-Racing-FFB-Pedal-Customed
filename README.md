@@ -1,6 +1,8 @@
 [![Arduino Build](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml/badge.svg?branch=main)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml)
 [![Doxygen Action](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml/badge.svg)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml)
 
+
+
 # DIY-Sim-Racing-FFB-Pedal
 
 # Disclaimer
@@ -19,6 +21,13 @@ This work is licensed under a
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
+
+# Related repos
+For the sake of clarity, this project is divided into multiple repositorys:
+| Description           |  Link |
+:------------------------- | :------------------------- |
+| Mechanical and electrical design | https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design |
+| Software (firmware, SimHub plugin, ...) |https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal |
 
 # Features
 ## Control of pedal parameters
@@ -62,89 +71,18 @@ A [Discord](https://discord.gg/j8QhD5hCv7) server has been created to allow join
 
 
 # Hardware
-## Electronics
+During the development of this project, PCBs to hold the electric components were developed, see below <br>
+<img src="https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/Wiring/Esp32_V3/PCB_assembled.jpg" width="400"> .
 
-## Control PCB
-The embedded code of this DIY FFB pedal runs on an ESP32 microcontroller. The PCB design was developed to prove the concept. It holds the ESP32, the ADC, a level shifter, and connectors. Currently, version 3 of this PCB design is used which introduced sensorless homing of the servo. The PCB design and pinout diagram can be found [here](Wiring/Esp32_V3). If you use Simucube wheelbase, you can use the D15 accessory port for input, detail was list [here](Wiring/PCB_analog_output)
-
-Here is an image of the plain PCB:
-![](Wiring/Esp32_V3/PCB_empty.jpeg)
-
-Here is an image of the assembled PCB:
-![](Wiring/Esp32_V3/PCB_assembled.jpg)
+Also a (mostly) 3d printable mechanical design was designed and optimized to withstand the high forces of this application, see below <br>
+<img src="https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7" width="400"> .
 
 
-### Wiring
-The PCB has three connectors with the following wiring:
+Please refer to the https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main?tab=readme-ov-file#related-repos section to access the design files.
 
-#### Servo motion port
-| Connector at PCB           |  Servo |
-:------------------------- | :-------------------------
-| Dir-| Dir-|
-| Dir+| Dir+|
-| Pul-| Pul-|
-| Pul+| Pul+|
-
-#### Servo debug port 
-| Connector at PCB           |  Servo |
-:------------------------- | :-------------------------
-| Gnd| Gnd|
-| Tx| Rx|
-| Rx| Tx|
-
-#### Loadcell port 
-| Connector at PCB           |  Loadcell |
-:------------------------- | :-------------------------
-| 5V| V+|
-| Gnd| V-|
-| Gnd| Shield|
-| S+| S+|
-| S-| S-|
-
-#### Servo power port 
-It is recommended to use a Schottky diode in the positive line from the PSU to the servo. The plated side faces the servo.
-| PSU           |  Servo |
-:------------------------- | :-------------------------
-| 36V/48V| Vdd+|
-| Gnd| Gnd|
-
-
-
-## Power PCB
-Depending on the load direction, the servo will act as a generator. It will produce an additional current flow from the servo to the PSU which could trigger the over-voltage protection from the PSU and the servo. To prevent the reverse current flow to the PSU and thus prevent over-voltage protection from the PSU, a Schottky diode was added to the power line. To prevent the trigger of the over-voltage protection from the servo a large capacitor was added in the power-line. 
-
-A deeper analysis of the reverse current flow and investigation of smaller power circuits can be found [here](https://github.com/tcfshcrw/Brake_resistor_Control_Circuit).
-
-| Component           |  Link |
-:------------------------- | :-------------------------
-| SR5100 Schottky diode | [Amazon.de](https://www.amazon.de/Packung-20-SR5100-Schottky-Barriere-Gleichrichterdioden-DO-201AD/dp/B079KK7QL5/ref=sr_1_3?keywords=sr+5100+diode&qid=1691820234&sr=8-3) |
-| 100V 10kF capacitor| [Amazon.de](https://www.amazon.de/dp/B07QWTMKWZ?ref_=cm_sw_r_apan_dp_ANE55Z4BEQEJHQBQSDVM&language=de-DE) |
-
-To hold the components, a [power PCB](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/tree/main/Wiring/PowerPcb) was developed, which also featured a port to hold XT30 connectors. The 
-
-Here is an image of the plain PCB:
-![](Wiring/PowerPcb/front.svg)
-
-Here is an image of the assembled PCB:
-![](Wiring/PowerPcb/PCB_assembled.jpg)
-
-
-A graph of the voltage fluctuations introduced by generative current flow from the servo can be seen here:
-<img src="Images/servo_voltage_fluctuation.png" height="200">
-
-Without the capacitor these fluctuations would be much higher eventually triggering the servos overvoltage protection.
-
-
-
-
-
-
-
-## Mechanical design
-A mostly pritnable mechanical design can be found [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design/blob/main/README.md)
-
-![DiyFfbPedalAssembly v61](https://github.com/user-attachments/assets/f1a54fd9-5949-4dc0-b573-b34a77b52dd7)
-
+<br>
+<br>
+<br>
 
 Examples other awesome DIYers have done are listed below:
 
@@ -155,11 +93,6 @@ Examples other awesome DIYers have done are listed below:
 |<img src="https://media.printables.com/media/prints/557527/images/4471984_0fbfebf6-7b91-47dd-9602-44a6c7e8b851/thumbs/inside/1600x1200/png/screenshot-2023-08-19-150158.webp" height="200">  |  [GWiz's design](https://www.printables.com/de/model/557527-simucube-style-active-pedal/files)|
 |<img src="https://cdn.thingiverse.com/assets/14/7d/56/cd/03/large_display_9d83a9a8-2c8a-4940-b9ce-b4ae4f9674c6.jpg" height="200">  | [shf90's design](https://www.thingiverse.com/thing:6414587)|
 
-
-
-
-## BOM
-The [BOM](Design/BOM.md) refers to the pedal design which I have chosen, see [here](Design/MechanicalDesign.md).
 
 # Software
 
@@ -178,15 +111,22 @@ Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed 
 See this [guide](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/VScode-IDE-setup).
 
 #### Flash prebuilt binaries via web flasher
-The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). 
-
+The binaries are available [here](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases). They can be flashed via the ESP [webflasher](https://esp.huhn.me/). Another [Webflasher](https://nabucasa.github.io/esp-web-flasher/).
+##### ESP32
 Memory address            |  File
 :-------------------------:|:-------------------------:
-| 0x1000 | Main.ino.bootloader.bin |
-| 0x8000 | Main.ino.partitions.bin | 
+| 0x1000 | bootloader.bin |
+| 0x8000 | partitions.bin | 
 | 0xe000 | boot_app0.bin |
-| 0x10000 | Main.ino.bin |
+| 0x10000 | firmware.bin |
 
+##### ESP32S3
+Memory address            |  File
+:-------------------------:|:-------------------------:
+| 0x0000 | bootloader.bin |
+| 0x8000 | partitions.bin | 
+| 0xe000 | boot_app0.bin |
+| 0x10000 | firmware.bin |
 
 ## iSV57T-130 servo config tuning
 The iSV57T allows parameter tuning via its RS232 interface. To tune the servo towards this application, I executed the following [steps](StepperParameterization/StepperTuning.md).

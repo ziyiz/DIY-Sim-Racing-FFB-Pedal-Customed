@@ -40,6 +40,7 @@
 #define pr_4_00 pr_3_00 + 30 // velocity torque control
 #define pr_5_00 pr_4_00 + 50 // extension settings
 #define pr_6_00 pr_5_00 + 40 // special settings
+#define pr_7_00 pr_6_00 + 40 // special settings
 
 
 
@@ -53,6 +54,7 @@ class isv57communication {
     void readServoStates();
     bool checkCommunication();
     bool findServosSlaveId();
+    bool clearServoAlarms();
 
 
 

@@ -132,18 +132,9 @@ void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57, DAP_con
 
   _limitMax = _stepper->getCurrentPosition();
 
-  // reduce speed and accelerartion
-  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED / 4);
-  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 4);
-
-  // move to min
-  _stepper->moveTo(_posMin, true);
-
-  // increase speed and accelerartion
-  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);
-  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED);
-
-
+  
+  // move slowly to min position
+  moveSlowlyToPos(_posMin);
 
 
 #if defined(SUPPORT_ESP32_PULSE_COUNTER)
@@ -151,6 +142,20 @@ void StepperWithLimits::findMinMaxSensorless(isv57communication * isv57, DAP_con
 #endif
 
 
+}
+
+
+void StepperWithLimits::moveSlowlyToPos(int32_t targetPos_ui32) {
+  // reduce speed and accelerartion
+  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED / 4);
+  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 4);
+
+  // move to min
+  _stepper->moveTo(targetPos_ui32, true);
+
+  // increase speed and accelerartion
+  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);
+  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED);
 }
 
 
