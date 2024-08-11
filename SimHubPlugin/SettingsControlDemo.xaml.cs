@@ -53,14 +53,20 @@ using Windows.UI.Notifications;
 using System.Windows.Navigation;
 using System.CodeDom;
 
+using System.Timers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
+
 
 
 
 namespace User.PluginSdkDemo
 {
 
+
+    
 
     /// <summary>
     /// Logique d'interaction pour SettingsControlDemo.xaml
@@ -86,6 +92,9 @@ namespace User.PluginSdkDemo
         public bool[] waiting_for_pedal_config = new bool[3];
         public System.Windows.Forms.Timer[] pedal_serial_read_timer = new System.Windows.Forms.Timer[3];
         public System.Windows.Forms.Timer connect_timer;
+        public System.Windows.Forms.Timer vjoyReset_timer;
+
+
         //public System.Timers.Timer[] pedal_serial_read_timer = new System.Timers.Timer[3];
         int printCtr = 0;
 
@@ -95,6 +104,7 @@ namespace User.PluginSdkDemo
         //public VirtualJoystick joystick;
         internal vJoyInterfaceWrap.vJoy joystick;
 
+        
 
         public bool[] dumpPedalToResponseFile = new bool[3];
 
@@ -660,6 +670,10 @@ namespace User.PluginSdkDemo
             plugin.wpfHandle = this;
 
 
+            
+        
+        
+        
             UpdateSerialPortList_click();
             //closeSerialAndStopReadCallback(1);
 
@@ -835,10 +849,24 @@ namespace User.PluginSdkDemo
                 connect_timer.Stop();
             }
 
+
+            if (vjoyReset_timer != null)
+            {
+                vjoyReset_timer.Dispose();
+                vjoyReset_timer.Stop();
+            }
+
             connect_timer = new System.Windows.Forms.Timer();
             connect_timer.Tick += new EventHandler(connection_timmer_tick);
             connect_timer.Interval = 5000; // in miliseconds try connect every 5s
             connect_timer.Start();
+            System.Threading.Thread.Sleep(50);
+
+
+            vjoyReset_timer = new System.Windows.Forms.Timer();
+            vjoyReset_timer.Tick += new EventHandler(resetVjoy_timmer_tick);
+            vjoyReset_timer.Interval = 1000; // in miliseconds try connect every 5s
+            vjoyReset_timer.Start();
             System.Threading.Thread.Sleep(50);
 
             /*
@@ -2594,6 +2622,49 @@ namespace User.PluginSdkDemo
 
         }
 
+
+
+        public void resetVjoy_timmer_tick(object sender, EventArgs e)
+        {
+
+            //joystick.GetVJDStatus
+
+            if (joystick != null)
+            {
+                int currentTimeInSeconds = (int)DateTime.Now.TimeOfDay.TotalSeconds;
+                DateTime now = DateTime.Now;
+
+                for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                {
+
+                    // Compute the time difference
+                    TimeSpan timeDifference = now - vJoyLastUpdateTime[pedalIdx];
+
+                    // if time difference too large, reset vJoy output
+                    if (timeDifference.TotalMilliseconds > 1000)
+                    {
+                        switch (pedalIdx)
+                        {
+                            case 0:
+                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
+                                joystick.SetAxis(0, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
+                                break;
+                            case 1:
+                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RY);  // Center X axis
+                                joystick.SetAxis(0, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RY);   // HID_USAGES Enums
+                                break;
+                            case 2:
+                                //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RZ);  // Center X axis
+                                joystick.SetAxis(0, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
         public void closeSerialAndStopReadCallback(uint pedalIdx)
         {
             
@@ -2722,6 +2793,7 @@ namespace User.PluginSdkDemo
         static int destBufferSize = 1000;
         byte[][] buffer_appended = { new byte[bufferSize], new byte[bufferSize], new byte[bufferSize] };
 
+        DateTime[] vJoyLastUpdateTime = { DateTime.Now, DateTime.Now, DateTime.Now };
         unsafe public void timerCallback_serial(object sender, EventArgs e)
         {
 
@@ -2904,9 +2976,10 @@ namespace User.PluginSdkDemo
                                     //{
                                         if (Plugin.Settings.vjoy_output_flag == 1)
                                         {
-                                            switch (pedalSelected)
-                                            {
 
+                                            vJoyLastUpdateTime[pedalSelected] = DateTime.Now;
+                                            switch (pedalSelected)
+                                                {
                                                 case 0:
                                                     //joystick.SetJoystickAxis(pedalState_read_st.payloadPedalState_.joystickOutput_u16, Axis.HID_USAGE_RX);  // Center X axis
                                                     joystick.SetAxis(pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RX);   // HID_USAGES Enums
