@@ -1235,7 +1235,7 @@ void pedalUpdateTask( void * pvParameters )
         dap_state_basic_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_BASIC;
         dap_state_basic_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_basic_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_basic_st.payLoadHeader_)), sizeof(dap_state_basic_st.payLoadHeader_) + sizeof(dap_state_basic_st.payloadPedalState_Basic_));
-
+        dap_state_basic_st.payLoadHeader_.PedalTag=dap_config_st.payLoadPedalConfig_.pedal_type;
 
         // update extended struct 
         dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
@@ -1828,6 +1828,7 @@ int ESPNOW_count=0;
 int error_count=0;
 int print_count=0;
 int ESPNow_no_device_count=0;
+bool basic_state_send_b=false;
 uint8_t error_out;
 void ESPNOW_SyncTask( void * pvParameters )
 {
@@ -1835,37 +1836,55 @@ void ESPNOW_SyncTask( void * pvParameters )
   {
       //if(ESPNOW_status)
       
+      if(ESPNOW_count>6)
+      {
+        basic_state_send_b=true;
+        ESPNOW_count=0;
+      }
+      else
+      {
+        ESPNOW_count++;
+      }
         if(ESPNow_initial_status==false)
         {
           ESPNow_initialize();
         }
         else
         {
-          bool espnow_result= sendMessageToMaster(joystickNormalizedToInt32);
-        
-          if(espnow_result)
+          sendMessageToMaster(joystickNormalizedToInt32);
+          if(basic_state_send_b)
           {
-            //rudder sync
-            if(dap_calculationVariables_st.Rudder_status)
-            {              
-              dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
-              _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
-              _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
-              //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
-              esp_err_t result =ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));                
-              //if (result == ESP_OK) 
-              //{
-              //  Serial.println("Error sending the data");
-              //}                
-              if(ESPNow_update)
-              {
-                //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
-                dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
-                dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
-                ESPNow_update=false;
-              }                
-            }
+            ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_state_basic_st,sizeof(dap_state_basic_st));
+            basic_state_send_b=false;
           }
+          if(ESPNow_config_request)
+          {
+            ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_config_st,sizeof(dap_config_st));
+            ESPNow_config_request=false;
+          }
+          
+          
+          //rudder sync
+          if(dap_calculationVariables_st.Rudder_status)
+          {              
+            dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
+            _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
+            _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
+            //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
+            esp_err_t result =ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));                
+            //if (result == ESP_OK) 
+            //{
+            //  Serial.println("Error sending the data");
+            //}                
+            if(ESPNow_update)
+            {
+              //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
+              dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
+              dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
+              ESPNow_update=false;
+            }                
+          }
+          
         }
         //ESPNOW_count=0;
         //send the data to master
