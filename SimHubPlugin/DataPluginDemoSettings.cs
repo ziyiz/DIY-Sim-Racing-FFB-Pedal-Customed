@@ -47,6 +47,7 @@ namespace User.PluginSdkDemo
         public string[] CV2_bindings = new string[3] { "", "", "" };
         public string ESPNow_port = "";
         public bool[] Pedal_ESPNow_Sync_flag = new bool[3] { false, false, false };
+        public bool Pedal_ESPNow_auto_connect_flag = false;
 
     }
         

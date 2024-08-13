@@ -929,6 +929,13 @@ namespace User.PluginSdkDemo
                         info_text = "Waiting...";
                     }
                 }
+                if (Plugin.ESPsync_serialPort.IsOpen)
+                {
+                    if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
+                    {
+                        info_text = "Wireless Sync";
+                    }
+                }
                 info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
                 if (Plugin.Rudder_status)
                 {
@@ -1098,6 +1105,15 @@ namespace User.PluginSdkDemo
                 else
                 {
                     CheckBox_Pedal_ESPNow_SyncFlag.IsChecked = false;
+                }
+
+                if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                {
+                    CheckBox_Pedal_ESPNow_autoconnect.IsChecked = true;
+                }
+                else
+                { 
+                    CheckBox_Pedal_ESPNow_autoconnect.IsChecked= false;
                 }
                 
             }
@@ -2579,7 +2595,82 @@ namespace User.PluginSdkDemo
             count_timmer_count++;
             if (count_timmer_count > 1)
             {
+                if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                {
+                    if (Plugin.ESPsync_serialPort.IsOpen==false)
+                    {
+                        Plugin.ESPsync_serialPort.PortName = Plugin.Settings.ESPNow_port;
+                        try
+                        {
+                            // serial port settings
+                            Plugin.ESPsync_serialPort.Handshake = Handshake.None;
+                            Plugin.ESPsync_serialPort.Parity = Parity.None;
+                            //_serialPort[pedalIdx].StopBits = StopBits.None;
 
+
+                            Plugin.ESPsync_serialPort.ReadTimeout = 2000;
+                            Plugin.ESPsync_serialPort.WriteTimeout = 500;
+
+                            // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+                            Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
+                            Plugin.ESPsync_serialPort.NewLine = "\r\n";
+                            Plugin.ESPsync_serialPort.ReadBufferSize = 10000;
+                            if (Plugin.PortExists(Plugin.ESPsync_serialPort.PortName))
+                            {
+                                try
+                                {
+                                    Plugin.ESPsync_serialPort.Open();
+                                    System.Threading.Thread.Sleep(200);
+                                    // ESP32 S3
+                                    Plugin.ESPsync_serialPort.RtsEnable = false;
+                                    Plugin.ESPsync_serialPort.DtrEnable = true;
+                                    //SystemSounds.Beep.Play();
+                                    Plugin.Sync_esp_connection_flag = true;
+                                    btn_connect_espnow_port.Content = "Disconnect";
+                                    //Plugin.Settings.connect_status[3] = 1;
+                                    // read callback
+                                    /*
+                                    if (pedal_serial_read_timer[3] != null)
+                                    {
+                                        pedal_serial_read_timer[3].Stop();
+                                        pedal_serial_read_timer[3].Dispose();
+                                    }
+                                    */
+                                    ESP_host_serial_timer = new System.Windows.Forms.Timer();
+                                    ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
+                                    ESP_host_serial_timer.Tag = 3;
+                                    ESP_host_serial_timer.Interval = 16; // in miliseconds
+                                    ESP_host_serial_timer.Start();
+                                    System.Threading.Thread.Sleep(100);
+                                    ToastNotification("Pedal Bridge", "Connected");
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    TextBox2.Text = ex.Message;
+                                    //Serial_connect_status[3] = false;
+                                }
+
+
+                            }
+                            else
+                            {
+                                Plugin.Sync_esp_connection_flag = false;
+                                btn_connect_espnow_port.Content = "Connect";
+                                if (ESP_host_serial_timer != null)
+                                {
+                                    ESP_host_serial_timer.Stop();
+                                    ESP_host_serial_timer.Dispose();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            TextBox2.Text = ex.Message;
+                        }
+                    }
+                                       
+                }
 
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
@@ -5677,12 +5768,7 @@ namespace User.PluginSdkDemo
                         try
                         {
                             Plugin.ESPsync_serialPort.Open();
-
-
-
-
                             System.Threading.Thread.Sleep(200);
-
                             // ESP32 S3
                             Plugin.ESPsync_serialPort.RtsEnable = false;
                             Plugin.ESPsync_serialPort.DtrEnable = true;
@@ -5704,6 +5790,10 @@ namespace User.PluginSdkDemo
                             ESP_host_serial_timer.Interval = 16; // in miliseconds
                             ESP_host_serial_timer.Start();
                             System.Threading.Thread.Sleep(100);
+                            if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                            {
+                                Plugin.Settings.ESPNow_port = Plugin.ESPsync_serialPort.PortName;
+                            }
                             
                             
                         }
@@ -6230,6 +6320,21 @@ namespace User.PluginSdkDemo
             }
         }
 
+        private void CheckBox_Pedal_ESPNow_autoconnect_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            { 
+                Plugin.Settings.Pedal_ESPNow_auto_connect_flag = true;
+            }
+        }
+
+        private void CheckBox_Pedal_ESPNow_autoconnect_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Pedal_ESPNow_auto_connect_flag = false;
+            }
+        }
     }
     
 }
