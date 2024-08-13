@@ -2079,7 +2079,7 @@ namespace User.PluginSdkDemo
             //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";
 
             TextBox_debugOutput.Text = String.Empty;
-            if (Plugin.Sync_esp_connection_flag)
+            if (Plugin.Settings.Pedal_ESPNow_Sync_flag[pedalIdx])
             {
                 if (Plugin.ESPsync_serialPort.IsOpen)
                 {
@@ -2091,6 +2091,7 @@ namespace User.PluginSdkDemo
                         // send data
                         Plugin.ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
                         //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
+                        System.Threading.Thread.Sleep(50);
                     }
                     catch (Exception caughtEx)
                     {
@@ -2208,7 +2209,7 @@ namespace User.PluginSdkDemo
             newBuffer = Plugin.getBytes_Action(tmp);
             // tell the plugin that we expect config data
             waiting_for_pedal_config[i] = true;
-            if (Plugin.Sync_esp_connection_flag)
+            if (Plugin.Settings.Pedal_ESPNow_Sync_flag[i])
             {
                 if (Plugin.ESPsync_serialPort.IsOpen)
                 {
