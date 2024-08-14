@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 138
+#define DAP_VERSION_CONFIG 139
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
@@ -21,6 +21,9 @@ struct payloadHeader {
 
   // store to EEPROM flag
   uint8_t storeToEeprom;
+
+  //pedal tag
+  uint8_t PedalTag;
 
 };
 

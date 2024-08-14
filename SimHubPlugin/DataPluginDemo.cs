@@ -1,6 +1,7 @@
 ﻿using GameReaderCommon;
 //using log4net.Plugin;
 using SimHub.Plugins;
+using SimHub.Plugins.DataPlugins.RGBMatrixDriver.Settings;
 using SimHub.Plugins.DataPlugins.ShakeItV3.UI.Effects;
 using SimHub.Plugins.OutputPlugins.Dash.GLCDTemplating;
 using System;
@@ -24,7 +25,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 138;
+    public const uint pedalConfigPayload_version = 139;
 
 
     // pyload types
@@ -45,6 +46,7 @@ public struct payloadHeader
     public byte version;
 
     public byte storeToEeprom;
+    public byte PedalTag;
 }
 
 
@@ -292,6 +294,7 @@ namespace User.PluginSdkDemo
         public bool Rudder_brake_enable_flag = false;
         public bool Rudder_brake_status = false;
         public byte pedal_state_in_ratio = 0;
+        public bool Sync_esp_connection_flag=false;
         
 
 
@@ -322,9 +325,11 @@ namespace User.PluginSdkDemo
 
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
-        public SerialPort[] _serialPort = new SerialPort[3] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
+        public SerialPort[] _serialPort = new SerialPort[4] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
-            new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+            new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+
+        public SerialPort ESPsync_serialPort = new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One);
 
         //for (byte pedalIdx_lcl = 0; pedalIdx_lcl< 3; pedalIdx_lcl++)
         //{
@@ -551,12 +556,13 @@ namespace User.PluginSdkDemo
                 // Send ABS trigger signal via serial
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-                    if (_serialPort[pedalIdx].IsOpen)
-                    {
+                    
+                    
 
                         DAP_action_st tmp;
                         tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                        tmp.payloadHeader_.PedalTag = (byte)pedalIdx;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
                         
@@ -738,16 +744,33 @@ namespace User.PluginSdkDemo
                             byte[] newBuffer = new byte[length];
                             newBuffer = getBytes_Action(tmp);
 
+                            if (Settings.Pedal_ESPNow_Sync_flag[pedalIdx])
+                            {
+                                if (ESPsync_serialPort.IsOpen)
+                                {
+                                    ESPsync_serialPort.DiscardInBuffer();
+                                    ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                                    System.Threading.Thread.Sleep(5);
+                                }
 
-                            // clear inbuffer 
-                            _serialPort[pedalIdx].DiscardInBuffer();
+                            }
+                            else
+                            {
+                                if (_serialPort[pedalIdx].IsOpen)
+                                {
+                                    // clear inbuffer 
+                                    _serialPort[pedalIdx].DiscardInBuffer();
 
-                            // send query command
-                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                                    // send query command
+                                    _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                                }
+
+                            }
+
 
 
                         }
-                    }
+                    
                 }
                 
             }
@@ -756,47 +779,63 @@ namespace User.PluginSdkDemo
                 if (game_running_index == 1)
                 {
                     game_running_index = 0;
-                    clear_action = true;
-                    /*
-                    DAP_action_st tmp;
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                    tmp.payloadPedalAction_.RPM_u8 = 0;
-                    tmp.payloadPedalAction_.G_value = 128;
-                    tmp.payloadPedalAction_.WS_u8 = 0;
-                    tmp.payloadPedalAction_.impact_value = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                    tmp.payloadPedalAction_.Rudder_action = 0;
-                    rpm_last_value = 0;
-                    Road_impact_last = 0;
-                    debug_value = 0;
+                    clear_action = true;   
+                }
+            }
+
+
+
+            // Send ABS test signal if requested
+            if (sendAbsSignal)
+            {
+                sendAbsSignal_local_b = true;
+                sendTcSignal_local_b = true;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                tmp.payloadPedalAction_.Rudder_action = 0;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
+
+                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                {
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
-                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
                     {
-                        if (_serialPort[pedalIdx].IsOpen)
+                        if (ESPsync_serialPort.IsOpen) 
                         {
-                            // clear inbuffer 
-                            _serialPort[pedalIdx].DiscardInBuffer();
-
-                            // send query command
-                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                            ESPsync_serialPort.DiscardInBuffer();  
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(5);
                         }
                     }
-                    */
-                    
+                    else
+                    {
+                        if (_serialPort[PIDX].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[PIDX].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                        }
+                    }
                 }
+                    
+
             }
-            
-
-
-
             if (Rudder_enable_flag)
             {
                 if (Rudder_status == false)
@@ -807,25 +846,40 @@ namespace User.PluginSdkDemo
                 {
                     Rudder_status = false;
                 }
-                    DAP_action_st tmp;
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
-                    tmp.payloadPedalAction_.RPM_u8 = 0;
-                    tmp.payloadPedalAction_.G_value = 128;
-                    tmp.payloadPedalAction_.WS_u8 = 0;
-                    tmp.payloadPedalAction_.impact_value = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                    tmp.payloadPedalAction_.Rudder_action = 1;
-                    tmp.payloadPedalAction_.Rudder_brake_action = 0;
-                DAP_action_st* v = &tmp;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;                    
+                tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                tmp.payloadPedalAction_.Rudder_action = 1;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
+
+                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                {
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
+                    DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
-                    for (uint PIDX = 1; PIDX < 3; PIDX++)
+                    
+                    
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
+                    {
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(5);
+                        }
+                    }
+                    else
                     {
                         if (_serialPort[PIDX].IsOpen)
                         {
@@ -835,9 +889,13 @@ namespace User.PluginSdkDemo
                             // send query command
                             _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
                         }
-                        Rudder_enable_flag = false;
-                        System.Threading.Thread.Sleep(50);
+
                     }
+
+                    
+                    Rudder_enable_flag = false;
+                    System.Threading.Thread.Sleep(50);
+                }
                 SystemSounds.Beep.Play();
 
             }
@@ -868,21 +926,36 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                 tmp.payloadPedalAction_.Rudder_action = 0;
                 tmp.payloadPedalAction_.Rudder_brake_action = 1;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
+
                 for (uint PIDX = 1; PIDX < 3; PIDX++)
                 {
-                    if (_serialPort[PIDX].IsOpen)
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
                     {
-                        // clear inbuffer 
-                        _serialPort[PIDX].DiscardInBuffer();
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(5);
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort[PIDX].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[PIDX].DiscardInBuffer();
 
-                        // send query command
-                        _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                            // send query command
+                            _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                        }
+
                     }
                     Rudder_brake_enable_flag = false;
                     System.Threading.Thread.Sleep(50);
@@ -909,21 +982,36 @@ namespace User.PluginSdkDemo
                 rpm_last_value = 0;
                 Road_impact_last = 0;
                 debug_value = 0;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
+
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-                    if (_serialPort[pedalIdx].IsOpen)
+                    tmp.payloadHeader_.PedalTag = (byte)pedalIdx;
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    if (Settings.Pedal_ESPNow_Sync_flag[pedalIdx])
                     {
-                        // clear inbuffer 
-                        _serialPort[pedalIdx].DiscardInBuffer();
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(5);
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort[pedalIdx].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[pedalIdx].DiscardInBuffer();
 
-                        // send query command
-                        _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                            // send query command
+                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                        }
+
                     }
                 }
                 clear_action = false;
