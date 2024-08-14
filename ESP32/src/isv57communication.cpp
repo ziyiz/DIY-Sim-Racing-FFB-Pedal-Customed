@@ -163,6 +163,11 @@ void isv57communication::setZeroPos()
   zeroPos = servo_pos_given_p;
 }
 
+void isv57communication::applyOfsetToZeroPos(int16_t givenPosOffset_i16)
+{
+  zeroPos += givenPosOffset_i16;
+}
+
 int16_t isv57communication::getZeroPos()
 {
   return zeroPos;

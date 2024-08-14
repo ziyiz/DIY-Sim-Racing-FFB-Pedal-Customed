@@ -1508,7 +1508,7 @@ void serialCommunicationTask( void * pvParameters )
         SetControllerOutputValue(joystickNormalizedToInt32_local);
       }
     }
-    
+
   }
 }
 //OTA multitask
@@ -1812,7 +1812,7 @@ int64_t timeDiff = 0;
 
 #define TIME_SINCE_SERVO_POS_CHANGE_TO_DETECT_STANDSTILL_IN_MS 200
 
-
+bool previousIsv57LifeSignal_b = true;
 
 uint64_t print_cycle_counter_u64 = 0;
 unsigned long cycleTimeLastCall_lifelineCheck = 0;//micros();
@@ -1829,7 +1829,7 @@ void servoCommunicationTask( void * pvParameters )
 
     // check if servo communication is still there every N milliseconds
     unsigned long now = millis();
-    if ( (now - cycleTimeLastCall_lifelineCheck) > 5000) 
+    if ( (now - cycleTimeLastCall_lifelineCheck) > 500) 
     {
       // if target cycle time is reached, update last time
       cycleTimeLastCall_lifelineCheck = now;
@@ -1843,7 +1843,16 @@ void servoCommunicationTask( void * pvParameters )
     if (isv57LifeSignal_b)
     {
 
-        //delay(5);
+
+        // when servo was restarted, the read states need to be initialized first
+        if (false == previousIsv57LifeSignal_b)
+        {
+          isv57.setupServoStateReading();
+          previousIsv57LifeSignal_b = true;
+          delay(50);
+        }
+        
+
         isv57.readServoStates();
 
         if(semaphore_readServoValues!=NULL)
@@ -1858,18 +1867,17 @@ void servoCommunicationTask( void * pvParameters )
           semaphore_readServoValues = xSemaphoreCreateMutex();
         }
         
-        
-
         int32_t servo_offset_compensation_steps_local_i32 = 0;
 
-        
         // condition 1: servo must be at halt
         // condition 2: the esp accel lib must be at halt
-        bool cond_1 = false;;
+        bool cond_1 = false;
         bool cond_2 = false;
 
         // check whether target position from ESP hasn't changed and is at min endstop position
         cond_2 = stepper->isAtMinPos();
+
+        
 
         if (cond_2 == true)
         {
@@ -1901,6 +1909,7 @@ void servoCommunicationTask( void * pvParameters )
 
 
         
+        
 
         // calculate zero position offset
         if (cond_1 && cond_2)
@@ -1917,6 +1926,55 @@ void servoCommunicationTask( void * pvParameters )
           // movement to the back will reduce encoder value
           servo_offset_compensation_steps_local_i32 = (int32_t)isv57.getZeroPos() - (int32_t)isv57.servo_pos_given_p;
           // when pedal has moved to the back due to step losses --> offset will be positive 
+
+
+
+
+
+          // When the servo turned off during driving, the servo loses its zero position and the correction might not be valid anymore. If still applied, the servo will somehow srive against the block
+          // resulting in excessive servo load --> current load. We'll detect whether min or max block was reached, depending on the position error sign
+          bool servoCurrentLow_b = abs(isv57.servo_current_percent) < 20;
+          if (!servoCurrentLow_b)
+          {
+
+            // positive current means positive rotation 
+            bool minBlockCrashDetected_b = false;
+            bool maxBlockCrashDetected_b = false;
+            if (isv57.servo_current_percent > 0) // if current is positive, the rotation will be positive and thus the sled will move towards the user
+            {
+              minBlockCrashDetected_b = true; 
+              isv57.applyOfsetToZeroPos(-500); // bump up a bit to prevent the servo from pushing against the endstop continously
+            }
+            else
+            {
+              maxBlockCrashDetected_b = true;
+              isv57.applyOfsetToZeroPos(500); // bump up a bit to prevent the servo from pushing against the endstop continously
+            }
+
+            /*print_cycle_counter_u64++;
+            print_cycle_counter_u64 %= 10;
+
+            if (print_cycle_counter_u64 == 0)
+            {
+              Serial.print("minDet: ");
+              Serial.print(minBlockCrashDetected_b);
+
+              Serial.print("curr: ");
+              Serial.print(isv57.servo_current_percent);
+              
+              Serial.print("posError: ");
+              Serial.print(isv57.servo_pos_error_p);
+
+              Serial.println();
+            }*/
+
+
+            //servo_offset_compensation_steps_local_i32 = isv57.servo_pos_error_p;
+          }
+
+
+
+
 
           // since the encoder positions are defined in int16 space, they wrap at multiturn
           // to correct overflow, we apply modulo to take smallest possible deviation
@@ -1971,7 +2029,8 @@ void servoCommunicationTask( void * pvParameters )
     else
     {
       Serial.println("Servo communication lost!");
-      delay(1000);
+      delay(100);
+      previousIsv57LifeSignal_b = false;
     }
 
 

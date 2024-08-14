@@ -59,6 +59,7 @@ class isv57communication {
 
 
     void setZeroPos();
+    void applyOfsetToZeroPos(int16_t givenPosOffset_i16);
     int16_t getZeroPos();
     int16_t regArray[4];
 
