@@ -1693,88 +1693,68 @@ void ESPNOW_SyncTask( void * pvParameters )
 {
   for(;;)
   {
-      //if(ESPNOW_status)
+    //if(ESPNOW_status)
 
-      // measure callback time and continue, when desired period is reached
-      timeNow_espNowTask_l = millis();
-      int64_t timeDiff_espNowTask_l = ( timePrevious_espNowTask_l + REPETITION_INTERVAL_ESPNOW_TASK) - timeNow_espNowTask_l;
-      uint32_t targetWaitTime_u32 = constrain(timeDiff_espNowTask_l, 0, REPETITION_INTERVAL_ESPNOW_TASK);
-      delay(targetWaitTime_u32);
-      timePrevious_espNowTask_l = millis();
-
-      
-      
-      if(ESPNOW_count>6)
+    // measure callback time and continue, when desired period is reached
+    timeNow_espNowTask_l = millis();
+    int64_t timeDiff_espNowTask_l = ( timePrevious_espNowTask_l + REPETITION_INTERVAL_ESPNOW_TASK) - timeNow_espNowTask_l;
+    uint32_t targetWaitTime_u32 = constrain(timeDiff_espNowTask_l, 0, REPETITION_INTERVAL_ESPNOW_TASK);
+    delay(targetWaitTime_u32);
+    timePrevious_espNowTask_l = millis();
+    if(ESPNOW_count>4)
+    {
+      basic_state_send_b=true;
+      ESPNOW_count=0;
+    }
+    else
+    {
+      ESPNOW_count++;
+    }
+    if(ESPNow_initial_status==false)
+    {
+      ESPNow_initialize();
+    }
+    else
+    {
+      sendMessageToMaster(joystickNormalizedToInt32);
+      if(basic_state_send_b)
       {
-        basic_state_send_b=true;
-        ESPNOW_count=0;
+        ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_state_basic_st,sizeof(dap_state_basic_st));
+        basic_state_send_b=false;
       }
-      else
+      if(ESPNow_config_request)
       {
-        ESPNOW_count++;
+        ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_config_st,sizeof(dap_config_st));
+        ESPNow_config_request=false;
       }
-        if(ESPNow_initial_status==false)
-        {
-          ESPNow_initialize();
-        }
-        else
-        {
-          sendMessageToMaster(joystickNormalizedToInt32);
-          if(basic_state_send_b)
-          {
-            ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_state_basic_st,sizeof(dap_state_basic_st));
-            basic_state_send_b=false;
-          }
-          if(ESPNow_config_request)
-          {
-            ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_config_st,sizeof(dap_config_st));
-            ESPNow_config_request=false;
-          }
           
-          //rudder sync
-          if(dap_calculationVariables_st.Rudder_status)
-          {              
-            dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
-            _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
-            _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
-            //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
-            esp_err_t result =ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));                
-            //if (result == ESP_OK) 
-            //{
-            //  Serial.println("Error sending the data");
-            //}                
-            if(ESPNow_update)
-            {
-              //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
-              dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
-              dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
-              ESPNow_update=false;
-            }                
-          }
-          
-        }
-        //ESPNOW_count=0;
-        //send the data to master
-        //if(dap_config_st.payLoadPedalConfig_.Joystick_ESPsync_to_ESP==1)
-        //always send message to ESP reciever
+      //rudder sync
+      if(dap_calculationVariables_st.Rudder_status)
+      {              
+        dap_calculationVariables_st.current_pedal_position_ratio=((float)(dap_calculationVariables_st.current_pedal_position-dap_calculationVariables_st.stepperPosMin_default))/((float)dap_calculationVariables_st.stepperPosRange_default);
+        _ESPNow_Send.pedal_position_ratio=dap_calculationVariables_st.current_pedal_position_ratio;
+        _ESPNow_Send.pedal_position=dap_calculationVariables_st.current_pedal_position;
+        //ESPNow_send=dap_calculationVariables_st.current_pedal_position; 
+        esp_err_t result =ESPNow.send_message(Recv_mac,(uint8_t *) &_ESPNow_Send,sizeof(_ESPNow_Send));                
+        //if (result == ESP_OK) 
         //{
-        
-        
-        
+        //  Serial.println("Error sending the data");
+        //}                
+        if(ESPNow_update)
+        {
+          //dap_calculationVariables_st.sync_pedal_position=ESPNow_recieve;
+          dap_calculationVariables_st.sync_pedal_position=_ESPNow_Recv.pedal_position;
+          dap_calculationVariables_st.Sync_pedal_position_ratio=_ESPNow_Recv.pedal_position_ratio;
+          ESPNow_update=false;
+        }                
+      }
+          
+    }
 
-        //}
-        
-        
-        
       
-      //else
-      //{
-        //ESPNOW_count++;          
-      //}
-      
-      #ifdef ESPNow_debug
-          if(print_count>1500)
-          {
+    #ifdef ESPNow_debug
+      if(print_count>1500)
+      {
             Serial.print("Rudder Status:");
             Serial.println(dap_calculationVariables_st.Rudder_status);
             Serial.print("Pedal type:");
@@ -1787,16 +1767,16 @@ void ESPNOW_SyncTask( void * pvParameters )
             Serial.println(dap_calculationVariables_st.current_pedal_position);                  
             
             print_count=0;
-          }
-          else
-          {
-            print_count++;
+      }
+      else
+      {
+        print_count++;
             
-          } 
+      } 
           
                
-      #endif
-      //delay(2);
+    #endif
+    //delay(2);
   }
 }
 #endif

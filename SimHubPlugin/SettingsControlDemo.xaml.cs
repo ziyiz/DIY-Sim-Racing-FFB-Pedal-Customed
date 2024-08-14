@@ -2107,7 +2107,7 @@ namespace User.PluginSdkDemo
                         // send data
                         Plugin.ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
                         //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
-                        System.Threading.Thread.Sleep(50);
+                        System.Threading.Thread.Sleep(100);
                     }
                     catch (Exception caughtEx)
                     {
@@ -2597,26 +2597,23 @@ namespace User.PluginSdkDemo
             {
                 if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
                 {
-                    if (Plugin.ESPsync_serialPort.IsOpen==false)
+                    if (Plugin.PortExists(Plugin.Settings.ESPNow_port))
                     {
-                        Plugin.ESPsync_serialPort.PortName = Plugin.Settings.ESPNow_port;
-                        try
+                        if (Plugin.ESPsync_serialPort.IsOpen == false)
                         {
-                            // serial port settings
-                            Plugin.ESPsync_serialPort.Handshake = Handshake.None;
-                            Plugin.ESPsync_serialPort.Parity = Parity.None;
-                            //_serialPort[pedalIdx].StopBits = StopBits.None;
-
-
-                            Plugin.ESPsync_serialPort.ReadTimeout = 2000;
-                            Plugin.ESPsync_serialPort.WriteTimeout = 500;
-
-                            // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
-                            Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
-                            Plugin.ESPsync_serialPort.NewLine = "\r\n";
-                            Plugin.ESPsync_serialPort.ReadBufferSize = 10000;
-                            if (Plugin.PortExists(Plugin.ESPsync_serialPort.PortName))
+                            Plugin.ESPsync_serialPort.PortName = Plugin.Settings.ESPNow_port;
+                            try
                             {
+                                // serial port settings
+                                Plugin.ESPsync_serialPort.Handshake = Handshake.None;
+                                Plugin.ESPsync_serialPort.Parity = Parity.None;
+                                //_serialPort[pedalIdx].StopBits = StopBits.None;
+                                Plugin.ESPsync_serialPort.ReadTimeout = 2000;
+                                Plugin.ESPsync_serialPort.WriteTimeout = 500;
+                                // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
+                                Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
+                                Plugin.ESPsync_serialPort.NewLine = "\r\n";
+                                Plugin.ESPsync_serialPort.ReadBufferSize = 10000;
                                 try
                                 {
                                     Plugin.ESPsync_serialPort.Open();
@@ -2627,15 +2624,6 @@ namespace User.PluginSdkDemo
                                     //SystemSounds.Beep.Play();
                                     Plugin.Sync_esp_connection_flag = true;
                                     btn_connect_espnow_port.Content = "Disconnect";
-                                    //Plugin.Settings.connect_status[3] = 1;
-                                    // read callback
-                                    /*
-                                    if (pedal_serial_read_timer[3] != null)
-                                    {
-                                        pedal_serial_read_timer[3].Stop();
-                                        pedal_serial_read_timer[3].Dispose();
-                                    }
-                                    */
                                     ESP_host_serial_timer = new System.Windows.Forms.Timer();
                                     ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                                     ESP_host_serial_timer.Tag = 3;
@@ -2643,33 +2631,31 @@ namespace User.PluginSdkDemo
                                     ESP_host_serial_timer.Start();
                                     System.Threading.Thread.Sleep(100);
                                     ToastNotification("Pedal Bridge", "Connected");
-
                                 }
                                 catch (Exception ex)
                                 {
                                     TextBox2.Text = ex.Message;
                                     //Serial_connect_status[3] = false;
                                 }
-
-
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                Plugin.Sync_esp_connection_flag = false;
-                                btn_connect_espnow_port.Content = "Connect";
-                                if (ESP_host_serial_timer != null)
-                                {
-                                    ESP_host_serial_timer.Stop();
-                                    ESP_host_serial_timer.Dispose();
-                                }
+                                TextBox2.Text = ex.Message;
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            TextBox2.Text = ex.Message;
                         }
                     }
-                                       
+                    else
+                    {  
+                        Plugin.Sync_esp_connection_flag = false;
+                        btn_connect_espnow_port.Content = "Connect";
+                        if (ESP_host_serial_timer != null)
+                        {
+                            ESP_host_serial_timer.Stop();
+                            ESP_host_serial_timer.Dispose();
+                        }
+                            
+                    }
+                                            
                 }
 
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
@@ -3141,7 +3127,7 @@ namespace User.PluginSdkDemo
 
                                         if (debug_flag)
                                         {
-                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2 );
                                             Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
 
                                             Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) /*+ rect_State.Width*/);
@@ -3155,7 +3141,7 @@ namespace User.PluginSdkDemo
                                         }
                                         else
                                         {
-                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
+                                            Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2 );
                                             int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
                                             int x_showed = round_x + 1;
                                             round_x = Math.Max(0, Math.Min(round_x, 99));
@@ -5744,6 +5730,8 @@ namespace User.PluginSdkDemo
                     Plugin.Sync_esp_connection_flag = false;
                     btn_connect_espnow_port.Content = "Connect";
                     SystemSounds.Beep.Play();
+                    Plugin.Settings.Pedal_ESPNow_auto_connect_flag = false;
+                    updateTheGuiFromConfig();
                 }
             }
             else
