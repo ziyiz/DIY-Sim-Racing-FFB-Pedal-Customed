@@ -20,7 +20,10 @@ bool ESPNow_initial_status=false;
 bool ESPNow_update= false;
 bool ESPNow_no_device=false;
 bool ESPNow_config_request=false;
-//https://github.com/nickgammon/I2C_Anything/tree/master
+bool ESPNow_restart=false;
+
+
+
 struct ESPNow_Send_Struct
 { 
   uint16_t pedal_position;
@@ -182,10 +185,15 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
               if (structChecker == true)
               {
 
-                // trigger reset pedal position
-                if (dap_actions_st.payloadPedalAction_.resetPedalPos_u8)
+                //1=trigger reset pedal position
+                if (dap_actions_st.payloadPedalAction_.resetPedalPos_u8==1)
                 {
                   resetPedalPosition = true;
+                }
+                //2= restart pedal
+                if (dap_actions_st.payloadPedalAction_.resetPedalPos_u8==2)
+                {
+                  ESPNow_restart = true;
                 }
 
                 // trigger ABS effect

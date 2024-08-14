@@ -1701,6 +1701,12 @@ void ESPNOW_SyncTask( void * pvParameters )
     uint32_t targetWaitTime_u32 = constrain(timeDiff_espNowTask_l, 0, REPETITION_INTERVAL_ESPNOW_TASK);
     delay(targetWaitTime_u32);
     timePrevious_espNowTask_l = millis();
+    //restart from espnow
+    if(ESPNow_restart)
+    {
+      ESP.restart();
+    }
+
     if(ESPNOW_count>4)
     {
       basic_state_send_b=true;

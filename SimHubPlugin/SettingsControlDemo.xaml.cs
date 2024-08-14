@@ -1115,6 +1115,15 @@ namespace User.PluginSdkDemo
                 { 
                     CheckBox_Pedal_ESPNow_autoconnect.IsChecked= false;
                 }
+
+                if (Plugin.Settings.Serial_auto_clean)
+                {
+                    Checkbox_auto_remove_serial_line.IsChecked = true;
+                }
+                else
+                { 
+                    Checkbox_auto_remove_serial_line.IsChecked= false;
+                }
                 
             }
 
@@ -1957,6 +1966,7 @@ namespace User.PluginSdkDemo
                     DAP_action_st tmp;
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                    tmp.payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
                     tmp.payloadPedalAction_.resetPedalPos_u8 = 1;
 
 
@@ -2910,8 +2920,14 @@ namespace User.PluginSdkDemo
 
                 if (sp.IsOpen)
                 {
+                    if (Plugin.Settings.Serial_auto_clean)
+                    {
+                        if (TextBox_serialMonitor.LineCount > 300)
+                        {
+                            TextBox_serialMonitor.Clear();
+                        }
+                    }
 
-                
                     int receivedLength = 0;
                     try 
                     {
@@ -3576,13 +3592,46 @@ namespace User.PluginSdkDemo
 
 
 
-        private void RestartPedal_click(object sender, RoutedEventArgs e)
+        unsafe private void RestartPedal_click(object sender, RoutedEventArgs e)
         {
             Plugin._serialPort[indexOfSelectedPedal_u].DtrEnable = true;
             Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = true;
             System.Threading.Thread.Sleep(100);
             Plugin._serialPort[indexOfSelectedPedal_u].DtrEnable = false;
             Plugin._serialPort[indexOfSelectedPedal_u].RtsEnable = false;
+            if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
+            {
+                if (Plugin.ESPsync_serialPort.IsOpen)
+                {
+                    try
+                    {
+                        // compute checksum
+                        DAP_action_st tmp;
+                        tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                        tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                        tmp.payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
+                        tmp.payloadPedalAction_.resetPedalPos_u8 = 2; //1=reset pedal position, 2 =restart esp.
+
+                        DAP_action_st* v = &tmp;
+                        byte* p = (byte*)v;
+                        tmp.payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                        int length = sizeof(DAP_action_st);
+                        byte[] newBuffer = new byte[length];
+                        newBuffer = Plugin.getBytes_Action(tmp);
+                        // clear inbuffer 
+                        Plugin.ESPsync_serialPort.DiscardInBuffer();
+
+                        // send query command
+                        Plugin.ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    catch (Exception caughtEx)
+                    {
+                        string errorMessage = caughtEx.Message;
+                        TextBox_debugOutput.Text = errorMessage;
+                    }
+                }
+            }
+            
         }
 
         public void Read_for_slot(object sender, EventArgs e)
@@ -5872,6 +5921,13 @@ namespace User.PluginSdkDemo
                 if (sp.IsOpen)
                 {
 
+                    if (Plugin.Settings.Serial_auto_clean)
+                    {
+                        if (TextBox_serialMonitor.LineCount > 300)
+                        {
+                            TextBox_serialMonitor.Clear();
+                        }
+                    }
 
                     int receivedLength = 0;
                     try
@@ -6321,6 +6377,22 @@ namespace User.PluginSdkDemo
             if (Plugin != null)
             {
                 Plugin.Settings.Pedal_ESPNow_auto_connect_flag = false;
+            }
+        }
+
+        private void Checkbox_auto_remove_serial_line_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Serial_auto_clean = true;
+            }
+        }
+
+        private void Checkbox_auto_remove_serial_line_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Serial_auto_clean = false;
             }
         }
     }

@@ -53,7 +53,7 @@ public struct payloadHeader
 public struct payloadPedalAction
 {
     public byte triggerAbs_u8;
-    public byte resetPedalPos_u8;
+    public byte resetPedalPos_u8; //1=reset position, 2=restart ESP
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;

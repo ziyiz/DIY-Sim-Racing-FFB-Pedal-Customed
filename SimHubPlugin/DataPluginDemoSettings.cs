@@ -48,6 +48,7 @@ namespace User.PluginSdkDemo
         public string ESPNow_port = "";
         public bool[] Pedal_ESPNow_Sync_flag = new bool[3] { false, false, false };
         public bool Pedal_ESPNow_auto_connect_flag = false;
+        public bool Serial_auto_clean = false; //clean serial monitor
 
     }
         
