@@ -106,7 +106,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
 
       if(mac_addr[5]==esp_Host[5])
       {
-        Serial.println("dap_config_st ESPNow recieved");
+        //Serial.println("dap_config_st ESPNow recieved");
         if(semaphore_updateConfig!=NULL)
         {
           if(xSemaphoreTake(semaphore_updateConfig, (TickType_t)1)==pdTRUE)
@@ -117,47 +117,33 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
             dap_config_st_local_ptr = &dap_config_st_local;
             //Serial.readBytes((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
             memcpy(dap_config_st_local_ptr, data, sizeof(DAP_config_st));
-            //debug
-            Serial.print("Config version expected: ");
-            Serial.print(DAP_VERSION_CONFIG);
-            Serial.print(",   Config version received: ");
-            Serial.println(dap_config_st_local.payLoadHeader_.version);
-            Serial.print("minimun position: ");
-            Serial.println(dap_config_st_local.payLoadPedalConfig_.pedalStartPosition);      
+       
+  
 
             // check if data is plausible
             if ( dap_config_st_local.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_CONFIG )
             { 
               structChecker = false;
-              Serial.print("Payload type expected: ");
-              Serial.print(DAP_PAYLOAD_TYPE_CONFIG);
-              Serial.print(",   Payload type received: ");
-              Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
+
             }
             if ( dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG )
             { 
               structChecker = false;
-              Serial.print("Config version expected: ");
-              Serial.print(DAP_VERSION_CONFIG);
-              Serial.print(",   Config version received: ");
-              Serial.println(dap_config_st_local.payLoadHeader_.version);
+
             }
                     // checksum validation
             crc = checksumCalculator((uint8_t*)(&(dap_config_st_local.payLoadHeader_)), sizeof(dap_config_st_local.payLoadHeader_) + sizeof(dap_config_st_local.payLoadPedalConfig_));
             if (crc != dap_config_st_local.payloadFooter_.checkSum)
             { 
               structChecker = false;
-              Serial.print("CRC expected: ");
-              Serial.print(crc);
-              Serial.print(",   CRC received: ");
-              Serial.println(dap_config_st_local.payloadFooter_.checkSum);
+
             }
 
 
                     // if checks are successfull, overwrite global configuration struct
             if (structChecker == true)
             {
-              Serial.println("Updating pedal config");
+              //Serial.println("Updating pedal config");
               configUpdateAvailable = true;          
             }
               xSemaphoreGive(semaphore_updateConfig);
@@ -180,25 +166,16 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
               if ( dap_actions_st.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_ACTION )
               { 
                 structChecker = false;
-                Serial.print("Payload type expected: ");
-                Serial.print(DAP_PAYLOAD_TYPE_ACTION);
-                Serial.print(",   Payload type received: ");
-                Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
+
               }
               if ( dap_actions_st.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
                 structChecker = false;
-                Serial.print("Config version expected: ");
-                Serial.print(DAP_VERSION_CONFIG);
-                Serial.print(",   Config version received: ");
-                Serial.println(dap_config_st_local.payLoadHeader_.version);
+
               }
               crc = checksumCalculator((uint8_t*)(&(dap_actions_st.payLoadHeader_)), sizeof(dap_actions_st.payLoadHeader_) + sizeof(dap_actions_st.payloadPedalAction_));
               if (crc != dap_actions_st.payloadFooter_.checkSum){ 
                 structChecker = false;
-                Serial.print("CRC expected: ");
-                Serial.print(crc);
-                Serial.print(",   CRC received: ");
-                Serial.println(dap_actions_st.payloadFooter_.checkSum);
+
               }
 
 
@@ -261,7 +238,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                   if(dap_calculationVariables_st.Rudder_status==false)
                   {
                     dap_calculationVariables_st.Rudder_status=true;
-                    Serial.println("Rudder on");
+                    //Serial.println("Rudder on");
                     moveSlowlyToPosition_b=true;
                     //Serial.print("status:");
                     //Serial.println(dap_calculationVariables_st.Rudder_status);
@@ -269,7 +246,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                   else
                   {
                     dap_calculationVariables_st.Rudder_status=false;
-                    Serial.println("Rudder off");
+                    //Serial.println("Rudder off");
                     moveSlowlyToPosition_b=true;
                     //Serial.print("status:");
                     //Serial.println(dap_calculationVariables_st.Rudder_status);
@@ -280,14 +257,14 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                   if(dap_calculationVariables_st.rudder_brake_status==false&&dap_calculationVariables_st.Rudder_status==true)
                   {
                     dap_calculationVariables_st.rudder_brake_status=true;
-                    Serial.println("Rudder brake on");
+                    //Serial.println("Rudder brake on");
                     //Serial.print("status:");
                     //Serial.println(dap_calculationVariables_st.Rudder_status);
                   }
                   else
                   {
                     dap_calculationVariables_st.rudder_brake_status=false;
-                    Serial.println("Rudder brake off");
+                    //Serial.println("Rudder brake off");
                     //Serial.print("status:");
                     //Serial.println(dap_calculationVariables_st.Rudder_status);
                   }
