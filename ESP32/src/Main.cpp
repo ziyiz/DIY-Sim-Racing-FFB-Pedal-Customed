@@ -737,11 +737,25 @@ unsigned long printCycleCounter = 0;
 
 
 uint printCntr = 0;
+
+
+int64_t timeNow_pedalUpdateTask_l = 0;
+int64_t timePrevious_pedalUpdateTask_l = 0;
+#define REPETITION_INTERVAL_PEDALUPDATE_TASK (int64_t)1
+
 //void loop()
 void pedalUpdateTask( void * pvParameters )
 {
 
   for(;;){
+
+
+    // measure callback time and continue, when desired period is reached
+    timeNow_pedalUpdateTask_l = millis();
+    int64_t timeDiff_pedalUpdateTask_l = ( timePrevious_pedalUpdateTask_l + REPETITION_INTERVAL_PEDALUPDATE_TASK) - timeNow_pedalUpdateTask_l;
+    uint32_t targetWaitTime_u32 = constrain(timeDiff_pedalUpdateTask_l, 0, REPETITION_INTERVAL_PEDALUPDATE_TASK);
+    delay(targetWaitTime_u32);
+    timePrevious_pedalUpdateTask_l = millis();
 
 
     // system identification mode
@@ -1303,6 +1317,7 @@ void pedalUpdateTask( void * pvParameters )
 
 
 
+
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         communication task                                                 */
@@ -1311,13 +1326,24 @@ void pedalUpdateTask( void * pvParameters )
 
 
 
-
+int64_t timeNow_serialCommunicationTask_l = 0;
+int64_t timePrevious_serialCommunicationTask_l = 0;
+#define REPETITION_INTERVAL_SERIALCOMMUNICATION_TASK (int64_t)10
 
 int32_t joystickNormalizedToInt32_local = 0;
 void serialCommunicationTask( void * pvParameters )
 {
 
   for(;;){
+
+    // measure callback time and continue, when desired period is reached
+    timeNow_serialCommunicationTask_l = millis();
+    int64_t timeDiff_serialCommunicationTask_l = ( timePrevious_serialCommunicationTask_l + REPETITION_INTERVAL_SERIALCOMMUNICATION_TASK) - timeNow_serialCommunicationTask_l;
+    uint32_t targetWaitTime_u32 = constrain(timeDiff_serialCommunicationTask_l, 0, REPETITION_INTERVAL_SERIALCOMMUNICATION_TASK);
+    delay(targetWaitTime_u32);
+    timePrevious_serialCommunicationTask_l = millis();
+
+
 
     // average cycle time averaged over multiple cycles 
     if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_CYCLE_TIMER) 
@@ -1331,7 +1357,7 @@ void serialCommunicationTask( void * pvParameters )
 
 
 
-    delay( SERIAL_COOMUNICATION_TASK_DELAY_IN_MS );
+    //delay( SERIAL_COOMUNICATION_TASK_DELAY_IN_MS );
 
    
     { 
@@ -1830,11 +1856,24 @@ int print_count=0;
 int ESPNow_no_device_count=0;
 bool basic_state_send_b=false;
 uint8_t error_out;
+
+int64_t timeNow_espNowTask_l = 0;
+int64_t timePrevious_espNowTask_l = 0;
+#define REPETITION_INTERVAL_ESPNOW_TASK (int64_t)2
 void ESPNOW_SyncTask( void * pvParameters )
 {
   for(;;)
   {
       //if(ESPNOW_status)
+
+      // measure callback time and continue, when desired period is reached
+      timeNow_espNowTask_l = millis();
+      int64_t timeDiff_espNowTask_l = ( timePrevious_espNowTask_l + REPETITION_INTERVAL_ESPNOW_TASK) - timeNow_espNowTask_l;
+      uint32_t targetWaitTime_u32 = constrain(timeDiff_espNowTask_l, 0, REPETITION_INTERVAL_ESPNOW_TASK);
+      delay(targetWaitTime_u32);
+      timePrevious_espNowTask_l = millis();
+
+      
       
       if(ESPNOW_count>6)
       {
@@ -1929,7 +1968,7 @@ void ESPNOW_SyncTask( void * pvParameters )
           
                
       #endif
-      delay(2);
+      //delay(2);
   }
 }
 #endif

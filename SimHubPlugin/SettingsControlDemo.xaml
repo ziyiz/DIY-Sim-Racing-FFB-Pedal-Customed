@@ -677,11 +677,21 @@
                         <Border  Width="170" Height="30" Margin="0,0,0,0" >
                             <Label Content="JOYSTICK-OUTPUT CURVE"  FontFamily="Arial Black" FontSize="11" Height="30" Width="170" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                         </Border>
+
+                        
+
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
 
+                        <Canvas x:Name="canvas_plot_joystickCurve" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="70,2,0,0" >
+                            <Polyline x:Name="Polyline_plot_joystickCurve" Height="200" Width="400" Points="0,200 80,160 160,120 240,80 320,40 400,0" Stroke="{DynamicResource AccentColorBrush}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="2" />
+                        </Canvas>
+
+                        
+
 
                     </Border>
+                    
 
 
                 </TabItem>
