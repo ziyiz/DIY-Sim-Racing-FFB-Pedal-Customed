@@ -1902,7 +1902,6 @@ void ESPNOW_SyncTask( void * pvParameters )
             ESPNow_config_request=false;
           }
           
-          
           //rudder sync
           if(dap_calculationVariables_st.Rudder_status)
           {              
