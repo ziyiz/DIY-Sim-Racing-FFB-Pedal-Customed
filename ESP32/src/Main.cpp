@@ -17,6 +17,7 @@
 
 bool resetServoEncoder = true;
 bool isv57LifeSignal_b = false;
+bool isv57_not_live_b=false;
 #ifdef ISV_COMMUNICATION
   #include "isv57communication.h"
   int32_t servo_offset_compensation_steps_i32 = 0; 
@@ -1102,15 +1103,24 @@ void pedalUpdateTask( void * pvParameters )
         dap_state_basic_st.payLoadHeader_.version = DAP_VERSION_CONFIG;
         dap_state_basic_st.payloadFooter_.checkSum = checksumCalculator((uint8_t*)(&(dap_state_basic_st.payLoadHeader_)), sizeof(dap_state_basic_st.payLoadHeader_) + sizeof(dap_state_basic_st.payloadPedalState_Basic_));
         dap_state_basic_st.payLoadHeader_.PedalTag=dap_config_st.payLoadPedalConfig_.pedal_type;
+        
+        //error code
         dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=0;
         if(ESPNow_error_code!=0)
         {
           dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=ESPNow_error_code;
+          ESPNow_error_code=0;
         }
         //dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=200;
         if(isv57.isv57_update_parameter_b)
         {
           dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=11;
+          isv57.isv57_update_parameter_b=false;
+        }
+        if(isv57_not_live_b)
+        {
+          dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=12;
+          isv57_not_live_b=false;
         }
         // update extended struct 
         dap_state_extended_st.payloadPedalState_Extended_.timeInMs_u32 = millis();
@@ -1833,6 +1843,7 @@ void servoCommunicationTask( void * pvParameters )
       Serial.println("Servo communication lost!");
       delay(100);
       previousIsv57LifeSignal_b = false;
+      isv57_not_live_b=true;
     }
 
 
