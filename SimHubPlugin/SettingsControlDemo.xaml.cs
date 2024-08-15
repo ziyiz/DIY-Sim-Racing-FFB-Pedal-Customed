@@ -1967,7 +1967,7 @@ namespace User.PluginSdkDemo
                     tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                     tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                     tmp.payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
-                    tmp.payloadPedalAction_.resetPedalPos_u8 = 1;
+                    tmp.payloadPedalAction_.system_action_u8 = 1;
 
 
                     DAP_action_st* v = &tmp;
@@ -3610,7 +3610,7 @@ namespace User.PluginSdkDemo
                         tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
-                        tmp.payloadPedalAction_.resetPedalPos_u8 = 2; //1=reset pedal position, 2 =restart esp.
+                        tmp.payloadPedalAction_.system_action_u8 = 2; //1=reset pedal position, 2 =restart esp.
 
                         DAP_action_st* v = &tmp;
                         byte* p = (byte*)v;
@@ -5923,7 +5923,7 @@ namespace User.PluginSdkDemo
 
                     if (Plugin.Settings.Serial_auto_clean)
                     {
-                        if (TextBox_serialMonitor.LineCount > 300)
+                        if (TextBox_serialMonitor.LineCount > 100)
                         {
                             TextBox_serialMonitor.Clear();
                         }

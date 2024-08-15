@@ -53,7 +53,7 @@ public struct payloadHeader
 public struct payloadPedalAction
 {
     public byte triggerAbs_u8;
-    public byte resetPedalPos_u8; //1=reset position, 2=restart ESP
+    public byte system_action_u8; //1=reset position, 2=restart ESP
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
@@ -71,6 +71,7 @@ public struct payloadPedalState_Basic
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
+    public byte erroe_code_u8;
 
 };
 
@@ -818,7 +819,7 @@ namespace User.PluginSdkDemo
                         {
                             ESPsync_serialPort.DiscardInBuffer();  
                             ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
-                            System.Threading.Thread.Sleep(5);
+                            System.Threading.Thread.Sleep(30);
                         }
                     }
                     else

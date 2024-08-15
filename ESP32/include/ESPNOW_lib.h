@@ -21,6 +21,7 @@ bool ESPNow_update= false;
 bool ESPNow_no_device=false;
 bool ESPNow_config_request=false;
 bool ESPNow_restart=false;
+uint8_t ESPNow_error_code=0;
 
 
 
@@ -127,11 +128,13 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
             if ( dap_config_st_local.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_CONFIG )
             { 
               structChecker = false;
+              ESPNow_error_code=101;
 
             }
             if ( dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG )
             { 
               structChecker = false;
+              ESPNow_error_code=102;
 
             }
                     // checksum validation
@@ -139,6 +142,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
             if (crc != dap_config_st_local.payloadFooter_.checkSum)
             { 
               structChecker = false;
+              ESPNow_error_code=103;
 
             }
 
@@ -169,15 +173,18 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
               if ( dap_actions_st.payLoadHeader_.payloadType != DAP_PAYLOAD_TYPE_ACTION )
               { 
                 structChecker = false;
+                ESPNow_error_code=111;
 
               }
               if ( dap_actions_st.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
                 structChecker = false;
+                ESPNow_error_code=112;
 
               }
               crc = checksumCalculator((uint8_t*)(&(dap_actions_st.payLoadHeader_)), sizeof(dap_actions_st.payLoadHeader_) + sizeof(dap_actions_st.payloadPedalAction_));
               if (crc != dap_actions_st.payloadFooter_.checkSum){ 
                 structChecker = false;
+                ESPNow_error_code=113;
 
               }
 
@@ -186,12 +193,12 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
               {
 
                 //1=trigger reset pedal position
-                if (dap_actions_st.payloadPedalAction_.resetPedalPos_u8==1)
+                if (dap_actions_st.payloadPedalAction_.system_action_u8==1)
                 {
                   resetPedalPosition = true;
                 }
                 //2= restart pedal
-                if (dap_actions_st.payloadPedalAction_.resetPedalPos_u8==2)
+                if (dap_actions_st.payloadPedalAction_.system_action_u8==2)
                 {
                   ESPNow_restart = true;
                 }
