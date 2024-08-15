@@ -242,6 +242,7 @@ bool moveSlowlyToPosition_b = false;
 #ifdef OTA_update
 #include "ota.h"
 TaskHandle_t Task4;
+char* APhost;
 #endif
 
 
@@ -531,7 +532,7 @@ void setup()
 
   //Serial.begin(115200);
   #ifdef OTA_update
-  char* APhost;
+  
     switch(dap_config_st.payLoadPedalConfig_.pedal_type)
     {
       case 0:
@@ -547,12 +548,9 @@ void setup()
         APhost="FFBPedal";
         break;        
 
-    }
-    if(dap_config_st.payLoadPedalConfig_.OTA_flag==1)
-    {
-      
-      ota_wifi_initialize(APhost);
-      xTaskCreatePinnedToCore(
+    }      
+    
+    xTaskCreatePinnedToCore(
                     OTATask,   
                     "OTATask", 
                     16000,  
@@ -561,8 +559,8 @@ void setup()
                     1,         
                     &Task4,    
                     0);     
-      delay(500);
-    }
+    delay(500);
+
   #endif
 
   //MCP setup
@@ -611,12 +609,10 @@ void setup()
   #ifdef ESPNOW_Enable
   dap_calculationVariables_st.rudder_brake_status=false;
   
-  if(dap_config_st.payLoadPedalConfig_.OTA_flag==0)
+  if(dap_config_st.payLoadPedalConfig_.pedal_type==1||dap_config_st.payLoadPedalConfig_.pedal_type==2||dap_config_st.payLoadPedalConfig_.pedal_type==3)
   {
-    if(dap_config_st.payLoadPedalConfig_.pedal_type==1||dap_config_st.payLoadPedalConfig_.pedal_type==2||dap_config_st.payLoadPedalConfig_.pedal_type==3)
-    {
-      ESPNow_initialize();
-      xTaskCreatePinnedToCore(
+    ESPNow_initialize();
+    xTaskCreatePinnedToCore(
                         ESPNOW_SyncTask,   
                         "ESPNOW_update_Task", 
                         3000,  
@@ -625,12 +621,12 @@ void setup()
                         1,         
                         &Task6,    
                         0);     
-      delay(500);
-    }
+    delay(500);
+  }
     
       
     
-}
+
     
 
   #endif
@@ -1313,6 +1309,19 @@ void serialCommunicationTask( void * pvParameters )
               {
                 resetPedalPosition = true;
               }
+              //2= restart pedal
+              if (dap_actions_st.payloadPedalAction_.system_action_u8==2)
+              {
+                ESP.restart();
+              }
+              //3= Wifi OTA
+              if (dap_actions_st.payloadPedalAction_.system_action_u8==3)
+              {
+                Serial.println("Get OTA command");
+                OTA_enable_b=true;
+                //OTA_enable_start=true;
+                ESPNow_OTA_enable=false;
+              }
 
               // trigger ABS effect
               if (dap_actions_st.payloadPedalAction_.triggerAbs_u8)
@@ -1492,14 +1501,58 @@ void serialCommunicationTask( void * pvParameters )
   }
 }
 //OTA multitask
+
+uint16_t OTA_count=0;
+bool message_out_b=false;
+bool OTA_enable_start=false;
 void OTATask( void * pvParameters )
 {
 
   for(;;)
   {
     #ifdef OTA_update
-    server.handleClient();
-    //delay(1);
+    if(OTA_count>200)
+    {
+      message_out_b=true;
+      OTA_count=0;
+    }
+    else
+    {
+      OTA_count++;
+    }
+
+    
+    if(OTA_enable_b)
+    {
+      if(message_out_b)
+      {
+        message_out_b=false;
+        Serial1.println("OTA enable flag on");
+      }
+      if(OTA_status)
+      {
+        
+        server.handleClient();
+      }
+      else
+      {
+        Serial.println("de-initialize espnow");
+        Serial.println("wait...");
+        esp_err_t result= esp_now_deinit();
+        ESPNow_initial_status=false;
+        ESPNOW_status=false;
+        delay(200);
+        if(result==ESP_OK)
+        {
+          OTA_status=true;
+          delay(1000);
+          ota_wifi_initialize(APhost);
+        }
+
+      }
+    }
+    
+    delay(1);
     #endif
   }
 }
@@ -1542,13 +1595,19 @@ void ESPNOW_SyncTask( void * pvParameters )
     {
       ESPNOW_count++;
     }
-    if(ESPNow_initial_status==false)
+    if(ESPNow_initial_status==false  )
     {
-      ESPNow_initialize();
+      if(OTA_enable_b==false)
+      {
+        ESPNow_initialize();
+      }
+      
     }
     else
     {
+      //joystick sync
       sendMessageToMaster(joystickNormalizedToInt32);
+
       if(basic_state_send_b)
       {
         ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_state_basic_st,sizeof(dap_state_basic_st));
@@ -1558,6 +1617,13 @@ void ESPNOW_SyncTask( void * pvParameters )
       {
         ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_config_st,sizeof(dap_config_st));
         ESPNow_config_request=false;
+      }
+      if(ESPNow_OTA_enable)
+      {
+        Serial.println("Get OTA command");
+        OTA_enable_b=true;
+        OTA_enable_start=true;
+        ESPNow_OTA_enable=false;
       }
           
       //rudder sync
