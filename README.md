@@ -105,7 +105,7 @@ A Doxygen report of the sources can be found [here](https://chrgri.github.io/DIY
 The drivers can be found here [here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
 
 ### Firmware generation and flashing
-Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed e.g. via ESP32 webflasher.
+Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed e.g. via ESP32 webflasher of the [flashing tool](https://www.espressif.com/sites/default/files/tools/flash_download_tool_3.9.3.zip).
 
 #### Built from source (via VS Code)
 See this [guide](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/VScode-IDE-setup).
