@@ -147,13 +147,13 @@ jobs:
         working-directory: ./ESP_bridge
         run: | 
           pio system info
-          pio run --environment esp32
+          pio run --environment esp32 
     # copy files to dir
       - name: Copy files to packing dir
         run: | 
-          copy ${{ github.workspace }}/ESP_bridge/.pio/build/ESP_bridge/firmware.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
-          copy ${{ github.workspace }}/ESP_bridge/.pio/build/ESP_bridge/bootloader.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
-          copy ${{ github.workspace }}/ESP_bridge/.pio/build/ESP_bridge/partitions.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
+          copy ${{ github.workspace }}/ESP_bridge/.pio/build/esp32/firmware.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
+          copy ${{ github.workspace }}/ESP_bridge/.pio/build/esp32/bootloader.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
+          copy ${{ github.workspace }}/ESP_bridge/.pio/build/esp32/partitions.bin  ${{ github.workspace }}/Helper/bins/esp32_bridge
     # zip plugin binaries
       - name: ZIP files
         run: | 
@@ -206,8 +206,8 @@ jobs:
           url: ${{needs.Build-date.outputs.Upload_URL}}
         with:
           upload_url: ${{ env.url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./Helper/zip/esp32s3_espmaster.zip
-          asset_name: esp32s3_espmaster.zip
+          asset_path: ./Helper/zip/esp32s3_joystickreceiver.zip
+          asset_name: esp32s3_joystickreceiver.zip
           asset_content_type: application/zip
 
       - name: Upload ESP release assets esp32s3 espmaster
