@@ -53,9 +53,18 @@
 /*                                                                                            */
 /**********************************************************************************************/
 //#include <esp_now.h>
+#define Using_MCP4728
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <ESPNowW.h>
+#include "Wire.h"
+#include "SPI.h"
+#ifdef Using_MCP4728
+  #include <Adafruit_MCP4728.h>
+  Adafruit_MCP4728 mcp;
+  TwoWire MCP4728_I2C= TwoWire(1);
+  bool MCP_status =false;
+#endif
 // Set your new MAC Address
 //uint8_t newMACAddress[] = {0x32, 0xAE, 0xA4, 0x07, 0x0D, 0x66};
 uint8_t esp_master[] = {0x36, 0x33, 0x33, 0x33, 0x33, 0x31};
@@ -69,7 +78,7 @@ uint16_t pedal_brake_rudder_value=0;
 uint16_t pedal_throttle_rudder_value=0;
 uint8_t pedal_status=0;
 bool joystick_update=false;
-
+uint16_t Joystick_value[]={0,0,0};
 typedef struct struct_message {
     uint64_t cycleCnt_u64;
     int64_t timeSinceBoot_i64;
@@ -92,16 +101,19 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
 	if(mac_addr[5]==Clu_mac[5])
 	{
 		pedal_cluth_value=joystickNormalizedToInt32;
+		Joystick_value[0]=myData.controllerValue_i32;
 		//joystick_update=true;
 	}
 	if(mac_addr[5]==Brk_mac[5])
 	{
 		pedal_brake_value=joystickNormalizedToInt32;
+		Joystick_value[1]=myData.controllerValue_i32;
 		//joystick_update=true;
 	}
 	if(mac_addr[5]==Gas_mac[5])
 	{
 		pedal_throttle_value=joystickNormalizedToInt32;
+		Joystick_value[2]=myData.controllerValue_i32;
 		//joystick_update=true;
 	}
 	// send controller output
@@ -257,6 +269,46 @@ void setup()
 	//esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 	ESPNow.reg_recv_cb(OnDataRecv);
 	Serial.println("ESPNow Comunication Starting");
+	#ifdef Using_MCP4728
+    MCP4728_I2C.begin(MCP_SDA,MCP_SCL,400000);
+    uint8_t i2c_address[8]={0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67};
+    int index_address=0;
+    int found_address=0;
+    int error;
+    for(index_address=0;index_address<8;index_address++)
+    {
+      MCP4728_I2C.beginTransmission(i2c_address[index_address]);
+      error = MCP4728_I2C.endTransmission();
+      if (error == 0)
+      {
+        Serial.print("I2C device found at address");
+        Serial.print(i2c_address[index_address]);
+        Serial.println("  !");
+        found_address=index_address;
+        break;
+        
+      }
+      else
+      {
+        Serial.print("try address");
+        Serial.println(i2c_address[index_address]);
+      }
+    }
+    
+    if(mcp.begin(i2c_address[found_address], &MCP4728_I2C)==false)
+    {
+      Serial.println("Couldn't find MCP4728, will not have analog output");
+      MCP_status=false;
+    }
+    else
+    {
+      Serial.println("MCP4728 founded");
+      MCP_status=true;
+      //MCP.begin();
+    }
+    
+  #endif
+
 }
 
 
@@ -324,7 +376,15 @@ void loop() {
 
 		joystickSendState();
 	}
-		
+#ifdef Using_MCP4728
+if(MCP_status)
+	{
+		mcp.setChannelValue(MCP4728_CHANNEL_A, (uint16_t)((float)Joystick_value[0]/(float)JOYSTICK_RANGE*4096));
+		mcp.setChannelValue(MCP4728_CHANNEL_B, (uint16_t)((float)Joystick_value[1]/(float)JOYSTICK_RANGE*4096));
+		mcp.setChannelValue(MCP4728_CHANNEL_C, (uint16_t)((float)Joystick_value[2]/(float)JOYSTICK_RANGE*4096));
+	}
+
+#endif
 	
 	
 }
