@@ -936,6 +936,18 @@ namespace User.PluginSdkDemo
                         info_text = "Wireless Sync";
                     }
                 }
+                else
+                {
+                    if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                    {
+                        info_text = info_text_connection;
+                    }
+                    else
+                    {
+                        info_text = "Waiting...";
+                    }
+
+                }
                 info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
                 if (Plugin.Rudder_status)
                 {
