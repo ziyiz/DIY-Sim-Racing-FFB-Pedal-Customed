@@ -71,7 +71,7 @@ public struct payloadPedalState_Basic
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
-    public byte erroe_code_u8;
+    public byte error_code_u8;
 
 };
 
@@ -296,6 +296,8 @@ namespace User.PluginSdkDemo
         public bool Rudder_brake_status = false;
         public byte pedal_state_in_ratio = 0;
         public bool Sync_esp_connection_flag=false;
+        public byte PedalErrorCode = 0;
+        public byte PedalErrorIndex = 0;
         
 
 
@@ -1034,8 +1036,8 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("rudder_status", this.GetType(), Rudder_status);
             pluginManager.SetPropertyValue("rudder_brake_status", this.GetType(), Rudder_brake_status);
             pluginManager.SetPropertyValue("pedal_position", this.GetType(), pedal_state_in_ratio);
-
-
+            pluginManager.SetPropertyValue("PedalErrorIndex", this.GetType(), PedalErrorIndex);
+            pluginManager.SetPropertyValue("PedalErrorCode", this.GetType(), PedalErrorCode);
 
 
         }
@@ -1443,6 +1445,8 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("rudder_status", this.GetType(), Rudder_status);
             pluginManager.AddProperty("rudder_brake_status", this.GetType(), Rudder_brake_status);
             pluginManager.AddProperty("pedal_position", this.GetType(), pedal_state_in_ratio);
+            pluginManager.AddProperty("PedalErrorIndex", this.GetType(), PedalErrorIndex);
+            pluginManager.AddProperty("PedalErrorCode", this.GetType(), PedalErrorCode);
             // Declare an event
             //this.AddEvent("SpeedWarning");
 

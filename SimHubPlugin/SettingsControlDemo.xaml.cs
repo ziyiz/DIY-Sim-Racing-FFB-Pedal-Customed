@@ -905,8 +905,8 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
-            
-            string plugin_version= Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            string plugin_version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             if (plugin_version == "1.0.0.0")
             {
                 plugin_version = "Dev.";
@@ -948,7 +948,7 @@ namespace User.PluginSdkDemo
                     }
 
                 }
-                info_text += "\n" + Constants.pedalConfigPayload_version+"\n"+plugin_version;
+                info_text += "\n" + Constants.pedalConfigPayload_version + "\n" + plugin_version;
                 if (Plugin.Rudder_status)
                 {
                     info_text += "\nIn Action";
@@ -957,7 +957,7 @@ namespace User.PluginSdkDemo
                 info_label_2.Content = info_text;
             }
 
-            
+
 
 
 
@@ -973,10 +973,10 @@ namespace User.PluginSdkDemo
 
             Slider_WS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
             label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
-            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f;
-            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp/20.0f + "kg";
-            Slider_WS_trigger.Value= Plugin.Settings.WS_trigger;
-            label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
+            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20.0f;
+            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp / 20.0f + "kg";
+            Slider_WS_trigger.Value = Plugin.Settings.WS_trigger;
+            label_WS_trigger.Content = "Notification Trigger: " + (Plugin.Settings.WS_trigger + 50) + "%";
 
             Slider_G_force_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
             label_G_force_window.Content = "G Force Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
@@ -988,19 +988,26 @@ namespace User.PluginSdkDemo
             Slider_BP_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f;
             label_BP_AMP.Content = "Bite Point Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp / 100.0f + "kg";
 
-            Rangeslider_RPM_freq.LowerValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq ;
+            Rangeslider_RPM_freq.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq;
             Rangeslider_RPM_freq.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
             label_RPM_freq_max.Content = "MAX:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq + "Hz";
             label_RPM_freq_min.Content = "MIN:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
 
 
-            Slider_RPM_AMP.Value= (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP)/100.0f;
+            Slider_RPM_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f;
             label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
 
             Slider_ABS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
             label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
             Slider_ABS_AMP.Value = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) / 20.0f;
-
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition < 5)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = 5;
+            }
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition > 95)
+            {
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition=95;
+            }
             Rangeslider_travel_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition;
             Rangeslider_travel_range.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition;
             
@@ -3918,6 +3925,14 @@ namespace User.PluginSdkDemo
                         {
                             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 100;
                         }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition < 5)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = 5;
+                        }
+                        if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition > 95)
+                        {
+                            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = 95;
+                        }
                     }
 
                     updateTheGuiFromConfig();
@@ -6060,15 +6075,21 @@ namespace User.PluginSdkDemo
                                 }
 
                                 if ((check_payload_state_b) && check_crc_state_b)
-                                {
+                                { 
 
                                     // write vJoy data
-                                    Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;                                  
+                                    Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
                                     // GUI update
-                                    
+                                    if (pedalState_read_st.payloadPedalBasicState_.error_code_u8 != 0)
+                                    {
+                                        Plugin.PedalErrorCode = pedalState_read_st.payloadPedalBasicState_.error_code_u8;
+                                        Plugin.PedalErrorIndex = pedalState_read_st.payloadHeader_.PedalTag;
+                                        TextBox2.Text = "Pedal:" + pedalState_read_st.payloadHeader_.PedalTag + " ErrorCode" + pedalState_read_st.payloadPedalBasicState_.error_code_u8;
+
+                                    }
                                     if ((pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected))
                                     {
-                                       
+
 
 
                                         pedalStateHasAlreadyBeenUpdated_b = true;
