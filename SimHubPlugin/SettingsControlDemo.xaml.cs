@@ -6498,6 +6498,53 @@ namespace User.PluginSdkDemo
             Plugin.ESPsync_serialPort.DtrEnable = false;
             Plugin.ESPsync_serialPort.RtsEnable = false;
         }
+
+        unsafe private void btn_PedalID_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            // compute checksum
+            //getBytes(this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_)
+            this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+            this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
+            this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
+            this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.storeToEeprom = 1;
+            this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedal_type = 4;//back to default value 4.
+            DAP_config_st tmp = this.dap_config_st[indexOfSelectedPedal_u];
+            DAP_config_st* v = &tmp;
+            byte* p = (byte*)v;
+            this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
+            int length = sizeof(DAP_config_st);
+            //int val = this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.checkSum;
+            //string msg = "CRC value: " + val.ToString();
+            byte[] newBuffer = new byte[length];
+            newBuffer = getBytes(this.dap_config_st[indexOfSelectedPedal_u]);
+
+            //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";
+
+            TextBox_debugOutput.Text = String.Empty;
+            if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
+            {
+                if (Plugin.ESPsync_serialPort.IsOpen)
+                {
+                    try
+                    {
+                        TextBox2.Text = "Buffer sent size:" + length;
+                        Plugin.ESPsync_serialPort.DiscardInBuffer();
+                        Plugin.ESPsync_serialPort.DiscardOutBuffer();
+                        // send data
+                        Plugin.ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                        //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
+                        System.Threading.Thread.Sleep(100);
+                        string MSG_tmp = "Pedal:"+indexOfSelectedPedal_u+" ID is reset, please adjust jumpper on the control board then re-send config in.";
+                        System.Windows.MessageBox.Show(MSG_tmp, "OTA warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    catch (Exception caughtEx)
+                    {
+                        string errorMessage = caughtEx.Message;
+                        TextBox_debugOutput.Text = errorMessage;
+                    }
+                }
+            }
+        }
     }
     
 }
