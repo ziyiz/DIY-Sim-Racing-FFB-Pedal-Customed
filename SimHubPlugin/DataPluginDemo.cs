@@ -298,10 +298,14 @@ namespace User.PluginSdkDemo
         public bool Sync_esp_connection_flag=false;
         public byte PedalErrorCode = 0;
         public byte PedalErrorIndex = 0;
+        public byte[] random_pedal_action_interval=new byte[3] { 50,43,37};
+
+
+
+        //effect trigger timer
+        DateTime[] Action_currentTime = new DateTime[3];
+        DateTime[] Action_lastTime = new DateTime[3];
         
-
-
-
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
@@ -537,7 +541,7 @@ namespace User.PluginSdkDemo
             absTrigger_currentTime = DateTime.Now;
             TimeSpan diff = absTrigger_currentTime - absTrigger_lastTime;
             int millisceonds = (int)diff.TotalMilliseconds;
-            if (millisceonds <= 50)
+            if (millisceonds <= 10)
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
@@ -588,7 +592,7 @@ namespace User.PluginSdkDemo
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
 
-                            if (Math.Abs(RPM_value - rpm_last_value) > 10)
+                            if (Math.Abs(RPM_value - rpm_last_value) > 3)
                             {
                                 tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
                                 update_flag = true;
@@ -735,10 +739,30 @@ namespace User.PluginSdkDemo
 
                             }
                         }
-
-                        if (update_flag)
+                    // check the update interval
+                    if (update_flag)
+                    {
+                        Action_currentTime[pedalIdx] = DateTime.Now;
+                        TimeSpan diff_action = Action_currentTime[pedalIdx] - Action_lastTime[pedalIdx];
+                        int millisceonds_action = (int)diff_action.TotalMilliseconds;
+                        if (millisceonds_action <= random_pedal_action_interval[pedalIdx])
                         {
-                            DAP_action_st* v = &tmp;
+                            update_flag = false;
+                        }
+                        else
+                        {
+                            Action_lastTime[pedalIdx] = DateTime.Now;
+                            
+                        }
+
+                        
+                    }
+
+
+                    if (update_flag)
+                    {
+
+                        DAP_action_st* v = &tmp;
                             byte* p = (byte*)v;
                             tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
@@ -772,7 +796,7 @@ namespace User.PluginSdkDemo
 
 
 
-                        }
+                    }
                     
                 }
                 
@@ -1447,6 +1471,16 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("pedal_position", this.GetType(), pedal_state_in_ratio);
             pluginManager.AddProperty("PedalErrorIndex", this.GetType(), PedalErrorIndex);
             pluginManager.AddProperty("PedalErrorCode", this.GetType(), PedalErrorCode);
+
+            for (uint pedali=0; pedali < 3; pedali++)
+            {
+                Action_currentTime[pedali] = new DateTime();
+                Action_currentTime[pedali]=DateTime.Now;
+                Action_lastTime[pedali] = new DateTime();
+                Action_lastTime[pedali] = DateTime.Now;
+            }
+            
+
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
