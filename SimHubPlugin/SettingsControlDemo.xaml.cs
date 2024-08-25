@@ -6151,7 +6151,7 @@ namespace User.PluginSdkDemo
                                 // check whether receive struct is plausible
                                 DAP_state_extended_st* v_state = &pedalState_ext_read_st;
                                 byte* p_state = (byte*)v_state;
-
+                                UInt16 pedalSelected = pedalState_ext_read_st.payloadHeader_.PedalTag;
                                 // payload type check
                                 bool check_payload_state_b = false;
                                 if (pedalState_ext_read_st.payloadHeader_.payloadType == Constants.pedalStateExtendedPayload_type)
@@ -6171,14 +6171,14 @@ namespace User.PluginSdkDemo
 
 
 
-                                    /*
-                                    if (indexOfSelectedPedal_u == pedalSelected)
+                                    
+                                    //if (indexOfSelectedPedal_u == pedalSelected)
                                     {
                                         if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
                                         {
                                             // Specify the path to the file
                                             string currentDirectory = Directory.GetCurrentDirectory();
-                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
+                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + pedalSelected + ".txt";
 
 
                                             // write header
@@ -6226,7 +6226,7 @@ namespace User.PluginSdkDemo
                                             }
                                         }
                                     }
-                                    */
+                                    
 
 
 
