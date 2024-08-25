@@ -298,7 +298,7 @@ namespace User.PluginSdkDemo
         public bool Sync_esp_connection_flag=false;
         public byte PedalErrorCode = 0;
         public byte PedalErrorIndex = 0;
-        public byte[] random_pedal_action_interval=new byte[3] { 50,43,37};
+        public byte[] random_pedal_action_interval=new byte[3] { 50,51,53};
 
 
 
@@ -777,7 +777,7 @@ namespace User.PluginSdkDemo
                                 {
                                     ESPsync_serialPort.DiscardInBuffer();
                                     ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
-                                    System.Threading.Thread.Sleep(5);
+                                    System.Threading.Thread.Sleep(10);
                                 }
 
                             }
