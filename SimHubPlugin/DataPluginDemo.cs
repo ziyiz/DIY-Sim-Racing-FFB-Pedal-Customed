@@ -33,6 +33,7 @@ static class Constants
     public const uint pedalActionPayload_type = 110;
     public const uint pedalStateBasicPayload_type = 120;
     public const uint pedalStateExtendedPayload_type = 130;
+    public const uint bridgeStatePayloadType = 210;
 }
 
 
@@ -87,6 +88,11 @@ public struct payloadPedalState_Extended
     public Int16 servoPositionTarget_i16;
     public Int16 servo_voltage_0p1V_i16;
     public Int16 servo_current_percent_i16;
+};
+
+public struct payloadBridgeState
+{
+    public byte Pedal_RSSI;
 };
 
 public struct payloadPedalConfig
@@ -251,6 +257,12 @@ public struct DAP_state_extended_st
     public payloadFooter payloadFooter_;
 }
 
+public struct DAP_bridge_state_st
+{
+    public payloadHeader payLoadHeader_;
+    public payloadBridgeState payloadBridgeState_;
+    public payloadFooter payloadFooter_;
+};
 
 namespace User.PluginSdkDemo
 {

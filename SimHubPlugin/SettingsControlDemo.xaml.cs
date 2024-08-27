@@ -102,11 +102,17 @@ namespace User.PluginSdkDemo
 
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
+        private SolidColorBrush redcolor;
+        private SolidColorBrush color_RSSI_1;
+        private SolidColorBrush color_RSSI_2;
+        private SolidColorBrush color_RSSI_3;
+        private SolidColorBrush color_RSSI_4;
         private string info_text_connection;
         private int current_pedal_travel_state= 0;
         private int gridline_kinematic_count_original = 0;
         private double[] Pedal_position_reading=new double[3];
         private bool[] Serial_connect_status = new bool[3] { false,false,false};
+        public byte Bridge_RSSI = 0;
 
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -518,15 +524,27 @@ namespace User.PluginSdkDemo
             Color color = Color.FromArgb(150, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
             Color color_2 = Color.FromArgb(200, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
             Color color_3 = Color.FromArgb(255, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B);
+            Color RED_color = Color.FromArgb(60, 139, 0, 0);
+            redcolor = new SolidColorBrush(RED_color);
             SolidColorBrush Line_fill = new SolidColorBrush(color_2);
+            
             //SolidColorBrush rect_fill = new SolidColorBrush(color);
             defaultcolor = new SolidColorBrush(color);
             lightcolor = new SolidColorBrush(color_3);
+            color_RSSI_1 = new SolidColorBrush(Color.FromArgb(150, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B));
+            color_RSSI_2 = new SolidColorBrush(Color.FromArgb(180, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B));
+            color_RSSI_3 = new SolidColorBrush(Color.FromArgb(210, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B));
+            color_RSSI_4 = new SolidColorBrush(Color.FromArgb(255, buttonBackground_.Color.R, buttonBackground_.Color.G, buttonBackground_.Color.B));
+            RSSI_1.Fill = color_RSSI_1;
+            RSSI_2.Fill = color_RSSI_2;
+            RSSI_3.Fill = color_RSSI_3;
+            RSSI_4.Fill = color_RSSI_4;
             //Plugin.simhub_theme_color=defaultcolor.ToString();            
             // Call this method to generate gridlines on the Canvas
             DrawGridLines();
             DrawGridLines_kinematicCanvas(100,20,1.5);
             CustomEffectTab.Visibility = Visibility.Hidden;
+            Label_RSSI.Visibility= Visibility.Hidden;
 
 
 
@@ -626,6 +644,21 @@ namespace User.PluginSdkDemo
             Marshal.Copy(myBuffer, 0, ptr, size);
 
             aux = (DAP_state_extended_st)Marshal.PtrToStructure(ptr, typeof(DAP_state_extended_st));
+            Marshal.FreeHGlobal(ptr);
+
+            return aux;
+        }
+        public DAP_bridge_state_st getStateBridgeFromBytes(byte[] myBuffer)
+        {
+            DAP_bridge_state_st aux;
+
+            // see https://stackoverflow.com/questions/31045358/how-do-i-copy-bytes-into-a-struct-variable-in-c
+            int size = Marshal.SizeOf(typeof(DAP_bridge_state_st));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(myBuffer, 0, ptr, size);
+
+            aux = (DAP_bridge_state_st)Marshal.PtrToStructure(ptr, typeof(DAP_bridge_state_st));
             Marshal.FreeHGlobal(ptr);
 
             return aux;
@@ -905,6 +938,20 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            //RSSI canvas
+            if (Plugin != null)
+            {
+                if (Plugin.ESPsync_serialPort.IsOpen)
+                {
+                    RSSI_canvas.Visibility = Visibility.Visible;
+                    //Label_RSSI.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    RSSI_canvas.Visibility = Visibility.Hidden;
+                    //Label_RSSI.Visibility = Visibility.Hidden;
+                }
+            }
 
             string plugin_version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             if (plugin_version == "1.0.0.0")
@@ -933,14 +980,18 @@ namespace User.PluginSdkDemo
                 {
                     if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
                     {
-                        info_text = "Wireless Sync";
+                        info_text = "Wireless";
                     }
                 }
                 else
                 {
-                    if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                    if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
                     {
-                        info_text = info_text_connection;
+                        if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                        {
+                            info_text = info_text_connection;
+                        }
+                        
                     }
                     else
                     {
@@ -2649,7 +2700,8 @@ namespace User.PluginSdkDemo
                                     ESP_host_serial_timer.Interval = 16; // in miliseconds
                                     ESP_host_serial_timer.Start();
                                     System.Threading.Thread.Sleep(100);
-                                    ToastNotification("Pedal Bridge", "Connected");
+                                    ToastNotification("Pedal Wireless Bridge", "Connected");
+                                    updateTheGuiFromConfig();
                                 }
                                 catch (Exception ex)
                                 {
@@ -2671,6 +2723,7 @@ namespace User.PluginSdkDemo
                         {
                             ESP_host_serial_timer.Stop();
                             ESP_host_serial_timer.Dispose();
+                            updateTheGuiFromConfig();
                         }
                             
                     }
@@ -4251,6 +4304,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 1088;
             CustomEffectTab.Visibility = Visibility.Visible;
             Slider_LC_rate.TickFrequency = 1;
+
 
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
@@ -5841,7 +5895,7 @@ namespace User.PluginSdkDemo
                             ESP_host_serial_timer = new System.Windows.Forms.Timer();
                             ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                             ESP_host_serial_timer.Tag = 3;
-                            ESP_host_serial_timer.Interval = 7; // in miliseconds
+                            ESP_host_serial_timer.Interval = 16; // in miliseconds
                             ESP_host_serial_timer.Start();
                             System.Threading.Thread.Sleep(100);
                             if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
@@ -6236,6 +6290,82 @@ namespace User.PluginSdkDemo
                             }
 
 
+                            if ((destBuffLength == sizeof(DAP_bridge_state_st)))
+                            {
+
+                                // parse byte array as config struct
+                                DAP_bridge_state_st bridge_state = getStateBridgeFromBytes(destinationArray);
+
+                                // check whether receive struct is plausible
+                                DAP_bridge_state_st* v_state = &bridge_state;
+                                byte* p_state = (byte*)v_state;
+                                
+                                // payload type check
+                                bool check_payload_state_b = false;
+                                if (bridge_state.payLoadHeader_.payloadType == Constants.bridgeStatePayloadType)
+                                {
+                                    check_payload_state_b = true;
+                                }
+
+                                // CRC check
+                                bool check_crc_state_b = false;
+                                if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadBridgeState)) == bridge_state.payloadFooter_.checkSum)
+                                {
+                                    check_crc_state_b = true;
+                                }
+
+                                if ((check_payload_state_b) && check_crc_state_b)
+                                {
+                                    Bridge_RSSI= bridge_state.payloadBridgeState_.Pedal_RSSI;
+                                    Label_RSSI.Content = "" + (Bridge_RSSI - 100) + "dBm";
+                                    if (Bridge_RSSI < 12)
+                                    { 
+                                        RSSI_1.Visibility=Visibility.Visible;
+                                        RSSI_1.Fill = redcolor;
+                                        RSSI_2.Visibility=Visibility.Hidden;
+                                        RSSI_3.Visibility = Visibility.Hidden;
+                                        RSSI_4.Visibility = Visibility.Hidden;
+                                    }
+                                    if (Bridge_RSSI > 12 && Bridge_RSSI<23)
+                                    {
+                                        RSSI_1.Visibility = Visibility.Visible;
+                                        RSSI_1.Fill = color_RSSI_1;
+                                        RSSI_2.Visibility = Visibility.Visible;
+                                        
+                                        RSSI_3.Visibility = Visibility.Hidden;
+                                        RSSI_4.Visibility = Visibility.Hidden;
+                                    }
+                                    if (Bridge_RSSI > 23 && Bridge_RSSI < 34)
+                                    {
+                                        RSSI_1.Visibility = Visibility.Visible;
+                                        RSSI_1.Fill = color_RSSI_1;
+                                        RSSI_2.Visibility = Visibility.Visible;
+                                        
+                                        RSSI_3.Visibility = Visibility.Visible;
+                                        RSSI_4.Visibility = Visibility.Hidden;
+                                    }
+                                    if (Bridge_RSSI > 34)
+                                    {
+                                        RSSI_1.Visibility = Visibility.Visible;
+                                        RSSI_1.Fill = defaultcolor;
+                                        RSSI_2.Visibility = Visibility.Visible;
+                                        RSSI_3.Visibility = Visibility.Visible;
+                                        RSSI_4.Visibility = Visibility.Visible;
+                                    }
+                                    if (debug_flag)
+                                    {
+                                        Label_RSSI.Visibility = Visibility.Visible;
+                                    }
+                                    else
+                                    {
+                                        Label_RSSI.Visibility = Visibility.Hidden;
+                                    }
+
+                                    //updateTheGuiFromConfig();
+                                    continue;
+                                }
+                            }
+
 
 
 
@@ -6243,7 +6373,7 @@ namespace User.PluginSdkDemo
 
 
                             // decode into config struct
-                            
+
                             if ( destBuffLength == sizeof(DAP_config_st))
                             {
 
