@@ -949,7 +949,7 @@ namespace User.PluginSdkDemo
                 else
                 {
                     RSSI_canvas.Visibility = Visibility.Hidden;
-                    //Label_RSSI.Visibility = Visibility.Hidden;
+                    Label_RSSI.Visibility = Visibility.Hidden;
                 }
             }
 
@@ -5902,6 +5902,7 @@ namespace User.PluginSdkDemo
                             {
                                 Plugin.Settings.ESPNow_port = Plugin.ESPsync_serialPort.PortName;
                             }
+                            updateTheGuiFromConfig();
                             
                             
                         }
