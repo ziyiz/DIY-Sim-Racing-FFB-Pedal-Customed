@@ -81,6 +81,7 @@ namespace User.PluginSdkDemo
 
 
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
+        public DAP_bridge_state_st dap_bridge_state_st;
         private string stringValue;
 
 
@@ -980,7 +981,20 @@ namespace User.PluginSdkDemo
                 {
                     if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
                     {
-                        info_text = "Wireless";
+
+                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1 && indexOfSelectedPedal_u == 0)
+                        {
+                            info_text = "Wireless";
+                        }
+                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1 && indexOfSelectedPedal_u == 1)
+                        {
+                            info_text = "Wireless";
+                        }
+                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 1 && indexOfSelectedPedal_u == 2)
+                        {
+                            info_text = "Wireless";
+                        }
+
                     }
                 }
                 else
@@ -2697,7 +2711,7 @@ namespace User.PluginSdkDemo
                                     ESP_host_serial_timer = new System.Windows.Forms.Timer();
                                     ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                                     ESP_host_serial_timer.Tag = 3;
-                                    ESP_host_serial_timer.Interval = 16; // in miliseconds
+                                    ESP_host_serial_timer.Interval = 8; // in miliseconds
                                     ESP_host_serial_timer.Start();
                                     System.Threading.Thread.Sleep(100);
                                     ToastNotification("Pedal Wireless Bridge", "Connected");
@@ -5895,7 +5909,7 @@ namespace User.PluginSdkDemo
                             ESP_host_serial_timer = new System.Windows.Forms.Timer();
                             ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                             ESP_host_serial_timer.Tag = 3;
-                            ESP_host_serial_timer.Interval = 16; // in miliseconds
+                            ESP_host_serial_timer.Interval = 8; // in miliseconds
                             ESP_host_serial_timer.Start();
                             System.Threading.Thread.Sleep(100);
                             if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
@@ -6360,6 +6374,52 @@ namespace User.PluginSdkDemo
                                     else
                                     {
                                         Label_RSSI.Visibility = Visibility.Hidden;
+                                    }
+
+                                    dap_bridge_state_st.payloadBridgeState_.Pedal_RSSI = bridge_state.payloadBridgeState_.Pedal_RSSI;
+                                    if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 != bridge_state.payloadBridgeState_.Pedal_availability_0)
+                                    {
+
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 0)
+                                        {
+                                            ToastNotification("Wireless Clutch", "Connected");
+                                        }
+                                        else
+                                        {
+                                            ToastNotification("Wireless Clutch", "Disconnected");
+                                        }
+                                        dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 = bridge_state.payloadBridgeState_.Pedal_availability_0;
+                                        updateTheGuiFromConfig();
+                                    }
+
+                                    if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 != bridge_state.payloadBridgeState_.Pedal_availability_1)
+                                    {
+
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 0)
+                                        {
+                                            ToastNotification("Wireless Brake", "Connected");
+                                        }
+                                        else
+                                        {
+                                            ToastNotification("Wireless Brake", "Disconnected");
+                                        }
+                                        dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 = bridge_state.payloadBridgeState_.Pedal_availability_1;
+                                        updateTheGuiFromConfig();
+                                    }
+
+                                    if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 != bridge_state.payloadBridgeState_.Pedal_availability_2)
+                                    {
+
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 0)
+                                        {
+                                            ToastNotification("Wireless Throttle", "Connected");
+                                        }
+                                        else
+                                        {
+                                            ToastNotification("Wireless Throttle", "Disconnected");
+                                        }
+                                        dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 = bridge_state.payloadBridgeState_.Pedal_availability_2;
+                                        updateTheGuiFromConfig();
                                     }
 
                                     //updateTheGuiFromConfig();

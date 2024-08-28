@@ -93,6 +93,9 @@ public struct payloadPedalState_Extended
 public struct payloadBridgeState
 {
     public byte Pedal_RSSI;
+    public byte Pedal_availability_0;
+    public byte Pedal_availability_1;
+    public byte Pedal_availability_2;
 };
 
 public struct payloadPedalConfig
