@@ -408,7 +408,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
-            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 50;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 500;
             dap_config_st[pedalIdx].payloadPedalConfig_.preloadForce = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
@@ -482,7 +482,7 @@ namespace User.PluginSdkDemo
 
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
-            dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
+            //dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.enableReboot_u8 = 0;
         }
 
@@ -546,6 +546,7 @@ namespace User.PluginSdkDemo
             DrawGridLines_kinematicCanvas(100,20,1.5);
             CustomEffectTab.Visibility = Visibility.Hidden;
             Label_RSSI.Visibility= Visibility.Hidden;
+            Rangeslider_force_range.TickFrequency = 10;
 
 
 
@@ -1090,16 +1091,16 @@ namespace User.PluginSdkDemo
             Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
             if (indexOfSelectedPedal_u != 1)
             {
-                Rangeslider_force_range.Maximum = 50;
+                Rangeslider_force_range.Maximum = 500;
             }
             else
             {
-                Rangeslider_force_range.Maximum = 200;
+                Rangeslider_force_range.Maximum = 2000;
             }
             if (Plugin != null)
             {
-                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
-                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce / 10 + "kg";
+                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce / 10 + "kg";
             }
 
             label_damping.Content = "Damping factor: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress * 0.00015f)+"s";
@@ -3830,6 +3831,12 @@ namespace User.PluginSdkDemo
                                     byte value = (byte)data["payloadPedalConfig_"][field.Name];
                                     field.SetValue(obj, value);
                                 }
+                                if (field.FieldType == typeof(Int16))
+                                {
+                                    //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                    Int16 value = (Int16)data["payloadPedalConfig_"][field.Name];
+                                    field.SetValue(obj, value);
+                                }
 
                             }
                             catch (Exception)
@@ -4318,6 +4325,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 1088;
             CustomEffectTab.Visibility = Visibility.Visible;
             Slider_LC_rate.TickFrequency = 1;
+            Rangeslider_force_range.TickFrequency = 1;
 
 
         }
@@ -4346,6 +4354,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 723;
             CustomEffectTab.Visibility = Visibility.Hidden;
             Slider_LC_rate.TickFrequency = 10;
+            Rangeslider_force_range.TickFrequency = 10;
         }
 
 
@@ -4859,7 +4868,7 @@ namespace User.PluginSdkDemo
             Update_BrakeForceCurve();
             updateTheGuiFromConfig();
         }
-
+        /*
         private void OTA_update_check_Unchecked(object sender, RoutedEventArgs e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 0;
@@ -4869,6 +4878,7 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.OTA_flag = 1;
         }
+        */
 
         private void EnableReboot_check_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -5618,19 +5628,19 @@ namespace User.PluginSdkDemo
 
         private void Rangeslider_force_range_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = (byte)e.NewValue;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = (Int16)e.NewValue;
             if (Plugin != null)
             {
-                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
+                Label_max_force.Content = "Max force:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce/10.0f + "kg";
             }
         }
 
         private void Rangeslider_force_range_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = (byte)e.NewValue;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = (Int16)e.NewValue;
             if (Plugin != null)
             {
-                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
+                Label_min_force.Content = "Preload:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce/10.0f + "kg";
             }
         }
 

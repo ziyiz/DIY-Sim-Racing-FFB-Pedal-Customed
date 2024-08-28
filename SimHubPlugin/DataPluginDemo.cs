@@ -25,7 +25,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 139;
+    public const uint pedalConfigPayload_version = 140;
 
 
     // pyload types
@@ -106,8 +106,8 @@ public struct payloadPedalConfig
     public byte pedalEndPosition;
 
     // configure pedal forces
-    public byte maxForce;
-    public byte preloadForce;
+    public Int16 maxForce;
+    public Int16 preloadForce;
 
     // design force vs travel curve
     // In percent
@@ -216,7 +216,7 @@ public struct payloadPedalConfig
     public byte pedal_type;
 
     // OTA update flag
-    public byte OTA_flag;
+    //public byte OTA_flag;
 
     // OTA update flag
     public byte enableReboot_u8;
@@ -1944,7 +1944,7 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
-            dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
+            //dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
             dap_config_initial_st.payloadPedalConfig_.enableReboot_u8 = 1;
 
 
