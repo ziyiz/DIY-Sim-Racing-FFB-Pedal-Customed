@@ -18,9 +18,9 @@ This work is licensed under a
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
 
-The reason for that is, that at some point in time individuals started
-- to steal the sources and binaries and sold them on the internet
-- mass production of FFB pedals in their living-rooms to make money by taking parts from this project and Simucubes design files.
+The reason for that is that at some point in time, individuals start
+- to steal the sources and binaries and sell them on the internet
+- mass production of FFB pedals in their living rooms to make money by taking parts from this project and Simucubes design files.
   
 All that without contributing anything to this project.
 
