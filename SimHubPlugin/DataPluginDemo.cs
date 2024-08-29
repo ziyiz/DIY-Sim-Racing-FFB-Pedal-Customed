@@ -25,7 +25,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 140;
+    public const uint pedalConfigPayload_version = 141;
 
 
     // pyload types
@@ -106,8 +106,8 @@ public struct payloadPedalConfig
     public byte pedalEndPosition;
 
     // configure pedal forces
-    public Int16 maxForce;
-    public Int16 preloadForce;
+    public float maxForce;
+    public float preloadForce;
 
     // design force vs travel curve
     // In percent

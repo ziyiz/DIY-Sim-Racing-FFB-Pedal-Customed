@@ -546,7 +546,7 @@ namespace User.PluginSdkDemo
             DrawGridLines_kinematicCanvas(100,20,1.5);
             CustomEffectTab.Visibility = Visibility.Hidden;
             Label_RSSI.Visibility= Visibility.Hidden;
-            Rangeslider_force_range.TickFrequency = 10;
+            Rangeslider_force_range.TickFrequency = 1;
 
 
 
@@ -1091,16 +1091,16 @@ namespace User.PluginSdkDemo
             Rangeslider_force_range.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
             if (indexOfSelectedPedal_u != 1)
             {
-                Rangeslider_force_range.Maximum = 500;
+                Rangeslider_force_range.Maximum = 50;
             }
             else
             {
-                Rangeslider_force_range.Maximum = 2000;
+                Rangeslider_force_range.Maximum = 200;
             }
             if (Plugin != null)
             {
-                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce / 10 + "kg";
-                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce / 10 + "kg";
+                Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce  + "kg";
+                Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce  + "kg";
             }
 
             label_damping.Content = "Damping factor: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress * 0.00015f)+"s";
@@ -2704,8 +2704,8 @@ namespace User.PluginSdkDemo
                                     Plugin.ESPsync_serialPort.Open();
                                     System.Threading.Thread.Sleep(200);
                                     // ESP32 S3
-                                    Plugin.ESPsync_serialPort.RtsEnable = false;
-                                    Plugin.ESPsync_serialPort.DtrEnable = true;
+                                    //Plugin.ESPsync_serialPort.RtsEnable = false;
+                                    //Plugin.ESPsync_serialPort.DtrEnable = true;
                                     //SystemSounds.Beep.Play();
                                     Plugin.Sync_esp_connection_flag = true;
                                     btn_connect_espnow_port.Content = "Disconnect";
@@ -4325,7 +4325,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 1088;
             CustomEffectTab.Visibility = Visibility.Visible;
             Slider_LC_rate.TickFrequency = 1;
-            Rangeslider_force_range.TickFrequency = 1;
+            Rangeslider_force_range.TickFrequency = 0.1;
 
 
         }
@@ -4354,7 +4354,7 @@ namespace User.PluginSdkDemo
             Line_H_HeaderTab.X2 = 723;
             CustomEffectTab.Visibility = Visibility.Hidden;
             Slider_LC_rate.TickFrequency = 10;
-            Rangeslider_force_range.TickFrequency = 10;
+            Rangeslider_force_range.TickFrequency = 1;
         }
 
 
@@ -5628,19 +5628,19 @@ namespace User.PluginSdkDemo
 
         private void Rangeslider_force_range_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = (Int16)e.NewValue;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = (float)e.NewValue;
             if (Plugin != null)
             {
-                Label_max_force.Content = "Max force:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce/10.0f + "kg";
+                Label_max_force.Content = "Max force:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce + "kg";
             }
         }
 
         private void Rangeslider_force_range_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = (Int16)e.NewValue;
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = (float)e.NewValue;
             if (Plugin != null)
             {
-                Label_min_force.Content = "Preload:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce/10.0f + "kg";
+                Label_min_force.Content = "Preload:\n" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce + "kg";
             }
         }
 
@@ -5902,8 +5902,8 @@ namespace User.PluginSdkDemo
                             Plugin.ESPsync_serialPort.Open();
                             System.Threading.Thread.Sleep(200);
                             // ESP32 S3
-                            Plugin.ESPsync_serialPort.RtsEnable = false;
-                            Plugin.ESPsync_serialPort.DtrEnable = true;
+                            //Plugin.ESPsync_serialPort.RtsEnable = false;
+                            //Plugin.ESPsync_serialPort.DtrEnable = true;
                             SystemSounds.Beep.Play();
                             Plugin.Sync_esp_connection_flag = true;
                             btn_connect_espnow_port.Content = "Disconnect";
