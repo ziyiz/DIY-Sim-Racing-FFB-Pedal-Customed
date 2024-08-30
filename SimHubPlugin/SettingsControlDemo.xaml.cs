@@ -114,6 +114,7 @@ namespace User.PluginSdkDemo
         private double[] Pedal_position_reading=new double[3];
         private bool[] Serial_connect_status = new bool[3] { false,false,false};
         public byte Bridge_RSSI = 0;
+        public bool[] Pedal_wireless_connection_update_b = new bool[3] { false,false,false};
 
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -408,7 +409,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedalEndPosition = 80;
-            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 500;
+            dap_config_st[pedalIdx].payloadPedalConfig_.maxForce = 50;
             dap_config_st[pedalIdx].payloadPedalConfig_.preloadForce = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p000 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.relativeForce_p020 = 20;
@@ -2675,6 +2676,17 @@ namespace User.PluginSdkDemo
             }
             info_text_connection = tmp;
 
+            for (uint pedal_idex = 0; pedal_idex < 3; pedal_idex++)
+            {
+                if (Pedal_wireless_connection_update_b[pedal_idex])
+                {
+                    Pedal_wireless_connection_update_b[pedal_idex] = false;
+                    if (Plugin.Settings.reading_config == 1)
+                    {
+                        Reading_config_auto(pedal_idex);
+                    }
+                }
+            }
 
 
             count_timmer_count++;
@@ -6387,34 +6399,50 @@ namespace User.PluginSdkDemo
                                     }
 
                                     dap_bridge_state_st.payloadBridgeState_.Pedal_RSSI = bridge_state.payloadBridgeState_.Pedal_RSSI;
+                                    string connection_tmp="";
+                                    bool wireless_connection_update = false;
                                     if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 != bridge_state.payloadBridgeState_.Pedal_availability_0)
                                     {
 
                                         if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 0)
                                         {
-                                            ToastNotification("Wireless Clutch", "Connected");
+                                            //ToastNotification("Wireless Clutch", "Connected");
+                                            connection_tmp += "Clutch Connected";
+                                            wireless_connection_update = true;
+                                            Pedal_wireless_connection_update_b[0] = true;
+
                                         }
                                         else
                                         {
-                                            ToastNotification("Wireless Clutch", "Disconnected");
+                                            ///ToastNotification("Wireless Clutch", "Disconnected");
+                                            connection_tmp += "Clutch Disconnected";
+                                            wireless_connection_update = true;
                                         }
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 = bridge_state.payloadBridgeState_.Pedal_availability_0;
-                                        updateTheGuiFromConfig();
+                                        //updateTheGuiFromConfig();
                                     }
+                                    
 
                                     if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 != bridge_state.payloadBridgeState_.Pedal_availability_1)
                                     {
 
                                         if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 0)
                                         {
-                                            ToastNotification("Wireless Brake", "Connected");
+                                            //ToastNotification("Wireless Brake", "Connected");
+                                            connection_tmp += " Brake Connected";
+                                            wireless_connection_update = true;
+                                            Pedal_wireless_connection_update_b[1] = true;
+
+
                                         }
                                         else
                                         {
-                                            ToastNotification("Wireless Brake", "Disconnected");
+                                            //ToastNotification("Wireless Brake", "Disconnected");
+                                            connection_tmp += " Brake Disconnected";
+                                            wireless_connection_update = true;
                                         }
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 = bridge_state.payloadBridgeState_.Pedal_availability_1;
-                                        updateTheGuiFromConfig();
+                                        //updateTheGuiFromConfig();
                                     }
 
                                     if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 != bridge_state.payloadBridgeState_.Pedal_availability_2)
@@ -6422,15 +6450,28 @@ namespace User.PluginSdkDemo
 
                                         if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 0)
                                         {
-                                            ToastNotification("Wireless Throttle", "Connected");
+                                            //ToastNotification("Wireless Throttle", "Connected");
+                                            connection_tmp += " Throttle Connected";
+                                            wireless_connection_update = true;
+                                            Pedal_wireless_connection_update_b[2] = true;
+
                                         }
                                         else
                                         {
                                             ToastNotification("Wireless Throttle", "Disconnected");
+                                            connection_tmp += " Throttle Disconnected";
+                                            wireless_connection_update = true;
                                         }
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 = bridge_state.payloadBridgeState_.Pedal_availability_2;
-                                        updateTheGuiFromConfig();
+                                        
                                     }
+                                    if (wireless_connection_update)
+                                    {
+                                        ToastNotification("Wireless Connection", connection_tmp);
+                                        updateTheGuiFromConfig();
+                                        wireless_connection_update = false;
+                                    }
+                                    
 
                                     //updateTheGuiFromConfig();
                                     continue;
