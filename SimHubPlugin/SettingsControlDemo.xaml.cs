@@ -1210,6 +1210,15 @@ namespace User.PluginSdkDemo
                 { 
                     Checkbox_auto_remove_serial_line.IsChecked= false;
                 }
+
+                if (Plugin.Settings.Using_CDC_bridge)
+                {
+                    CheckBox_using_CDC_for_bridge.IsChecked = true;
+                }
+                else
+                {
+                    CheckBox_using_CDC_for_bridge.IsChecked = false;
+                }
                 
             }
 
@@ -2716,8 +2725,11 @@ namespace User.PluginSdkDemo
                                     Plugin.ESPsync_serialPort.Open();
                                     System.Threading.Thread.Sleep(200);
                                     // ESP32 S3
-                                    //Plugin.ESPsync_serialPort.RtsEnable = false;
-                                    //Plugin.ESPsync_serialPort.DtrEnable = true;
+                                    if (Plugin.Settings.Using_CDC_bridge)
+                                    {
+                                        Plugin.ESPsync_serialPort.RtsEnable = false;
+                                        Plugin.ESPsync_serialPort.DtrEnable = true;
+                                    }
                                     //SystemSounds.Beep.Play();
                                     Plugin.Sync_esp_connection_flag = true;
                                     btn_connect_espnow_port.Content = "Disconnect";
@@ -5914,8 +5926,12 @@ namespace User.PluginSdkDemo
                             Plugin.ESPsync_serialPort.Open();
                             System.Threading.Thread.Sleep(200);
                             // ESP32 S3
-                            //Plugin.ESPsync_serialPort.RtsEnable = false;
-                            //Plugin.ESPsync_serialPort.DtrEnable = true;
+                            if (Plugin.Settings.Using_CDC_bridge)
+                            {
+                                Plugin.ESPsync_serialPort.RtsEnable = false;
+                                Plugin.ESPsync_serialPort.DtrEnable = true;
+                            }
+
                             SystemSounds.Beep.Play();
                             Plugin.Sync_esp_connection_flag = true;
                             btn_connect_espnow_port.Content = "Disconnect";
@@ -6785,6 +6801,22 @@ namespace User.PluginSdkDemo
                         TextBox_debugOutput.Text = errorMessage;
                     }
                 }
+            }
+        }
+
+        private void CheckBox_using_CDC_for_bridge_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            { 
+                Plugin.Settings.Using_CDC_bridge = true;
+            }
+        }
+
+        private void CheckBox_using_CDC_for_bridge_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Using_CDC_bridge = false;
             }
         }
     }
