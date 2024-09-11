@@ -1164,7 +1164,8 @@ namespace User.PluginSdkDemo
                 label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
                 textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
                 textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
-
+                Label_Pedal_interval_trigger.Content = "Action Interval: "+Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u] + "ms";
+                Slider_Pedal_interval_trigger.Value = Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u];
 
                 //rudder text
                 if (Plugin.Rudder_status)
@@ -1219,6 +1220,8 @@ namespace User.PluginSdkDemo
                 {
                     CheckBox_using_CDC_for_bridge.IsChecked = false;
                 }
+
+                
                 
             }
 
@@ -6817,6 +6820,15 @@ namespace User.PluginSdkDemo
             if (Plugin != null)
             {
                 Plugin.Settings.Using_CDC_bridge = false;
+            }
+        }
+
+        private void Slider_Pedal_interval_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u] = (byte)e.NewValue;
+                Label_Pedal_interval_trigger.Content = "Action Interval: "+ Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u]+"ms";
             }
         }
     }

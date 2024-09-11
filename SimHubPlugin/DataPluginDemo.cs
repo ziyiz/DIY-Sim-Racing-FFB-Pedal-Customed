@@ -760,7 +760,7 @@ namespace User.PluginSdkDemo
                         Action_currentTime[pedalIdx] = DateTime.Now;
                         TimeSpan diff_action = Action_currentTime[pedalIdx] - Action_lastTime[pedalIdx];
                         int millisceonds_action = (int)diff_action.TotalMilliseconds;
-                        if (millisceonds_action <= random_pedal_action_interval[pedalIdx])
+                        if (millisceonds_action <= Settings.Pedal_action_interval[pedalIdx])
                         {
                             update_flag = false;
                         }

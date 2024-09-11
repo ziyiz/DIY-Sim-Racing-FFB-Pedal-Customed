@@ -50,6 +50,7 @@ namespace User.PluginSdkDemo
         public bool Pedal_ESPNow_auto_connect_flag = false;
         public bool Serial_auto_clean = false; //clean serial monitor
         public bool Using_CDC_bridge = false;
+        public byte[] Pedal_action_interval = new byte[3] { 50, 51, 53 };
 
     }
         
