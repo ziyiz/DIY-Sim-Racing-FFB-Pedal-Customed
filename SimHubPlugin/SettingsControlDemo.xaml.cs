@@ -1735,8 +1735,8 @@ namespace User.PluginSdkDemo
                 for (int idx = 0; idx < x_quantity; idx++)
                 {
                     x[idx] = idx;     
-                    y[idx] = -1 * amp / max_force  * y_max * (x[idx]%peroid)/peroid;
-                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 50);
+                    y[idx] = -1 * amp / max_force  * y_max * (x[idx]%peroid)/peroid+0.5* amp / max_force * y_max ;
+                    System.Windows.Point Pointlcl = new System.Windows.Point(dx * x[idx], dy * y[idx] + 25);
                     myPointCollection2.Add(Pointlcl);
                 }
             }
