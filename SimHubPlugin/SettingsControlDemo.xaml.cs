@@ -2738,7 +2738,7 @@ namespace User.PluginSdkDemo
                                     ESP_host_serial_timer = new System.Windows.Forms.Timer();
                                     ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                                     ESP_host_serial_timer.Tag = 3;
-                                    ESP_host_serial_timer.Interval = 8; // in miliseconds
+                                    ESP_host_serial_timer.Interval = 16; // in miliseconds
                                     ESP_host_serial_timer.Start();
                                     System.Threading.Thread.Sleep(100);
                                     ToastNotification("Pedal Wireless Bridge", "Connected");
@@ -5949,7 +5949,7 @@ namespace User.PluginSdkDemo
                             ESP_host_serial_timer = new System.Windows.Forms.Timer();
                             ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                             ESP_host_serial_timer.Tag = 3;
-                            ESP_host_serial_timer.Interval = 8; // in miliseconds
+                            ESP_host_serial_timer.Interval = 16; // in miliseconds
                             ESP_host_serial_timer.Start();
                             System.Threading.Thread.Sleep(100);
                             if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
