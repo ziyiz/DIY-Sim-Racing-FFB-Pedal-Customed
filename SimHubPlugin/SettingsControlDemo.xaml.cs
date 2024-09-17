@@ -2721,7 +2721,7 @@ namespace User.PluginSdkDemo
                                 // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
                                 Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
                                 Plugin.ESPsync_serialPort.NewLine = "\r\n";
-                                Plugin.ESPsync_serialPort.ReadBufferSize = 10000;
+                                Plugin.ESPsync_serialPort.ReadBufferSize = 40960;
                                 try
                                 {
                                     Plugin.ESPsync_serialPort.Open();
@@ -2738,7 +2738,7 @@ namespace User.PluginSdkDemo
                                     ESP_host_serial_timer = new System.Windows.Forms.Timer();
                                     ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                                     ESP_host_serial_timer.Tag = 3;
-                                    ESP_host_serial_timer.Interval = 16; // in miliseconds
+                                    ESP_host_serial_timer.Interval = 8; // in miliseconds
                                     ESP_host_serial_timer.Start();
                                     System.Threading.Thread.Sleep(100);
                                     ToastNotification("Pedal Wireless Bridge", "Connected");
@@ -5920,7 +5920,7 @@ namespace User.PluginSdkDemo
                     // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
                     Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
                     Plugin.ESPsync_serialPort.NewLine = "\r\n";
-                    Plugin.ESPsync_serialPort.ReadBufferSize = 10000;
+                    Plugin.ESPsync_serialPort.ReadBufferSize = 40960;
                     if (Plugin.PortExists(Plugin.ESPsync_serialPort.PortName))
                     {
                         try
@@ -5949,7 +5949,7 @@ namespace User.PluginSdkDemo
                             ESP_host_serial_timer = new System.Windows.Forms.Timer();
                             ESP_host_serial_timer.Tick += new EventHandler(timerCallback_serial_esphost);
                             ESP_host_serial_timer.Tag = 3;
-                            ESP_host_serial_timer.Interval = 16; // in miliseconds
+                            ESP_host_serial_timer.Interval = 8; // in miliseconds
                             ESP_host_serial_timer.Start();
                             System.Threading.Thread.Sleep(100);
                             if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)

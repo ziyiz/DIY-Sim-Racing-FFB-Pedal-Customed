@@ -872,6 +872,7 @@ namespace User.PluginSdkDemo
 
                             // send query command
                             _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(50);
                         }
                     }
                 }
@@ -984,7 +985,7 @@ namespace User.PluginSdkDemo
                         {
                             ESPsync_serialPort.DiscardInBuffer();
                             ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
-                            System.Threading.Thread.Sleep(5);
+                            System.Threading.Thread.Sleep(10);
                         }
                     }
                     else
@@ -1040,7 +1041,7 @@ namespace User.PluginSdkDemo
                         {
                             ESPsync_serialPort.DiscardInBuffer();
                             ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
-                            System.Threading.Thread.Sleep(5);
+                            System.Threading.Thread.Sleep(10);
                         }
                     }
                     else
