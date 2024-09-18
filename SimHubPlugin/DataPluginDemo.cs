@@ -701,6 +701,7 @@ namespace User.PluginSdkDemo
                                 }
                             }
                         }
+                        //custom effcts
                         if (Settings.CV1_enable_flag[pedalIdx] == true)
                         {
                             if (pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]) != null)
@@ -733,7 +734,7 @@ namespace User.PluginSdkDemo
 
                         if (pedalIdx == 1)
                         {
-                            if (sendAbsSignal_local_b & Settings.ABS_enable_flag[pedalIdx] ==1)
+                            if (sendAbsSignal_local_b && Settings.ABS_enable_flag[pedalIdx] ==1)
                             {
                                 //_serialPort[1].Write("2");
 
@@ -745,7 +746,7 @@ namespace User.PluginSdkDemo
                         }
                         if (pedalIdx == 2)
                         {
-                            if (sendTcSignal_local_b & Settings.ABS_enable_flag[pedalIdx] == 1)
+                            if (sendTcSignal_local_b && Settings.ABS_enable_flag[pedalIdx] == 1)
                             {
                                 // compute checksum
 
@@ -792,7 +793,7 @@ namespace User.PluginSdkDemo
                                 {
                                     ESPsync_serialPort.DiscardInBuffer();
                                     ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
-                                    System.Threading.Thread.Sleep(10);
+                                    System.Threading.Thread.Sleep(7);
                                 }
 
                             }

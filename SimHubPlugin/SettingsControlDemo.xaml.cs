@@ -6476,7 +6476,7 @@ namespace User.PluginSdkDemo
                                         }
                                         else
                                         {
-                                            ToastNotification("Wireless Throttle", "Disconnected");
+                                            //ToastNotification("Wireless Throttle", "Disconnected");
                                             connection_tmp += " Throttle Disconnected";
                                             wireless_connection_update = true;
                                         }
