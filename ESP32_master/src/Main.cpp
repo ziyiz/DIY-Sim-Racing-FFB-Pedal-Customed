@@ -102,11 +102,13 @@ DAP_bridge_state_st dap_bridge_state_st;
 #ifndef CONFIG_IDF_TARGET_ESP32S3
   #include "soc/rtc_wdt.h"
 #endif
-#ifdef LED_ENABLE
-  #include <LiteLED.h>
-  #define LED_TYPE LED_STRIP_WS2812
-  #define LED_TYPE_IS_RGBW 0
-  #define LED_BRIGHT 10
+#ifdef LED_ENABLE_WAVESHARE
+  #include "soc/soc_caps.h"
+  #include <Adafruit_NeoPixel.h>
+  #define LEDS_COUNT 1
+  #define CHANNEL 0
+  #define LED_BRIGHT 30
+  /*
   static const crgb_t L_RED = 0xff0000;
   static const crgb_t L_GREEN = 0x00ff00;
   static const crgb_t L_BLUE = 0x0000ff;
@@ -115,7 +117,8 @@ DAP_bridge_state_st dap_bridge_state_st;
   static const crgb_t L_ORANGE = 0xffa500;
   static const crgb_t L_CYAN = 0x00ffff;
   static const crgb_t L_PURPLE = 0x800080;
-  LiteLED myLED( LED_TYPE, LED_TYPE_IS_RGBW );
+  */
+  Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_RGB + NEO_KHZ800);
 
 #endif
 
@@ -127,7 +130,7 @@ DAP_bridge_state_st dap_bridge_state_st;
 
 TaskHandle_t Task1;
 TaskHandle_t Task2;
-
+TaskHandle_t Task3;
 
 //static SemaphoreHandle_t semaphore_updateConfig=NULL;
   bool configUpdateAvailable = false;                              // semaphore protected data
@@ -193,7 +196,7 @@ unsigned long pedal_last_update[3]={1,1,1};
 uint8_t pedal_avaliable[3]={0,0,0};
 void ESPNOW_SyncTask( void * pvParameters);
 void Joystick_Task( void * pvParameters);
-
+void LED_Task( void * pvParameters);
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         setup function                                                     */
@@ -329,10 +332,21 @@ void setup()
   {
     pedal_last_update[pedalIDX]=millis();
   }
-  #ifdef LED_ENABLE
-    myLED.begin( LED_GPIO, 1 );         // initialze the myLED object. Here we have 1 LED attached to the LED_GPIO pin
-    myLED.brightness( LED_BRIGHT );     // set the LED photon intensity level
-    myLED.setPixel( 0, L_WHITE, 1 );    // set the LED colour and show it
+  #ifdef LED_ENABLE_WAVESHARE
+    pixels.begin();
+    pixels.setBrightness(20);
+    pixels.setPixelColor(0,0xff,0xff,0xff);
+    pixels.show();
+    xTaskCreatePinnedToCore(
+                          LED_Task,   
+                          "LED_update_Task", 
+                          3000,  
+                          //STACK_SIZE_FOR_TASK_2,    
+                          NULL,      
+                          1,         
+                          &Task3,    
+                          0);     
+    delay(500);
   #endif
 
   Serial.println("Setup end");
@@ -626,40 +640,6 @@ void ESPNOW_SyncTask( void * pvParameters )
       }
 
     }
-    //show led status
-    #ifdef LED_ENABLE
-      uint8_t led_status=dap_bridge_state_st.payloadBridgeState_.Pedal_availability[0]+dap_bridge_state_st.payloadBridgeState_.Pedal_availability[1]*2+dap_bridge_state_st.payloadBridgeState_.Pedal_availability[2]*4;
-      switch (led_status)
-      {
-        case 0:
-          /* code */
-          break;
-        case 1:
-          myLED.setPixel( 0, L_RED, 1 );
-          break;
-        case 2:
-          myLED.setPixel( 0, L_ORANGE, 1 );
-          break;
-        case 3:
-          myLED.setPixel( 0, L_CYAN, 1 );
-          break; 
-        case 4:
-          myLED.setPixel( 0, L_YELLOW, 1 );
-          break;
-        case 5:
-          myLED.setPixel( 0, L_BLUE, 1 );
-          break;      
-        case 6:
-          myLED.setPixel( 0, L_GREEN, 1 );
-          break;  
-        case 7:
-          myLED.setPixel( 0, L_PURPLE, 1 );
-          break;                                         
-        default:
-          break;
-      }
-    #endif
-
     delay(2);
   }
 }
@@ -730,6 +710,69 @@ void Joystick_Task( void * pvParameters )
 
     #endif
       delay(2);
+  }
+}
+
+//LED task
+uint8_t LED_bright_index=0;
+uint8_t LED_bright_direction=1;
+void LED_Task( void * pvParameters)
+{
+  for(;;)
+  {
+    #ifdef LED_ENABLE_WAVESHARE
+    //LED status update
+      if(LED_bright_index>30)
+      {
+        LED_bright_direction=-1;
+      }
+      if(LED_bright_index<2)
+      {
+        LED_bright_direction=1;
+      }
+      LED_bright_index=LED_bright_index+LED_bright_direction;
+      pixels.setBrightness(LED_bright_index);
+      uint8_t led_status=dap_bridge_state_st.payloadBridgeState_.Pedal_availability[0]+dap_bridge_state_st.payloadBridgeState_.Pedal_availability[1]*2+dap_bridge_state_st.payloadBridgeState_.Pedal_availability[2]*4;
+      switch (led_status)
+      {
+        case 0:
+          //pixels.setPixelColor(0,0xff,0xff,0xff);
+          pixels.setPixelColor(0,0x52,0x00,0xff);//Orange
+          pixels.show();
+          break;
+        case 1:
+          pixels.setPixelColor(0,0xff,0x00,0x00);//Red
+          pixels.show();
+          break;
+        case 2:
+          pixels.setPixelColor(0,0xff,0x0f,0x00);//Orange
+          pixels.show();
+          break;
+        case 3:
+          pixels.setPixelColor(0,0x52,0x00,0xff);//Cyan
+          pixels.show();
+          break; 
+        case 4:
+          pixels.setPixelColor(0,0x5f,0x5f,0x00);//Yellow
+          pixels.show();
+          break;
+        case 5:
+          pixels.setPixelColor(0,0x00,0x00,0xff);//Blue
+          pixels.show();
+          break;      
+        case 6:
+          pixels.setPixelColor(0,0x00,0xff,0x00);//Green
+          pixels.show();
+          break;  
+        case 7:
+          pixels.setPixelColor(0, 0x80, 0x00, 0x80);//Purple
+          pixels.show();
+          break;                                         
+        default:
+          break;
+      }
+      delay(150);   
+    #endif  
   }
 }
 
