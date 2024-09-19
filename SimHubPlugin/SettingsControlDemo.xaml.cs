@@ -115,7 +115,7 @@ namespace User.PluginSdkDemo
         private bool[] Serial_connect_status = new bool[3] { false,false,false};
         public byte Bridge_RSSI = 0;
         public bool[] Pedal_wireless_connection_update_b = new bool[3] { false,false,false};
-
+        public int Bridge_baudrate = 3000000;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
         private double kinematicDiagram_zeroPos_OY = 20;
@@ -547,6 +547,7 @@ namespace User.PluginSdkDemo
             DrawGridLines_kinematicCanvas(100,20,1.5);
             Label_RSSI.Visibility= Visibility.Hidden;
             Rangeslider_force_range.TickFrequency = 1;
+            TextBox_debug_count.Visibility= Visibility.Hidden;
 
 
 
@@ -2718,6 +2719,7 @@ namespace User.PluginSdkDemo
                                 //_serialPort[pedalIdx].StopBits = StopBits.None;
                                 Plugin.ESPsync_serialPort.ReadTimeout = 2000;
                                 Plugin.ESPsync_serialPort.WriteTimeout = 500;
+                                Plugin.ESPsync_serialPort.BaudRate = Bridge_baudrate;
                                 // https://stackoverflow.com/questions/7178655/serialport-encoding-how-do-i-get-8-bit-ascii
                                 Plugin.ESPsync_serialPort.Encoding = System.Text.Encoding.GetEncoding(28591);
                                 Plugin.ESPsync_serialPort.NewLine = "\r\n";
@@ -4352,6 +4354,7 @@ namespace User.PluginSdkDemo
 
             Slider_LC_rate.TickFrequency = 1;
             Rangeslider_force_range.TickFrequency = 0.1;
+            TextBox_debug_count.Visibility=Visibility.Visible;
 
 
         }
@@ -4381,6 +4384,7 @@ namespace User.PluginSdkDemo
 
             Slider_LC_rate.TickFrequency = 10;
             Rangeslider_force_range.TickFrequency = 1;
+            TextBox_debug_count.Visibility = Visibility.Hidden;
         }
 
 
@@ -5912,7 +5916,7 @@ namespace User.PluginSdkDemo
                     Plugin.ESPsync_serialPort.Handshake = Handshake.None;
                     Plugin.ESPsync_serialPort.Parity = Parity.None;
                     //_serialPort[pedalIdx].StopBits = StopBits.None;
-
+                    Plugin.ESPsync_serialPort.BaudRate = Bridge_baudrate;
 
                     Plugin.ESPsync_serialPort.ReadTimeout = 2000;
                     Plugin.ESPsync_serialPort.WriteTimeout = 500;
@@ -6016,45 +6020,23 @@ namespace User.PluginSdkDemo
             //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
 
             bool pedalStateHasAlreadyBeenUpdated_b = false;
-
-            // once the pedal has identified, go ahead
-            //if (pedalSelected < 3)
-            //if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+            if (Plugin.Settings.Serial_auto_clean)
             {
-
-
-
+                if (TextBox_serialMonitor.LineCount > 100)
+                {
+                    TextBox_serialMonitor.Clear();
+                }
+            }
+            try 
+            {
                 // Create a Stopwatch instance
                 Stopwatch stopwatch = new Stopwatch();
-
                 // Start the stopwatch
                 stopwatch.Start();
-
-
-
                 SerialPort sp = Plugin.ESPsync_serialPort;
-
-
-
                 // https://stackoverflow.com/questions/9732709/the-calling-thread-cannot-access-this-object-because-a-different-thread-owns-it
-
-
-                //int length = sizeof(DAP_config_st);
-
-
-
-
                 if (sp.IsOpen)
                 {
-
-                    if (Plugin.Settings.Serial_auto_clean)
-                    {
-                        if (TextBox_serialMonitor.LineCount > 100)
-                        {
-                            TextBox_serialMonitor.Clear();
-                        }
-                    }
-
                     int receivedLength = 0;
                     try
                     {
@@ -6066,8 +6048,6 @@ namespace User.PluginSdkDemo
                         //ConnectToPedal.IsChecked = false;
                         return;
                     }
-
-
 
                     if (receivedLength > 0)
                     {
@@ -6099,11 +6079,6 @@ namespace User.PluginSdkDemo
                             appendedBufferOffset[3] = 0;
                             return;
                         }
-
-
-
-
-
                         // copy to local buffer
                         //byte[] localBuffer = new byte[currentBufferLength];
 
@@ -6112,19 +6087,8 @@ namespace User.PluginSdkDemo
 
                         // find all occurences of crlf as they indicate message end
                         List<int> indices = FindAllOccurrences(buffer_appended[3], byteToFind, currentBufferLength);
-
-
-
-
                         // Destination array
                         byte[] destinationArray = new byte[destBufferSize];
-
-
-
-
-
-
-
                         int srcBufferOffset = 0;
                         // decode every message
                         //foreach (int number in indices)
@@ -6149,33 +6113,26 @@ namespace User.PluginSdkDemo
                             {
                                 continue;
                             }
-
-
-
-
-
                             // copy bytes to subarray
                             Buffer.BlockCopy(buffer_appended[3], srcBufferOffset, destinationArray, 0, destBuffLength);
-
-
                             // check for pedal state struct
                             if ((destBuffLength == sizeof(DAP_state_basic_st)))
                             {
 
                                 // parse byte array as config struct
                                 DAP_state_basic_st pedalState_read_st = getStateFromBytes(destinationArray);
-                                
+
                                 // check whether receive struct is plausible
                                 DAP_state_basic_st* v_state = &pedalState_read_st;
                                 byte* p_state = (byte*)v_state;
-                                UInt16 pedalSelected= pedalState_read_st.payloadHeader_.PedalTag;
+                                UInt16 pedalSelected = pedalState_read_st.payloadHeader_.PedalTag;
                                 // payload type check
                                 bool check_payload_state_b = false;
                                 if (pedalState_read_st.payloadHeader_.payloadType == Constants.pedalStateBasicPayload_type)
                                 {
                                     check_payload_state_b = true;
                                 }
-                                
+
                                 // CRC check
                                 bool check_crc_state_b = false;
                                 if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadPedalState_Basic)) == pedalState_read_st.payloadFooter_.checkSum)
@@ -6184,7 +6141,7 @@ namespace User.PluginSdkDemo
                                 }
 
                                 if ((check_payload_state_b) && check_crc_state_b)
-                                { 
+                                {
 
                                     // write vJoy data
                                     Pedal_position_reading[pedalSelected] = pedalState_read_st.payloadPedalBasicState_.joystickOutput_u16;
@@ -6198,9 +6155,6 @@ namespace User.PluginSdkDemo
                                     }
                                     if ((pedalStateHasAlreadyBeenUpdated_b == false) && (indexOfSelectedPedal_u == pedalSelected))
                                     {
-
-
-
                                         pedalStateHasAlreadyBeenUpdated_b = true;
 
                                         text_point_pos.Visibility = Visibility.Hidden;
@@ -6213,7 +6167,7 @@ namespace User.PluginSdkDemo
                                             Canvas.SetLeft(rect_State, dxx * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 - rect_State.Width / 2);
                                             Canvas.SetTop(rect_State, canvas.Height - dyy * pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 - rect_State.Height / 2);
 
-                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) );
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State));
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                             text_state.Text = Math.Round(pedalState_read_st.payloadPedalBasicState_.pedalForce_u16 / control_rect_value_max * 100) + "%";
                                             int round_x = (int)(100 * pedalState_read_st.payloadPedalBasicState_.pedalPosition_u16 / control_rect_value_max) - 1;
@@ -6231,25 +6185,19 @@ namespace User.PluginSdkDemo
                                             current_pedal_travel_state = x_showed;
                                             Plugin.pedal_state_in_ratio = (byte)current_pedal_travel_state;
                                             Canvas.SetTop(rect_State, canvas.Height - Force_curve_Y[round_x] - rect_State.Height / 2);
-                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State) );
+                                            Canvas.SetLeft(text_state, Canvas.GetLeft(rect_State));
                                             Canvas.SetTop(text_state, Canvas.GetTop(rect_State) - rect_State.Height);
                                             text_state.Text = x_showed + "%";
                                             Pedal_joint_draw();
                                         }
 
                                     }
-                                    
+
 
                                     continue;
                                 }
 
                             }
-
-
-
-
-
-
                             // check for pedal extended state struct
                             if ((destBuffLength == sizeof(DAP_state_extended_st)))
                             {
@@ -6277,10 +6225,6 @@ namespace User.PluginSdkDemo
 
                                 if ((check_payload_state_b) && check_crc_state_b)
                                 {
-
-
-
-                                    
                                     //if (indexOfSelectedPedal_u == pedalSelected)
                                     {
                                         if (dumpPedalToResponseFile[indexOfSelectedPedal_u])
@@ -6335,11 +6279,6 @@ namespace User.PluginSdkDemo
                                             }
                                         }
                                     }
-                                    
-
-
-
-
                                     continue;
                                 }
                             }
@@ -6354,7 +6293,7 @@ namespace User.PluginSdkDemo
                                 // check whether receive struct is plausible
                                 DAP_bridge_state_st* v_state = &bridge_state;
                                 byte* p_state = (byte*)v_state;
-                                
+
                                 // payload type check
                                 bool check_payload_state_b = false;
                                 if (bridge_state.payLoadHeader_.payloadType == Constants.bridgeStatePayloadType)
@@ -6371,22 +6310,22 @@ namespace User.PluginSdkDemo
 
                                 if ((check_payload_state_b) && check_crc_state_b)
                                 {
-                                    Bridge_RSSI= bridge_state.payloadBridgeState_.Pedal_RSSI;
+                                    Bridge_RSSI = bridge_state.payloadBridgeState_.Pedal_RSSI;
                                     Label_RSSI.Content = "" + (Bridge_RSSI - 100) + "dBm";
                                     if (Bridge_RSSI < 12)
-                                    { 
-                                        RSSI_1.Visibility=Visibility.Visible;
+                                    {
+                                        RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = redcolor;
-                                        RSSI_2.Visibility=Visibility.Hidden;
+                                        RSSI_2.Visibility = Visibility.Hidden;
                                         RSSI_3.Visibility = Visibility.Hidden;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
-                                    if (Bridge_RSSI > 12 && Bridge_RSSI<23)
+                                    if (Bridge_RSSI > 12 && Bridge_RSSI < 23)
                                     {
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = color_RSSI_1;
                                         RSSI_2.Visibility = Visibility.Visible;
-                                        
+
                                         RSSI_3.Visibility = Visibility.Hidden;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
@@ -6395,7 +6334,7 @@ namespace User.PluginSdkDemo
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = color_RSSI_1;
                                         RSSI_2.Visibility = Visibility.Visible;
-                                        
+
                                         RSSI_3.Visibility = Visibility.Visible;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
@@ -6417,7 +6356,7 @@ namespace User.PluginSdkDemo
                                     }
 
                                     dap_bridge_state_st.payloadBridgeState_.Pedal_RSSI = bridge_state.payloadBridgeState_.Pedal_RSSI;
-                                    string connection_tmp="";
+                                    string connection_tmp = "";
                                     bool wireless_connection_update = false;
                                     if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 != bridge_state.payloadBridgeState_.Pedal_availability_0)
                                     {
@@ -6439,7 +6378,7 @@ namespace User.PluginSdkDemo
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 = bridge_state.payloadBridgeState_.Pedal_availability_0;
                                         //updateTheGuiFromConfig();
                                     }
-                                    
+
 
                                     if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 != bridge_state.payloadBridgeState_.Pedal_availability_1)
                                     {
@@ -6481,7 +6420,7 @@ namespace User.PluginSdkDemo
                                             wireless_connection_update = true;
                                         }
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 = bridge_state.payloadBridgeState_.Pedal_availability_2;
-                                        
+
                                     }
                                     if (wireless_connection_update)
                                     {
@@ -6489,22 +6428,15 @@ namespace User.PluginSdkDemo
                                         updateTheGuiFromConfig();
                                         wireless_connection_update = false;
                                     }
-                                    
+
 
                                     //updateTheGuiFromConfig();
                                     continue;
                                 }
                             }
-
-
-
-
-
-
-
                             // decode into config struct
 
-                            if ( destBuffLength == sizeof(DAP_config_st))
+                            if (destBuffLength == sizeof(DAP_config_st))
                             {
 
                                 // parse byte array as config struct
@@ -6544,12 +6476,7 @@ namespace User.PluginSdkDemo
                                         TextBox_debugOutput.Text += "Payload config test 2: " + check_crc_config_b;
                                     }
                                 }
-
-
                             }
-                            
-
-
                             // If non known array datatype was received, assume a text message was received and print it
                             // only print debug messages when debug mode is active as it degrades performance
                             if (Debug_check.IsChecked == true)
@@ -6560,39 +6487,9 @@ namespace User.PluginSdkDemo
 
                                 TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor.ScrollToEnd();
-                                
+
                             }
-
-
-
-
-
-
-                            // When only a few messages are received, make the counter greater than N thus every message is printed
-                            //if (destBuffLength < 100)
-                            //{
-                            //    printCtr = 600;
-                            //}
-
-                            //if (printCtr++ > 200)
-                            //{
-                            //    printCtr = 0;
-                            //    TextBox_serialMonitor.Text += dataToSend + "\n";
-                            //    TextBox_serialMonitor.ScrollToEnd();
-                            //}
-
-
-
-
-
                         }
-
-
-
-
-
-
-
                         // copy the last not finished buffer element to begining of next cycles buffer
                         // and determine buffer offset
                         if (indices.Count > 0)
@@ -6615,12 +6512,6 @@ namespace User.PluginSdkDemo
                         {
                             appendedBufferOffset[3] += receivedLength;
                         }
-
-
-
-
-
-
                         // Stop the stopwatch
                         stopwatch.Stop();
 
@@ -6645,6 +6536,13 @@ namespace User.PluginSdkDemo
 
                 }
             }
+            catch (Exception caughtEx)
+            {
+
+                string errorMessage = caughtEx.Message;
+                TextBox_debug_count.Text += errorMessage;
+            }
+      
         }
 
         private void CheckBox_Pedal_ESPNow_autoconnect_Checked(object sender, RoutedEventArgs e)

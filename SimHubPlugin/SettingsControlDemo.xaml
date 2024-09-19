@@ -780,7 +780,7 @@
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5"  Margin="0,3,0,0">
-                        <StackPanel HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="510" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1" Margin="0,50,0,0">
+                        <StackPanel HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="540" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1" Margin="0,50,0,0">
                             <TextBlock HorizontalAlignment="Left" Width="510" Height="10" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" Foreground="White">           
                                 This work is licensed under a
                                         <Hyperlink NavigateUri="http://creativecommons.org/licenses/by-nc-sa/4.0/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
@@ -794,6 +794,7 @@
                                 </Hyperlink>
                             </TextBlock>
                             <styles:SHButtonPrimary x:Name="btn_test" Click="btn_toast_Click" Width="30" Content="TEST" Height="20" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                            <TextBox x:Name="TextBox_debug_count" TextWrapping="Wrap" Width="540" AutomationProperties.Name="TextBox2" Height="120" FontSize="10" Background="#004E4E4E" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" HorizontalAlignment="Center"/>
 
                         </StackPanel>
 
@@ -965,7 +966,7 @@
                                 <StackPanel Width="160" Height="10" Orientation="Horizontal">
                                     <Label x:Name="Label_Pedal_interval_trigger"  Width="160" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Action Interval:" Height="10" Padding="0,0,0,0"/>
                                 </StackPanel>
-                                <Slider x:Name="Slider_Pedal_interval_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="160" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_Pedal_interval_trigger_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True" Minimum="50" ToolTip="Adjust for the serial write interval, when meet I/O error, increase the interval"/>
+                                <Slider x:Name="Slider_Pedal_interval_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="160" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_Pedal_interval_trigger_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True" Minimum="20" ToolTip="Adjust for the serial write interval, when meet I/O error, increase the interval"/>
                             </StackPanel>
                             <styles:SHButtonPrimary x:Name="btn_Bridge_restart" Click="btn_Bridge_restart_Click" Width="160" Content="Bridge Restart" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
                             <styles:SHButtonPrimary x:Name="btn_PedalID_Reset" Click="btn_PedalID_Reset_Click" Width="160" Content="Reset Pedal ID" Height="28" Margin="0,4,0,0" HorizontalAlignment="Center" />
