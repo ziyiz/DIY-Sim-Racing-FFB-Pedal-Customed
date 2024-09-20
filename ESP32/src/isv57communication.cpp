@@ -254,7 +254,7 @@ bool isv57communication::readCurrentAlarm() {
 bool isv57communication::readAlarmHistory() {
 
 // 
-Serial.println("iSV57 alarm history: ");
+Serial.println("\niSV57 alarm history: ");
 for (uint8_t idx=0; idx < 12; idx++)
 {
   // example signal, read the 9th alarm
@@ -268,11 +268,19 @@ for (uint8_t idx=0; idx < 12; idx++)
     for (uint8_t regIdx = 0; regIdx < 1; regIdx++)
     { 
       uint16_t tmp = modbus.uint16(regIdx) & 0x0FFF; // mask the first half byte as it does not contain info
-      Serial.println( tmp, HEX);
+
+      if (tmp > 0)
+      {
+        Serial.print("Alarm Idx: ");
+        Serial.print(idx);
+        Serial.print(",    Alarm Code: ");
+        Serial.println( tmp, HEX);
+      }
+      
     }
   }
 }
-  
+  Serial.print("\n");
     
   return 1;
 }
