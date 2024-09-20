@@ -309,6 +309,9 @@ void setup()
     ESP.restart();
   }
 
+  // read servos alarm history
+  isv57.readAlarmHistory();
+  
   // reset iSV57 alarms
   bool servoAlarmsCleared = isv57.clearServoAlarms();
   delay(500);
