@@ -633,9 +633,9 @@
                                     <Rectangle x:Name="rect_SABS" Width="400" Height="40" Fill="#4C8B0000" Canvas.Left="0" Canvas.Top="0" />
                                     <Rectangle x:Name="rect_SABS_Control" Width="400" Height="6" Fill="#998B0000" Canvas.Left="0" Canvas.Top="37" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_ABS" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
                                     <Rectangle x:Name="rect_BP_Control" Width="32" Height="200" Fill="#990954CE" Canvas.Left="200" Canvas.Top="0" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_sigle_slider_H" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-                                    <Ellipse x:Name="rect_State" Width="10" Height="10" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#CCEF0707" StrokeThickness="0" >
+                                    <Ellipse x:Name="rect_State" Width="15" Height="15" Canvas.Left="25" Canvas.Top="76" Opacity="0.5" Fill="#CCEF0707" StrokeThickness="0" >
                                         <Ellipse.Effect>
-                                            <BlurEffect KernelType="Gaussian" RenderingBias="Quality" Radius="5"/>
+                                            <BlurEffect KernelType="Gaussian" RenderingBias="Quality" Radius="7"/>
                                         </Ellipse.Effect>
                                     </Ellipse>
                                     <TextBlock x:Name="text_state" Width="20" Height="10" Foreground="#7FFFFFFF" Text="10%" FontSize="8" FontFamily="Arial"/>
