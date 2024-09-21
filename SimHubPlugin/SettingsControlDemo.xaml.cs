@@ -2619,12 +2619,17 @@ namespace User.PluginSdkDemo
                             Plugin._serialPort[pedalIdx].RtsEnable = false;
                             Plugin._serialPort[pedalIdx].DtrEnable = false;
                         }
+                        else
+                        {
+                            // ESP32 S3
+                            Plugin._serialPort[pedalIdx].RtsEnable = false;
+                            Plugin._serialPort[pedalIdx].DtrEnable = true;
+                        }
+                        
 
                         System.Threading.Thread.Sleep(200);
 
-                        // ESP32 S3
-                        Plugin._serialPort[pedalIdx].RtsEnable = false;
-                        Plugin._serialPort[pedalIdx].DtrEnable = true;
+                       
 
                         Plugin.Settings.connect_status[pedalIdx] = 1;
                         // read callback
