@@ -6800,6 +6800,8 @@ namespace User.PluginSdkDemo
                     TextBox_debugOutput.Text = errorMessage;
                 }
             }
+            string MSG_tmp = "Please restart all pedals and bridge after pairing complete, related message will be shown in serial monitor.";
+            System.Windows.MessageBox.Show(MSG_tmp, "Pairing", MessageBoxButton.OK, MessageBoxImage.Warning);
 
 
         }
