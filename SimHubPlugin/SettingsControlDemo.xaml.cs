@@ -6733,6 +6733,76 @@ namespace User.PluginSdkDemo
                 Label_Pedal_interval_trigger.Content = "Action Interval: "+ Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u]+"ms";
             }
         }
+
+        unsafe private void btn_Pairing_Click(object sender, RoutedEventArgs e)
+        {
+            //write to pedal
+            DAP_action_st tmp;
+            tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+            tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+            tmp.payloadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
+            tmp.payloadPedalAction_.system_action_u8 = 4; //1=reset pedal position, 2 =restart esp, 3=enable wifi OTA, 4= pairing
+
+            DAP_action_st* v = &tmp;
+            byte* p = (byte*)v;
+            tmp.payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+            int length = sizeof(DAP_action_st);
+            byte[] newBuffer = new byte[length];
+            newBuffer = Plugin.getBytes_Action(tmp);
+            for (uint pedalIDX = 0; pedalIDX < 3; pedalIDX++)
+            {
+                if (Plugin._serialPort[pedalIDX].IsOpen)
+                {
+                    try
+                    {
+                        // clear inbuffer 
+                        Plugin._serialPort[pedalIDX].DiscardInBuffer();
+
+                        // send query command
+                        Plugin._serialPort[pedalIDX].Write(newBuffer, 0, newBuffer.Length);
+                    }
+                    catch (Exception caughtEx)
+                    {
+                        string errorMessage = caughtEx.Message;
+                        TextBox_debugOutput.Text = errorMessage;
+                    }
+                }
+            }
+
+            //write to bridge
+            DAP_bridge_state_st tmp_2;
+            tmp_2.payLoadHeader_.version = (byte)Constants.pedalConfigPayload_version;           
+            tmp_2.payLoadHeader_.payloadType = (byte)Constants.bridgeStatePayloadType;
+            tmp_2.payLoadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
+            tmp_2.payloadBridgeState_.Pedal_RSSI = 0; 
+            tmp_2.payloadBridgeState_.Pedal_availability_0 = 0;
+            tmp_2.payloadBridgeState_.Pedal_availability_1 = 0;
+            tmp_2.payloadBridgeState_.Pedal_availability_2 = 0;
+            tmp_2.payloadBridgeState_.Bridge_action = 1; //enable pairing
+            DAP_bridge_state_st* v_2 = &tmp_2;
+            byte* p_2 = (byte*)v_2;
+            tmp_2.payloadFooter_.checkSum = Plugin.checksumCalc(p_2, sizeof(payloadHeader) + sizeof(payloadBridgeState));
+            length = sizeof(DAP_bridge_state_st);
+            byte[] newBuffer_2 = new byte[length];
+            newBuffer_2 = Plugin.getBytes_Bridge(tmp_2);
+            if (Plugin.ESPsync_serialPort.IsOpen)
+            {
+                try
+                {
+                    // clear inbuffer 
+                    Plugin.ESPsync_serialPort.DiscardInBuffer();
+                    // send query command
+                    Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
+                }
+                catch (Exception caughtEx)
+                {
+                    string errorMessage = caughtEx.Message;
+                    TextBox_debugOutput.Text = errorMessage;
+                }
+            }
+
+
+        }
     }
     
 }

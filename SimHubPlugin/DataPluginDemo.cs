@@ -96,6 +96,7 @@ public struct payloadBridgeState
     public byte Pedal_availability_0;
     public byte Pedal_availability_1;
     public byte Pedal_availability_2;
+    public byte Bridge_action;//0=none, 1=enable pairing
 };
 
 public struct payloadPedalConfig
@@ -433,7 +434,18 @@ namespace User.PluginSdkDemo
 
             return myBuffer;
         }
+        public byte[] getBytes_Bridge(DAP_bridge_state_st aux)
+        {
+            int length = Marshal.SizeOf(aux);
+            IntPtr ptr = Marshal.AllocHGlobal(length);
+            byte[] myBuffer = new byte[length];
 
+            Marshal.StructureToPtr(aux, ptr, true);
+            Marshal.Copy(ptr, myBuffer, 0, length);
+            Marshal.FreeHGlobal(ptr);
+
+            return myBuffer;
+        }
         unsafe public void DataUpdate(PluginManager pluginManager, ref GameData data)
         {
 			
