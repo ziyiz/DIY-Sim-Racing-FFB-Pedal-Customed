@@ -925,14 +925,18 @@
                                 <Label Content="Log pedal states" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                             </StackPanel>
                             <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
+                                <styles:SHToggleButton x:Name="CheckBox_USINGESP32S3" Content="" Checked="CheckBox_USINGESP32S3_Checked" Unchecked="CheckBox_USINGESP32S3_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                <Label Content="ESP32S3 ControlBoard" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
                                 <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                 <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                             </StackPanel>
-                            <styles:SHButtonPrimary x:Name="btn_rudder" Click="btn_rudder_Click" Width="160" Height="28" Content="Rudder" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="28" Content="Reset pedal position" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="28" Content="System identification" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" ToolTip="Reset the config to default" />
+                            <styles:SHButtonPrimary x:Name="btn_rudder" Click="btn_rudder_Click" Width="160" Height="25" Content="Rudder" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
+                            <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="25" Content="Reset pedal position" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
+                            <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" MinHeight="20" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                            <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="25" Content="System identification" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                            <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" ToolTip="Reset the config to default" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                         </StackPanel>
                     </Border>
                 </TabItem>
@@ -968,10 +972,10 @@
                                 </StackPanel>
                                 <Slider x:Name="Slider_Pedal_interval_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="160" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_Pedal_interval_trigger_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True" Minimum="20" ToolTip="Adjust for the serial write interval, when meet I/O error, increase the interval"/>
                             </StackPanel>
-                            <styles:SHButtonPrimary x:Name="btn_Bridge_restart" Click="btn_Bridge_restart_Click" Width="160" Content="Bridge Restart" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="btn_Pairing" Click="btn_Pairing_Click" Width="160" Content="Enable Pairing Mode" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="btn_PedalID_Reset" Click="btn_PedalID_Reset_Click" Width="160" Content="Reset Pedal ID" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" />
-                            <styles:SHButtonPrimary x:Name="btn_OTA_enable" Click="btn_OTA_enable_Click" Width="160" Content="Enable FIrmware OTA" Height="28" Margin="0,2,0,0" HorizontalAlignment="Center" />
+                            <styles:SHButtonPrimary x:Name="btn_Bridge_restart" Click="btn_Bridge_restart_Click" Width="160" Content="Bridge Restart" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                            <styles:SHButtonPrimary x:Name="btn_Pairing" Click="btn_Pairing_Click" Width="160" Content="Enable Pairing Mode" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                            <styles:SHButtonPrimary x:Name="btn_PedalID_Reset" Click="btn_PedalID_Reset_Click" Width="160" Content="Reset Pedal ID" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
+                            <styles:SHButtonPrimary x:Name="btn_OTA_enable" Click="btn_OTA_enable_Click" Width="160" Content="Enable FIrmware OTA" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                         </StackPanel>
                     </Border>
                 </TabItem>

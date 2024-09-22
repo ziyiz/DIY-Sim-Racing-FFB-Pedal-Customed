@@ -13,7 +13,6 @@ C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Rel
 C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\User.PluginSdkDemo.Properties.Resources.resources
 C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\User.PluginSdkDemo.csproj.GenerateResource.cache
 C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\User.PluginSdkDemo.csproj.CoreCompileInputs.cache
-C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\User.PluginSdkDemo.csproj.CopyComplete
 C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\DiyActivePedal.dll
 C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\DiyActivePedal.pdb
 C:\Program Files (x86)\SimHub\DiyActivePedal.dll.config
@@ -31,3 +30,4 @@ C:\Users\chris\OneDrive\Desktop\GIT\DIY-Sim-Racing-Active-Pedal\SimHubPlugin\obj
 C:\Users\chris\OneDrive\Desktop\GIT\DIY-Sim-Racing-Active-Pedal\SimHubPlugin\obj\Release\User.PluginSdkDemo.csproj.CopyComplete
 C:\Users\chris\OneDrive\Desktop\GIT\DIY-Sim-Racing-Active-Pedal\SimHubPlugin\obj\Release\DiyActivePedal.dll
 C:\Users\chris\OneDrive\Desktop\GIT\DIY-Sim-Racing-Active-Pedal\SimHubPlugin\obj\Release\DiyActivePedal.pdb
+C:\Users\tcfshcrw\Documents\GitHub\DIY-Sim-Racing-FFB-Pedal\SimHubPlugin\obj\Release\User.Plu.EBCE15C6.Up2Date

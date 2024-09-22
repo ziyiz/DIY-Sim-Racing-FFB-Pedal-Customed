@@ -1220,6 +1220,14 @@ namespace User.PluginSdkDemo
                 {
                     CheckBox_using_CDC_for_bridge.IsChecked = false;
                 }
+                if (Plugin.Settings.USING_ESP32S3[indexOfSelectedPedal_u] == true)
+                {
+                    CheckBox_USINGESP32S3.IsChecked = true;
+                }
+                else
+                {
+                    CheckBox_USINGESP32S3.IsChecked = false;
+                }
 
                 
                 
@@ -2619,12 +2627,15 @@ namespace User.PluginSdkDemo
                             Plugin._serialPort[pedalIdx].RtsEnable = false;
                             Plugin._serialPort[pedalIdx].DtrEnable = false;
                         }
-                        else
+                        //
+
+                        if (Plugin.Settings.USING_ESP32S3[pedalIdx] == true)
                         {
                             // ESP32 S3
                             Plugin._serialPort[pedalIdx].RtsEnable = false;
                             Plugin._serialPort[pedalIdx].DtrEnable = true;
                         }
+                        
                         
 
                         System.Threading.Thread.Sleep(200);
@@ -6804,6 +6815,22 @@ namespace User.PluginSdkDemo
             System.Windows.MessageBox.Show(MSG_tmp, "Pairing", MessageBoxButton.OK, MessageBoxImage.Warning);
 
 
+        }
+
+        private void CheckBox_USINGESP32S3_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.USING_ESP32S3[indexOfSelectedPedal_u] = true;
+            }
+        }
+
+        private void CheckBox_USINGESP32S3_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.USING_ESP32S3[indexOfSelectedPedal_u] = false;
+            }
         }
     }
     
