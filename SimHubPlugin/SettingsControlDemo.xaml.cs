@@ -6500,8 +6500,24 @@ namespace User.PluginSdkDemo
                                 byte[] destinationArray_sub = new byte[destBuffLength];
                                 Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
                                 string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
+                                if (resultString.Length > 3)
+                                {
+                                    string str_chk = resultString.Substring(0, 3);
+                                    if (String.Equals(str_chk, "[L]"))
+                                    {
+                                        string temp = resultString.Substring(3, resultString.Length - 3);
+                                        //TextBox_serialMonitor.Text += str_chk + "\n";
+                                        TextBox_serialMonitor.Text += temp + "\n";
+                                        SimHub.Logging.Current.Info(temp);
+                                    }
+                                    if ( String.Equals(str_chk, "E ("))
+                                    {
+                                        TextBox_serialMonitor.Text += resultString + "\n";
+                                        SimHub.Logging.Current.Info(resultString);
+                                    }
+                                }
 
-                                TextBox_serialMonitor.Text += resultString + "\n";
+                                //TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor.ScrollToEnd();
 
                             }
@@ -6557,6 +6573,7 @@ namespace User.PluginSdkDemo
 
                 string errorMessage = caughtEx.Message;
                 TextBox_debug_count.Text += errorMessage;
+                SimHub.Logging.Current.Error(errorMessage);
             }
       
         }
