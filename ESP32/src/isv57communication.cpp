@@ -52,7 +52,7 @@ void isv57communication::sendTunedServoParameters() {
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 0); // deactivate auto gain
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 10); // machine stiffness
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+4, 80); // ratio of inertia
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+8, 1600); // microsteps
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+8, STEPS_PER_MOTOR_REVOLUTION); // microsteps
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+9, 1); // 1st numerator 
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+10, 1); // & denominator
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+13, 500); // 1st torque limit
@@ -116,6 +116,7 @@ void isv57communication::sendTunedServoParameters() {
   {
     Serial.println("Servo registered in NVM have been updated! Please power cycle the servo and the ESP!");
     modbus.holdingRegisterWrite(slaveId, 0x019A, 0x5555); // store the settings to servos NVM
+    isv57_update_parameter_b=true;
     delay(2000);
   }
 
@@ -161,6 +162,11 @@ bool isv57communication::checkCommunication()
 void isv57communication::setZeroPos()
 {
   zeroPos = servo_pos_given_p;
+}
+
+void isv57communication::applyOfsetToZeroPos(int16_t givenPosOffset_i16)
+{
+  zeroPos += givenPosOffset_i16;
 }
 
 int16_t isv57communication::getZeroPos()
@@ -228,3 +234,54 @@ bool isv57communication::clearServoAlarms() {
     
   return 1;
 }
+
+
+bool isv57communication::readCurrentAlarm() {
+  int bytesReceived_i = modbus.requestFrom(slaveId, 0x03, 0x01F2, 1);
+  if(bytesReceived_i == (2))
+  {
+    modbus.RxRaw(raw,  len);
+    for (uint8_t regIdx = 0; regIdx < 1; regIdx++)
+    { 
+      uint16_t tmp = modbus.uint16(regIdx) && 0x0FFF; // mask the first half byte as it does not contain info
+      Serial.print("Current iSV57 alarm: ");
+      Serial.println( tmp, HEX);
+    }
+  }
+}
+
+
+bool isv57communication::readAlarmHistory() {
+
+// 
+Serial.println("\niSV57 alarm history: ");
+for (uint8_t idx=0; idx < 12; idx++)
+{
+  // example signal, read the 9th alarm
+  // 0x3f, 0x03, 0x12, 0x09, 0x00, 0x01, 0x55, 0xAE
+
+  // read the four registers simultaneously
+  int bytesReceived_i = modbus.requestFrom(slaveId, 0x03, 0x1200 + idx, 1);
+  if(bytesReceived_i == (2))
+  {
+    modbus.RxRaw(raw,  len);
+    for (uint8_t regIdx = 0; regIdx < 1; regIdx++)
+    { 
+      uint16_t tmp = modbus.uint16(regIdx) & 0x0FFF; // mask the first half byte as it does not contain info
+
+      if (tmp > 0)
+      {
+        Serial.print("Alarm Idx: ");
+        Serial.print(idx);
+        Serial.print(",    Alarm Code: ");
+        Serial.println( tmp, HEX);
+      }
+      
+    }
+  }
+}
+  Serial.print("\n");
+    
+  return 1;
+}
+

@@ -1,7 +1,7 @@
 [![Arduino Build](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml/badge.svg?branch=main)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/arduino.yml)
 [![Doxygen Action](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml/badge.svg)](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/actions/workflows/main.yml)
-
-
+ 
+ 
 
 # DIY-Sim-Racing-FFB-Pedal
 
@@ -17,6 +17,12 @@ This work is licensed under a
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+The reason for that license selection is that at some point in time, individuals start
+- to steal the sources and binaries and sell them on the internet
+- mass production of FFB pedals in their living rooms to make money by taking parts from this project and Simucubes design files.
+  
+All that, without contributing anything to this project.
 
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
@@ -105,7 +111,7 @@ A Doxygen report of the sources can be found [here](https://chrgri.github.io/DIY
 The drivers can be found here [here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
 
 ### Firmware generation and flashing
-Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed e.g. via ESP32 webflasher.
+Firmware can be built and flashed via VS Code. Prebuilt binaries can be flashed e.g. via ESP32 webflasher of the [flashing tool]([https://www.espressif.com/sites/default/files/tools/flash_download_tool_3.9.3.zip](https://www.espressif.com/en/support/download/other-tools)).
 
 #### Built from source (via VS Code)
 See this [guide](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/VScode-IDE-setup).

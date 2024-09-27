@@ -200,7 +200,7 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
 
 
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float d_phi_d_x, float d_x_hor_d_phi) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float d_phi_d_x, float d_x_hor_d_phi) {
   // see https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/Movement-control-strategies#mpc
 
 
@@ -249,12 +249,12 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float gradient_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, false);
 
     // apply effect force offset
-    loadCellTargetKg -=absForceOffset_fl32;
+    loadCellTargetKg -= absForceOffset_fl32;
 
     // how many mm movement to order if 1kg of error force is detected
     // this can be tuned for responsiveness vs oscillation
     float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
-    float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
+    float steps_per_motor_rev = (float)STEPS_PER_MOTOR_REVOLUTION;
 
     // foot spring stiffness
     float d_f_d_phi = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;

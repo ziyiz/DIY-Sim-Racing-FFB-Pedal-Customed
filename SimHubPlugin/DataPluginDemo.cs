@@ -1,6 +1,7 @@
 ﻿using GameReaderCommon;
 //using log4net.Plugin;
 using SimHub.Plugins;
+using SimHub.Plugins.DataPlugins.RGBMatrixDriver.Settings;
 using SimHub.Plugins.DataPlugins.ShakeItV3.UI.Effects;
 using SimHub.Plugins.OutputPlugins.Dash.GLCDTemplating;
 using System;
@@ -24,7 +25,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 138;
+    public const uint pedalConfigPayload_version = 141;
 
 
     // pyload types
@@ -32,6 +33,7 @@ static class Constants
     public const uint pedalActionPayload_type = 110;
     public const uint pedalStateBasicPayload_type = 120;
     public const uint pedalStateExtendedPayload_type = 130;
+    public const uint bridgeStatePayloadType = 210;
 }
 
 
@@ -45,13 +47,14 @@ public struct payloadHeader
     public byte version;
 
     public byte storeToEeprom;
+    public byte PedalTag;
 }
 
 
 public struct payloadPedalAction
 {
     public byte triggerAbs_u8;
-    public byte resetPedalPos_u8;
+    public byte system_action_u8; //1=reset position, 2=restart ESP
     public byte startSystemIdentification_u8;
     public byte returnPedalConfig_u8;
     public byte RPM_u8;
@@ -69,6 +72,7 @@ public struct payloadPedalState_Basic
     public UInt16 pedalPosition_u16;
     public UInt16 pedalForce_u16;
     public UInt16 joystickOutput_u16;
+    public byte error_code_u8;
 
 };
 
@@ -86,6 +90,15 @@ public struct payloadPedalState_Extended
     public Int16 servo_current_percent_i16;
 };
 
+public struct payloadBridgeState
+{
+    public byte Pedal_RSSI;
+    public byte Pedal_availability_0;
+    public byte Pedal_availability_1;
+    public byte Pedal_availability_2;
+    public byte Bridge_action;//0=none, 1=enable pairing
+};
+
 public struct payloadPedalConfig
 {
     // configure pedal start and endpoint
@@ -94,8 +107,8 @@ public struct payloadPedalConfig
     public byte pedalEndPosition;
 
     // configure pedal forces
-    public byte maxForce;
-    public byte preloadForce;
+    public float maxForce;
+    public float preloadForce;
 
     // design force vs travel curve
     // In percent
@@ -204,7 +217,7 @@ public struct payloadPedalConfig
     public byte pedal_type;
 
     // OTA update flag
-    public byte OTA_flag;
+    //public byte OTA_flag;
 
     // OTA update flag
     public byte enableReboot_u8;
@@ -248,6 +261,12 @@ public struct DAP_state_extended_st
     public payloadFooter payloadFooter_;
 }
 
+public struct DAP_bridge_state_st
+{
+    public payloadHeader payLoadHeader_;
+    public payloadBridgeState payloadBridgeState_;
+    public payloadFooter payloadFooter_;
+};
 
 namespace User.PluginSdkDemo
 {
@@ -292,10 +311,17 @@ namespace User.PluginSdkDemo
         public bool Rudder_brake_enable_flag = false;
         public bool Rudder_brake_status = false;
         public byte pedal_state_in_ratio = 0;
+        public bool Sync_esp_connection_flag=false;
+        public byte PedalErrorCode = 0;
+        public byte PedalErrorIndex = 0;
+        public byte[] random_pedal_action_interval=new byte[3] { 50,51,53};
+
+
+
+        //effect trigger timer
+        DateTime[] Action_currentTime = new DateTime[3];
+        DateTime[] Action_lastTime = new DateTime[3];
         
-
-
-
 
         // ABS trigger timer
         DateTime absTrigger_currentTime = DateTime.Now;
@@ -322,9 +348,11 @@ namespace User.PluginSdkDemo
 
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
-        public SerialPort[] _serialPort = new SerialPort[3] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
+        public SerialPort[] _serialPort = new SerialPort[4] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
             new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
-            new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+            new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One)};
+
+        public SerialPort ESPsync_serialPort = new SerialPort("COM7", 3000000, Parity.None, 8, StopBits.One);
 
         //for (byte pedalIdx_lcl = 0; pedalIdx_lcl< 3; pedalIdx_lcl++)
         //{
@@ -406,7 +434,18 @@ namespace User.PluginSdkDemo
 
             return myBuffer;
         }
+        public byte[] getBytes_Bridge(DAP_bridge_state_st aux)
+        {
+            int length = Marshal.SizeOf(aux);
+            IntPtr ptr = Marshal.AllocHGlobal(length);
+            byte[] myBuffer = new byte[length];
 
+            Marshal.StructureToPtr(aux, ptr, true);
+            Marshal.Copy(ptr, myBuffer, 0, length);
+            Marshal.FreeHGlobal(ptr);
+
+            return myBuffer;
+        }
         unsafe public void DataUpdate(PluginManager pluginManager, ref GameData data)
         {
 			
@@ -529,7 +568,7 @@ namespace User.PluginSdkDemo
             absTrigger_currentTime = DateTime.Now;
             TimeSpan diff = absTrigger_currentTime - absTrigger_lastTime;
             int millisceonds = (int)diff.TotalMilliseconds;
-            if (millisceonds <= 50)
+            if (millisceonds <= 10)
             {
                 sendAbsSignal_local_b = false;
                 sendTcSignal_local_b = false;
@@ -551,12 +590,13 @@ namespace User.PluginSdkDemo
                 // Send ABS trigger signal via serial
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-                    if (_serialPort[pedalIdx].IsOpen)
-                    {
+                    
+                    
 
                         DAP_action_st tmp;
                         tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                        tmp.payloadHeader_.PedalTag = (byte)pedalIdx;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
                         tmp.payloadPedalAction_.RPM_u8 = (Byte)rpm_last_value;
                         
@@ -579,7 +619,7 @@ namespace User.PluginSdkDemo
                         if (Settings.RPM_enable_flag[pedalIdx] == 1)
                         {
 
-                            if (Math.Abs(RPM_value - rpm_last_value) > 10)
+                            if (Math.Abs(RPM_value - rpm_last_value) > 3)
                             {
                                 tmp.payloadPedalAction_.RPM_u8 = (Byte)RPM_value;
                                 update_flag = true;
@@ -673,6 +713,7 @@ namespace User.PluginSdkDemo
                                 }
                             }
                         }
+                        //custom effcts
                         if (Settings.CV1_enable_flag[pedalIdx] == true)
                         {
                             if (pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]) != null)
@@ -705,7 +746,7 @@ namespace User.PluginSdkDemo
 
                         if (pedalIdx == 1)
                         {
-                            if (sendAbsSignal_local_b & Settings.ABS_enable_flag[pedalIdx] ==1)
+                            if (sendAbsSignal_local_b && Settings.ABS_enable_flag[pedalIdx] ==1)
                             {
                                 //_serialPort[1].Write("2");
 
@@ -717,7 +758,7 @@ namespace User.PluginSdkDemo
                         }
                         if (pedalIdx == 2)
                         {
-                            if (sendTcSignal_local_b & Settings.ABS_enable_flag[pedalIdx] == 1)
+                            if (sendTcSignal_local_b && Settings.ABS_enable_flag[pedalIdx] == 1)
                             {
                                 // compute checksum
 
@@ -726,10 +767,30 @@ namespace User.PluginSdkDemo
 
                             }
                         }
-
-                        if (update_flag)
+                    // check the update interval
+                    if (update_flag)
+                    {
+                        Action_currentTime[pedalIdx] = DateTime.Now;
+                        TimeSpan diff_action = Action_currentTime[pedalIdx] - Action_lastTime[pedalIdx];
+                        int millisceonds_action = (int)diff_action.TotalMilliseconds;
+                        if (millisceonds_action <= Settings.Pedal_action_interval[pedalIdx])
                         {
-                            DAP_action_st* v = &tmp;
+                            update_flag = false;
+                        }
+                        else
+                        {
+                            Action_lastTime[pedalIdx] = DateTime.Now;
+                            
+                        }
+
+                        
+                    }
+
+
+                    if (update_flag)
+                    {
+
+                        DAP_action_st* v = &tmp;
                             byte* p = (byte*)v;
                             tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
 
@@ -738,16 +799,33 @@ namespace User.PluginSdkDemo
                             byte[] newBuffer = new byte[length];
                             newBuffer = getBytes_Action(tmp);
 
+                            if (Settings.Pedal_ESPNow_Sync_flag[pedalIdx])
+                            {
+                                if (ESPsync_serialPort.IsOpen)
+                                {
+                                    ESPsync_serialPort.DiscardInBuffer();
+                                    ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                                    System.Threading.Thread.Sleep(7);
+                                }
 
-                            // clear inbuffer 
-                            _serialPort[pedalIdx].DiscardInBuffer();
+                            }
+                            else
+                            {
+                                if (_serialPort[pedalIdx].IsOpen)
+                                {
+                                    // clear inbuffer 
+                                    _serialPort[pedalIdx].DiscardInBuffer();
 
-                            // send query command
-                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                                    // send query command
+                                    _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                                }
+
+                            }
 
 
-                        }
+
                     }
+                    
                 }
                 
             }
@@ -756,47 +834,64 @@ namespace User.PluginSdkDemo
                 if (game_running_index == 1)
                 {
                     game_running_index = 0;
-                    clear_action = true;
-                    /*
-                    DAP_action_st tmp;
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                    tmp.payloadPedalAction_.RPM_u8 = 0;
-                    tmp.payloadPedalAction_.G_value = 128;
-                    tmp.payloadPedalAction_.WS_u8 = 0;
-                    tmp.payloadPedalAction_.impact_value = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                    tmp.payloadPedalAction_.Rudder_action = 0;
-                    rpm_last_value = 0;
-                    Road_impact_last = 0;
-                    debug_value = 0;
+                    clear_action = true;   
+                }
+            }
+
+
+
+            // Send ABS test signal if requested
+            if (sendAbsSignal)
+            {
+                sendAbsSignal_local_b = true;
+                sendTcSignal_local_b = true;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                tmp.payloadPedalAction_.triggerAbs_u8 = 1;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                tmp.payloadPedalAction_.Rudder_action = 0;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
+
+                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                {
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
-                    for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
                     {
-                        if (_serialPort[pedalIdx].IsOpen)
+                        if (ESPsync_serialPort.IsOpen) 
                         {
-                            // clear inbuffer 
-                            _serialPort[pedalIdx].DiscardInBuffer();
-
-                            // send query command
-                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                            ESPsync_serialPort.DiscardInBuffer();  
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(30);
                         }
                     }
-                    */
-                    
+                    else
+                    {
+                        if (_serialPort[PIDX].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[PIDX].DiscardInBuffer();
+
+                            // send query command
+                            _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    }
                 }
+                    
+
             }
-            
-
-
-
             if (Rudder_enable_flag)
             {
                 if (Rudder_status == false)
@@ -807,25 +902,40 @@ namespace User.PluginSdkDemo
                 {
                     Rudder_status = false;
                 }
-                    DAP_action_st tmp;
-                    tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-                    tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
-                    tmp.payloadPedalAction_.triggerAbs_u8 = 1;
-                    tmp.payloadPedalAction_.RPM_u8 = 0;
-                    tmp.payloadPedalAction_.G_value = 128;
-                    tmp.payloadPedalAction_.WS_u8 = 0;
-                    tmp.payloadPedalAction_.impact_value = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_1 = 0;
-                    tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                    tmp.payloadPedalAction_.Rudder_action = 1;
-                    tmp.payloadPedalAction_.Rudder_brake_action = 0;
-                DAP_action_st* v = &tmp;
+                DAP_action_st tmp;
+                tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;                    
+                tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                tmp.payloadPedalAction_.RPM_u8 = 0;
+                tmp.payloadPedalAction_.G_value = 128;
+                tmp.payloadPedalAction_.WS_u8 = 0;
+                tmp.payloadPedalAction_.impact_value = 0;
+                tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                tmp.payloadPedalAction_.Rudder_action = 1;
+                tmp.payloadPedalAction_.Rudder_brake_action = 0;
+
+                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                {
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
+                    DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
                     tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
                     int length = sizeof(DAP_action_st);
                     byte[] newBuffer = new byte[length];
                     newBuffer = getBytes_Action(tmp);
-                    for (uint PIDX = 1; PIDX < 3; PIDX++)
+                    
+                    
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
+                    {
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(5);
+                        }
+                    }
+                    else
                     {
                         if (_serialPort[PIDX].IsOpen)
                         {
@@ -835,9 +945,13 @@ namespace User.PluginSdkDemo
                             // send query command
                             _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
                         }
-                        Rudder_enable_flag = false;
-                        System.Threading.Thread.Sleep(50);
+
                     }
+
+                    
+                    Rudder_enable_flag = false;
+                    System.Threading.Thread.Sleep(50);
+                }
                 SystemSounds.Beep.Play();
 
             }
@@ -868,21 +982,36 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                 tmp.payloadPedalAction_.Rudder_action = 0;
                 tmp.payloadPedalAction_.Rudder_brake_action = 1;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
+
                 for (uint PIDX = 1; PIDX < 3; PIDX++)
                 {
-                    if (_serialPort[PIDX].IsOpen)
+                    tmp.payloadHeader_.PedalTag = (byte)PIDX;
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    if (Settings.Pedal_ESPNow_Sync_flag[PIDX])
                     {
-                        // clear inbuffer 
-                        _serialPort[PIDX].DiscardInBuffer();
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(10);
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort[PIDX].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[PIDX].DiscardInBuffer();
 
-                        // send query command
-                        _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                            // send query command
+                            _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
+                        }
+
                     }
                     Rudder_brake_enable_flag = false;
                     System.Threading.Thread.Sleep(50);
@@ -909,21 +1038,36 @@ namespace User.PluginSdkDemo
                 rpm_last_value = 0;
                 Road_impact_last = 0;
                 debug_value = 0;
-                DAP_action_st* v = &tmp;
-                byte* p = (byte*)v;
-                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
-                int length = sizeof(DAP_action_st);
-                byte[] newBuffer = new byte[length];
-                newBuffer = getBytes_Action(tmp);
+
                 for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
                 {
-                    if (_serialPort[pedalIdx].IsOpen)
+                    tmp.payloadHeader_.PedalTag = (byte)pedalIdx;
+                    DAP_action_st* v = &tmp;
+                    byte* p = (byte*)v;
+                    tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                    int length = sizeof(DAP_action_st);
+                    byte[] newBuffer = new byte[length];
+                    newBuffer = getBytes_Action(tmp);
+                    if (Settings.Pedal_ESPNow_Sync_flag[pedalIdx])
                     {
-                        // clear inbuffer 
-                        _serialPort[pedalIdx].DiscardInBuffer();
+                        if (ESPsync_serialPort.IsOpen)
+                        {
+                            ESPsync_serialPort.DiscardInBuffer();
+                            ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                            System.Threading.Thread.Sleep(10);
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort[pedalIdx].IsOpen)
+                        {
+                            // clear inbuffer 
+                            _serialPort[pedalIdx].DiscardInBuffer();
 
-                        // send query command
-                        _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                            // send query command
+                            _serialPort[pedalIdx].Write(newBuffer, 0, newBuffer.Length);
+                        }
+
                     }
                 }
                 clear_action = false;
@@ -945,8 +1089,8 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("rudder_status", this.GetType(), Rudder_status);
             pluginManager.SetPropertyValue("rudder_brake_status", this.GetType(), Rudder_brake_status);
             pluginManager.SetPropertyValue("pedal_position", this.GetType(), pedal_state_in_ratio);
-
-
+            pluginManager.SetPropertyValue("PedalErrorIndex", this.GetType(), PedalErrorIndex);
+            pluginManager.SetPropertyValue("PedalErrorCode", this.GetType(), PedalErrorCode);
 
 
         }
@@ -1354,6 +1498,18 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("rudder_status", this.GetType(), Rudder_status);
             pluginManager.AddProperty("rudder_brake_status", this.GetType(), Rudder_brake_status);
             pluginManager.AddProperty("pedal_position", this.GetType(), pedal_state_in_ratio);
+            pluginManager.AddProperty("PedalErrorIndex", this.GetType(), PedalErrorIndex);
+            pluginManager.AddProperty("PedalErrorCode", this.GetType(), PedalErrorCode);
+
+            for (uint pedali=0; pedali < 3; pedali++)
+            {
+                Action_currentTime[pedali] = new DateTime();
+                Action_currentTime[pedali]=DateTime.Now;
+                Action_lastTime[pedali] = new DateTime();
+                Action_lastTime[pedali] = DateTime.Now;
+            }
+            
+
             // Declare an event
             //this.AddEvent("SpeedWarning");
 
@@ -1802,7 +1958,7 @@ namespace User.PluginSdkDemo
 
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
-            dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
+            //dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
             dap_config_initial_st.payloadPedalConfig_.enableReboot_u8 = 1;
 
 

@@ -98,7 +98,7 @@ void DAP_config_st::initialiseDefaults() {
 
   payLoadPedalConfig_.invertMotorDirection_u8 = 0;
   payLoadPedalConfig_.pedal_type=4;
-  payLoadPedalConfig_.OTA_flag=0;
+  //payLoadPedalConfig_.OTA_flag=0;
   payLoadPedalConfig_.enableReboot_u8=1;
   //payLoadPedalConfig_.Joystick_ESPsync_to_ESP=0;
 }
@@ -166,7 +166,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   absFrequency = ((float)config_st.payLoadPedalConfig_.absFrequency);
   absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg or percent
 
-  dampingPress = ((float)config_st.payLoadPedalConfig_.dampingPress) / 400.0f;
+  dampingPress = ((float)config_st.payLoadPedalConfig_.dampingPress) * 0.00015f;
   RPM_max_freq = ((float)config_st.payLoadPedalConfig_.RPM_max_freq);
   RPM_min_freq = ((float)config_st.payLoadPedalConfig_.RPM_min_freq);
   RPM_AMP = ((float)config_st.payLoadPedalConfig_.RPM_AMP) / 100.0f;

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Windows.Media.Converters;
 
 namespace User.PluginSdkDemo
 {
@@ -38,12 +39,19 @@ namespace User.PluginSdkDemo
         public double kinematicDiagram_zeroPos_OY = 20;
         public double kinematicDiagram_zeroPos_scale = 1.5;
         public bool[] RTSDTR_False = new bool[3] { true,true,true};
+        public bool[] USING_ESP32S3 = new bool[3] { true, true, true };
         public bool[] CV1_enable_flag = new bool[3] { false,false, false };
         public int[] CV1_trigger = new int[3] { 0, 0, 0 };
         public string[] CV1_bindings = new string[3] { "","",""};
         public bool[] CV2_enable_flag = new bool[3] { false, false, false };
         public int[] CV2_trigger = new int[3] { 0, 0, 0 };
         public string[] CV2_bindings = new string[3] { "", "", "" };
+        public string ESPNow_port = "";
+        public bool[] Pedal_ESPNow_Sync_flag = new bool[3] { false, false, false };
+        public bool Pedal_ESPNow_auto_connect_flag = false;
+        public bool Serial_auto_clean = false; //clean serial monitor
+        public bool Using_CDC_bridge = false;
+        public byte[] Pedal_action_interval = new byte[3] { 50, 51, 53 };
 
     }
         
