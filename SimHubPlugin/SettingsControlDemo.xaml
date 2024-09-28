@@ -603,8 +603,7 @@
                                         </TextBlock.RenderTransform>
                                     </TextBlock>
                                     <!-- serial port selection -->
-                                    <TextBlock x:Name="Serial_port_text" Text="Serial port selection:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0"  Grid.Row="2" Grid.Column="1" Width="180" Height="15" FontSize="10" FontFamily="Arial" />
-
+                                   
                                     <Polyline x:Name="Polyline_BrakeForceCurve"
                                         Stroke="{DynamicResource AccentColorBrush}"
                                         Height="300" Width="400"

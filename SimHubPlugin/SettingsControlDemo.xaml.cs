@@ -116,6 +116,7 @@ namespace User.PluginSdkDemo
         public byte Bridge_RSSI = 0;
         public bool[] Pedal_wireless_connection_update_b = new bool[3] { false,false,false};
         public int Bridge_baudrate = 3000000;
+        //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
         private double kinematicDiagram_zeroPos_OY = 20;
@@ -962,6 +963,7 @@ namespace User.PluginSdkDemo
                 plugin_version = "Dev.";
             }
             string info_text;
+            info_text = "Waiting...";
             if (Plugin != null)
             {
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
@@ -973,10 +975,6 @@ namespace User.PluginSdkDemo
                     if (Plugin.Settings.auto_connect_flag[indexOfSelectedPedal_u] == 1)
                     {
                         info_text = info_text_connection;
-                    }
-                    else
-                    {
-                        info_text = "Waiting...";
                     }
                 }
                 if (Plugin.ESPsync_serialPort.IsOpen)
@@ -1008,10 +1006,6 @@ namespace User.PluginSdkDemo
                             info_text = info_text_connection;
                         }
                         
-                    }
-                    else
-                    {
-                        info_text = "Waiting...";
                     }
 
                 }
@@ -1490,17 +1484,6 @@ namespace User.PluginSdkDemo
                 checkbox_enable_G_force.IsEnabled = false;
                 checkbox_enable_G_force.IsChecked = false;
                 checkbox_enable_G_force.Content = "G Force Effect Disabled";
-            }
-
-            if (Plugin.Settings.connect_status[indexOfSelectedPedal_u] == 1)
-            {
-                Serial_port_text.Text = "Serial Port connected";
-                Serial_port_text.Visibility = Visibility.Visible;
-
-            }
-            else
-            {
-                Serial_port_text.Visibility = Visibility.Hidden;
             }
 
             if (Plugin.Settings.RPM_effect_type == 0)
@@ -2855,6 +2838,7 @@ namespace User.PluginSdkDemo
             {
                 count_timmer_count = 2;
             }
+            updateTheGuiFromConfig();
 
         }
 
