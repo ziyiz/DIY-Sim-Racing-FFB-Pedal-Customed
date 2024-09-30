@@ -4350,7 +4350,7 @@ namespace User.PluginSdkDemo
            // Label_reverse_LC.Visibility = Visibility.Visible;
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
-            Line_H_HeaderTab.X2 = 1088;
+            Line_H_HeaderTab.X2 = 1128;
 
             Slider_LC_rate.TickFrequency = 1;
             Rangeslider_force_range.TickFrequency = 0.1;
@@ -4380,7 +4380,7 @@ namespace User.PluginSdkDemo
             //Label_reverse_LC.Visibility = Visibility.Hidden;
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
-            Line_H_HeaderTab.X2 = 723;
+            Line_H_HeaderTab.X2 = 763;
 
             Slider_LC_rate.TickFrequency = 10;
             Rangeslider_force_range.TickFrequency = 1;
