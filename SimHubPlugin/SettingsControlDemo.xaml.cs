@@ -1164,11 +1164,11 @@ namespace User.PluginSdkDemo
                 //rudder text
                 if (Plugin.Rudder_status)
                 {
-                    btn_rudder.Content = "Rudder Off";
+                    btn_rudder.Content = "Disable Rudder";
                 }
                 else
                 {
-                    btn_rudder.Content = "Rudder On";
+                    btn_rudder.Content = "Enable Rudder";
                 }
                 if (Plugin.Sync_esp_connection_flag)
                 {
@@ -5840,14 +5840,14 @@ namespace User.PluginSdkDemo
             if (Plugin.Rudder_status)
             {
                 Plugin.Rudder_enable_flag = true;
-                Plugin.Rudder_status = false;
-                btn_rudder.Content = "Rudder On";
+                //Plugin.Rudder_status = false;
+                btn_rudder.Content = "Enable Rudder";
             }
             else
             {
                 Plugin.Rudder_enable_flag = true;
-                Plugin.Rudder_status = true;
-                btn_rudder.Content = "Rudder Off";
+                //Plugin.Rudder_status = true;
+                btn_rudder.Content = "Disable Rudder";
             }
         }
         public void ESPNow_SerialPortSelectionChanged(object sender, SelectionChangedEventArgs e)

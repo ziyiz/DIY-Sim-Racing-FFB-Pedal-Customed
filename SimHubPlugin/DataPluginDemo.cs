@@ -315,6 +315,8 @@ namespace User.PluginSdkDemo
         public byte PedalErrorCode = 0;
         public byte PedalErrorIndex = 0;
         public byte[] random_pedal_action_interval=new byte[3] { 50,51,53};
+        public byte Rudder_RPM_Effect_last_value = 0;
+        public bool MSFS_status = false;
 
 
 
@@ -334,17 +336,10 @@ namespace User.PluginSdkDemo
         //Road effect
         DateTime RoadTrigger_currentTime = DateTime.Now;
         DateTime RoadTrigger_lastTime = DateTime.Now;
+        //Rudder update
+        DateTime Rudder_Action_currentTime = DateTime.Now;
+        DateTime Rudder_Action_lastTime = DateTime.Now;
 
-        //// payload revisiom
-        //public uint pedalConfigPayload_version = 110;
-
-        //// pyload types
-        //public uint pedalConfigPayload_type = 100;
-        //public uint pedalActionPayload_type = 110;
-
-        //public SettingsControlDemo settings { get; }
-
-        //SettingsControlDemo wpfHandler;
 
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
@@ -935,24 +930,86 @@ namespace User.PluginSdkDemo
                             System.Threading.Thread.Sleep(5);
                         }
                     }
-                    else
-                    {
-                        if (_serialPort[PIDX].IsOpen)
-                        {
-                            // clear inbuffer 
-                            _serialPort[PIDX].DiscardInBuffer();
-
-                            // send query command
-                            _serialPort[PIDX].Write(newBuffer, 0, newBuffer.Length);
-                        }
-
-                    }
 
                     
                     Rudder_enable_flag = false;
                     System.Threading.Thread.Sleep(50);
                 }
                 SystemSounds.Beep.Play();
+
+            }
+            //Rudder effect runtine
+            if (Rudder_status && Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.IS_MSFS_PLUGIN_INSTALLED"))==1)
+            {
+                if (Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.FlightData.IS_MSFS_RUNNING")) == 1)
+                {
+                    MSFS_status = true;
+
+                }
+                else
+                {
+                    if (MSFS_status)
+                    {
+                        clear_action = true;
+                        MSFS_status = false;
+                    }
+                }
+                if (MSFS_status)
+                {
+                    Rudder_Action_currentTime = DateTime.Now;
+                    TimeSpan diff_action = Rudder_Action_currentTime - Rudder_Action_lastTime;
+                    int millisceonds_action = (int)diff_action.TotalMilliseconds;
+                    if (millisceonds_action > 30)
+                    {
+                        bool Rudder_Effect_update_b = false;
+                        DAP_action_st tmp;
+                        tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+                        tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
+                        tmp.payloadPedalAction_.triggerAbs_u8 = 0;
+                        tmp.payloadPedalAction_.RPM_u8 = 0;
+                        tmp.payloadPedalAction_.G_value = 128;
+                        tmp.payloadPedalAction_.WS_u8 = 0;
+                        tmp.payloadPedalAction_.impact_value = 0;
+                        tmp.payloadPedalAction_.Trigger_CV_1 = 0;
+                        tmp.payloadPedalAction_.Trigger_CV_2 = 0;
+                        tmp.payloadPedalAction_.Rudder_action = 0;
+                        tmp.payloadPedalAction_.Rudder_brake_action = 0;
+                        //action here
+
+                        //RPM effect
+
+                        byte Rudder_RPM_value = Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.FlightData.GENERAL_ENG_PCT_MAX_RPM_1"));
+                        if (Math.Abs(Rudder_RPM_value - Rudder_RPM_Effect_last_value) > 3)
+                        {
+                            tmp.payloadPedalAction_.RPM_u8 = Rudder_RPM_value;
+                            Rudder_Effect_update_b = true;
+                            Rudder_Action_lastTime = DateTime.Now;
+                            Rudder_RPM_Effect_last_value = Rudder_RPM_value;
+                        }
+                        //Write to Pedal
+                        if (Rudder_Effect_update_b)
+                        {
+                            for (uint PIDX = 1; PIDX < 3; PIDX++)
+                            {
+                                tmp.payloadHeader_.PedalTag = (byte)PIDX;
+                                DAP_action_st* v = &tmp;
+                                byte* p = (byte*)v;
+                                tmp.payloadFooter_.checkSum = checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalAction));
+                                int length = sizeof(DAP_action_st);
+                                byte[] newBuffer = new byte[length];
+                                newBuffer = getBytes_Action(tmp);
+                                if (ESPsync_serialPort.IsOpen)
+                                {
+                                    ESPsync_serialPort.DiscardInBuffer();
+                                    ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+                                    System.Threading.Thread.Sleep(7);
+                                }
+                            }
+                            Rudder_Effect_update_b = false;
+                        }
+                    }
+                }
+                
 
             }
 

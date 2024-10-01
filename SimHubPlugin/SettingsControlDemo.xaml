@@ -378,7 +378,7 @@
                                 <Line x:Name="Line_H_HeaderTab" X1="2" Y1="3" X2="763" Y2="3" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
                             </Canvas>
                             <StackPanel Height="900" Width="1180" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="4">
-                                <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="500" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Height="40" Margin="3,0,0,0" RenderTransformOrigin="0,0">
+                                <TabControl  x:Name="MyTab" SelectionChanged="TabControl_SelectionChanged" Width="500" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Height="40" Margin="3,0,0,0" RenderTransformOrigin="0,0" FlowDirection="RightToLeft">
                                     <TabControl.Resources>
                                         <Style TargetType="TabItem">
                                             <Setter Property="Template">
