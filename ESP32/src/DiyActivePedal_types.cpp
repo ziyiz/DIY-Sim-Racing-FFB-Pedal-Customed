@@ -183,6 +183,7 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   Force_Range = Force_Max - Force_Min;
   Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
   pedal_type=config_st.payLoadPedalConfig_.pedal_type;
+  
 }
 
 void DAP_calculationVariables_st::dynamic_update()
@@ -210,6 +211,7 @@ void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMax
   stepperPosMax = stepperPosEndstopRange * endPosRel;
   stepperPosMin_default = stepperPosMin;
   stepperPosRange = stepperPosMax - stepperPosMin;
+  //current_pedal_position_ratio=((float)(current_pedal_position-stepperPosMin_default))/((float)stepperPosRange_default);
 }
 
 void DAP_calculationVariables_st::updateStiffness() {
@@ -228,18 +230,27 @@ void DAP_calculationVariables_st::updateStiffness() {
 void DAP_calculationVariables_st::StepperPos_setback()
 {
   stepperPosMin=stepperPosMin_default;
+  stepperPosMax=stepperPosMax_default;
   stepperPosRange = stepperPosRange_default;
 }
 
-void DAP_calculationVariables_st::update_stepperpos(long newMinstop)
+void DAP_calculationVariables_st::update_stepperMinpos(long newMinstop)
 {
   stepperPosMin=newMinstop;
+  
+  stepperPosRange = stepperPosMax - stepperPosMin;
+}
+void DAP_calculationVariables_st::update_stepperMaxpos( long newMaxstop)
+{
+  
+  stepperPosMax=newMaxstop;
   stepperPosRange = stepperPosMax - stepperPosMin;
 }
 
 void DAP_calculationVariables_st::Default_pos()
 {
   stepperPosMin_default = stepperPosMin;
+  stepperPosMax_default = stepperPosMax;
   stepperPosRange_default=stepperPosRange;
 }
 

@@ -316,6 +316,7 @@ namespace User.PluginSdkDemo
         public byte PedalErrorIndex = 0;
         public byte[] random_pedal_action_interval=new byte[3] { 50,51,53};
         public byte Rudder_RPM_Effect_last_value = 0;
+        public byte Rudder_G_last_value = 0;
         public bool MSFS_status = false;
 
 
@@ -959,17 +960,18 @@ namespace User.PluginSdkDemo
                     Rudder_Action_currentTime = DateTime.Now;
                     TimeSpan diff_action = Rudder_Action_currentTime - Rudder_Action_lastTime;
                     int millisceonds_action = (int)diff_action.TotalMilliseconds;
-                    if (millisceonds_action > 30)
+                    if (millisceonds_action > 40)
                     {
                         bool Rudder_Effect_update_b = false;
                         DAP_action_st tmp;
                         tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
                         tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
                         tmp.payloadPedalAction_.triggerAbs_u8 = 0;
-                        tmp.payloadPedalAction_.RPM_u8 = 0;
+                        tmp.payloadPedalAction_.RPM_u8 = Rudder_RPM_Effect_last_value;
                         tmp.payloadPedalAction_.G_value = 128;
                         tmp.payloadPedalAction_.WS_u8 = 0;
-                        tmp.payloadPedalAction_.impact_value = 0;
+                        tmp.payloadPedalAction_.impact_value = Rudder_G_last_value;
+                        //tmp.payloadPedalAction_.impact_value = 0;
                         tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                         tmp.payloadPedalAction_.Trigger_CV_2 = 0;
                         tmp.payloadPedalAction_.Rudder_action = 0;
@@ -986,6 +988,24 @@ namespace User.PluginSdkDemo
                             Rudder_Action_lastTime = DateTime.Now;
                             Rudder_RPM_Effect_last_value = Rudder_RPM_value;
                         }
+
+                        //G-effect
+                        
+                        double Rudder_G_value_dz= Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.ACCELERATION_BODY_Z"));
+                        double Rudder_G_value_dy = Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.ACCELERATION_BODY_Y"));                     
+                        double Rudder_G_value_combined = Math.Sqrt(Rudder_G_value_dz * Rudder_G_value_dz + Rudder_G_value_dy * Rudder_G_value_dy);
+                        double max_G = 100;
+                        double Rudder_G_constrain = Math.Min( Rudder_G_value_combined, max_G);
+                        double Rudder_G_percent = Rudder_G_constrain / max_G * 100.0f;
+                        if (Math.Abs(Rudder_G_last_value - Rudder_G_percent) > 2)
+                        {
+                            tmp.payloadPedalAction_.impact_value = (Byte)Rudder_G_percent;
+                            Rudder_Effect_update_b = true;
+                            Rudder_Action_lastTime = DateTime.Now;
+                            Rudder_G_last_value = (Byte)Rudder_G_percent;
+                        }
+
+
                         //Write to Pedal
                         if (Rudder_Effect_update_b)
                         {
@@ -1148,7 +1168,7 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("pedal_position", this.GetType(), pedal_state_in_ratio);
             pluginManager.SetPropertyValue("PedalErrorIndex", this.GetType(), PedalErrorIndex);
             pluginManager.SetPropertyValue("PedalErrorCode", this.GetType(), PedalErrorCode);
-
+            pluginManager.SetPropertyValue("FlightRudder_G", this.GetType(), Rudder_G_last_value);
 
         }
 
@@ -1557,7 +1577,7 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("pedal_position", this.GetType(), pedal_state_in_ratio);
             pluginManager.AddProperty("PedalErrorIndex", this.GetType(), PedalErrorIndex);
             pluginManager.AddProperty("PedalErrorCode", this.GetType(), PedalErrorCode);
-
+            pluginManager.AddProperty("FlightRudder_G", this.GetType(), Rudder_G_last_value);
             for (uint pedali=0; pedali < 3; pedali++)
             {
                 Action_currentTime[pedali] = new DateTime();
