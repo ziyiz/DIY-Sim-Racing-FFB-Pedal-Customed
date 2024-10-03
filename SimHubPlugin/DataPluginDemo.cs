@@ -318,6 +318,7 @@ namespace User.PluginSdkDemo
         public byte Rudder_RPM_Effect_last_value = 0;
         public byte Rudder_G_last_value = 0;
         public bool MSFS_status = false;
+        public byte Rudder_Wind_Force_last_value = 0;
 
 
 
@@ -942,7 +943,7 @@ namespace User.PluginSdkDemo
             //Rudder effect runtine
             if (Rudder_status && Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.IS_MSFS_PLUGIN_INSTALLED"))==1)
             {
-                if (Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.FlightData.IS_MSFS_RUNNING")) == 1)
+                if (Convert.ToByte(pluginManager.GetPropertyValue("FlightPlugin.IS_MSFS_DATA_UPDATING")) == 1)
                 {
                     MSFS_status = true;
 
@@ -989,20 +990,31 @@ namespace User.PluginSdkDemo
                             Rudder_RPM_Effect_last_value = Rudder_RPM_value;
                         }
 
+
+                        double RELATIVE_WIND_VELOCITY_BODY_Z = Math.Abs(Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.RELATIVE_WIND_VELOCITY_BODY_Z")));
+                        double Rudder_Radians = Math.Abs(Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.RUDDER_DEFLECTION")));
+                        double Rudder_Wind_Force = Math.Sin(Rudder_Radians) * RELATIVE_WIND_VELOCITY_BODY_Z;
+                        Rudder_Wind_Force_last_value = (Byte)Rudder_Wind_Force;
+                        double Max_Wind_Force = 100;
+                        Rudder_Wind_Force = Math.Min(Max_Wind_Force, Rudder_Wind_Force);//clipping max force
+                        double Rudder_Wind_Froce_Ratio = 0.5 * 100 * (Rudder_Wind_Force / Max_Wind_Force);
                         //G-effect
-                        
+
                         double Rudder_G_value_dz= Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.ACCELERATION_BODY_Z"));
                         double Rudder_G_value_dy = Convert.ToDouble(pluginManager.GetPropertyValue("FlightPlugin.FlightData.ACCELERATION_BODY_Y"));                     
                         double Rudder_G_value_combined = Math.Sqrt(Rudder_G_value_dz * Rudder_G_value_dz + Rudder_G_value_dy * Rudder_G_value_dy);
                         double max_G = 100;
                         double Rudder_G_constrain = Math.Min( Rudder_G_value_combined, max_G);
                         double Rudder_G_percent = Rudder_G_constrain / max_G * 100.0f;
+
+                        double Rudder_G_Wind_combined = Math.Min(Rudder_G_percent + Rudder_Wind_Froce_Ratio, max_G); 
+                         
                         if (Math.Abs(Rudder_G_last_value - Rudder_G_percent) > 2)
                         {
-                            tmp.payloadPedalAction_.impact_value = (Byte)Rudder_G_percent;
+                            tmp.payloadPedalAction_.impact_value = (Byte)Rudder_G_Wind_combined;
                             Rudder_Effect_update_b = true;
                             Rudder_Action_lastTime = DateTime.Now;
-                            Rudder_G_last_value = (Byte)Rudder_G_percent;
+                            Rudder_G_last_value = (Byte)Rudder_G_Wind_combined;
                         }
 
 
@@ -1169,7 +1181,7 @@ namespace User.PluginSdkDemo
             pluginManager.SetPropertyValue("PedalErrorIndex", this.GetType(), PedalErrorIndex);
             pluginManager.SetPropertyValue("PedalErrorCode", this.GetType(), PedalErrorCode);
             pluginManager.SetPropertyValue("FlightRudder_G", this.GetType(), Rudder_G_last_value);
-
+            pluginManager.SetPropertyValue("FlightRudder_Wind_Force", this.GetType(), Rudder_Wind_Force_last_value);
         }
 
 
@@ -1578,6 +1590,7 @@ namespace User.PluginSdkDemo
             pluginManager.AddProperty("PedalErrorIndex", this.GetType(), PedalErrorIndex);
             pluginManager.AddProperty("PedalErrorCode", this.GetType(), PedalErrorCode);
             pluginManager.AddProperty("FlightRudder_G", this.GetType(), Rudder_G_last_value);
+            pluginManager.AddProperty("FlightRudder_Wind_Force", this.GetType(), Rudder_Wind_Force_last_value);
             for (uint pedali=0; pedali < 3; pedali++)
             {
                 Action_currentTime[pedali] = new DateTime();
@@ -1827,6 +1840,7 @@ namespace User.PluginSdkDemo
                 SimHub.Logging.Current.Info("Rudder Brake");
 
             });
+            /*
             this.AddAction("Rudder", (a, b) =>
             {
 
@@ -1834,6 +1848,7 @@ namespace User.PluginSdkDemo
                 SimHub.Logging.Current.Info("Rudder action");
 
             });
+            */
 
             //Settings.selectedJsonIndexLast[0]
             //SimHub.Logging.Current.Info("Diy active pedas plugin - Test 1");

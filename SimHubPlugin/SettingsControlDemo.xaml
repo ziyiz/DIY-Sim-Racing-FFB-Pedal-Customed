@@ -586,8 +586,7 @@
                                                         <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                                         <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                                     </StackPanel>
-                                                    <styles:SHButtonPrimary x:Name="btn_rudder" Click="btn_rudder_Click" Width="160" Height="25" Content="Rudder" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
-                                                    <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="25" Content="Reset pedal position" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
+                                                                                                        <styles:SHButtonPrimary x:Name="button_pedal_position_reset" Click="ResetPedalPosition_click" Width="160" Height="25" Content="Reset pedal position" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
                                                     <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" MinHeight="20" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                                     <styles:SHButtonPrimary x:Name="btn_system_id" Click="StartSystemIdentification_click" Width="160" RenderTransformOrigin="0.522,1.216" Height="25" Content="System identification" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                                     <styles:SHButtonPrimary x:Name="btn_reset_default" Click="btn_reset_default_Click" Width="160"  Content="Reset to Default" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" ToolTip="Reset the config to default" Padding="15,0,15,0" VerticalContentAlignment="Center" />
@@ -1717,14 +1716,241 @@
                             <Label Content="Rudder Control"  FontFamily="Arial Black" FontSize="26" Height="40" Width="250" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                         </Border>
                     </TabItem.Header>
+                    <Border  HorizontalAlignment="Left" Height="860" VerticalAlignment="Top" Width="1200" CornerRadius="5,5,5,5" Margin="0,3,0,0">
+                        <StackPanel Height="905" Width="1180" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="4">
+                            <Canvas  Height="6" Width="725" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,1,0,1" >
+                                <Line  X1="2" Y1="3" X2="763" Y2="3" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                            </Canvas>
+                            <StackPanel Height="900" Width="1180" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="4">
+                                <StackPanel HorizontalAlignment="Center" Height="498" Grid.Row="3" VerticalAlignment="Top" Width="168" Grid.RowSpan="3">
+
+                                    <Border Background="#7F4E4E4E" Height="498" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
+                                        <StackPanel HorizontalAlignment="Center" Height="381" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
+                                            <StackPanel Height="15" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Label Content="Rudder System Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="160" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
+                                                
+                                            </StackPanel>
+                                            <StackPanel Height="55" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                                <Label x:Name="info_rudder_label" Content="" Height="55" Width="80" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>
+                                                <Label x:Name="info_rudder_label_2" Content="Label" Height="55" Width="80" FontFamily="Arial" VerticalAlignment="Top" FontSize="10"/>
+                                            </StackPanel>
+                                            <TextBox x:Name="TextBox_rudder_debug" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="25" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="8" FontFamily="Arial" />
+                                            <styles:SHButtonPrimary x:Name="btn_rudder_initialize" Click="btn_rudder_initialize_Click" Width="160" Height="25" Content="Rudder" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
+
+
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Width="540" Height="900" Margin="3,0,0,0">
+                                    <StackPanel Width="540" Height="272" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                        <Border  HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
+                                            <StackPanel HorizontalAlignment="Left" Height="272" VerticalAlignment="Top" Width="540">
+                                                                                                <StackPanel Height="20" Width="540" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
+                                                    <Label Content="FORCE CURVE ADJUSTMENT" Width="200" Foreground="White" FontFamily="Arial Black" HorizontalAlignment="Center" Margin="70,0,0,0" Height="20" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center"/>
+                                                    <styles:SHButtonPrimary x:Name="btn_linearcurve_rudder" Click="btn_linearcurve_rudder_Click" Width="40" Content="Linear" Height="15" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" FontFamily="Arial" FontSize="10" MinHeight="15" VerticalContentAlignment="Center" />
+                                                    <styles:SHButtonPrimary x:Name="btn_Scurve_rudder" Click="btn_Scurve_rudder_Click" Width="45" Content="S-Curve" Height="15" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="15" />
+                                                    <styles:SHButtonPrimary x:Name="btn_10xcurve_rudder" Click="btn_10xcurve_rudder_Click" Width="50" Content="Exponent" Height="15" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="15" />
+                                                    <styles:SHButtonPrimary x:Name="btn_logcurve_rudder" Click="btn_logcurve_rudder_Click" Width="50" Content="Logarithm" Height="15" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" FontFamily="Arial" FontSize="10" MinHeight="15" VerticalContentAlignment="Center" />
+
+                                                </StackPanel>
+                                                <StackPanel Height="220" Width="540" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0">
+
+
+                                                    <!-- Travel vs Force curve GUI elements -->
+                                                    <Canvas x:Name="canvas_rudder_curve" Height="200" Width="400" Background="#7F20232F" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,0,0,0" >
+                                                        <Canvas.RenderTransform>
+                                                            <TransformGroup>
+                                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                <SkewTransform/>
+                                                                <RotateTransform/>
+                                                                <TranslateTransform/>
+                                                            </TransformGroup>
+
+                                                        </Canvas.RenderTransform>
+
+
+
+                                                        <TextBlock HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Top" 
+                                                   Text="FORCE" 
+                                                   Width="60" 
+                                                   Foreground="#7F7D7D7D" RenderTransformOrigin="0.5,0.5" Canvas.Left="-25" Canvas.Top="85" FontFamily="Arial Black" Height="13">
+                                                            <TextBlock.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="-90"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </TextBlock.RenderTransform>
+                                                        </TextBlock>
+
+
+                                                        <TextBlock HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center" 
+                                                   Text="TRAVEL" 
+                                                   Width="60" 
+                                                   Foreground="#7F7D7D7D" RenderTransformOrigin="0.5,0.5" Canvas.Left="170" Canvas.Top="186" FontFamily="Arial Black" TextAlignment="Center" Height="14">
+                                                            <TextBlock.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </TextBlock.RenderTransform>
+                                                        </TextBlock>
+
+                                                        <Polyline x:Name="Polyline_RudderForceCurve"
+                                                    Stroke="{DynamicResource AccentColorBrush}"
+                                                    Height="300" Width="400"
+                                                    Opacity="0.7"
+                                                    Points="0,0 80,20 160,40 240,60 320,80 400,100"
+                                                    StrokeThickness="4" RenderTransformOrigin="1,0.5" Canvas.Top="-100" HorizontalAlignment="Left" VerticalAlignment="Center" >
+                                                            <Polyline.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform ScaleX="1" ScaleY="-1"/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform/>
+                                                                    <TranslateTransform X="0"/>
+                                                                </TransformGroup>
+                                                            </Polyline.RenderTransform>
+                                                        </Polyline>
+                                                                                                                <TextBlock x:Name="text_point_pos_rudder" HorizontalAlignment="Left" VerticalAlignment="Top" Text="pos" Width="60" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="5" Canvas.Top="15" Height="30" FontSize="10" FontFamily="Arial"/>
+                                                        <Rectangle x:Name="rect0_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="-5" Canvas.Top="195" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8" StrokeThickness="0"/>
+                                                        <Rectangle x:Name="rect1_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="75" Canvas.Top="155" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                                        <Rectangle x:Name="rect2_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="155" Canvas.Top="115" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                                        <Rectangle x:Name="rect3_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="235" Canvas.Top="75" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                                        <Rectangle x:Name="rect4_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="315" Canvas.Top="35" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                                        <Rectangle x:Name="rect5_rudder" Width="10" Height="10" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="395" Canvas.Top="-5" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" MouseMove="Rectangle_MouseMove_Rudder" MouseLeftButtonUp="Rectangle_MouseLeftButtonUp" Opacity="0.8"/>
+                                                        <TextBox x:Name="text_rudder_log" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Rudder log" Width="400" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Left="0" Canvas.Top="0" Height="100" FontSize="10" FontFamily="Arial" Background="{x:Null}" BorderBrush="{x:Null}" CaretBrush="{x:Null}" SelectionTextBrush="{x:Null}" BorderThickness="0,0,0,0" IsReadOnly="True"/>
+
+
+
+                                                    </Canvas>
+
+                                                    <StackPanel Width="50" Height="230" Margin="10,-10,0,0">
+                                                        <Label x:Name="Label_max_force_rudder" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-5,0,0"/>
+                                                        <controls:RangeSlider x:Name="Rangeslider_rudder_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="180" LowerValueChanged="Rangeslider_rudder_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_rudder_force_range_UpperValueChanged" MinRange="0" IsSnapToTickEnabled="True" UpperValue="10" Width="20" Orientation="Vertical" Maximum="30" HorizontalAlignment="Left" LargeChange="10"/>
+                                                        <Label x:Name="Label_min_force_rudder" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+
+                                                <StackPanel Width="430" Height="40" Orientation="Horizontal" Margin="0,-10,0,0">
+                                                    <Label x:Name="Label_min_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                    <controls:RangeSlider x:Name="Rangeslider_rudder_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_rudder_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_rudder_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" UpperValue="85" Width="370" VerticalAlignment="Top" LowerValue="15" Minimum="15" Maximum="85" Value="85"/>
+                                                    <Label x:Name="Label_max_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                    <TabControl Grid.Column="0" HorizontalAlignment="Left" Height="222" Grid.Row="4" VerticalAlignment="Top" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,4,0,0">
+                                        <TabControl.Resources>
+                                            <Style TargetType="TabItem">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TabItem">
+                                                            <!--The four values of CornerRadius represent the four corners of the TabItem.-->
+                                                            <Border Name="Border" BorderThickness="0,0,0,0" BorderBrush="Gainsboro" CornerRadius="5,5,5,5" Margin="0,0,2,0">
+                                                                <ContentPresenter x:Name="ContentSite"  
+                                                                VerticalAlignment="Center"  
+                                                                HorizontalAlignment="Left"  
+                                                                ContentSource="Header"  
+                                                                Margin="0,0"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="Border" Property="Background" Value="#7F4E4E4E" />
+                                                                    <Setter Property="TextElement.Foreground" Value="#FFFFFFFF" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsSelected" Value="False">
+                                                                    <Setter TargetName="Border" Property="Background" Value="#334E4E4E" />
+                                                                    <Setter Property="TextElement.Foreground" Value="#33FFFFFF" />
+                                                                </Trigger>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="IsMouseOver" SourceName="Border" Value="True"/>
+                                                                        <Condition Property="IsSelected" Value="False"/>
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter TargetName="Border" Property="Background" Value="#4C4E4E4E" />
+                                                                </MultiTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TabControl.Resources>
+                                        <TabItem Width="90" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                            <TabItem.Header>
+                                                <Border  Width="90" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="General"  FontFamily="Arial Black" FontSize="10" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                </Border>
+                                            </TabItem.Header>
+                                            <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                                            </Border>
+                                        </TabItem>
+                                        <TabItem Width="90" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                            <TabItem.Header>
+                                                <Border  Width="90" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="RPM"  FontFamily="Arial Black" FontSize="10" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                </Border>
+                                            </TabItem.Header>
+                                            <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                                                <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                                                    <StackPanel Width="400" Height="40">
+                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_AMP_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                        </StackPanel>
+                                                        <Slider x:Name="Slider_RPM_AMP_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_RPM_AMP_rudder_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
+                                                    </StackPanel>
+                                                    <StackPanel Width="400" Height="50">
+                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq_rudder"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                        </StackPanel>
+                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq_min_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                            <Label x:Name="label_RPM_freq_max_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
+                                                        </StackPanel>
+                                                        <controls:RangeSlider x:Name="Rangeslider_RPM_freq_rudder" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="10" LowerValueChanged="Rangeslider_RPM_freq_rudder_LowerValueChanged" UpperValueChanged="Rangeslider_RPM_freq_rudder_UpperValueChanged" MinRange="1" SmallChange="1" Maximum="50" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="45" Minimum="1"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </TabItem>
+                                        <TabItem Width="90" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                            <TabItem.Header>
+                                                <Border  Width="90" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="Acceleration"  FontFamily="Arial Black" FontSize="10" Height="30" Width="90" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                </Border>
+                                            </TabItem.Header>
+                                            <Border Background="#7F4E4E4E" Height="190" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
+                                                <StackPanel HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="540">
+                                                </StackPanel>
+                                            </Border>
+                                        </TabItem>
+                                    </TabControl>
+
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </TabItem>
-                <TabItem x:Name="Tab_System" Width="250" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <TabItem x:Name="Tab_System" Width="150" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <TabItem.Header>
-                        <Border  Width="250" Height="40" Margin="0,0,0,0" >
-                            <Label Content="System"  FontFamily="Arial Black" FontSize="26" Height="40" Width="250" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                        <Border  Width="150" Height="40" Margin="0,0,0,0" >
+                            <Label Content="System"  FontFamily="Arial Black" FontSize="26" Height="40" Width="150" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                         </Border>
                     </TabItem.Header>
                 </TabItem>
+                <Border  HorizontalAlignment="Left" Height="860" VerticalAlignment="Top" Width="1200" CornerRadius="5,5,5,5" Margin="0,3,0,0">
+                    <StackPanel Height="905" Width="1180" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="4">
+                        <Canvas  Height="6" Width="725" Background="#00333333" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,1,0,1" >
+                            <Line  X1="2" Y1="3" X2="763" Y2="3" Stroke="{DynamicResource AccentColorBrush}" StrokeThickness="2" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                        </Canvas>
+                        <StackPanel Height="900" Width="1180" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="4">
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
             </TabControl>
 
         </Grid>
