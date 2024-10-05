@@ -50,8 +50,13 @@ namespace User.PluginSdkDemo
         public bool[] Pedal_ESPNow_Sync_flag = new bool[3] { false, false, false };
         public bool Pedal_ESPNow_auto_connect_flag = false;
         public bool Serial_auto_clean = false; //clean serial monitor
+        public bool Serial_auto_clean_bridge = false; //clean serial monitor bridge
         public bool Using_CDC_bridge = false;
         public byte[] Pedal_action_interval = new byte[3] { 50, 51, 53 };
+        public bool Rudder_RPM_effect_b = false;
+        public bool Rudder_ACC_effect_b=false;
+        public bool Rudder_ACC_WindForce = false;
+        public bool advanced_b = false;
 
     }
         

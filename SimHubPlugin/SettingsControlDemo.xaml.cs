@@ -110,6 +110,7 @@ namespace User.PluginSdkDemo
         private SolidColorBrush color_RSSI_3;
         private SolidColorBrush color_RSSI_4;
         private string info_text_connection;
+        private string system_info_text_connection;
         private int current_pedal_travel_state= 0;
         private int gridline_kinematic_count_original = 0;
         private double[] Pedal_position_reading=new double[3];
@@ -617,14 +618,9 @@ namespace User.PluginSdkDemo
             //InvertMotorDir_check.Visibility = Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             Border_serial_monitor.Visibility=Visibility.Hidden;
-            Advanced_Tab.Visibility=Visibility.Hidden;
+            
            
-            //btn_serial.Visibility = System.Windows.Visibility.Hidden;
-            button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
-            button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
-            btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
-            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
+
             //Label_reverse_LC.Visibility=Visibility.Hidden;
             //Label_reverse_servo.Visibility=Visibility.Hidden;
             btn_test.Visibility=Visibility.Hidden;
@@ -1049,6 +1045,7 @@ namespace User.PluginSdkDemo
             update_plot_WS();
             update_plot_RPM();
             info_label.Content = "State:\nDAP Version:\nPlugin Version:";
+            info_label_system.Content = "Bridge:\nDAP Version:\nPlugin Version:";
             //RSSI canvas
             if (Plugin != null)
             {
@@ -1070,9 +1067,12 @@ namespace User.PluginSdkDemo
                 plugin_version = "Dev.";
             }
             string info_text;
+            string system_info_text;
             info_text = "Waiting...";
+            system_info_text = "Waiting...";
             if (Plugin != null)
             {
+                
                 if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
                 {
                     info_text = "Connected";
@@ -1086,9 +1086,10 @@ namespace User.PluginSdkDemo
                 }
                 if (Plugin.ESPsync_serialPort.IsOpen)
                 {
+                    system_info_text = "Connected";
                     if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
                     {
-
+                        
                         if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1 && indexOfSelectedPedal_u == 0)
                         {
                             info_text = "Wireless";
@@ -1106,6 +1107,10 @@ namespace User.PluginSdkDemo
                 }
                 else
                 {
+                    if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
+                    {
+                        system_info_text = system_info_text_connection;
+                    }
                     if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
                     {
                         if (Plugin.Settings.Pedal_ESPNow_auto_connect_flag)
@@ -1117,12 +1122,16 @@ namespace User.PluginSdkDemo
 
                 }
                 info_text += "\n" + Constants.pedalConfigPayload_version + "\n" + plugin_version;
+                system_info_text += "\n" + Constants.pedalConfigPayload_version + "\n" + plugin_version;
                 if (Plugin.Rudder_status)
                 {
                     info_text += "\nIn Action";
+                    system_info_text += "\nIn Action";
                     info_label.Content += "\nRudder:";
+                    info_label_system.Content += "\nRudder:";
                 }
                 info_label_2.Content = info_text;
+                info_label_2_system.Content = system_info_text;
             }
 
 
@@ -1657,15 +1666,15 @@ namespace User.PluginSdkDemo
             Pedal_joint_draw();
 
 
-            //Rudder parameter initialized
+            //Rudder UI initialized
             if (Plugin != null)
             {
                 Rangeslider_rudder_force_range.LowerValue = dap_config_st_rudder.payloadPedalConfig_.preloadForce;
                 Rangeslider_rudder_force_range.UpperValue = dap_config_st_rudder.payloadPedalConfig_.maxForce;
                 Rangeslider_rudder_travel_range.LowerValue= dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition;
                 Rangeslider_rudder_travel_range.UpperValue = dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition;
-                Label_min_pos_rudder.Content = "MIN\n" + dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel * dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition) / 100) + "mm";
-                Label_max_pos_rudder.Content = "MAX\n" + dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel * dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_min_pos_rudder.Content = "MIN\n" + dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition + "%";
+                Label_max_pos_rudder.Content = "MAX\n" + dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition + "%" ;
                 Label_max_force_rudder.Content = "Max force:\n" + dap_config_st_rudder.payloadPedalConfig_.maxForce + "kg";
                 Label_min_force_rudder.Content = "Preload:\n" + dap_config_st_rudder.payloadPedalConfig_.preloadForce + "kg";
                 Rangeslider_RPM_freq_rudder.LowerValue = dap_config_st_rudder.payloadPedalConfig_.RPM_min_freq;
@@ -1705,6 +1714,8 @@ namespace User.PluginSdkDemo
                     btn_rudder_initialize.Content = "Enable Rudder";
                     text_rudder_log.Visibility = Visibility.Hidden;
                 }
+
+
                 //Rudder text
                 info_rudder_label.Content = "Bridge State:\nBRK Pedal:\nGAS Pedal:\nRudder:";
                 if (Plugin.ESPsync_serialPort.IsOpen)
@@ -1740,8 +1751,57 @@ namespace User.PluginSdkDemo
                     info_rudder_label_2.Content += "Off";
                 }
 
+                if (Plugin.Settings.Rudder_RPM_effect_b)
+                {
+                    checkbox_enable_RPM_rudder.IsChecked = true;
+                }
+                else
+                {
+                    checkbox_enable_RPM_rudder.IsChecked = false;
+                }
+
+                if (Plugin.Settings.Rudder_ACC_effect_b)
+                {
+                    checkbox_Rudder_ACC_effect.IsChecked = true;
+                }
+                else
+                {
+                    checkbox_Rudder_ACC_effect.IsChecked = false;
+                }
+
+                if (Plugin.Settings.Rudder_ACC_WindForce)
+                {
+                    Checkbox_Rudder_ACC_WindForce.IsChecked = true;
+                }
+                else
+                {
+                    Checkbox_Rudder_ACC_WindForce.IsChecked = false;
+                }
+
+                Slider_MPC_0th_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain;
+                label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+
+                label_damping_rudder.Content = "Damping factor: " + (float)(dap_config_st_rudder.payloadPedalConfig_.dampingPress * 0.00015f) + "s";
+                Slider_damping_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.dampingPress;
 
 
+
+            }
+
+            //system UI
+
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.advanced_b)
+                {
+                    Debug_check.IsChecked = true;
+                    debug_flag=Plugin.Settings.advanced_b;
+                }
+                else
+                { 
+                    Debug_check.IsChecked= false;
+                    debug_flag = Plugin.Settings.advanced_b;
+                }
             }
 
         }
@@ -2893,7 +2953,7 @@ namespace User.PluginSdkDemo
                     break;
             }
             info_text_connection = tmp;
-
+            system_info_text_connection=tmp;
             for (uint pedal_idex = 0; pedal_idex < 3; pedal_idex++)
             {
                 if (Pedal_wireless_connection_update_b[pedal_idex])
@@ -4610,18 +4670,14 @@ namespace User.PluginSdkDemo
             text_serial.Visibility = Visibility.Visible;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
             textBox_debug_Flag_0.Visibility = Visibility.Visible;
-            //btn_serial.Visibility = System.Windows.Visibility.Visible;
-            btn_system_id.Visibility = System.Windows.Visibility.Visible;
-            button_pedal_position_reset.Visibility = System.Windows.Visibility.Visible;
-            button_pedal_restart.Visibility = System.Windows.Visibility.Visible;
-            btn_reset_default.Visibility = System.Windows.Visibility.Visible;
-            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Visible;
-            //InvertLoadcellReading_check.Visibility = Visibility.Visible;
-            //InvertMotorDir_check.Visibility = Visibility.Visible;
-            //text_state.Visibility = Visibility.Hidden;
+
             debug_flag = true;
+            if (Plugin != null)
+            {
+                Plugin.Settings.advanced_b = debug_flag;
+            }
             Border_serial_monitor.Visibility = Visibility.Visible;
-            Advanced_Tab.Visibility = Visibility.Visible;
+            
             
            // Label_reverse_LC.Visibility = Visibility.Visible;
             //Label_reverse_servo.Visibility = Visibility.Visible;
@@ -4640,18 +4696,14 @@ namespace User.PluginSdkDemo
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             textBox_debug_Flag_0.Visibility = Visibility.Hidden;
-            //btn_serial.Visibility = System.Windows.Visibility.Hidden;
-            btn_system_id.Visibility = System.Windows.Visibility.Hidden;
-            button_pedal_position_reset.Visibility = System.Windows.Visibility.Hidden;
-            button_pedal_restart.Visibility = System.Windows.Visibility.Hidden;
-            btn_reset_default.Visibility = System.Windows.Visibility.Hidden;
-            dump_pedal_response_to_file.Visibility = System.Windows.Visibility.Hidden;
-            //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
-            //InvertMotorDir_check.Visibility = Visibility.Hidden;
-            //text_state.Visibility = Visibility.Visible;
+
             debug_flag = false;
+            if (Plugin != null)
+            {
+                Plugin.Settings.advanced_b = debug_flag;
+            }
             Border_serial_monitor.Visibility = Visibility.Hidden;
-            Advanced_Tab.Visibility = Visibility.Hidden;
+            
             
             //Label_reverse_LC.Visibility = Visibility.Hidden;
             //Label_reverse_servo.Visibility = Visibility.Hidden;
@@ -6282,8 +6334,12 @@ namespace User.PluginSdkDemo
             //int pedalSelected = (int)(sender as System.Windows.Forms.Timer).Tag;
 
             bool pedalStateHasAlreadyBeenUpdated_b = false;
-            if (Plugin.Settings.Serial_auto_clean)
+            if (Plugin.Settings.Serial_auto_clean_bridge)
             {
+                if (TextBox_serialMonitor_bridge.LineCount > 100)
+                {
+                    TextBox_serialMonitor_bridge.Clear();
+                }
                 if (TextBox_serialMonitor.LineCount > 100)
                 {
                     TextBox_serialMonitor.Clear();
@@ -6753,18 +6809,20 @@ namespace User.PluginSdkDemo
                                     {
                                         string temp = resultString.Substring(3, resultString.Length - 3);
                                         //TextBox_serialMonitor.Text += str_chk + "\n";
+                                        TextBox_serialMonitor_bridge.Text += temp + "\n";
                                         TextBox_serialMonitor.Text += temp + "\n";
                                         SimHub.Logging.Current.Info(temp);
                                     }
                                     if ( String.Equals(str_chk, "E ("))
                                     {
+                                        TextBox_serialMonitor_bridge.Text += resultString + "\n";
                                         TextBox_serialMonitor.Text += resultString + "\n";
                                         SimHub.Logging.Current.Info(resultString);
                                     }
                                 }
 
                                 //TextBox_serialMonitor.Text += resultString + "\n";
-                                TextBox_serialMonitor.ScrollToEnd();
+                                TextBox_serialMonitor_bridge.ScrollToEnd();
 
                             }
                         }
@@ -7101,7 +7159,7 @@ namespace User.PluginSdkDemo
             if (Plugin != null)
             {
                 dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition= (byte)e.NewValue;
-                Label_min_pos_rudder.Content = "MIN\n" + dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition + "%\n" + Math.Round((float)(dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel * dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition) / 100) + "mm";                
+                Label_min_pos_rudder.Content = "MIN\n" + dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition + "%";                
             }
         }
 
@@ -7129,7 +7187,7 @@ namespace User.PluginSdkDemo
             if (Plugin != null)
             {
                 dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = (byte)e.NewValue;
-                Label_max_pos_rudder.Content = "MAX\n" + dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition + "%\n" + Math.Round((float)(dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel * dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition) / 100) + "mm";
+                Label_max_pos_rudder.Content = "MAX\n" + dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition + "%";
             }
         }
 
@@ -7196,6 +7254,12 @@ namespace User.PluginSdkDemo
                 dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_horizontal= dap_config_st[i].payloadPedalConfig_.lengthPedal_c_horizontal;
                 dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_vertical = dap_config_st[i].payloadPedalConfig_.lengthPedal_c_vertical;
                 dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel= dap_config_st[i].payloadPedalConfig_.lengthPedal_travel;
+                dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = dap_config_st[i].payloadPedalConfig_.spindlePitch_mmPerRev_u8;
+                dap_config_st_rudder.payloadPedalConfig_.invertLoadcellReading_u8 = dap_config_st[i].payloadPedalConfig_.invertLoadcellReading_u8;
+                dap_config_st_rudder.payloadPedalConfig_.invertMotorDirection_u8 = dap_config_st[i].payloadPedalConfig_.invertMotorDirection_u8;
+                dap_config_st_rudder.payloadPedalConfig_.loadcell_rating = dap_config_st[i].payloadPedalConfig_.loadcell_rating;
+                //dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_trigger = 0;
+                dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_value = dap_config_st[i].payloadPedalConfig_.Simulate_ABS_value;
                 text_rudder_log.Text += "Send Rudder config to Pedal: "+i+"\n";
                 Sendconfig_Rudder(i);
                 System.Threading.Thread.Sleep(300);
@@ -7219,8 +7283,10 @@ namespace User.PluginSdkDemo
                 {
                     if (Plugin.Rudder_status)
                     {
+                        
 
                         text_rudder_log.Clear();
+                        text_rudder_log.Visibility = Visibility.Visible;
                         Plugin.Rudder_enable_flag = true;
                         //Plugin.Rudder_status = false;
                         text_rudder_log.Text += "Disabling Rudder\n";
@@ -7229,15 +7295,25 @@ namespace User.PluginSdkDemo
                         //resent config back
                         text_rudder_log.Text += "Send Original config back to Brk Pedal\n";
                         System.Threading.Thread.Sleep(300);
+                        
                         Sendconfig(1);
                         text_rudder_log.Text += "Send Original config back to Gas Pedal\n";
                         System.Threading.Thread.Sleep(300);
+                        
                         Sendconfig(2);
 
                     }
                     else
                     {
+                        if (Plugin.MSFS_Plugin_Status == false)
+                        {
+                            String MSG_tmp;
+                            MSG_tmp = "No MSFS simconnect plugin detected, please install the plugin and try again.";
+                            System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+
                         text_rudder_log.Clear();
+                        text_rudder_log.Visibility = Visibility.Visible;
                         text_rudder_log.Text += "Initializing Rudder\n";
                         Rudder_Initialized();
                         System.Threading.Thread.Sleep(300);
@@ -7282,6 +7358,231 @@ namespace User.PluginSdkDemo
         {
             dap_config_st_rudder.payloadPedalConfig_.RPM_max_freq = (byte)e.NewValue;
             label_RPM_freq_max_rudder.Content = "MAX:" + dap_config_st_rudder.payloadPedalConfig_.RPM_max_freq + "Hz";
+        }
+
+        private void SHButtonPrimary_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                openFileDialog.Title = "Datei auswählen";
+                openFileDialog.Filter = "Configdateien (*.json)|*.json";
+                string currentDirectory = Directory.GetCurrentDirectory();
+                openFileDialog.InitialDirectory = currentDirectory + "\\PluginsData\\Common";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string content = (string)openFileDialog.FileName;
+                    TextBox_debugOutput.Text = content;
+
+                    string filePath = openFileDialog.FileName;
+
+
+                    if (false)
+                    {
+                        string text1 = System.IO.File.ReadAllText(filePath);
+                        DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(DAP_config_st));
+                        var ms = new MemoryStream(Encoding.UTF8.GetBytes(text1));
+                        dap_config_st_rudder = (DAP_config_st)deserializer.ReadObject(ms);
+                    }
+                    else
+                    {
+                        // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/deserialization
+
+
+                        // c# code to iterate over all fields of struct and set values from json file
+
+                        // Read the entire JSON file
+                        string jsonString = File.ReadAllText(filePath);
+
+                        // Parse all of the JSON.
+                        //JsonNode forecastNode = JsonNode.Parse(jsonString);
+                        dynamic data = JsonConvert.DeserializeObject(jsonString);
+
+
+
+                        payloadPedalConfig payloadPedalConfig_fromJson_st = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
+                        //var s = default(payloadPedalConfig);
+                        Object obj = payloadPedalConfig_fromJson_st;// s;
+
+
+
+                        FieldInfo[] fi = payloadPedalConfig_fromJson_st.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+                        // Iterate over each field and print its name and value
+                        foreach (var field in fi)
+                        {
+
+                            if (data["payloadPedalConfig_"][field.Name] != null)
+                            //if (forecastNode["payloadPedalConfig_"][field.Name] != null)
+                            {
+                                try
+                                {
+                                    if (field.FieldType == typeof(float))
+                                    {
+                                        //float value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<float>();
+                                        float value = (float)data["payloadPedalConfig_"][field.Name];
+                                        field.SetValue(obj, value);
+                                    }
+
+                                    if (field.FieldType == typeof(byte))
+                                    {
+                                        //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        byte value = (byte)data["payloadPedalConfig_"][field.Name];
+                                        field.SetValue(obj, value);
+                                    }
+
+                                    if (field.FieldType == typeof(Int16))
+                                    {
+                                        //byte value = forecastNode["payloadPedalConfig_"][field.Name].GetValue<byte>();
+                                        Int16 value = (Int16)data["payloadPedalConfig_"][field.Name];
+                                        field.SetValue(obj, value);
+                                    }
+
+
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+
+                            }
+                        }
+
+                        // set values in global structure
+                        dap_config_st_rudder.payloadPedalConfig_ = (payloadPedalConfig)obj;// payloadPedalConfig_fromJson_st;
+                        if (dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.kf_modelNoise == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.kf_modelNoise = 5;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_a == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_a = 205;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_b == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_b = 220;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_d == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_d = 60;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_horizontal == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_horizontal = 215;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_vertical == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_vertical = 60;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel == 0)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel = 100;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition < 15)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 15;
+                        }
+                        if (dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition > 85)
+                        {
+                            dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 85;
+                        }
+                    }
+
+                    updateTheGuiFromConfig();
+                    /*
+                    TextBox_debugOutput.Text = "Config new imported!";
+                    TextBox2.Text = "Open " + openFileDialog.FileName;
+                    */
+                }
+            }
+        }
+
+        private void checkbox_enable_RPM_rudder_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_RPM_effect_b = true;
+            }
+        }
+
+        private void checkbox_enable_RPM_rudder_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_RPM_effect_b = false;
+            }
+        }
+
+        private void checkbox_Rudder_ACC_effect_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_ACC_effect_b = true;
+            }
+        }
+
+        private void checkbox_Rudder_ACC_effect_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_ACC_effect_b = false;
+            }
+        }
+
+        private void Slider_damping_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st_rudder.payloadPedalConfig_.dampingPress = (Byte)e.NewValue;
+            dap_config_st_rudder.payloadPedalConfig_.dampingPull = (Byte)e.NewValue;
+            label_damping_rudder.Content = "Damping factor: " + (float)(dap_config_st_rudder.payloadPedalConfig_.dampingPress * 0.00015f) + "s";
+        }
+
+        private void Slider_MPC_0th_gain_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = (float)e.NewValue;
+            label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+
+        }
+
+        private void Checkbox_Rudder_ACC_WindForce_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_ACC_WindForce = true;
+            }
+        }
+
+        private void Checkbox_Rudder_ACC_WindForce_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Rudder_ACC_WindForce = true;
+            }
+
+        }
+
+        private void btn_serial_clear_bridge_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox_serialMonitor_bridge.Clear();
+        }
+
+        private void Checkbox_auto_remove_serial_line_bridge_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Serial_auto_clean_bridge = true;
+            }
+        }
+
+        private void Checkbox_auto_remove_serial_line_bridge_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Plugin.Settings.Serial_auto_clean_bridge = false;
+            }
         }
     }
     
