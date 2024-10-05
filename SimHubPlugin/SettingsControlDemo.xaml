@@ -357,10 +357,10 @@
                 <TabControl.Background>
                     <SolidColorBrush Color="#FF252525" Opacity="0"/>
                 </TabControl.Background>
-                <TabItem x:Name="Tab_Pedals" Width="280" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <TabItem x:Name="Tab_Pedals" Width="200" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <TabItem.Header>
-                        <Border  Width="280" Height="40" Margin="0,0,0,0" >
-                            <Label Content="PEDAL CONTROL"  FontFamily="Arial Black" FontSize="26" Height="40" Width="280" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                        <Border  Width="200" Height="40" Margin="0,0,0,0" >
+                            <Label Content="PEDALS"  FontFamily="Arial Black" FontSize="26" Height="40" Width="200" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="860" VerticalAlignment="Top" Width="1200" CornerRadius="5,5,5,5" Margin="0,3,0,0">
@@ -490,13 +490,13 @@
                                                 <Border Background="#FF4E4E4E" Height="72" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Center" Margin="0,2,0,0" >
                                                     <TextBox x:Name="TextBox2" TextWrapping="Wrap" Width="160" AutomationProperties.Name="TextBox2" Height="72" FontSize="10" Background="#004E4E4E" BorderBrush="#00CCCCCC" IsHitTestVisible="False" AllowDrop="True" HorizontalAlignment="Center"/>
                                                 </Border>
-                                                <Border Background="#7F4E4E4E" Height="272" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Left" Margin="0,3,0,0" >
+                                                <Border Background="#FF4E4E4E" Height="272" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Left" Margin="0,3,0,0" >
                                                     <StackPanel HorizontalAlignment="Center" Height="272" VerticalAlignment="Top" Width="160">
-                                                        <Label Content="Pedal Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10"/>
-                                                        <StackPanel Width="160" Height="10" Orientation="Horizontal" Margin="0,1,0,0">
-                                                            <Label x:Name="Label_Pedal_interval_trigger"  Width="160" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Action Interval:" Height="10" Padding="0,0,0,0"/>
+                                                        <Label Content="Pedal Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="2,0,0,0"/>
+                                                        <StackPanel Width="155" Height="10" Orientation="Horizontal" Margin="2,1,0,0">
+                                                            <Label x:Name="Label_Pedal_interval_trigger"  Width="155" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Action Interval:" Height="10" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_Pedal_interval_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="160" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_Pedal_interval_trigger_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True" Minimum="20" ToolTip="Adjust for the serial write interval, when meet I/O error, increase the interval" Margin="0,2,0,0"/>
+                                                        <Slider x:Name="Slider_Pedal_interval_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="155" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_Pedal_interval_trigger_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True" Minimum="20" ToolTip="Adjust for the serial write interval, when meet I/O error, increase the interval" Margin="3,2,0,0"/>
                                                         <StackPanel x:Name="text_debug_flag" Height="20" Width="150" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2,0,0">
                                                             <Label Content="Debug flag 0:" Height="20" Width="60" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="5,0,0,0"/>
                                                             <TextBox x:Name="textBox_debug_Flag_0" Width="40" Height="20" PreviewTextInput="NumericTextBox_PreviewTextInput" TextChanged="NumericTextBox_TextChanged" Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="DebugFlag input, please check ESP32 sketch for cheatcode" BorderThickness="0,0,0,0"/>
@@ -510,16 +510,16 @@
                                                             <Label Content="Auto Read Config" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                                         </StackPanel>
                                                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                            <styles:SHToggleButton x:Name="CheckBox_Pedal_ESPNow_SyncFlag" Content="" Checked="CheckBox_Pedal_ESPNow_SyncFlag_Checked" Unchecked="CheckBox_Pedal_ESPNow_SyncFlag_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                            <styles:SHToggleButton x:Name="CheckBox_Pedal_ESPNow_SyncFlag" Content="" Checked="CheckBox_Pedal_ESPNow_SyncFlag_Checked" Unchecked="CheckBox_Pedal_ESPNow_SyncFlag_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                                             <Label Content="Wireless Sync to Pedal" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                                         </StackPanel>
 
                                                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                            <styles:SHToggleButton x:Name="CheckBox_USINGESP32S3" Content="" Checked="CheckBox_USINGESP32S3_Checked" Unchecked="CheckBox_USINGESP32S3_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                            <styles:SHToggleButton x:Name="CheckBox_USINGESP32S3" Content="" Checked="CheckBox_USINGESP32S3_Checked" Unchecked="CheckBox_USINGESP32S3_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for ESP32S3, V4,GIlphilbert board" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                                             <Label Content="ESP32S3 ControlBoard" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                                         </StackPanel>
                                                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                            <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for S3" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                            <styles:SHToggleButton x:Name="CheckBox_RTSDTR" Content="" Checked="CheckBox_RTSDTR_Checked" Unchecked="CheckBox_RTSDTR_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The option is for ESP32S3, V4, Gilphilbert Board" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
                                                             <Label Content="RTS/DTR false" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
                                                         </StackPanel>
                                                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
@@ -1451,7 +1451,7 @@
 
                                 </StackPanel>
                                 <StackPanel Height="900" Width="360" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-2,0,0,0">
-                                    <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="811" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="360" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.RowSpan="3" >
+                                    <Border x:Name="Border_serial_monitor" Background="#7F4E4E4E" CornerRadius="5,5,5,5" Height="808" BorderThickness="0,0,0,0" Grid.Row="3" Grid.Column="2" Width="360" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.RowSpan="3" >
                                         <StackPanel HorizontalAlignment="Center" Height="807" VerticalAlignment="Top" Width="356">
                                             <StackPanel HorizontalAlignment="Center" Height="25" VerticalAlignment="Top" Width="356" Orientation="Horizontal">
                                                 <Label x:Name="text_serial" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
@@ -1472,10 +1472,10 @@
 
                     </Border>
                 </TabItem>
-                <TabItem x:Name="Tab_Rudder" Width="300" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <TabItem x:Name="Tab_Rudder" Width="200" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <TabItem.Header>
-                        <Border  Width="300" Height="40" Margin="0,0,0,0" >
-                            <Label Content="RUDDER CONTROL"  FontFamily="Arial Black" FontSize="26" Height="40" Width="300" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                        <Border  Width="200" Height="40" Margin="0,0,0,0" >
+                            <Label Content="RUDDER"  FontFamily="Arial Black" FontSize="26" Height="40" Width="200" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                         </Border>
                     </TabItem.Header>
                     <Border  HorizontalAlignment="Left" Height="860" VerticalAlignment="Top" Width="1200" CornerRadius="5,5,5,5" Margin="0,3,0,0">
@@ -1492,7 +1492,7 @@
                                     <Border Background="#7F4E4E4E" Height="498" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="168" HorizontalAlignment="Center" >
                                         <StackPanel HorizontalAlignment="Center" Height="498" VerticalAlignment="Top" Width="160" Margin="0,5,0,0">
                                             <StackPanel Height="15" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <Label Content="Rudder System Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="160" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
+                                                <Label Content="Rudder Info"  FontFamily="Arial Black" FontSize="12" Height="15" Width="160" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"  />
                                                 
                                             </StackPanel>
                                             <StackPanel Height="55" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -1730,10 +1730,10 @@
                         </StackPanel>
                     </Border>
                 </TabItem>
-                <TabItem x:Name="Tab_System" Width="150" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <TabItem x:Name="Tab_System" Width="200" Height="40" Padding="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <TabItem.Header>
-                        <Border  Width="150" Height="40" Margin="0,0,0,0" >
-                            <Label Content="SYSTEM"  FontFamily="Arial Black" FontSize="26" Height="40" Width="150" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                        <Border  Width="200" Height="40" Margin="0,0,0,0" >
+                            <Label Content="SYSTEM"  FontFamily="Arial Black" FontSize="26" Height="40" Width="200" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                         </Border>
                     </TabItem.Header>
                 
@@ -1771,18 +1771,24 @@
                                             <styles:SHButtonPrimary x:Name="btn_update_system" Click="UpdateSerialPortList_click" Width="160" Height="25" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,2,0,0" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                             <styles:SHButtonPrimary x:Name="btn_Bridge_restart" Click="btn_Bridge_restart_Click" Width="160" Content="Bridge Restart" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                             <styles:SHButtonPrimary x:Name="btn_Pairing" Click="btn_Pairing_Click" Width="160" Content="Enable Pairing Mode" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
-                                            <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                <styles:SHToggleButton x:Name="CheckBox_Pedal_ESPNow_autoconnect" Content="" Checked="CheckBox_Pedal_ESPNow_autoconnect_Checked" Unchecked="CheckBox_Pedal_ESPNow_autoconnect_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
-                                                <Label Content="Auto Connect to Bridge" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                                            </StackPanel>
-                                            <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                <styles:SHToggleButton x:Name="CheckBox_using_CDC_for_bridge" Content="" Checked="CheckBox_using_CDC_for_bridge_Checked" Unchecked="CheckBox_using_CDC_for_bridge_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="This function is for performance testing, leave it off if you dont know what the function doing" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
-                                                <Label Content="CDC Serial for Bridge" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                                            </StackPanel>
-                                            <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
-                                                <styles:SHToggleButton x:Name="Debug_check" Content="" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Some opttions were hidden..." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
-                                                <Label Content="Advanced Mode" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
-                                            </StackPanel>
+                                            <Border Background="#FF4E4E4E" Height="311" CornerRadius="5,5,5,5" BorderThickness="0,0,0,0" Width="160" HorizontalAlignment="Left" Margin="0,3,0,0" >
+                                                <StackPanel HorizontalAlignment="Center" Height="311" VerticalAlignment="Top" Width="160">
+                                                    <Label Content="System Setting" Height="20" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" FontSize="10" Margin="2,0,0,0"/>
+
+                                                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
+                                                        <styles:SHToggleButton x:Name="CheckBox_Pedal_ESPNow_autoconnect" Content="" Checked="CheckBox_Pedal_ESPNow_autoconnect_Checked" Unchecked="CheckBox_Pedal_ESPNow_autoconnect_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                        <Label Content="Auto Connect to Bridge" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
+                                                        <styles:SHToggleButton x:Name="CheckBox_using_CDC_for_bridge" Content="" Checked="CheckBox_using_CDC_for_bridge_Checked" Unchecked="CheckBox_using_CDC_for_bridge_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="This function is for performance testing, leave it off if you dont know what the function doing" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                        <Label Content="CDC Serial for Bridge" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,0">
+                                                        <styles:SHToggleButton x:Name="Debug_check" Content="" Checked="Debug_checkbox_Checked" Unchecked="Debug_checkbox_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Some opttions were hidden..." RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                        <Label Content="Advanced Mode" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
 
 
                                         </StackPanel>
@@ -1963,10 +1969,10 @@
                                                                                                             <StackPanel HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="540" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1">
                                                             <StackPanel HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="540" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
 
-                                                                <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="20" Height="25" Width="150" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" VerticalContentAlignment="Center"  />
+                                                                <Label Content="LICENSE"  FontFamily="Arial Black" FontSize="20" Height="25" Width="150" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" RenderTransformOrigin="0,0" VerticalContentAlignment="Center" Margin="15,0,0,0"  />
                                                                 <styles:SHButtonPrimary x:Name="btn_test" Click="btn_toast_Click" Width="30" Content="TEST" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="6" MinHeight="20" Background="{x:Null}" />
                                                             </StackPanel>
-                                                            <TextBlock HorizontalAlignment="Center" Width="510" Height="10" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" Foreground="White">           
+                                                            <TextBlock HorizontalAlignment="Center" Width="510" Height="10" FontFamily="Arial" FontSize="10" VerticalAlignment="Center" Foreground="White" Margin="0,10,0,0">           
                                                                     This work is licensed under a
                                                                             <Hyperlink NavigateUri="http://creativecommons.org/licenses/by-nc-sa/4.0/" RequestNavigate="Hyperlink_RequestNavigate" FontFamily="Arial" FontSize="10">
                                                                         Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.

@@ -1802,6 +1802,15 @@ namespace User.PluginSdkDemo
                     Debug_check.IsChecked= false;
                     debug_flag = Plugin.Settings.advanced_b;
                 }
+
+                if (Plugin.Settings.Serial_auto_clean_bridge)
+                {
+                    Checkbox_auto_remove_serial_line_bridge.IsChecked = true;
+                }
+                else
+                {
+                    Checkbox_auto_remove_serial_line_bridge.IsChecked = false;
+                }
             }
 
         }
