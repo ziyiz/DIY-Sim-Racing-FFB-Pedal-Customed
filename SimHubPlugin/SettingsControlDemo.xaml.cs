@@ -611,12 +611,12 @@ namespace User.PluginSdkDemo
             }
             
             // debug mode invisiable
-            text_debug_flag.Visibility = Visibility.Hidden;
+            //text_debug_flag.Visibility = Visibility.Hidden;
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
             //InvertMotorDir_check.Visibility = Visibility.Hidden;
-            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
+            //textBox_debug_Flag_0.Visibility = Visibility.Hidden;
             Border_serial_monitor.Visibility=Visibility.Hidden;
             
            
@@ -4675,10 +4675,10 @@ namespace User.PluginSdkDemo
         private void Debug_checkbox_Checked(object sender, RoutedEventArgs e)
         {
 
-            text_debug_flag.Visibility = Visibility.Visible; 
+            //text_debug_flag.Visibility = Visibility.Visible; 
             text_serial.Visibility = Visibility.Visible;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
-            textBox_debug_Flag_0.Visibility = Visibility.Visible;
+            //textBox_debug_Flag_0.Visibility = Visibility.Visible;
 
             debug_flag = true;
             if (Plugin != null)
@@ -4701,10 +4701,10 @@ namespace User.PluginSdkDemo
         }
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            text_debug_flag.Visibility = Visibility.Hidden; ;
+            //text_debug_flag.Visibility = Visibility.Hidden; ;
             text_serial.Visibility = Visibility.Hidden;
             TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
-            textBox_debug_Flag_0.Visibility = Visibility.Hidden;
+            //textBox_debug_Flag_0.Visibility = Visibility.Hidden;
 
             debug_flag = false;
             if (Plugin != null)
