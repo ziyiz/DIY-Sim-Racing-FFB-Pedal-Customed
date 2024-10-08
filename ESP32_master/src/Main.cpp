@@ -111,10 +111,17 @@ DAP_bridge_state_st dap_bridge_state_lcl;//
 #ifndef CONFIG_IDF_TARGET_ESP32S3
   #include "soc/rtc_wdt.h"
 #endif
-#ifdef LED_ENABLE_WAVESHARE
+#ifdef USING_LED
   #include "soc/soc_caps.h"
   #include <Adafruit_NeoPixel.h>
-  #define LEDS_COUNT 1
+  #ifdef LED_ENABLE_WAVESHARE
+    #define LEDS_COUNT 1
+    Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_RGB + NEO_KHZ800);
+  #endif
+  #ifdef LED_ENABLE_DONGLE
+    #define LEDS_COUNT 3
+    Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_GRB + NEO_KHZ800);
+  #endif
   #define CHANNEL 0
   #define LED_BRIGHT 30
   /*
@@ -127,7 +134,7 @@ DAP_bridge_state_st dap_bridge_state_lcl;//
   static const crgb_t L_CYAN = 0x00ffff;
   static const crgb_t L_PURPLE = 0x800080;
   */
-  Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_RGB + NEO_KHZ800);
+  
   
 
 #endif
@@ -209,6 +216,7 @@ void ESPNOW_SyncTask( void * pvParameters);
 void Joystick_Task( void * pvParameters);
 void LED_Task( void * pvParameters);
 void Serial_Task( void * pvParameters);
+void LED_Task_Dongle( void * pvParameters);
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         setup function                                                     */
@@ -373,7 +381,22 @@ void setup()
                           0);     
     delay(500);
   #endif
-
+  #ifdef LED_ENABLE_DONGLE
+    pixels.begin();
+    pixels.setBrightness(20);
+    pixels.setPixelColor(0,0xff,0xff,0xff);
+    pixels.show();
+    xTaskCreatePinnedToCore(
+                          LED_Task_Dongle,   
+                          "LED_update_Task", 
+                          3000,  
+                          //STACK_SIZE_FOR_TASK_2,    
+                          NULL,      
+                          1,         
+                          &Task3,    
+                          0);     
+    delay(500);
+  #endif
   Serial.println("[L]Setup end");
   
 }
@@ -712,6 +735,13 @@ void Serial_Task( void * pvParameters)
               Serial.println("[L]Get Pair action");
               software_pairing_action_b=true;
             }
+            //action=2, restart
+            if(dap_bridge_state_lcl.payloadBridgeState_.Bridge_action==2)
+            {
+              Serial.println("[L]Bridge Restart");
+              delay(1000);
+              ESP.restart();
+            }
           }
           break;
 
@@ -1009,6 +1039,67 @@ void LED_Task( void * pvParameters)
         pixels.show();
         delay(500);
         pixels.setPixelColor(0,0x00,0x00,0x00);//fill no color      
+        //pixels.setBrightness(0);
+        pixels.show();
+        delay(500);
+      }
+      
+    #endif  
+    delay(10);
+  }
+}
+
+void LED_Task_Dongle( void * pvParameters)
+{
+  for(;;)
+  {
+    #ifdef LED_ENABLE_DONGLE
+    //LED status update
+      if(LED_Status==0)
+      {
+        if(LED_bright_index>30)
+        {
+          LED_bright_direction=-1;
+        }
+        if(LED_bright_index<2)
+        {
+          LED_bright_direction=1;
+        }
+        LED_bright_index=LED_bright_index+LED_bright_direction;
+        pixels.setBrightness(LED_bright_index);
+
+        for(uint i=0;i<3;i++)
+        {
+          if(dap_bridge_state_st.payloadBridgeState_.Pedal_availability[i]==1)
+          {
+            pixels.setPixelColor(i,0xff,0x0f,0x00);//Orange
+          }
+          else
+          {
+            pixels.setPixelColor(i,0xff,0xff,0xff);//White
+          }            
+        }
+        pixels.show();
+        
+        delay(150);           
+      }
+      if(LED_Status==1)//pairing
+      {
+        
+        //delay(1000);
+        for(uint i=0;i<3;i++)
+        {
+          pixels.setPixelColor(i,0xff,0x00,0x00);//Red  
+        }
+             
+        pixels.setBrightness(25);
+        pixels.show();
+        delay(500);
+        for(uint i=0;i<3;i++)
+        {
+          pixels.setPixelColor(i,0x00,0x00,0x00);//fill no color  
+        }
+           
         //pixels.setBrightness(0);
         pixels.show();
         delay(500);
