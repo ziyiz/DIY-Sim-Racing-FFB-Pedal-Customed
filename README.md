@@ -66,6 +66,7 @@ A lot of awesome devs have helped this project grow. Just to name a few:
 - [tcfshcrw](https://github.com/tcfshcrw) helped to elevate the Simhub plugin to its current form, added a ton of pedal effects, hardware and discord support, good guy and much more.
 - [MichaelJFr](https://github.com/MichaelJFr) helped with refactoring the code at the beginning of this project. Fruitful discussions let to the implementation of the control-loop strategies.
 - [Ibakha](https://github.com/Ibakha) Discord channel CEO.
+- [gilphilbert](https://github.com/gilphilbert) developed the PCB assemblies and did a ton of wiki refactoring.
 
 
 # Wiki
