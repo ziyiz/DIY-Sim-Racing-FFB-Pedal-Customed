@@ -2947,6 +2947,7 @@ namespace User.PluginSdkDemo
             Simhub_action_update();
             string tmp = "Connecting";
             int count_connection = ((int)count_timmer_count) % 4;
+            
             switch (count_connection) 
             {
                 case 0:
@@ -2975,6 +2976,7 @@ namespace User.PluginSdkDemo
                 }
             }
 
+            
 
             count_timmer_count++;
             if (count_timmer_count > 1)
@@ -3034,8 +3036,15 @@ namespace User.PluginSdkDemo
                         }
                     }
                     else
-                    {  
-                        Plugin.Sync_esp_connection_flag = false;
+                    {
+                        if (Plugin.Sync_esp_connection_flag)
+                        {
+                            Plugin.Sync_esp_connection_flag = false;
+                            dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 = 0;
+                            dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 = 0;
+                            dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 = 0;
+                        }
+                        
                         btn_connect_espnow_port.Content = "Connect";
                         if (ESP_host_serial_timer != null)
                         {
@@ -3106,7 +3115,6 @@ namespace User.PluginSdkDemo
                         }
                     }
                 }
-                    
 
                 
             }
