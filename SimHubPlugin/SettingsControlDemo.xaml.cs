@@ -519,8 +519,8 @@ namespace User.PluginSdkDemo
             
             dap_config_st_rudder.payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
             dap_config_st_rudder.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-            dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 15;
-            dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 85;
+            dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 5;
+            dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 95;
             dap_config_st_rudder.payloadPedalConfig_.maxForce = 10;
             dap_config_st_rudder.payloadPedalConfig_.preloadForce = 0;
             dap_config_st_rudder.payloadPedalConfig_.relativeForce_p000 = 0;
@@ -7533,13 +7533,13 @@ namespace User.PluginSdkDemo
                         {
                             dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel = 100;
                         }
-                        if (dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition < 15)
+                        if (dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition < 5)
                         {
-                            dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 15;
+                            dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 5;
                         }
-                        if (dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition > 85)
+                        if (dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition > 95)
                         {
-                            dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 85;
+                            dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 95;
                         }
                     }
 
