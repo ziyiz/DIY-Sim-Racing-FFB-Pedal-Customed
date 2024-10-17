@@ -53,6 +53,7 @@ using Windows.UI.Notifications;
 using System.Windows.Navigation;
 using System.CodeDom;
 using System.Media;
+using System.Windows.Threading;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -7287,35 +7288,79 @@ namespace User.PluginSdkDemo
             updateTheGuiFromConfig();
         }
         //Rudder initialize procee
+        public void DelayCall(int msec, Action fn)
+        {
+            // Grab the dispatcher from the current executing thread
+            Dispatcher d = Dispatcher.CurrentDispatcher;
+
+            // Tasks execute in a thread pool thread
+            new System.Threading.Tasks.Task(() =>
+            {
+                System.Threading.Thread.Sleep(msec);   // delay
+
+                // use the dispatcher to asynchronously invoke the action 
+                // back on the original thread
+                d.BeginInvoke(fn);
+            }).Start();
+        }
         private void Rudder_Initialized()
         {
+
+            DelayCall(400, () =>
+            {
+                Reading_config_auto(1);//read brk config from pedal
+                text_rudder_log.Text += "Read Config from BRK Pedal\n";              
+            });
+
+            DelayCall(600, () =>
+            {
+                Reading_config_auto(2);//read gas config from pedal
+                text_rudder_log.Text += "Read Config from GAS Pedal\n";               
+            });
+            /*
             text_rudder_log.Text += "Read Config from BRK Pedal\n";
             Reading_config_auto(1);//read brk config from pedal
             System.Threading.Thread.Sleep(500);
             text_rudder_log.Text += "Read Config from GAS Pedal\n";
             Reading_config_auto(2);//read gas config from pedal
             System.Threading.Thread.Sleep(500);
+            */
 
-            for (uint i = 1; i < 3; i++)
-            {
-                //read pedal kinematic
-                text_rudder_log.Text += "Create Rudder config for Pedal: "+i+"\n";
-                dap_config_st_rudder.payloadPedalConfig_.lengthPedal_a = dap_config_st[i].payloadPedalConfig_.lengthPedal_a;
-                dap_config_st_rudder.payloadPedalConfig_.lengthPedal_b = dap_config_st[i].payloadPedalConfig_.lengthPedal_b;
-                dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_horizontal= dap_config_st[i].payloadPedalConfig_.lengthPedal_c_horizontal;
-                dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_vertical = dap_config_st[i].payloadPedalConfig_.lengthPedal_c_vertical;
-                dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel= dap_config_st[i].payloadPedalConfig_.lengthPedal_travel;
-                dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = dap_config_st[i].payloadPedalConfig_.spindlePitch_mmPerRev_u8;
-                dap_config_st_rudder.payloadPedalConfig_.invertLoadcellReading_u8 = dap_config_st[i].payloadPedalConfig_.invertLoadcellReading_u8;
-                dap_config_st_rudder.payloadPedalConfig_.invertMotorDirection_u8 = dap_config_st[i].payloadPedalConfig_.invertMotorDirection_u8;
-                dap_config_st_rudder.payloadPedalConfig_.loadcell_rating = dap_config_st[i].payloadPedalConfig_.loadcell_rating;
-                //dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_trigger = 0;
-                dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_value = dap_config_st[i].payloadPedalConfig_.Simulate_ABS_value;
+
+
+
+                //System.Threading.Thread.Sleep(200);
+                DelayCall((int)(600), () =>
+                {
+                    for (uint i = 1; i < 3; i++)
+                    {
+                        text_rudder_log.Visibility = Visibility.Visible;
+                        //read pedal kinematic
+                        text_rudder_log.Text += "Create Rudder config for Pedal: " + i + "\n";
+                        dap_config_st_rudder.payloadPedalConfig_.lengthPedal_a = dap_config_st[i].payloadPedalConfig_.lengthPedal_a;
+                        dap_config_st_rudder.payloadPedalConfig_.lengthPedal_b = dap_config_st[i].payloadPedalConfig_.lengthPedal_b;
+                        dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_horizontal = dap_config_st[i].payloadPedalConfig_.lengthPedal_c_horizontal;
+                        dap_config_st_rudder.payloadPedalConfig_.lengthPedal_c_vertical = dap_config_st[i].payloadPedalConfig_.lengthPedal_c_vertical;
+                        dap_config_st_rudder.payloadPedalConfig_.lengthPedal_travel = dap_config_st[i].payloadPedalConfig_.lengthPedal_travel;
+                        dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = dap_config_st[i].payloadPedalConfig_.spindlePitch_mmPerRev_u8;
+                        dap_config_st_rudder.payloadPedalConfig_.invertLoadcellReading_u8 = dap_config_st[i].payloadPedalConfig_.invertLoadcellReading_u8;
+                        dap_config_st_rudder.payloadPedalConfig_.invertMotorDirection_u8 = dap_config_st[i].payloadPedalConfig_.invertMotorDirection_u8;
+                        dap_config_st_rudder.payloadPedalConfig_.loadcell_rating = dap_config_st[i].payloadPedalConfig_.loadcell_rating;
+                        //dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_trigger = 0;
+                        dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_value = dap_config_st[i].payloadPedalConfig_.Simulate_ABS_value;
+                        Sendconfig_Rudder(i);
+                        System.Threading.Thread.Sleep(200);
+                        text_rudder_log.Text += "Send Rudder config to Pedal: " + i + "\n";
+                    }
+                });
+
+                /*
                 text_rudder_log.Text += "Send Rudder config to Pedal: "+i+"\n";
                 Sendconfig_Rudder(i);
                 System.Threading.Thread.Sleep(300);
+                */
 
-            }
+            
 
 
 
@@ -7324,6 +7369,7 @@ namespace User.PluginSdkDemo
 
 
         }
+
 
 
         private void btn_rudder_initialize_Click(object sender, RoutedEventArgs e)
@@ -7342,8 +7388,23 @@ namespace User.PluginSdkDemo
                         //Plugin.Rudder_status = false;
                         text_rudder_log.Text += "Disabling Rudder\n";
                         btn_rudder_initialize.Content = "Enable Rudder";
-
+                                             
+                        DelayCall(300, () =>
+                        {
+                            text_rudder_log.Visibility = Visibility.Visible;
+                            Sendconfig(1);
+                            text_rudder_log.Text += "Send Original config back to Brk Pedal\n";
+                            
+                        });
+                        DelayCall(600, () =>
+                        {
+                            text_rudder_log.Visibility = Visibility.Visible;
+                            Sendconfig(2);
+                            text_rudder_log.Text += "Send Original config back to Gas Pedal\n";
+                            
+                        });
                         //resent config back
+                        /*
                         text_rudder_log.Text += "Send Original config back to Brk Pedal\n";
                         System.Threading.Thread.Sleep(300);
                         
@@ -7352,6 +7413,7 @@ namespace User.PluginSdkDemo
                         System.Threading.Thread.Sleep(300);
                         
                         Sendconfig(2);
+                        */
 
                     }
                     else
@@ -7365,13 +7427,22 @@ namespace User.PluginSdkDemo
 
                         text_rudder_log.Clear();
                         text_rudder_log.Visibility = Visibility.Visible;
-                        text_rudder_log.Text += "Initializing Rudder\n";
+                        DelayCall(100, () =>
+                        {
+                            text_rudder_log.Visibility = Visibility.Visible;
+                            text_rudder_log.Text += "Initializing Rudder\n";
+                        });
                         Rudder_Initialized();
-                        System.Threading.Thread.Sleep(300);
-                        text_rudder_log.Text += "Enabling Rudder\n";
-                        Plugin.Rudder_enable_flag = true;
-                        //Plugin.Rudder_status = true;
-                        btn_rudder_initialize.Content = "Disable Rudder";
+                        DelayCall(1100, () =>
+                        {
+                            text_rudder_log.Visibility = Visibility.Visible;
+                            text_rudder_log.Text += "Rudder initialized\n";
+                            Plugin.Rudder_enable_flag = true;
+                            //Plugin.Rudder_status = true;
+                            btn_rudder_initialize.Content = "Disable Rudder";
+                        });
+                        
+
                     }
                 }
                 else
