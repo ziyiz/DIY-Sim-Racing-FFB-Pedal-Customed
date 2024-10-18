@@ -444,7 +444,7 @@
                         <Border  Width="200" Height="40" Margin="0,0,0,0" >
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Width="26" Height="26" Source="{StaticResource Pedals}" />
-                                <Label Content="PEDLAS"  FontFamily="Arial Black" FontSize="26" Height="40" Width="126" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                                <Label Content="PEDALS"  FontFamily="Arial Black" FontSize="26" Height="40" Width="126" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" RenderTransformOrigin="0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                             </StackPanel>
                         </Border>
                     </TabItem.Header>
