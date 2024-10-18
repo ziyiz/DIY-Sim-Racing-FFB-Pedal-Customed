@@ -653,7 +653,7 @@ namespace User.PluginSdkDemo
             Label_RSSI.Visibility= Visibility.Hidden;
             Rangeslider_force_range.TickFrequency = 1;
             TextBox_debug_count.Visibility= Visibility.Hidden;
-
+            text_rudder_log.Visibility=Visibility.Hidden;
 
 
 
@@ -1708,12 +1708,12 @@ namespace User.PluginSdkDemo
                 if (Plugin.Rudder_status)
                 {
                     btn_rudder_initialize.Content = "Disable Rudder";
-                    text_rudder_log.Visibility= Visibility.Visible;
+                    //text_rudder_log.Visibility= Visibility.Visible;
                 }
                 else
                 {
                     btn_rudder_initialize.Content = "Enable Rudder";
-                    text_rudder_log.Visibility = Visibility.Hidden;
+                    //text_rudder_log.Visibility = Visibility.Hidden;
                 }
 
 
@@ -7330,7 +7330,7 @@ namespace User.PluginSdkDemo
 
 
                 //System.Threading.Thread.Sleep(200);
-                DelayCall((int)(600), () =>
+                DelayCall((int)(900), () =>
                 {
                     for (uint i = 1; i < 3; i++)
                     {
@@ -7403,6 +7403,10 @@ namespace User.PluginSdkDemo
                             text_rudder_log.Text += "Send Original config back to Gas Pedal\n";
                             
                         });
+                        DelayCall(1600, () =>
+                        {
+                            text_rudder_log.Visibility = Visibility.Hidden;
+                        });
                         //resent config back
                         /*
                         text_rudder_log.Text += "Send Original config back to Brk Pedal\n";
@@ -7433,7 +7437,7 @@ namespace User.PluginSdkDemo
                             text_rudder_log.Text += "Initializing Rudder\n";
                         });
                         Rudder_Initialized();
-                        DelayCall(1100, () =>
+                        DelayCall(1300, () =>
                         {
                             text_rudder_log.Visibility = Visibility.Visible;
                             text_rudder_log.Text += "Rudder initialized\n";
