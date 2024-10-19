@@ -600,17 +600,90 @@ namespace User.PluginSdkDemo
             //dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
             dap_config_st_rudder.payloadPedalConfig_.enableReboot_u8 = 0;
         }
-
+        System.Windows.Controls.CheckBox[,] Effect_status_profile=new System.Windows.Controls.CheckBox[3,8];
         public SettingsControlDemo()
         {
-
+            
             DAP_config_set_default_rudder();
             for (uint pedalIdx = 0; pedalIdx < 3; pedalIdx++)
             {
                 DAP_config_set_default(pedalIdx);
-                InitializeComponent();
+                
             }
-            
+            InitializeComponent();
+
+            //initialize profile effect status
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Effect_status_profile[i, j] = new System.Windows.Controls.CheckBox();
+                    Effect_status_profile[i, j].Width = 45;
+                    Effect_status_profile[i, j].Height = 20;
+                    Effect_status_profile[i, j].FontSize = 8;
+                    switch (j)
+                    {
+                        case 0:
+                            
+                            Effect_status_profile[i, j].Margin = new Thickness(20, 0, 0, 0);
+                            if (i == 0 || i == 2)
+                            {
+                                Effect_status_profile[i, j].Content = "TC";
+                                
+                            }
+                            else
+                            {
+                                Effect_status_profile[i, j].Content = "ABS";
+                            }
+                            
+                            break;
+                        case 1:
+                            Effect_status_profile[i, j].Content = "RPM";
+                            break;
+                        case 2:
+                            Effect_status_profile[i, j].Content = "B.P";
+                            Effect_status_profile[i, j].Width = 40;
+                            break;
+                        case 3:
+                            Effect_status_profile[i, j].Content = "G-F";
+                            Effect_status_profile[i, j].Width = 40;
+                            if (i == 0 || i == 2)
+                            {
+                                Effect_status_profile[i, j].IsEnabled = false;
+                            }
+                            break;
+                        case 4:
+                            Effect_status_profile[i, j].Content = "W.S";
+                            Effect_status_profile[i, j].Width = 40;
+                            break;
+                        case 5:
+                            Effect_status_profile[i, j].Content = "IMAPCT";
+                            Effect_status_profile[i, j].Width = 60;
+                            break;
+                        case 6:
+                            Effect_status_profile[i, j].Content = "CUS-1";
+                            Effect_status_profile[i, j].Width = 50;
+                            break;
+                        case 7:
+                            Effect_status_profile[i, j].Content = "CUS-2";
+                            Effect_status_profile[i, j].Width = 50;
+                            break;
+                    }
+                    switch (i)
+                    {
+                        case 0:
+                            StackPanel_Effects_Status_0.Children.Add(Effect_status_profile[i, j]);
+                            break;
+                        case 1:
+                            StackPanel_Effects_Status_1.Children.Add(Effect_status_profile[i, j]);
+                            break;
+                        case 2:
+                            StackPanel_Effects_Status_2.Children.Add(Effect_status_profile[i, j]);
+                            break;
+                    }
+                }
+            }
+
             // debug mode invisiable
             //text_debug_flag.Visibility = Visibility.Hidden;
             text_serial.Visibility = Visibility.Hidden;
@@ -1811,6 +1884,21 @@ namespace User.PluginSdkDemo
                 else
                 {
                     Checkbox_auto_remove_serial_line_bridge.IsChecked = false;
+                }
+                //effect profile reading
+                for (int j = 0; j < 3; j++)
+                {
+                    for (int k = 0; k < 8; k++)
+                    {
+                        if (Plugin.Settings.Effect_status_prolife[profile_select, j, k])
+                        {
+                            Effect_status_profile[j, k].IsChecked = true;
+                        }
+                        else
+                        {
+                            Effect_status_profile[j, k].IsChecked = false;
+                        }
+                    }
                 }
             }
 
@@ -4041,15 +4129,18 @@ namespace User.PluginSdkDemo
 
 
                     string filePath = openFileDialog.FileName;
-                    //TextBox_debugOutput.Text =  Button.Name; 
+                    //TextBox_debugOutput.Text =  Button.Name;
+                    //
+                    uint i = profile_select;
+                    uint j = 0;
                     if (Button.Name == "Reading_clutch")
                     {
 
                         Plugin.Settings.Pedal_file_string[profile_select,0] = filePath;
                         Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
                         Plugin.Settings.file_enable_check[profile_select, 0] = 1;
-                        Clutch_file_check.IsChecked = true;
-
+                        Clutch_file_check.IsChecked = true;                       
+                        j = 0;                        
                     }
                     if (Button.Name == "Reading_brake")
                     {
@@ -4057,6 +4148,7 @@ namespace User.PluginSdkDemo
                         Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
                         Plugin.Settings.file_enable_check[profile_select, 1] = 1;
                         Brake_file_check.IsChecked = true;
+                        j = 1;
                     }
                     if (Button.Name == "Reading_gas")
                     {
@@ -4064,6 +4156,21 @@ namespace User.PluginSdkDemo
                         Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
                         Plugin.Settings.file_enable_check[profile_select, 2] = 1;
                         Gas_file_check.IsChecked = true;
+                        j = 2;
+                    }
+
+                    //write to setting
+                    for (int k = 0; k < 8; k++)
+                    {
+                        if (Effect_status_profile[j, k].IsChecked == true)
+                        {
+                            Plugin.Settings.Effect_status_prolife[i, j, k] = true;
+                        }
+                        else
+                        {
+                            Plugin.Settings.Effect_status_prolife[i, j, k] = false;
+                        }
+
                     }
 
 
@@ -4074,6 +4181,8 @@ namespace User.PluginSdkDemo
         public void Clear_slot(object sender, EventArgs e)
         {
             var Button = sender as SHButtonPrimary;
+            uint i = profile_select;
+            uint j = 0;
             if (Button.Name == "Clear_clutch")
             {
 
@@ -4081,6 +4190,7 @@ namespace User.PluginSdkDemo
                 Label_clutch_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 0];
                 Plugin.Settings.file_enable_check[profile_select, 0] = 0;
                 Clutch_file_check.IsChecked = false;
+                j = 0;
 
             }
             if (Button.Name == "Clear_brake")
@@ -4090,6 +4200,7 @@ namespace User.PluginSdkDemo
                 Label_brake_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 1];
                 Plugin.Settings.file_enable_check[profile_select, 1] = 0;
                 Brake_file_check.IsChecked = false;
+                j = 1;
 
             }
             if (Button.Name == "Clear_gas")
@@ -4099,7 +4210,14 @@ namespace User.PluginSdkDemo
                 Label_gas_file.Content = Plugin.Settings.Pedal_file_string[profile_select, 2];
                 Plugin.Settings.file_enable_check[profile_select, 2] = 0;
                 Gas_file_check.IsChecked = false;
+                j = 2;
 
+            }
+            //write to setting
+            for (int k = 0; k < 8; k++)
+            {
+                Plugin.Settings.Effect_status_prolife[i, j, k] = false;
+                Effect_status_profile[j, k].IsChecked = false;
             }
             //updateTheGuiFromConfig();
         }
@@ -5143,6 +5261,75 @@ namespace User.PluginSdkDemo
                     break;
             }
             Plugin.current_profile = tmp;
+            for (int j = 0; j < 3; j++)
+            {
+                for (int k = 0; k < 8; k++)
+                {
+                    if (Plugin.Settings.Effect_status_prolife[profile_select, j, k])
+                    {
+                        switch (k)
+                        {
+                            case 0:
+                                Plugin.Settings.ABS_enable_flag[j] = 1;
+                                break;
+                            case 1:
+                                Plugin.Settings.RPM_enable_flag[j] = 1;
+                                break;
+                            case 2:
+                                //Plugin.Settings. = 1;
+                                break;
+                            case 3:
+                                Plugin.Settings.G_force_enable_flag[j] = 1;
+                                break;
+                            case 4:
+                                Plugin.Settings.WS_enable_flag[j] = 1;
+                                break;
+                            case 5:
+                                Plugin.Settings.Road_impact_enable_flag[j] = 1;
+                                break;
+                            case 6:
+                                Plugin.Settings.CV1_enable_flag[j] = true;
+                                break;
+                            case 7:
+                                Plugin.Settings.CV2_enable_flag[j] = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (k)
+                        {
+                            case 0:
+                                Plugin.Settings.ABS_enable_flag[j] = 0;
+                                break;
+                            case 1:
+                                Plugin.Settings.RPM_enable_flag[j] = 0;
+                                break;
+                            case 2:
+                                //Plugin.Settings. = 1;
+                                break;
+                            case 3:
+                                Plugin.Settings.G_force_enable_flag[j] = 0;
+                                break;
+                            case 4:
+                                Plugin.Settings.WS_enable_flag[j] = 0;
+                                break;
+                            case 5:
+                                Plugin.Settings.Road_impact_enable_flag[j] = 0;
+                                break;
+                            case 6:
+                                Plugin.Settings.CV1_enable_flag[j] = false;
+                                break;
+                            case 7:
+                                Plugin.Settings.CV2_enable_flag[j] = false;
+                                break;
+                        }
+                    }
+
+                }
+            }
+            //effect profile change
+
         }
 
         private void effect_bind_click(object sender, RoutedEventArgs e)
