@@ -1667,7 +1667,9 @@ void ESPNOW_SyncTask( void * pvParameters )
           if(now-Pairing_state_start>Pairing_timeout)
           {
             ESPNow_pairing_action_b=false;
-            Serial.println("Reach timeout");
+            Serial.print("Pedal: ");
+            Serial.print(dap_config_st.payLoadPedalConfig_.pedal_type);
+            Serial.println(" timeout.");
             if(UpdatePairingToEeprom)
             {
               EEPROM.put(EEPROM_offset,_ESP_pairing_reg);
