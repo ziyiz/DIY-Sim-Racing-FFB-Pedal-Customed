@@ -119,6 +119,7 @@ namespace User.PluginSdkDemo
         public byte Bridge_RSSI = 0;
         public bool[] Pedal_wireless_connection_update_b = new bool[3] { false,false,false};
         public int Bridge_baudrate = 3000000;
+        public bool Fanatec_mode = false;
         //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -1203,6 +1204,13 @@ namespace User.PluginSdkDemo
                     system_info_text += "\nIn Action";
                     info_label.Content += "\nRudder:";
                     info_label_system.Content += "\nRudder:";
+                }
+                if (Fanatec_mode)
+                {
+                    info_text += "\nIn Action";
+                    system_info_text += "\nIn Action";
+                    info_label.Content += "\nFanatec:";
+                    info_label_system.Content += "\nFanatec:";
                 }
                 info_label_2.Content = info_text;
                 info_label_2_system.Content = system_info_text;
@@ -7796,6 +7804,53 @@ namespace User.PluginSdkDemo
             tmp_2.payloadBridgeState_.Pedal_availability_1 = 0;
             tmp_2.payloadBridgeState_.Pedal_availability_2 = 0;
             tmp_2.payloadBridgeState_.Bridge_action = 3; //restart bridge into boot mode
+            DAP_bridge_state_st* v_2 = &tmp_2;
+            byte* p_2 = (byte*)v_2;
+            tmp_2.payloadFooter_.checkSum = Plugin.checksumCalc(p_2, sizeof(payloadHeader) + sizeof(payloadBridgeState));
+            length = sizeof(DAP_bridge_state_st);
+            byte[] newBuffer_2 = new byte[length];
+            newBuffer_2 = Plugin.getBytes_Bridge(tmp_2);
+            if (Plugin.ESPsync_serialPort.IsOpen)
+            {
+                try
+                {
+                    // clear inbuffer 
+                    Plugin.ESPsync_serialPort.DiscardInBuffer();
+                    // send query command
+                    Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
+                }
+                catch (Exception caughtEx)
+                {
+                    string errorMessage = caughtEx.Message;
+                    TextBox_debugOutput.Text = errorMessage;
+                }
+            }
+        }
+
+        unsafe private void btn_Fanatec_mode_Click(object sender, RoutedEventArgs e)
+        {
+            if (Fanatec_mode == false)
+            {
+                String MSG_tmp;
+                MSG_tmp = "Fanatec Mode Enabling, now Bridge will get the action from wheelbase, please check the serial out of bridge";
+                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Fanatec_mode = true;
+            }
+            else
+            {
+                Fanatec_mode = false;
+            }
+
+            DAP_bridge_state_st tmp_2;
+            int length;
+            tmp_2.payLoadHeader_.version = (byte)Constants.pedalConfigPayload_version;
+            tmp_2.payLoadHeader_.payloadType = (byte)Constants.bridgeStatePayloadType;
+            tmp_2.payLoadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
+            tmp_2.payloadBridgeState_.Pedal_RSSI = 0;
+            tmp_2.payloadBridgeState_.Pedal_availability_0 = 0;
+            tmp_2.payloadBridgeState_.Pedal_availability_1 = 0;
+            tmp_2.payloadBridgeState_.Pedal_availability_2 = 0;
+            tmp_2.payloadBridgeState_.Bridge_action = 4; //Fanatec Mode
             DAP_bridge_state_st* v_2 = &tmp_2;
             byte* p_2 = (byte*)v_2;
             tmp_2.payloadFooter_.checkSum = Plugin.checksumCalc(p_2, sizeof(payloadHeader) + sizeof(payloadBridgeState));
