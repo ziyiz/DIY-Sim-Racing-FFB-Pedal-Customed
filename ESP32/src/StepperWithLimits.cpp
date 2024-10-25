@@ -4,7 +4,7 @@
 #include "Math.h"
 
 
-#define STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT 20
+#define STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT 50
 #define MIN_POS_MAX_ENDSTOP STEPS_PER_MOTOR_REVOLUTION * 3 // servo has to drive minimum N steps before it allows the detection of the max endstop
 
 
@@ -70,8 +70,8 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
     _stepper->setSpeedInTicks( maxSpeedInTicks ); // ticks
     _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);  // steps/s²
 	_stepper->setLinearAcceleration(0);
-    //_stepper->setForwardPlanningTimeInMs(8);
-	_stepper->setForwardPlanningTimeInMs(4);
+    _stepper->setForwardPlanningTimeInMs(8);
+	//_stepper->setForwardPlanningTimeInMs(4);
 
 	
 	
@@ -166,7 +166,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		
 		// reduce speed and acceleration
 		_stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED / 10);
-		//_stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 10);
+		_stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 10);
 
 		// enable servo
 		restartServo = true;
@@ -222,10 +222,12 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		restartServo = true;
 
 		bool servoAxisResetSuccessfull_b = false;
-		for (uint16_t waitTillServoCounterWasReset_Idx = 0; waitTillServoCounterWasReset_Idx < 100; waitTillServoCounterWasReset_Idx++)
+		for (uint16_t waitTillServoCounterWasReset_Idx = 0; waitTillServoCounterWasReset_Idx < 10; waitTillServoCounterWasReset_Idx++)
 		{
 			delay(100);
-			if ( (false == restartServo) && (0 == isv57.servo_pos_given_p ) )
+
+			bool servoPosRes_b = (50 > abs(isv57.servo_pos_given_p) ) || ( 50 > (INT16_MAX - abs(isv57.servo_pos_given_p))  );
+			if ( (false == restartServo) && (servoPosRes_b) )
 			{
 				Serial.print("Servo axis was reset succesfully! Current position: ");
 				Serial.println(isv57.servo_pos_given_p);
