@@ -549,9 +549,11 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 			// restarting servo axis
 			if(true == stepper_cl->restartServo)
 			{
-				stepper_cl->isv57.disableAxis();				
+				stepper_cl->isv57.disableAxis();
+				delay(50);				
 				stepper_cl->isv57.enableAxis();
 				stepper_cl->restartServo = false;
+				delay(200);
 			}
 
 
