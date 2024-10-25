@@ -135,7 +135,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 		xTaskCreatePinnedToCore(
 						  this->servoCommunicationTask,   
 						  "servoCommunicationTask", 
-						  5000,  
+						  2000,  
 						  //STACK_SIZE_FOR_TASK_2,    
 						  this,//NULL,      
 						  1,         
@@ -509,6 +509,7 @@ int16_t servoPos_last_i16 = 0;
 int64_t timeNow_l = 0;
 
 
+uint32_t stackSizeIdx_u32 = 0;
 void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 {
   
@@ -725,9 +726,16 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 				
 			}
 
-
-			
-		
+			#ifdef PRINT_TASK_FREE_STACKSIZE_IN_WORDS
+				if( stackSizeIdx_u32 == 1000)
+				{
+					UBaseType_t stackHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+					Serial.print("StackSize (Servo communication): ");
+					Serial.println(stackHighWaterMark);
+					stackSizeIdx_u32 = 0;
+				}
+				stackSizeIdx_u32++;
+			#endif
 
 			
 		}
