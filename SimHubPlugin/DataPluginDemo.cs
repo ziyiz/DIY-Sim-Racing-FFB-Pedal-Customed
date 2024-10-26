@@ -268,6 +268,17 @@ public struct DAP_bridge_state_st
     public payloadFooter payloadFooter_;
 };
 
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+unsafe public struct Basic_WIfi_info
+{
+    public byte wifi_action;
+    public byte mode_select;
+    public byte SSID_Length;
+    public byte PASS_Length;
+    public fixed byte WIFI_SSID[30];
+    public fixed byte WIFI_PASS[30];
+};
+
 namespace User.PluginSdkDemo
 {
     [PluginDescription("The Plugin was for FFB pedal, To tune the pedal parameters and communicates with the pedal over USB.")]
@@ -433,6 +444,19 @@ namespace User.PluginSdkDemo
             return myBuffer;
         }
         public byte[] getBytes_Bridge(DAP_bridge_state_st aux)
+        {
+            int length = Marshal.SizeOf(aux);
+            IntPtr ptr = Marshal.AllocHGlobal(length);
+            byte[] myBuffer = new byte[length];
+
+            Marshal.StructureToPtr(aux, ptr, true);
+            Marshal.Copy(ptr, myBuffer, 0, length);
+            Marshal.FreeHGlobal(ptr);
+
+            return myBuffer;
+        }
+
+        public byte[] getBytes_Basic_Wifi_info(Basic_WIfi_info aux)
         {
             int length = Marshal.SizeOf(aux);
             IntPtr ptr = Marshal.AllocHGlobal(length);

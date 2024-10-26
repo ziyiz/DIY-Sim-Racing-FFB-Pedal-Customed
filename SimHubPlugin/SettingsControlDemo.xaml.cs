@@ -84,6 +84,7 @@ namespace User.PluginSdkDemo
         public DAP_config_st[] dap_config_st = new DAP_config_st[3];
         public DAP_config_st dap_config_st_rudder;
         public DAP_bridge_state_st dap_bridge_state_st;
+        public Basic_WIfi_info _basic_wifi_info;
         private string stringValue;
 
 
@@ -602,7 +603,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.enableReboot_u8 = 0;
         }
         System.Windows.Controls.CheckBox[,] Effect_status_profile=new System.Windows.Controls.CheckBox[3,8];
-        public SettingsControlDemo()
+        unsafe public SettingsControlDemo()
         {
             
             DAP_config_set_default_rudder();
@@ -610,6 +611,11 @@ namespace User.PluginSdkDemo
             {
                 DAP_config_set_default(pedalIdx);
                 
+            }
+            for (uint i = 0; i < 30; i++)
+            {
+                _basic_wifi_info.WIFI_PASS[i] = 0;
+                _basic_wifi_info.WIFI_SSID[i] = 0;
             }
             InitializeComponent();
 
@@ -5269,10 +5275,57 @@ namespace User.PluginSdkDemo
             Plugin.Settings.Profile_name[profile_select]= textbox.Text;
         }
 
-        private void btn_toast_Click(object sender, RoutedEventArgs e)
+        unsafe private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
+            /*
             ToastNotification("Rudder Brake","Test");
             Plugin.Rudder_brake_enable_flag = true;
+            */
+            Basic_WIfi_info tmp_2;
+            int length;
+            string SSID = "WIFISSID";
+            string PASS = "ABCDEFGHIJ";
+
+            tmp_2.SSID_Length = (byte)SSID.Length;
+            tmp_2.PASS_Length = (byte)PASS.Length;
+            byte[] array_ssid = Encoding.ASCII.GetBytes(SSID);
+            TextBox_serialMonitor_bridge.Text += "SSID:";
+            for (int i = 0; i < SSID.Length; i++)
+            {
+                tmp_2.WIFI_SSID[i]= array_ssid[i];
+                TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i]+",";
+            }
+            TextBox_serialMonitor_bridge.Text += "\nPASS:";
+            byte[] array_pass = Encoding.ASCII.GetBytes(PASS);
+            for (int i = 0; i < PASS.Length; i++)
+            {
+                tmp_2.WIFI_PASS[i] = array_pass[i];
+                TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
+            }
+
+            Basic_WIfi_info* v_2 = &tmp_2;
+            byte* p_2 = (byte*)v_2;
+            TextBox_serialMonitor_bridge.Text += "\nwifiinfo sent\n\r";
+            
+            length = sizeof(Basic_WIfi_info);
+            TextBox_serialMonitor_bridge.Text += "\nLength:" + length;
+            byte[] newBuffer_2 = new byte[length];
+            newBuffer_2 = Plugin.getBytes_Basic_Wifi_info(tmp_2);
+            if (Plugin.ESPsync_serialPort.IsOpen)
+            {
+                try
+                {
+                    // clear inbuffer 
+                    Plugin.ESPsync_serialPort.DiscardInBuffer();
+                    // send query command
+                    Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
+                }
+                catch (Exception caughtEx)
+                {
+                    string errorMessage = caughtEx.Message;
+                    TextBox_debugOutput.Text = errorMessage;
+                }
+            }
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
