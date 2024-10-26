@@ -149,6 +149,9 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
 
   // Pr3 register
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_3_00+24, 5000); // maximum rpm
+
+  // Pr4 register
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_4_00+23, 80); // FIR based command smoothing time. Since the stpper task runs every 4ms, this time is selected to be larger than that. Unit is 0.1ms 
   
   // Pr5 register
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_5_00+13, 5000); // overspeed level
