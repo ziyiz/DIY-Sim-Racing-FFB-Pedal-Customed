@@ -99,8 +99,8 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
 
   // Pr0 register
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+1, 0); // control mode 
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 0); // deactivate auto gain
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 10); // machine stiffness
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 1); // Enable auto gain. Sometimes after reboot, the servo rattles violenty. Perhaps enabling auto gain after reboot will mitigate the issue.
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 1); // machine stiffness. Select low machine stiffness to reduce rattling.
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+4, 80); // ratio of inertia
   //retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+6, commandRotationDirection); // Command Pulse Rotational Direction
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+8, STEPS_PER_MOTOR_REVOLUTION); // microsteps
@@ -186,6 +186,11 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
     isv57_update_parameter_b=true;
     delay(2000);
   }
+
+
+  // After flashing the register values, deactivate auto gain again to have best possible closed-loop response
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 0); // deactivate auto gain
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 10); // machine stiffness
 
 }
 
