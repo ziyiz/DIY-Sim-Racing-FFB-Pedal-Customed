@@ -245,6 +245,34 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		*/
 
 
+		// check if servo readings are trustworthy
+		// check if voltage is in reasonable range
+		bool servoRadingsTrustworthy_b = false;
+		for (uint16_t waitTillServoCounterWasReset_Idx = 0; waitTillServoCounterWasReset_Idx < 10; waitTillServoCounterWasReset_Idx++)
+		{
+			delay(100);
+
+			servoRadingsTrustworthy_b = getServosVoltage() > 100;
+
+			if (true == servoRadingsTrustworthy_b)
+			{
+				Serial.print("Servo axis was reset succesfully! Current position: ");
+				Serial.println(isv57.servo_pos_given_p);
+				break;
+			}
+		}
+
+		if(false == servoRadingsTrustworthy_b)
+		{
+			Serial.print("Servo axis not reset. Restarting ESP!");
+			ESP.restart();
+		}
+		
+
+
+		
+		
+
 		isv57.setZeroPos();
 
 		
