@@ -194,7 +194,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 			if (true == servoRadingsTrustworthy_b)
 			{
-				Serial.print("Servo axis was reset succesfully! Current position: ");
+				Serial.print("Servo readings plausible! Current position (raw): ");
 				Serial.println(isv57.servo_pos_given_p);
 				break;
 			}
@@ -202,7 +202,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 		if(false == servoRadingsTrustworthy_b)
 		{
-			Serial.print("Servo axis not reset. Restarting ESP!");
+			Serial.print("Servo readings not plausible. Restarting ESP!");
 			ESP.restart();
 		}
 		
