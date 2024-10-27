@@ -115,8 +115,8 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 		Serial.print("iSV57 communication state:  ");
 		Serial.println( getLifelineSignal() );
 
-		isv57.enableAxis();
-		delay(100);
+		// isv57.enableAxis();
+		// delay(100);
 
 		// flash iSV57 registers
 		isv57.setupServoStateReading();
@@ -176,6 +176,9 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		//isv57.enableAxis();
 		//delay(50);
 
+		// move a tiny bit to enable axis
+		// _stepper->move(10, true);
+
 
 
 
@@ -205,6 +208,8 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			Serial.print("Servo readings not plausible. Restarting ESP!");
 			ESP.restart();
 		}
+		
+
 		
 
 

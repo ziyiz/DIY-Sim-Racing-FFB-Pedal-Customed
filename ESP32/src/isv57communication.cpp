@@ -98,9 +98,9 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
 
 
   // Pr0 register
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+1, 0); // control mode 
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 1); // Enable auto gain. Sometimes after reboot, the servo rattles violenty. Perhaps enabling auto gain after reboot will mitigate the issue.
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 1); // machine stiffness. Select low machine stiffness to reduce rattling.
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+1, 0); // control mode #
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 0); // deactivate auto gain
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 10); // machine stiffness
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+4, 80); // ratio of inertia
   //retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+6, commandRotationDirection); // Command Pulse Rotational Direction
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+8, STEPS_PER_MOTOR_REVOLUTION); // microsteps
@@ -165,7 +165,23 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_7_00+33, 1); // bleeder hysteresis voltage; Contrary to the manual this seems to be an offset voltage, thus Braking disabling voltage = Pr7.32 + Pr.33
   
   // disable axis after servo startup --> ESP has to enable the axis first
-  //isv57communication::disableAxis();
+  // Pr4.08
+  // long servoEnableStatus = modbus.holdingRegisterRead(slaveId, 0x03, pr_4_00+8);
+  // Serial.print("Servo enable setting: ");
+  // Serial.println(servoEnableStatus, HEX);
+  // delay(100);
+  // if (servoEnableStatus != 0x303)
+  // {
+  //   isv57communication::disableAxis();
+  // }
+  // delay(100);
+  // servoEnableStatus = modbus.holdingRegisterRead(slaveId, 0x03, pr_4_00+8);
+  // Serial.print("Servo enable setting: ");
+  // Serial.println(servoEnableStatus, HEX);
+
+
+  isv57communication::enableAxis();
+  
 
 
   // store the settings to servos NVM if necesssary
@@ -184,13 +200,9 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
     
     
     isv57_update_parameter_b=true;
-    delay(2000);
+    delay(1000);
   }
 
-
-  // After flashing the register values, deactivate auto gain again to have best possible closed-loop response
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+2, 0); // deactivate auto gain
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_0_00+3, 10); // machine stiffness
 
 }
 
