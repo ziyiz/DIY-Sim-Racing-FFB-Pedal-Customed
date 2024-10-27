@@ -245,13 +245,17 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		*/
 
 
-		// check if servo readings are trustworthy
-		// check if voltage is in reasonable range
+
+
+
+		// check if servo readings are trustworthy, by checking if servos bus voltage is in reasonable range. Otherwise restart servo.
 		bool servoRadingsTrustworthy_b = false;
 		for (uint16_t waitTillServoCounterWasReset_Idx = 0; waitTillServoCounterWasReset_Idx < 10; waitTillServoCounterWasReset_Idx++)
 		{
 			delay(100);
 
+			// voltage return is given in 0.1V units --> 10V range --> threshold 100
+			// at beginning the values typically are initialized with -1
 			servoRadingsTrustworthy_b = getServosVoltage() > 100;
 
 			if (true == servoRadingsTrustworthy_b)
@@ -268,6 +272,8 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			ESP.restart();
 		}
 		
+
+
 
 
 		
