@@ -180,7 +180,7 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
   // Serial.println(servoEnableStatus, HEX);
 
 
-  isv57communication::enableAxis();
+  //isv57communication::enableAxis();
   
 
 
