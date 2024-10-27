@@ -63,15 +63,29 @@ void isv57communication::enableAxis()
   Serial.println("Enabling servo");
 
   // 0x3f, 0x06, 0x00, 0x85, 0x03, 0x83, 0xdd, 0xac
+  // Pr4.08: 0x085
   modbus.holdingRegisterWrite(slaveId, 0x0085, 0x0383);
   delay(12);
   // 0x3f, 0x06, 0x01, 0x39, 0x00, 0x08, 0x5d, 0x23
   modbus.holdingRegisterWrite(slaveId, 0x0139, 0x0008);
   delay(10);
 
+  // modbus.holdingRegisterRead(0x0085);
+  // modbus.holdingRegisterRead(0x0139);
   
 }
 
+
+void isv57communication::resetAxisCounter() 
+{
+  Serial.println("Reset axis counter");
+
+  modbus.holdingRegisterRead(0x0085);
+  delay(10);
+  modbus.holdingRegisterRead(0x0139);
+  delay(10);
+  
+}
 
 
 
@@ -180,7 +194,7 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
   // Serial.println(servoEnableStatus, HEX);
 
 
-  //isv57communication::enableAxis();
+  isv57communication::enableAxis();
   
 
 
