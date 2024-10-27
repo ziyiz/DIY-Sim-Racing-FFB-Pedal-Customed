@@ -115,6 +115,9 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 		Serial.print("iSV57 communication state:  ");
 		Serial.println( getLifelineSignal() );
 
+		isv57.enableAxis();
+		delay(100);
+
 		// flash iSV57 registers
 		isv57.setupServoStateReading();
 		invertMotorDir_global_b = invertMotorDir_b;
@@ -170,7 +173,8 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 		// enable servo
 		//restartServo = true;
-		delay(50);
+		//isv57.enableAxis();
+		//delay(50);
 
 
 
