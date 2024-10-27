@@ -32,8 +32,9 @@ static class Constants
     public const uint pedalConfigPayload_type = 100;
     public const uint pedalActionPayload_type = 110;
     public const uint pedalStateBasicPayload_type = 120;
-    public const uint pedalStateExtendedPayload_type = 130;
+    public const uint pedalStateExtendedPayload_type = 130;   
     public const uint bridgeStatePayloadType = 210;
+    public const uint Basic_Wifi_info_type = 220;
 }
 
 
@@ -271,6 +272,8 @@ public struct DAP_bridge_state_st
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 unsafe public struct Basic_WIfi_info
 {
+    public byte payload_Type;
+    public byte device_ID;
     public byte wifi_action;
     public byte mode_select;
     public byte SSID_Length;

@@ -734,6 +734,7 @@ namespace User.PluginSdkDemo
             Rangeslider_force_range.TickFrequency = 1;
             TextBox_debug_count.Visibility= Visibility.Hidden;
             text_rudder_log.Visibility=Visibility.Hidden;
+            
 
 
 
@@ -1914,6 +1915,8 @@ namespace User.PluginSdkDemo
                         }
                     }
                 }
+                textbox_SSID.Text = Plugin.Settings.SSID_string;
+                textbox_PASS.Password = Plugin.Settings.PASS_string;
             }
 
         }
@@ -5277,55 +5280,11 @@ namespace User.PluginSdkDemo
 
         unsafe private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
-            /*
+            
             ToastNotification("Rudder Brake","Test");
             Plugin.Rudder_brake_enable_flag = true;
-            */
-            Basic_WIfi_info tmp_2;
-            int length;
-            string SSID = "WIFISSID";
-            string PASS = "ABCDEFGHIJ";
-
-            tmp_2.SSID_Length = (byte)SSID.Length;
-            tmp_2.PASS_Length = (byte)PASS.Length;
-            byte[] array_ssid = Encoding.ASCII.GetBytes(SSID);
-            TextBox_serialMonitor_bridge.Text += "SSID:";
-            for (int i = 0; i < SSID.Length; i++)
-            {
-                tmp_2.WIFI_SSID[i]= array_ssid[i];
-                TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i]+",";
-            }
-            TextBox_serialMonitor_bridge.Text += "\nPASS:";
-            byte[] array_pass = Encoding.ASCII.GetBytes(PASS);
-            for (int i = 0; i < PASS.Length; i++)
-            {
-                tmp_2.WIFI_PASS[i] = array_pass[i];
-                TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
-            }
-
-            Basic_WIfi_info* v_2 = &tmp_2;
-            byte* p_2 = (byte*)v_2;
-            TextBox_serialMonitor_bridge.Text += "\nwifiinfo sent\n\r";
             
-            length = sizeof(Basic_WIfi_info);
-            TextBox_serialMonitor_bridge.Text += "\nLength:" + length;
-            byte[] newBuffer_2 = new byte[length];
-            newBuffer_2 = Plugin.getBytes_Basic_Wifi_info(tmp_2);
-            if (Plugin.ESPsync_serialPort.IsOpen)
-            {
-                try
-                {
-                    // clear inbuffer 
-                    Plugin.ESPsync_serialPort.DiscardInBuffer();
-                    // send query command
-                    Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
-                }
-                catch (Exception caughtEx)
-                {
-                    string errorMessage = caughtEx.Message;
-                    TextBox_debugOutput.Text = errorMessage;
-                }
-            }
+            
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -7924,6 +7883,104 @@ namespace User.PluginSdkDemo
                     string errorMessage = caughtEx.Message;
                     TextBox_debugOutput.Text = errorMessage;
                 }
+            }
+        }
+
+        unsafe private void btn_Bridge_OTA_Click(object sender, RoutedEventArgs e)
+        {
+            Basic_WIfi_info tmp_2;
+            int length;
+            string SSID = textbox_SSID.Text;
+            string PASS = textbox_PASS.Password;
+            bool SSID_PASS_check = true;
+
+            if (SSID.Length > 30 || PASS.Length > 30)
+            { 
+                SSID_PASS_check = false;
+                String MSG_tmp;
+                MSG_tmp = "ERROR! SSID or Password length larger than 30 bytes";
+                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            if (SSID_PASS_check)
+            {
+                tmp_2.SSID_Length = (byte)SSID.Length;
+                tmp_2.PASS_Length = (byte)PASS.Length;
+                tmp_2.device_ID = 99;
+                tmp_2.payload_Type = (Byte)Constants.Basic_Wifi_info_type;
+
+                byte[] array_ssid = Encoding.ASCII.GetBytes(SSID);
+                TextBox_serialMonitor_bridge.Text += "SSID:";
+                for (int i = 0; i < SSID.Length; i++)
+                {
+                    tmp_2.WIFI_SSID[i] = array_ssid[i];
+                    TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i] + ",";
+                }
+                TextBox_serialMonitor_bridge.Text += "\nPASS:";
+                byte[] array_pass = Encoding.ASCII.GetBytes(PASS);
+                for (int i = 0; i < PASS.Length; i++)
+                {
+                    tmp_2.WIFI_PASS[i] = array_pass[i];
+                    TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
+                }
+
+                Basic_WIfi_info* v_2 = &tmp_2;
+                byte* p_2 = (byte*)v_2;
+                TextBox_serialMonitor_bridge.Text += "\nwifiinfo sent\n\r";
+
+                length = sizeof(Basic_WIfi_info);
+                TextBox_serialMonitor_bridge.Text += "\nLength:" + length;
+                byte[] newBuffer_2 = new byte[length];
+                newBuffer_2 = Plugin.getBytes_Basic_Wifi_info(tmp_2);
+                if (Plugin.ESPsync_serialPort.IsOpen)
+                {
+                    try
+                    {
+                        // clear inbuffer 
+                        Plugin.ESPsync_serialPort.DiscardInBuffer();
+                        // send query command
+                        Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
+                    }
+                    catch (Exception caughtEx)
+                    {
+                        string errorMessage = caughtEx.Message;
+                        TextBox_debugOutput.Text = errorMessage;
+                    }
+                }
+            }
+            
+        }
+
+        private void textbox_SSID_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (textbox_SSID.Text.Length > 30)
+            {
+                Label_SSID.Content = "Error! SSID length >30";
+            }
+            else
+            {
+                if (Plugin != null)
+                { 
+                    Plugin.Settings.SSID_string = textbox_SSID.Text;
+                }
+                Label_SSID.Content = "";
+            }
+        }
+
+
+        private void textbox_PASS_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (textbox_PASS.Password.Length > 30)
+            {
+                Label_PASS.Content = "Error! Password length >30";
+            }
+            else
+            {
+                if (Plugin != null)
+                {
+                    Plugin.Settings.PASS_string = textbox_PASS.Password;
+                }
+                Label_PASS.Content = "";
             }
         }
     }
