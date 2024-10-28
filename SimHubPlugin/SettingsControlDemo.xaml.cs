@@ -7028,6 +7028,7 @@ namespace User.PluginSdkDemo
  unsafe private void btn_OTA_enable_Click(object sender, RoutedEventArgs e)
         {
             // compute checksum
+            /*
             DAP_action_st tmp;
             tmp.payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
             tmp.payloadHeader_.payloadType = (byte)Constants.pedalActionPayload_type;
@@ -7094,6 +7095,99 @@ namespace User.PluginSdkDemo
             MSG_tmp += " wifi hotspot, then go to 192.168.2.1 to upload firmware.bin";
 
             System.Windows.MessageBox.Show(MSG_tmp, "OTA warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            */
+            Basic_WIfi_info tmp_2;
+            int length;
+            string SSID = textbox_SSID.Text;
+            string PASS = textbox_PASS.Password;
+            bool SSID_PASS_check = true;
+            if (OTAChannel_Sel_1.IsChecked == true)
+            {
+                tmp_2.mode_select = 1;
+            }
+            if (OTAChannel_Sel_2.IsChecked == true)
+            {
+                tmp_2.mode_select = 2;
+            }
+            if (SSID.Length > 30 || PASS.Length > 30)
+            {
+                SSID_PASS_check = false;
+                String MSG_tmp;
+                MSG_tmp = "ERROR! SSID or Password length must less than 30 bytes";
+                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            if (SSID_PASS_check)
+            {
+                tmp_2.SSID_Length = (byte)SSID.Length;
+                tmp_2.PASS_Length = (byte)PASS.Length;
+                tmp_2.device_ID = (byte)indexOfSelectedPedal_u;
+                tmp_2.payload_Type = (Byte)Constants.Basic_Wifi_info_type;
+
+                byte[] array_ssid = Encoding.ASCII.GetBytes(SSID);
+                //TextBox_serialMonitor_bridge.Text += "SSID:";
+                for (int i = 0; i < SSID.Length; i++)
+                {
+                    tmp_2.WIFI_SSID[i] = array_ssid[i];
+                    //TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i] + ",";
+                }
+                //TextBox_serialMonitor_bridge.Text += "\nPASS:";
+                byte[] array_pass = Encoding.ASCII.GetBytes(PASS);
+                for (int i = 0; i < PASS.Length; i++)
+                {
+                    tmp_2.WIFI_PASS[i] = array_pass[i];
+                    //TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
+                }
+
+                Basic_WIfi_info* v_2 = &tmp_2;
+                byte* p_2 = (byte*)v_2;
+                TextBox_serialMonitor_bridge.Text += "\nwifi info sent\n\r";
+
+                length = sizeof(Basic_WIfi_info);
+                TextBox_serialMonitor_bridge.Text += "\nLength:" + length;
+                byte[] newBuffer_2 = new byte[length];
+                newBuffer_2 = Plugin.getBytes_Basic_Wifi_info(tmp_2);
+                if (Plugin.Settings.Pedal_ESPNow_Sync_flag[indexOfSelectedPedal_u])
+                {
+                    if (Plugin.ESPsync_serialPort.IsOpen)
+                    {
+                        try
+                        {
+                            // clear inbuffer 
+                            Plugin.ESPsync_serialPort.DiscardInBuffer();
+
+                            // send query command
+                            Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
+                        }
+                        catch (Exception caughtEx)
+                        {
+                            string errorMessage = caughtEx.Message;
+                            //TextBox_debugOutput.Text = errorMessage;
+                            TextBox_serialMonitor.Text+= errorMessage+"\n";
+                        }
+                    }
+                }
+                else
+                {
+                    if (Plugin._serialPort[indexOfSelectedPedal_u].IsOpen)
+                    {
+                        try
+                        {
+                            // clear inbuffer 
+                            Plugin._serialPort[indexOfSelectedPedal_u].DiscardInBuffer();
+
+                            // send query command
+                            Plugin._serialPort[indexOfSelectedPedal_u].Write(newBuffer_2, 0, newBuffer_2.Length);
+                        }
+                        catch (Exception caughtEx)
+                        {
+                            string errorMessage = caughtEx.Message;
+                            //TextBox_debugOutput.Text = errorMessage;
+                            TextBox_serialMonitor.Text += errorMessage + "\n";
+                        }
+                    }
+                }
+            }
         }
 
         unsafe private void btn_Bridge_restart_Click(object sender, RoutedEventArgs e)
@@ -7839,52 +7933,7 @@ namespace User.PluginSdkDemo
             }
         }
 
-        unsafe private void btn_Fanatec_mode_Click(object sender, RoutedEventArgs e)
-        {
-            if (Fanatec_mode == false)
-            {
-                String MSG_tmp;
-                MSG_tmp = "Fanatec Mode Enabling, now Bridge will get the action from wheelbase, please check the serial out of bridge";
-                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Fanatec_mode = true;
-            }
-            else
-            {
-                Fanatec_mode = false;
-            }
-
-            DAP_bridge_state_st tmp_2;
-            int length;
-            tmp_2.payLoadHeader_.version = (byte)Constants.pedalConfigPayload_version;
-            tmp_2.payLoadHeader_.payloadType = (byte)Constants.bridgeStatePayloadType;
-            tmp_2.payLoadHeader_.PedalTag = (byte)indexOfSelectedPedal_u;
-            tmp_2.payloadBridgeState_.Pedal_RSSI = 0;
-            tmp_2.payloadBridgeState_.Pedal_availability_0 = 0;
-            tmp_2.payloadBridgeState_.Pedal_availability_1 = 0;
-            tmp_2.payloadBridgeState_.Pedal_availability_2 = 0;
-            tmp_2.payloadBridgeState_.Bridge_action = 4; //Fanatec Mode
-            DAP_bridge_state_st* v_2 = &tmp_2;
-            byte* p_2 = (byte*)v_2;
-            tmp_2.payloadFooter_.checkSum = Plugin.checksumCalc(p_2, sizeof(payloadHeader) + sizeof(payloadBridgeState));
-            length = sizeof(DAP_bridge_state_st);
-            byte[] newBuffer_2 = new byte[length];
-            newBuffer_2 = Plugin.getBytes_Bridge(tmp_2);
-            if (Plugin.ESPsync_serialPort.IsOpen)
-            {
-                try
-                {
-                    // clear inbuffer 
-                    Plugin.ESPsync_serialPort.DiscardInBuffer();
-                    // send query command
-                    Plugin.ESPsync_serialPort.Write(newBuffer_2, 0, newBuffer_2.Length);
-                }
-                catch (Exception caughtEx)
-                {
-                    string errorMessage = caughtEx.Message;
-                    TextBox_debugOutput.Text = errorMessage;
-                }
-            }
-        }
+        
 
         unsafe private void btn_Bridge_OTA_Click(object sender, RoutedEventArgs e)
         {
@@ -7893,7 +7942,14 @@ namespace User.PluginSdkDemo
             string SSID = textbox_SSID.Text;
             string PASS = textbox_PASS.Password;
             bool SSID_PASS_check = true;
-
+            if (OTAChannel_Sel_1.IsChecked == true)
+            {
+                tmp_2.mode_select = 1;
+            }
+            if (OTAChannel_Sel_2.IsChecked == true)
+            {
+                tmp_2.mode_select = 2;
+            }
             if (SSID.Length > 30 || PASS.Length > 30)
             { 
                 SSID_PASS_check = false;
@@ -7910,23 +7966,23 @@ namespace User.PluginSdkDemo
                 tmp_2.payload_Type = (Byte)Constants.Basic_Wifi_info_type;
 
                 byte[] array_ssid = Encoding.ASCII.GetBytes(SSID);
-                TextBox_serialMonitor_bridge.Text += "SSID:";
+                //TextBox_serialMonitor_bridge.Text += "SSID:";
                 for (int i = 0; i < SSID.Length; i++)
                 {
                     tmp_2.WIFI_SSID[i] = array_ssid[i];
-                    TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i] + ",";
+                    //TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_SSID[i] + ",";
                 }
-                TextBox_serialMonitor_bridge.Text += "\nPASS:";
+                //TextBox_serialMonitor_bridge.Text += "\nPASS:";
                 byte[] array_pass = Encoding.ASCII.GetBytes(PASS);
                 for (int i = 0; i < PASS.Length; i++)
                 {
                     tmp_2.WIFI_PASS[i] = array_pass[i];
-                    TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
+                    //TextBox_serialMonitor_bridge.Text += tmp_2.WIFI_PASS[i] + ",";
                 }
 
                 Basic_WIfi_info* v_2 = &tmp_2;
                 byte* p_2 = (byte*)v_2;
-                TextBox_serialMonitor_bridge.Text += "\nwifiinfo sent\n\r";
+                TextBox_serialMonitor_bridge.Text += "\nwifi info sent\n\r";
 
                 length = sizeof(Basic_WIfi_info);
                 TextBox_serialMonitor_bridge.Text += "\nLength:" + length;
@@ -7983,6 +8039,8 @@ namespace User.PluginSdkDemo
                 Label_PASS.Content = "";
             }
         }
+
+
     }
     
 }
