@@ -3,13 +3,16 @@
 #include <esp_wifi.h>
 #define VERSION "0.0.0"
 #if PCB_VERSION==5
-	#define JSON_URL   "https://raw.githubusercontent.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/develop/OTA/Bridge/Fanatec_Bridge/Version.json"
+	#define JSON_URL_dev   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/dev/Bridge/Version_Fanatec_bridge.json"
+	#define JSON_URL_main   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/main/Bridge/Version_Fanatec_bridge.json"
 #endif
 #if PCB_VERSION==6
-	#define JSON_URL   "https://raw.githubusercontent.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/develop/OTA/Bridge/dev_kit/Version.json"
+	#define JSON_URL_dev   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/dev/Bridge/Version_devkit.json"
+	#define JSON_URL_main   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/main/Bridge/Version_devkit.json"
 #endif
 #if PCB_VERSION==7
-	#define JSON_URL   "https://raw.githubusercontent.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/develop/OTA/Bridge/Gilphilbert_dongle/Version.json"
+	#define JSON_URL_dev   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/dev/Bridge/Version_Gilphilbert_dongle.json"
+	#define JSON_URL_main   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/main/Bridge/Version_Gilphilbert_dongle.json"
 #endif
 
 bool OTA_enable_b =false;
@@ -43,8 +46,9 @@ void wifi_initialized(char* Wifi_SSID, char* Wifi_PASS)
     WiFi.begin(Wifi_SSID, Wifi_PASS);
 
     // Display connection progress
-    Serial.print("[L]Connecting to WiFi");
-    
+    Serial.print("[L]Connecting to WiFi:");
+    Serial.print(WiFi.SSID());
+	Serial.print(" ");
     // Wait until WiFi is connected
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -86,7 +90,7 @@ const char *errtext(int code)
 	}
 	return "Unknown error";
 }
-
+/*
 void DisplayInfo()
 {
 	char exampleImageURL[256];
@@ -107,13 +111,14 @@ void DisplayInfo()
 	Serial.printf("\n");
 	Serial.printf("(Board, Device, Config, and Version are all *optional*.)\n");
 	Serial.printf("\n");
-	Serial.printf("Post the JSON at, e.g., %s\n", JSON_URL);
+	Serial.printf("Post the JSON at, e.g., %s\n", JSON_URL_main);
 	Serial.printf("Post the compiled bin at, e.g., %s\n\n", exampleImageURL);
 }
+*/
 
 void OTAcallback(int offset, int totallength)
 {
-	Serial.print("[L]Updating");
+	Serial.print("[L]Updating: ");
     Serial.print(offset);
     Serial.print(" of ");
     Serial.print(totallength);
