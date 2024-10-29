@@ -166,6 +166,7 @@ static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
   //#define Pairing_GPIO 13
   //#define ESPNow_debug_rudder
   #define OTA_update_ESP32
+  
 #endif
 
 

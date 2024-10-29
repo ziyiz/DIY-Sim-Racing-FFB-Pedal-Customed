@@ -1566,7 +1566,7 @@ void OTATask( void * pvParameters )
 
   for(;;)
   {
-    #ifdef OTA_update
+    
     if(OTA_count>200)
     {
       message_out_b=true;
@@ -1577,7 +1577,7 @@ void OTATask( void * pvParameters )
       OTA_count++;
     }
 
-    
+    #if defined(OTA_update)  || defined(OTA_update_ESP32)
     if(OTA_enable_b)
     {
       if(message_out_b)
@@ -1587,13 +1587,14 @@ void OTATask( void * pvParameters )
       }
       if(OTA_status)
       {
-        
-        //server.handleClient();
+        #ifdef OTA_update_esp32
+          server.handleClient();
+        #endif
       }
       else
       {
-        Serial.println("[L]de-initialize espnow");
-        Serial.println("[L]wait...");
+        Serial.println("de-initialize espnow");
+        Serial.println("wait...");
         esp_err_t result= esp_now_deinit();
         ESPNow_initial_status=false;
         ESPNOW_status=false;
@@ -1602,7 +1603,10 @@ void OTATask( void * pvParameters )
         {
           OTA_status=true;
           delay(1000);
-          //ota_wifi_initialize(APhost);
+          #ifdef OTA_update_ESP32
+          ota_wifi_initialize(APhost);
+          #endif
+          #ifdef OTA_update
           wifi_initialized(SSID,PASS);
           delay(2000);
           ESP32OTAPull ota;
@@ -1623,6 +1627,7 @@ void OTATask( void * pvParameters )
             default:
             break;
           }
+          #endif
 
           delay(3000);
         }
@@ -1643,6 +1648,7 @@ void OTATask( void * pvParameters )
       }
       otaTask_stackSizeIdx_u32++;
     #endif
+    delay(2);
   }
 }
 
