@@ -516,7 +516,7 @@ void setup()
   xTaskCreatePinnedToCore(
                     OTATask,   
                     "OTATask", 
-                    20000,  
+                    16000,  
                     //STACK_SIZE_FOR_TASK_2,    
                     NULL,      
                     1,         
@@ -630,7 +630,7 @@ void setup()
     xTaskCreatePinnedToCore(
                         ESPNOW_SyncTask,   
                         "ESPNOW_update_Task", 
-                        2000,  
+                        4000,  
                         //STACK_SIZE_FOR_TASK_2,    
                         NULL,      
                         1,         
