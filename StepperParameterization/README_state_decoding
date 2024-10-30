@@ -713,6 +713,36 @@ ChannelTable_EN:
 
 
 
+Pr4.02 - Pr4.05
+Digital input signal status:
+Bit 0 --> SI1
+Bit 1 --> SI2
+Bit 2 --> SI3
+...
+Bit 8 --> SI9
+
+
+Pr4.10 - Pr4.12
+Digital output signal status:
+Bit 0 --> DO1
+Bit 1 --> DO2
+Bit 2 --> DO3
+
+
+According to iSV57 manual. Pr4.10 (SO1) seems to be connected to the ALM+/ALM- port.
+Check if the ALM+/ALM- is wired to the internal signal header from the servo. If so, the other ports from the pin header might be connected to other SO signals too.
+
+
+Example for the iSV57 parameter tune app, configuring Pr4.08:
+Position control mode: SERVO-ON input ( connected to A)= 0x3
+Position control mode: SERVO-ON input ( connected to B)= 0x83
+Connect to A: Normally open (Normally open means input signal comes from external controller or component, for example: PLC.)
+Connect to B: Normally closed (Normally closed means input signal comes from drive internally)
+
+
+
+
+
 
 
 iSV57 database:
