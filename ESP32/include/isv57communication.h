@@ -27,6 +27,16 @@
 #define reg_add_velocity_current_feedback_percent 0x0081 // checked
 #define reg_add_voltage_0p1V 0x0140 // checked
 
+// identified from leadshine motion studio
+#define reg_add_position_internal_p 0x0006 
+#define reg_add_input_status 0x0100
+#define reg_add_output_status 0x0101
+#define reg_add_testchannel_1 0x01C0
+#define reg_add_testchannel_2 0x01C1
+#define reg_add_testchannel_3 0x01C2
+#define reg_add_testchannel_4 0x01C3
+#define reg_add_testchannel_5 0x01C4
+
 
 // DC bus voltage: 0B0AH --> 140 = 8c
 // position feedback: 0B14H
