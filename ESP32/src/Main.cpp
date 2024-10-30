@@ -311,6 +311,12 @@ void setup()
     pinMode(Pairing_GPIO, INPUT_PULLUP);
   #endif
 
+  #ifdef USING_LED
+    pixels.begin();
+    pixels.setBrightness(20);
+    pixels.setPixelColor(0,0xff,0x00,0x00);
+    pixels.show(); 
+  #endif
 // initialize configuration and update local variables
   dap_config_st.initialiseDefaults();
 
@@ -385,7 +391,7 @@ void setup()
   dap_calculationVariables_st.updateFromConfig(dap_config_st);
   #ifdef USING_LED
       //pixels.setBrightness(20);
-      pixels.setPixelColor(0,0xff,0x0f,0x00);//Orange
+      pixels.setPixelColor(0,0x5f,0x5f,0x00);//yellow
       pixels.show(); 
       //delay(3000);
   #endif
@@ -1609,26 +1615,18 @@ void OTATask( void * pvParameters )
         ESPNow_initial_status=false;
         ESPNOW_status=false;
         delay(3000);
-        //remove task to prevent to trigger protection
-        /*
-        vTaskDelete(Task6);
-        Serial.println("remove espnow task");
-        delay(1000);
-        
-        vTaskDelete(Task1);
-        Serial.println("remove pedal update task");
-        delay(1000);
-        stepper->removevtask();
-        Serial.println("remove stepper task");
-        delay(1000);
-        */
-
         if(result==ESP_OK)
         {
           OTA_status=true;
           delay(1000);
           #ifdef OTA_update_ESP32
           ota_wifi_initialize(APhost);
+          #endif
+          #ifdef USING_LED
+              //pixels.setBrightness(20);
+              pixels.setPixelColor(0,0x00,0x00,0xff);//Blue
+              pixels.show(); 
+              //delay(3000);
           #endif
           #ifdef OTA_update
           wifi_initialized(SSID,PASS);
