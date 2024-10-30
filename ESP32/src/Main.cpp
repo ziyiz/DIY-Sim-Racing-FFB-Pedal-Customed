@@ -1606,6 +1606,17 @@ void OTATask( void * pvParameters )
         #ifdef OTA_update_esp32
           server.handleClient();
         #endif
+        #ifdef OTA_update
+          #ifdef USING_LED
+            pixels.setPixelColor(0,0xff,0x00,0x00);//red
+            pixels.show(); 
+            delay(1000);
+            pixels.setPixelColor(0,0x00,0x00,0x00);//no color
+            pixels.show();            
+          #endif
+        #endif
+        
+
       }
       else
       {
