@@ -49,6 +49,7 @@ void serialCommunicationTask( void * pvParameters );
 void servoCommunicationTask( void * pvParameters );
 void OTATask( void * pvParameters );
 void ESPNOW_SyncTask( void * pvParameters);
+#define INCLUDE_vTaskDelete 1
 // https://www.tutorialspoint.com/cyclic-redundancy-check-crc-in-arduino
 uint16_t checksumCalculator(uint8_t * data, uint16_t length)
 {
@@ -515,7 +516,7 @@ void setup()
   xTaskCreatePinnedToCore(
                     OTATask,   
                     "OTATask", 
-                    16000,  
+                    20000,  
                     //STACK_SIZE_FOR_TASK_2,    
                     NULL,      
                     1,         
@@ -736,8 +737,13 @@ void pedalUpdateTask( void * pvParameters )
     uint32_t targetWaitTime_u32 = constrain(timeDiff_pedalUpdateTask_l, 0, REPETITION_INTERVAL_PEDALUPDATE_TASK);
     delay(targetWaitTime_u32);
     timePrevious_pedalUpdateTask_l = millis();
-
-
+    /*
+    if(OTA_status)
+    {
+      Serial.println("delete update task");
+      vTaskDelete(NULL);
+    }
+    */
     // system identification mode
     #ifdef ALLOW_SYSTEM_IDENTIFICATION
       if (systemIdentificationMode_b == true)
@@ -986,7 +992,7 @@ void pedalUpdateTask( void * pvParameters )
     }
 
     // if pedal in min position, recalibrate position --> automatic step loss compensation
-    if (stepper->isAtMinPos())
+    if (stepper->isAtMinPos() && OTA_status==false)
     {
       stepper->correctPos();
     }
@@ -1012,15 +1018,19 @@ void pedalUpdateTask( void * pvParameters )
 
 
     // Move to new position
-    if (!moveSlowlyToPosition_b)
+    if(OTA_status==false)
     {
-      stepper->moveTo(Position_Next, false);
+      if (!moveSlowlyToPosition_b)
+      {
+        stepper->moveTo(Position_Next, false);
+      }
+      else
+      {
+        moveSlowlyToPosition_b = false;
+        stepper->moveSlowlyToPos(Position_Next);
+      }
     }
-    else
-    {
-      moveSlowlyToPosition_b = false;
-      stepper->moveSlowlyToPos(Position_Next);
-    }
+ 
     
 
     // compute controller output
@@ -1598,7 +1608,21 @@ void OTATask( void * pvParameters )
         esp_err_t result= esp_now_deinit();
         ESPNow_initial_status=false;
         ESPNOW_status=false;
-        delay(200);
+        delay(3000);
+        //remove task to prevent to trigger protection
+        /*
+        vTaskDelete(Task6);
+        Serial.println("remove espnow task");
+        delay(1000);
+        
+        vTaskDelete(Task1);
+        Serial.println("remove pedal update task");
+        delay(1000);
+        stepper->removevtask();
+        Serial.println("remove stepper task");
+        delay(1000);
+        */
+
         if(result==ESP_OK)
         {
           OTA_status=true;
@@ -1615,14 +1639,14 @@ void OTATask( void * pvParameters )
           switch (_basic_wifi_info.mode_select)
           {
             case 1:
-              Serial.printf("[L]Flashing to latest Main, checking %s to see if an update is available...\n", JSON_URL_main);
+              Serial.printf("Flashing to latest Main, checking %s to see if an update is available...\n", JSON_URL_main);
               ret = ota.CheckForOTAUpdate(JSON_URL_main, VERSION);
-              Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
+              Serial.printf("CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
               break;
             case 2:
-              Serial.printf("[L]Flashing to latest Dev, checking %s to see if an update is available...\n", JSON_URL_dev);
+              Serial.printf("Flashing to latest Dev, checking %s to see if an update is available...\n", JSON_URL_dev);
               ret = ota.CheckForOTAUpdate(JSON_URL_dev, VERSION);
-              Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
+              Serial.printf("CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
               break;
             default:
             break;
