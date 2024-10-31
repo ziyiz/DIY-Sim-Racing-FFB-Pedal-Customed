@@ -7100,6 +7100,7 @@ namespace User.PluginSdkDemo
             int length;
             string SSID = textbox_SSID.Text;
             string PASS = textbox_PASS.Password;
+            string MSG_tmp="";
             bool SSID_PASS_check = true;
             if (OTAChannel_Sel_1.IsChecked == true)
             {
@@ -7112,10 +7113,27 @@ namespace User.PluginSdkDemo
             if (SSID.Length > 30 || PASS.Length > 30)
             {
                 SSID_PASS_check = false;
-                String MSG_tmp;
+                
                 MSG_tmp = "ERROR! SSID or Password length must less than 30 bytes";
                 System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
+            MSG_tmp += "OTA-Pull function only support V4/Gilphilbert board, for V3/Speedcrafter board user, please connect";
+            if (indexOfSelectedPedal_u == 0)
+            {
+                MSG_tmp += "FFBPedalClutch";
+            }
+            if (indexOfSelectedPedal_u == 1)
+            {
+                MSG_tmp += "FFBPedalBrake";
+            }
+            if (indexOfSelectedPedal_u == 2)
+            {
+                MSG_tmp += "FFBPedalGas";
+            }
+            MSG_tmp += " wifi hotspot, open 192.168.2.1 in web browser to upload firmware.bin";
+
+            System.Windows.MessageBox.Show(MSG_tmp, "OTA warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
             if (SSID_PASS_check)
             {
