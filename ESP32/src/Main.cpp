@@ -1001,22 +1001,24 @@ void pedalUpdateTask( void * pvParameters )
     }
 
     // if pedal in min position, recalibrate position --> automatic step loss compensation
+
+    stepper->configSteplossRecovAndCrashDetection(dap_config_st.payLoadPedalConfig_.enableMiscFlags_u8);
     if (stepper->isAtMinPos() && OTA_status==false)
     {
       stepper->correctPos();
     }
 
-    // if (pos_printCount == 1000)
-    // {
-    //   Serial.print("ESP pos: ");
-    //   Serial.print(stepper->getCurrentPosition());
-    //   Serial.print(", Serovs pos: ");
-    //   Serial.print(stepper->getServosPos());
-    //   Serial.print(", Serovs pos (corr.): ");
-    //   Serial.println(stepper->getServosInternalPosition());
-    //   pos_printCount = 0;
-    // }
-    // pos_printCount++;
+    if (pos_printCount == 1000)
+    {
+      Serial.print("ESP pos: ");
+      Serial.print(stepper->getCurrentPosition());
+      Serial.print(", Serovs pos: ");
+      Serial.print(stepper->getServosPos());
+      Serial.print(", Serovs pos (corr.): ");
+      Serial.println(stepper->getServosInternalPosition());
+      pos_printCount = 0;
+    }
+    pos_printCount++;
     
 
 

@@ -220,8 +220,8 @@ public struct payloadPedalConfig
     // OTA update flag
     //public byte OTA_flag;
 
-    // OTA update flag
-    public byte enableReboot_u8;
+    // Misc flags
+    public byte enableMiscFlags_u8;
 
 }
 
@@ -2100,7 +2100,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
             //dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
-            dap_config_initial_st.payloadPedalConfig_.enableReboot_u8 = 1;
+            dap_config_initial_st.payloadPedalConfig_.enableMiscFlags_u8 = 1;
 
 
 

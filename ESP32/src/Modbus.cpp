@@ -144,12 +144,12 @@ bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t param
     if(returnValue!= targetValue_l)
     {
 
-      delay(50);
+      delay(30);
       Serial.print("Parameter adresse: ");
       Serial.print(parameterAdress);
-      Serial.print(",    actual:");
+      Serial.print(",    actual: ");
       Serial.print(returnValue);
-      Serial.print(",    target:");
+      Serial.print(",    target: ");
       Serial.println(targetValue_l);
 
       holdingRegisterWrite(slaveId_local_u16, parameterAdress, targetValue_l); 
@@ -523,18 +523,47 @@ int Modbus::holdingRegisterWrite(int id, int address, uint16_t value)
 	
 	// send signal
 	digitalWrite(mode_,1);
-    delay(1);
-    this->s->write(txout,8);
-    this->s->flush();
-    digitalWrite(mode_,0);
-    delay(1);
+  delay(1);
+  this->s->write(txout,8);
+  this->s->flush();
+  digitalWrite(mode_,0);
+  delay(1);
 
   // verify return signal
   // should be identical to transmit signal, otherwise error
 
-	return 1;
+  uint32_t t = millis();
+  int ll = 0;
+  int rx;
+  
+  bool returnSignalIsCopyOfTransmittedSignal_b = false;
+  while((millis() - t) < timeout_){
+      if(this->s->available())
+      {
+        rx = this->s->read();
+        t = millis();
+        
+        if(txout[ll] == rx){ll++;}else{ll = 0;}
+
+        if (ll == 8)
+        {
+          returnSignalIsCopyOfTransmittedSignal_b = true;
+          break;
+        }
+
+      }
+  }
+
+  // Serial.print("Returnsignal: ");
+  // Serial.print(returnSignalIsCopyOfTransmittedSignal_b);
+  // Serial.print(",    Adress: ");
+  // Serial.print(address);
+  // Serial.print(",    value: ");
+  // Serial.println(value);
 	
-	
-	
-	
+
+  delay(5);
+
+  return returnSignalIsCopyOfTransmittedSignal_b;
+
 }
