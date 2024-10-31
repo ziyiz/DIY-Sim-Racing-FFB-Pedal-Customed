@@ -1,4 +1,4 @@
-name: OTA Build for PreRelease
+name: OTA_Build_for_PreRelease
 
 on:
   workflow_dispatch:  # Allows the workflow to be triggered manually
