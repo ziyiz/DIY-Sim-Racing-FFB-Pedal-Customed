@@ -1,0 +1,26 @@
+name: OTA Build for PreRelease
+
+on:
+  workflow_dispatch:  # Allows the workflow to be triggered manually
+
+jobs:
+  increment-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: develop  # Check out the develop branch
+
+    - name: Increment version number
+      run: |
+        sed -i 's/\(#define VERSION "\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)"\)/#define VERSION "\2.\3.$((\4+1))"/' ESP32/include/OTA_Pull.h
+        
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add ESP32/include/OTA_Pull.h
+        git commit -m "Incremented version number"
+        git push origin develop
