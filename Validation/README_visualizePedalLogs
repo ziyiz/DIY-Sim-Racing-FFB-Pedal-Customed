@@ -1,6 +1,8 @@
 
-# 
+# Visualize the pedal logs
 1) Open [jupyter online](https://python-fiddle.com/)
 2) upload the jupyther notebook
-
+3) upload the pedal log file
+4) change the pedal log file name
+5) run the script
 
