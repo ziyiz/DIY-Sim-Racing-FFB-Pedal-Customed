@@ -116,7 +116,7 @@ bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t param
   // check and set the register at maximum N times
   for (uint8_t tryIdx_u8 = 0; tryIdx_u8 < 10; tryIdx_u8++)
   {
-
+    
     if (true == registerValueAsTarget_b)
     {
       // when register has proper setting, break the loop

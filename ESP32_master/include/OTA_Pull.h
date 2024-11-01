@@ -15,6 +15,8 @@
 	#define Board   "Gilphilbert_Dongle"
 #endif
 
+
+
 /*
 #if PCB_VERSION==5
 	#define JSON_URL_dev   "https://raw.githubusercontent.com/tcfshcrw/FFBPedalOTA_Json/main/JSON/dev/Bridge/Version_Fanatec_bridge.json"
