@@ -1169,13 +1169,13 @@ void OTATask( void * pvParameters )
           {
             case 1:
               Serial.printf("[L]Flashing to latest Main, checking %s to see if an update is available...\n", JSON_URL_main);
-              ret = ota.SetConfig(Board)
+              ret = ota.OverrideBoard(Board) 
                        .CheckForOTAUpdate(JSON_URL_main, VERSION);
               Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
               break;
             case 2:
               Serial.printf("[L]Flashing to latest Dev, checking %s to see if an update is available...\n", JSON_URL_dev);
-              ret = ota.SetConfig(Board)
+              ret = ota.OverrideBoard(Board)                       
                        .CheckForOTAUpdate(JSON_URL_dev, VERSION);
               Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
               break;
