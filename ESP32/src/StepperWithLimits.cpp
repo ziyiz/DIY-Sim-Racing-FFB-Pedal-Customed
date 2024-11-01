@@ -197,12 +197,14 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 			// voltage return is given in 0.1V units --> 10V range --> threshold 100
 			// at beginning the values typically are initialized with -1
-			servoRadingsTrustworthy_b = getServosVoltage() > 100;
+			float servosBusVoltageInVolt_fl32 = ( (float)getServosVoltage() ) / 10.0f;
+			servoRadingsTrustworthy_b = ( servosBusVoltageInVolt_fl32 >= 16) && ( servosBusVoltageInVolt_fl32 < 48);
 
 			if (true == servoRadingsTrustworthy_b)
 			{
-				Serial.print("Servo readings plausible! Current position (raw): ");
-				Serial.println(isv57.servo_pos_given_p);
+				Serial.print("Servos bus voltage in expected range: ");
+				Serial.print( servosBusVoltageInVolt_fl32 );
+				Serial.println("V");
 				break;
 			}
 		}
@@ -230,8 +232,8 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		// wait some time to check if signal stabilized
 		for (uint16_t tryIdx = 0; tryIdx < 500; tryIdx++)
 		{
-			delay(10);
-			endPosDetected = abs( isv57.servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
+			delay(5);
+			endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 
 			if (false == endPosDetected)
 			{
@@ -247,8 +249,8 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		_stepper->move(INT32_MIN, false);
 		
 		while( (!endPosDetected) && (getLifelineSignal()) ){
-			delay(10);
-			endPosDetected = abs( isv57.servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
+			delay(2);
+			endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 		}
 		setPosition = - 5 * ENDSTOP_MOVEMENT_SENSORLESS;
 		_stepper->forceStopAndNewPosition(setPosition);
@@ -325,10 +327,10 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		
 		// if endstop is reached, communication is lost or virtual endstop is hit
 		while( (!endPosDetected) && (getLifelineSignal()) ){
-			delay(10);
+			delay(2);
 			if (_stepper->getCurrentPosition() > MIN_POS_MAX_ENDSTOP)
     		{
-				endPosDetected = abs( isv57.servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
+				endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 			}
 
 			// virtual endstop

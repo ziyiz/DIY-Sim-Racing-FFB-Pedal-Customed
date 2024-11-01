@@ -228,18 +228,35 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection)
 bool isv57communication::findServosSlaveId()
 {
   bool slaveIdFound = false;
-  for (int slaveIdTest = 0; slaveIdTest<256; slaveIdTest++)
+
+  // typically the servo address is 63, so start with that
+  int slaveIdTest = 63;
+  if(modbus.requestFrom(slaveIdTest, 0x03, 0x0000, 2) > 0)
   {
-      if(modbus.requestFrom(slaveIdTest, 0x03, 0x0000, 2) > 0)
-      {
-        slaveId = slaveIdTest;
-        slaveIdFound = true;
-        Serial.print("Found servo slave ID:");
-        Serial.print(slaveId);
-        Serial.print("\r\n");
-        break;
-      }
+    slaveId = slaveIdTest;
+    slaveIdFound = true;
+    Serial.print("Found servo slave ID:");
+    Serial.print(slaveId);
+    Serial.print("\r\n");
   }
+
+
+  if (false == slaveIdFound )
+  {
+    for (int slaveIdTest = 0; slaveIdTest<256; slaveIdTest++)
+    {
+        if(modbus.requestFrom(slaveIdTest, 0x03, 0x0000, 2) > 0)
+        {
+          slaveId = slaveIdTest;
+          slaveIdFound = true;
+          Serial.print("Found servo slave ID:");
+          Serial.print(slaveId);
+          Serial.print("\r\n");
+          break;
+        }
+    }
+  }
+  
   return slaveIdFound;
 }
 
