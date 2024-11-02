@@ -1176,14 +1176,14 @@ void pedalUpdateTask( void * pvParameters )
         dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_fl32 =  changeVelocity;
 
         //dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPosition();
-        dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPositionCorrected();
+        dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPositionCorrected()- stepper->getMinPosition();
         dap_state_extended_st.payloadPedalState_Extended_.servo_voltage_0p1V =  stepper->getServosVoltage();
         dap_state_extended_st.payloadPedalState_Extended_.servo_current_percent_i16 = stepper->getServosCurrent();
         
 
 
         //dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPositionFromMin();
-        dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPosition();
+        dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPosition() - stepper->getMinPosition();
         dap_state_extended_st.payLoadHeader_.PedalTag=dap_config_st.payLoadPedalConfig_.pedal_type;
         dap_state_extended_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_EXTENDED;
         dap_state_extended_st.payLoadHeader_.version = DAP_VERSION_CONFIG;

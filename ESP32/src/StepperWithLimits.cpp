@@ -392,6 +392,10 @@ int32_t StepperWithLimits::getCurrentPositionFromMin() const {
   return _stepper->getCurrentPosition() - _posMin;
 }
 
+int32_t StepperWithLimits::getMinPosition() const {
+  return _posMin;
+}
+
 int32_t StepperWithLimits::getCurrentPosition() const {
   return _stepper->getCurrentPosition();
 }
