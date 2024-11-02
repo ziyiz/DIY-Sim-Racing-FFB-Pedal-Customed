@@ -29,6 +29,7 @@ bool previousIsv57LifeSignal_b = true;
 static SemaphoreHandle_t semaphore_lifelineSignal = xSemaphoreCreateMutex();
 static SemaphoreHandle_t semaphore_resetServoPos = xSemaphoreCreateMutex();
 static SemaphoreHandle_t semaphore_readServoValues = xSemaphoreCreateMutex();
+static SemaphoreHandle_t semaphore_getSetCorrectedServoPos = xSemaphoreCreateMutex();
 
 
 
@@ -161,6 +162,12 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
   }
 }
 
+
+// Log all servo params
+void StepperWithLimits::printAllServoParameters()
+{
+	logAllServoParams = true;
+}
 
 void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 {
@@ -548,6 +555,41 @@ int32_t StepperWithLimits::getServosPos()
 
 
 
+void StepperWithLimits::setServosInternalPositionCorrected(int32_t posCorrected_i32)
+{
+
+	if(semaphore_getSetCorrectedServoPos!=NULL)
+	{
+	  if(xSemaphoreTake(semaphore_getSetCorrectedServoPos, (TickType_t)1)==pdTRUE) {
+		servoPos_local_corrected_i32 = posCorrected_i32;
+		xSemaphoreGive(semaphore_getSetCorrectedServoPos);
+	  }
+	}
+	else
+	{
+	  semaphore_readServoValues = xSemaphoreCreateMutex();
+	}
+
+}
+
+int32_t StepperWithLimits::getServosInternalPositionCorrected()
+{
+	int32_t pos_i32 = 0;
+	if(semaphore_getSetCorrectedServoPos!=NULL)
+	{
+	  if(xSemaphoreTake(semaphore_getSetCorrectedServoPos, (TickType_t)1)==pdTRUE) {
+		pos_i32 = servoPos_local_corrected_i32;
+		xSemaphoreGive(semaphore_getSetCorrectedServoPos);
+	  }
+	}
+	else
+	{
+	  semaphore_readServoValues = xSemaphoreCreateMutex();
+	}
+
+	return pos_i32;
+}
+
 
 
 int32_t StepperWithLimits::getServosInternalPosition()
@@ -611,7 +653,17 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 		}
 
 		
-		
+		/************************************************************/
+		/* 					log all servo params 					*/
+		/************************************************************/
+		if (true == stepper_cl->logAllServoParams)
+		{
+			stepper_cl->logAllServoParams = false;
+			stepper_cl->isv57.readAllServoParameters();
+		}
+
+
+
 		/************************************************************/
 		/* 					read servo states 						*/
 		/*				and calculate step loss 					*/
@@ -648,6 +700,7 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 			// read servo states
 			stepper_cl->isv57.readServoStates();
 
+
 			if(semaphore_readServoValues!=NULL)
 			{
 				if(xSemaphoreTake(semaphore_readServoValues, (TickType_t)1)==pdTRUE) {
@@ -668,6 +721,32 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 			{
 				semaphore_readServoValues = xSemaphoreCreateMutex();
 			}
+
+
+
+
+			// unwrap the servos position by aligning it to the ESPs position
+			int32_t servoPosCorrected_i32 = stepper_cl->getServosInternalPosition();
+			int32_t espPos_i32 = stepper_cl->getCurrentPosition();
+			for (uint8_t wrapIndex_u8 = 0; wrapIndex_u8 < 10; wrapIndex_u8++)
+			{
+				if ( ( espPos_i32 - servoPosCorrected_i32 ) > INT16_MAX )
+				{
+					// 4294967296 = 2^16
+					servoPosCorrected_i32 += 4294967296;
+				}
+
+				if ( ( espPos_i32 - servoPosCorrected_i32 ) < INT16_MIN )
+				{
+					// 4294967296 = 2^16
+					servoPosCorrected_i32 -= 4294967296;
+				}
+			}
+			
+
+
+			stepper_cl->setServosInternalPositionCorrected(servoPosCorrected_i32);
+			
 			
 			
 			
@@ -779,24 +858,6 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 					// calculate encoder offset
 					// movement to the back will reduce encoder value
 
-					// unwrap the servos position by aligning it to the ESPs position
-					int32_t servoPosCorrected_i32 = stepper_cl->getServosInternalPosition();
-					int32_t espPos_i32 = stepper_cl->getCurrentPosition();
-					for (uint8_t wrapIndex_u8 = 0; wrapIndex_u8 < 10; wrapIndex_u8++)
-					{
-						if ( ( espPos_i32 - servoPosCorrected_i32 ) > INT16_MAX )
-						{
-							// 4294967296 = 2^16
-							servoPosCorrected_i32 += 4294967296;
-						}
-
-						if ( ( espPos_i32 - servoPosCorrected_i32 ) < INT16_MIN )
-						{
-							// 4294967296 = 2^16
-							servoPosCorrected_i32 -= 4294967296;
-						}
-					}
-					
 					servo_offset_compensation_steps_local_i32 = espPos_i32 - servoPosCorrected_i32;
 					// if (false == stepper_cl->invertMotorDir_global_b)
 					// {

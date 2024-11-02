@@ -49,6 +49,10 @@ private:
 	bool disableSteplossRecov_b = true;
 	bool disableCrashDetection_b = true;
 
+	bool logAllServoParams = false;
+
+	int32_t servoPos_local_corrected_i32 = 0;
+
 	
 
 public:
@@ -84,7 +88,11 @@ public:
 	bool getLifelineSignal();
 	
 	void configSteplossRecovAndCrashDetection(uint8_t flags_u8);
+	void printAllServoParameters();
 
+
+	void setServosInternalPositionCorrected(int32_t posCorrected_i32);
+	int32_t getServosInternalPositionCorrected();
 
 
 	static void servoCommunicationTask( void * pvParameters );

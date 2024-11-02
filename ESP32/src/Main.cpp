@@ -12,7 +12,7 @@
 #define DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS 16
 #define DEBUG_INFO_0_STATE_BASIC_INFO_STRUCT 32
 #define DEBUG_INFO_0_STATE_EXTENDED_INFO_STRUCT 64
-#define DEBUG_INFO_0_CONTROL_LOOP_ALGO 128
+#define DEBUG_INFO_0_LOG_ALL_SERVO_PARAMS 128
 
 
 
@@ -1010,6 +1010,18 @@ void pedalUpdateTask( void * pvParameters )
       stepper->correctPos();
     }
 
+
+    // print all servo parameters for debug purposes
+    if ( (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_LOG_ALL_SERVO_PARAMS) )
+    {
+      // clear the debug bit
+      dap_config_st.payLoadPedalConfig_.debug_flags_0 &= ( ~(uint8_t)DEBUG_INFO_0_LOG_ALL_SERVO_PARAMS);
+      delay(1000);  
+			stepper->printAllServoParameters();
+    }
+
+
+
     // if (pos_printCount == 1000)
     // {
     //   Serial.print("ESP pos: ");
@@ -1163,13 +1175,15 @@ void pedalUpdateTask( void * pvParameters )
         dap_state_extended_st.payloadPedalState_Extended_.pedalForce_filtered_fl32 =  filteredReading;
         dap_state_extended_st.payloadPedalState_Extended_.forceVel_est_fl32 =  changeVelocity;
 
-        dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPosition();
+        //dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPosition();
+        dap_state_extended_st.payloadPedalState_Extended_.servoPosition_i16 = stepper->getServosInternalPositionCorrected();
         dap_state_extended_st.payloadPedalState_Extended_.servo_voltage_0p1V =  stepper->getServosVoltage();
         dap_state_extended_st.payloadPedalState_Extended_.servo_current_percent_i16 = stepper->getServosCurrent();
         
 
 
-        dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPositionFromMin();
+        //dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPositionFromMin();
+        dap_state_extended_st.payloadPedalState_Extended_.servoPositionTarget_i16 = stepper->getCurrentPosition();
         dap_state_extended_st.payLoadHeader_.PedalTag=dap_config_st.payLoadPedalConfig_.pedal_type;
         dap_state_extended_st.payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_STATE_EXTENDED;
         dap_state_extended_st.payLoadHeader_.version = DAP_VERSION_CONFIG;

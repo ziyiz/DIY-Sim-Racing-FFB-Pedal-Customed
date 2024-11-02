@@ -30,7 +30,7 @@ void isv57communication::setupServoStateReading() {
 
 
 void isv57communication::readAllServoParameters() {
-  for (uint16_t reg_sub_add_u16 = 0;  reg_sub_add_u16 < pr_6_00; reg_sub_add_u16++)
+  for (uint16_t reg_sub_add_u16 = 0;  reg_sub_add_u16 < (pr_7_00+49); reg_sub_add_u16++)
   {
     modbus.readParameter(slaveId, pr_0_00 + reg_sub_add_u16);
   }
