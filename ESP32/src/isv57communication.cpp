@@ -7,7 +7,8 @@ Modbus modbus(Serial1);
 // initialize the communication
 isv57communication::isv57communication()
 {
-  Serial1.begin(38400, SERIAL_8N2, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
+  //Serial1.begin(38400, SERIAL_8N2, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
+  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
   modbus.init(MODE);
 }
 
