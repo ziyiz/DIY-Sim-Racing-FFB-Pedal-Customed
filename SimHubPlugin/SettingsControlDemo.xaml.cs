@@ -1701,15 +1701,6 @@ namespace User.PluginSdkDemo
                 checkbox_enable_wheelslip.IsChecked = false;
             }
 
-            if (((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 >> 0) & 1) == 1)
-            {
-                EnableReboot_check.IsChecked = true;
-            }
-            else
-            {
-                EnableReboot_check.IsChecked = false;
-            }
-
             if ( ((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 >> 1) & 1) == 1)
             {
                 EnableStepLossRecov_check.IsChecked = true;
