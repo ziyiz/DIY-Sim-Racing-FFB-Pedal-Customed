@@ -205,7 +205,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			// voltage return is given in 0.1V units --> 10V range --> threshold 100
 			// at beginning the values typically are initialized with -1
 			float servosBusVoltageInVolt_fl32 = ( (float)getServosVoltage() ) / 10.0f;
-			servoRadingsTrustworthy_b = ( servosBusVoltageInVolt_fl32 >= 16) && ( servosBusVoltageInVolt_fl32 < 48);
+			servoRadingsTrustworthy_b = ( servosBusVoltageInVolt_fl32 >= 16) && ( servosBusVoltageInVolt_fl32 < 39);
 
 			if (true == servoRadingsTrustworthy_b)
 			{
@@ -218,7 +218,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 		if(false == servoRadingsTrustworthy_b)
 		{
-			Serial.print("Servo readings not plausible. Restarting ESP!");
+			Serial.print("Servo bus voltage not in expected range (16V-39V). Restarting ESP!");
 			ESP.restart();
 		}
 		
