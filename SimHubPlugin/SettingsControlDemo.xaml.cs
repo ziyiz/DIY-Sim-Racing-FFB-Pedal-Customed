@@ -121,6 +121,7 @@ namespace User.PluginSdkDemo
         public bool[] Pedal_wireless_connection_update_b = new bool[3] { false,false,false};
         public int Bridge_baudrate = 3000000;
         public bool Fanatec_mode = false;
+        public bool Update_Profile_Checkbox_b = false;
         //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -1911,20 +1912,25 @@ namespace User.PluginSdkDemo
                     Checkbox_auto_remove_serial_line_bridge.IsChecked = false;
                 }
                 //effect profile reading
-                for (int j = 0; j < 3; j++)
+                if (Update_Profile_Checkbox_b)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int j = 0; j < 3; j++)
                     {
-                        if (Plugin.Settings.Effect_status_prolife[profile_select, j, k])
+                        for (int k = 0; k < 8; k++)
                         {
-                            Effect_status_profile[j, k].IsChecked = true;
-                        }
-                        else
-                        {
-                            Effect_status_profile[j, k].IsChecked = false;
+                            if (Plugin.Settings.Effect_status_prolife[profile_select, j, k])
+                            {
+                                Effect_status_profile[j, k].IsChecked = true;
+                            }
+                            else
+                            {
+                                Effect_status_profile[j, k].IsChecked = false;
+                            }
                         }
                     }
+                    Update_Profile_Checkbox_b = false;
                 }
+
                 textbox_SSID.Text = Plugin.Settings.SSID_string;
                 textbox_PASS.Password = Plugin.Settings.PASS_string;
             }
@@ -5101,7 +5107,9 @@ namespace User.PluginSdkDemo
             //Profile_change(profile_select);
             //Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
             // update the sliders & serial port selection accordingly
+            Update_Profile_Checkbox_b = true;
             updateTheGuiFromConfig();
+            
         }
 
         private void file_check_Checked(object sender, RoutedEventArgs e)
@@ -8109,7 +8117,14 @@ namespace User.PluginSdkDemo
             }
         }
 
-
+        private void Function_Tab_seleciton_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Function_Tab_seleciton.SelectedIndex==2)
+            {
+                Update_Profile_Checkbox_b = true;
+                updateTheGuiFromConfig();
+            }
+        }
     }
     
 }
