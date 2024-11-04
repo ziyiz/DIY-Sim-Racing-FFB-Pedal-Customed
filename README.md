@@ -34,6 +34,7 @@ For the sake of clarity, this project is divided into multiple repositorys:
 :------------------------- | :------------------------- |
 | Mechanical and electrical design | https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal-Mechanical-Design |
 | Software (firmware, SimHub plugin, ...) |https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal |
+| PCBA (Control Board and Power Board PCBA design)|https://github.com/gilphilbert/DIY-Sim-Racing-FFB-Pedal-PCBs|
 
 # Features
 ## Control of pedal parameters
