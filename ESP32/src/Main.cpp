@@ -482,7 +482,7 @@ void setup()
   xTaskCreatePinnedToCore(
                     pedalUpdateTask,   /* Task function. */
                     "pedalUpdateTask",     /* name of task. */
-                    2000,       /* Stack size of task */
+                    5000,       /* Stack size of task */
                     //STACK_SIZE_FOR_TASK_1,
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
@@ -493,7 +493,7 @@ void setup()
   xTaskCreatePinnedToCore(
                     serialCommunicationTask,   
                     "serialCommunicationTask", 
-                    3000,  
+                    5000,  
                     //STACK_SIZE_FOR_TASK_2,    
                     NULL,      
                     1,         
@@ -641,7 +641,7 @@ void setup()
     xTaskCreatePinnedToCore(
                         ESPNOW_SyncTask,   
                         "ESPNOW_update_Task", 
-                        4000,  
+                        5000,  
                         //STACK_SIZE_FOR_TASK_2,    
                         NULL,      
                         1,         
