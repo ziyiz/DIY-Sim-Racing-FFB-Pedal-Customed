@@ -103,6 +103,7 @@ namespace User.PluginSdkDemo
 
 
         public bool[] dumpPedalToResponseFile = new bool[3];
+        public bool[] dumpPedalToResponseFile_clearFile = new bool[3];
 
         private SolidColorBrush defaultcolor;
         private SolidColorBrush lightcolor;
@@ -436,6 +437,7 @@ namespace User.PluginSdkDemo
         public void DAP_config_set_default(uint pedalIdx)
         {
             dumpPedalToResponseFile[pedalIdx] = false;
+            dumpPedalToResponseFile_clearFile[pedalIdx] = false;
             dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
             dap_config_st[pedalIdx].payloadHeader_.version = (byte)Constants.pedalConfigPayload_version;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedalStartPosition = 35;
@@ -3617,7 +3619,15 @@ namespace User.PluginSdkDemo
                                         {
                                             // Specify the path to the file
                                             string currentDirectory = Directory.GetCurrentDirectory();
-                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + indexOfSelectedPedal_u.ToString() + ".txt";
+                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\DiyFfbPedalStateLog_" + indexOfSelectedPedal_u.ToString() + ".txt";
+
+
+                                            // delete file 
+                                            if (true == dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u])
+                                            {
+                                                dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u] = false;
+                                                File.Delete(filePath);
+                                            }
 
 
                                             // write header
@@ -3639,6 +3649,8 @@ namespace User.PluginSdkDemo
                                                 }
 
                                             }
+
+
                                             // Use StreamWriter to write to the file
                                             using (StreamWriter writer = new StreamWriter(filePath, true))
                                             {
@@ -4438,6 +4450,7 @@ namespace User.PluginSdkDemo
 
         private void dump_pedal_response_to_file_checked(object sender, RoutedEventArgs e)
         {
+            dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u] = true;
             dumpPedalToResponseFile[indexOfSelectedPedal_u] = true;
         }
 
