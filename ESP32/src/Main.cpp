@@ -505,7 +505,7 @@ void setup()
 
 
   //Serial.begin(115200);
-  #ifdef OTA_update
+  #if defined(OTA_update)  || defined(OTA_update_ESP32)
   
     switch(dap_config_st.payLoadPedalConfig_.pedal_type)
     {
@@ -522,9 +522,9 @@ void setup()
         APhost="FFBPedal";
         break;        
 
-  }   
-  //Serial.begin(115200);
-  xTaskCreatePinnedToCore(
+    }   
+    //Serial.begin(115200);
+    xTaskCreatePinnedToCore(
                     OTATask,   
                     "OTATask", 
                     16000,  
@@ -1624,7 +1624,7 @@ void OTATask( void * pvParameters )
       }
       if(OTA_status)
       {
-        #ifdef OTA_update_esp32
+        #ifdef OTA_update_ESP32
           server.handleClient();
         #endif
         #ifdef OTA_update
