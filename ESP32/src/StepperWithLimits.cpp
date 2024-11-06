@@ -732,18 +732,30 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 			// unwrap the servos position by aligning it to the ESPs position
 			int32_t servoPosCorrected_i32 = stepper_cl->getServosInternalPosition();
 			int32_t espPos_i32 = stepper_cl->getCurrentPosition();
-			for (uint8_t wrapIndex_u8 = 0; wrapIndex_u8 < 10; wrapIndex_u8++)
+			// allow up to 50 wraps 
+			// 1 rotation = 6400 steps
+			// 2^15 / 6400 = 5.12 rotations until wrap
+			// 5 rotations * 5mm/rotation * 50 wraps --> 250mm
+			for (uint8_t wrapIndex_u8 = 0; wrapIndex_u8 < 50; wrapIndex_u8++)
 			{
+				bool posCorrectedInLoop_b = false;
 				if ( ( espPos_i32 - servoPosCorrected_i32 ) > INT16_MAX )
 				{
 					// 4294967296 = 2^16
 					servoPosCorrected_i32 += 4294967296;
+					posCorrectedInLoop_b = true;
 				}
 
 				if ( ( espPos_i32 - servoPosCorrected_i32 ) < INT16_MIN )
 				{
 					// 4294967296 = 2^16
 					servoPosCorrected_i32 -= 4294967296;
+					posCorrectedInLoop_b = true;
+				}
+
+				if (false == posCorrectedInLoop_b)
+				{
+					break;
 				}
 			}
 			
