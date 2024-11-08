@@ -123,6 +123,7 @@ namespace User.PluginSdkDemo
         public int Bridge_baudrate = 3000000;
         public bool Fanatec_mode = false;
         public bool Update_Profile_Checkbox_b = false;
+        public bool Update_CV_textbox = false;
         //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -1364,8 +1365,12 @@ namespace User.PluginSdkDemo
                 label_CV2_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
                 label_CV2_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2 / 20.0f + "kg";
                 label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
-                textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
-                textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
+                if (Update_CV_textbox)
+                {
+                    Update_CV_textbox = false;
+                    textBox_CV1_string.Text = Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u];
+                    textBox_CV2_string.Text = Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u];
+                }
                 Label_Pedal_interval_trigger.Content = "Action Interval: "+Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u] + "ms";
                 Slider_Pedal_interval_trigger.Value = Plugin.Settings.Pedal_action_interval[indexOfSelectedPedal_u];
 
@@ -2185,10 +2190,15 @@ namespace User.PluginSdkDemo
         // see https://stackoverflow.com/questions/772841/is-there-selected-tab-changed-event-in-the-standard-wpf-tab-control
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            indexOfSelectedPedal_u = (uint)MyTab.SelectedIndex;
-            Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
+
             // update the sliders & serial port selection accordingly
-            updateTheGuiFromConfig();
+            if (Plugin != null)
+            {
+                indexOfSelectedPedal_u = (uint)MyTab.SelectedIndex;
+                Plugin.Settings.table_selected = (uint)MyTab.SelectedIndex;
+                Update_CV_textbox = true;
+                updateTheGuiFromConfig();
+            }
         }
 
 
@@ -6264,8 +6274,18 @@ namespace User.PluginSdkDemo
 
         private void Bind_CV1_Click(object sender, RoutedEventArgs e)
         {
-            Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u] = (string)textBox_CV1_string.Text;
-            Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+            if (Plugin.Ncalc_reading(textBox_CV1_string.Text) != "Error")
+            {
+                Plugin.Settings.CV1_bindings[indexOfSelectedPedal_u] = (string)textBox_CV1_string.Text;
+                Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = true;
+            }
+            else
+            {
+                Plugin.Settings.CV1_enable_flag[indexOfSelectedPedal_u] = false;
+                string MSG_tmp = "ERROR! String can not be evaluated";
+                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            }
             //updateTheGuiFromConfig();
         }
 
@@ -6323,8 +6343,22 @@ namespace User.PluginSdkDemo
 
         private void Bind_CV2_Click(object sender, RoutedEventArgs e)
         {
+            if (Plugin.Ncalc_reading(textBox_CV2_string.Text) != "Error")
+            {
+                Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u] = (string)textBox_CV2_string.Text;
+                Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = true;
+            }
+            else
+            {
+                Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = false;
+                string MSG_tmp = "ERROR! String can not be evaluated";
+                System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            }
+            /*
             Plugin.Settings.CV2_bindings[indexOfSelectedPedal_u] = (string)textBox_CV2_string.Text;
             Plugin.Settings.CV2_enable_flag[indexOfSelectedPedal_u] = true;
+            */
         }
 
         private void Clear_CV2_Click(object sender, RoutedEventArgs e)
@@ -8137,6 +8171,29 @@ namespace User.PluginSdkDemo
                 Update_Profile_Checkbox_b = true;
                 updateTheGuiFromConfig();
             }
+        }
+        private void textBox_CV1_string_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string var1 = "";
+            var1 = Plugin.Ncalc_reading(textBox_CV1_string.Text.ToString());
+            Label_NCALC_CUS1.Content = var1;
+        }
+
+        private void TabControl_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                Update_CV_textbox = true;
+                updateTheGuiFromConfig();
+            }
+
+        }
+
+        private void textBox_CV2_string_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string var1 = "";
+            var1 = Plugin.Ncalc_reading(textBox_CV2_string.Text.ToString());
+            Label_NCALC_CUS2.Content = var1;
         }
     }
     

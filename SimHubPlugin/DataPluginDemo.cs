@@ -1,4 +1,6 @@
 ﻿using GameReaderCommon;
+using NCalc;
+
 //using log4net.Plugin;
 using SimHub.Plugins;
 using SimHub.Plugins.DataPlugins.RGBMatrixDriver.Settings;
@@ -471,6 +473,34 @@ namespace User.PluginSdkDemo
 
             return myBuffer;
         }
+        public string Ncalc_reading(String expression)
+        {
+            string value = "";
+            try
+            {
+                NCalc.Expression exp = new NCalc.Expression(expression);
+                exp.ResolveParameter += delegate (string name, ParameterResolveArgs rarg)
+                {
+                    rarg.Result = () => PluginManager.GetPropertyValue(name);
+                };
+
+                if (exp.HasErrors() == false)
+                {
+                    value = exp.Evaluate().ToString();
+                }
+                else
+                {
+                    value = "Error";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                SimHub.Logging.Current.Error(ex.Message);
+            }
+
+            return value;
+        }
         unsafe public void DataUpdate(PluginManager pluginManager, ref GameData data)
         {
 			
@@ -738,33 +768,55 @@ namespace User.PluginSdkDemo
                                 }
                             }
                         }
-                        //custom effcts
-                        if (Settings.CV1_enable_flag[pedalIdx] == true)
+                     //custom effcts
+                     if (Settings.CV1_enable_flag[pedalIdx] == true)
+                     {
+                        if (pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]) != null)
                         {
-                            if (pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]) != null)
-                            {
 
-                                CV1_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]));
-                                if (CV1_value > (Settings.CV1_trigger[pedalIdx]))
-                                {
-                                    tmp.payloadPedalAction_.Trigger_CV_1 = 1;
-                                    update_flag = true;
-                                }
+                            //CV1_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.CV1_bindings[pedalIdx]));
+                            string temp_string = Ncalc_reading(Settings.CV1_bindings[pedalIdx]);
+                            if (temp_string != "Error")
+                            {
+                                CV1_value = Convert.ToByte(temp_string);
+                            }
+                            else
+                            {
+                                CV1_value = 0;
+                                SimHub.Logging.Current.Error("CV1 Reading error");
+                            }
+
+
+                            if (CV1_value > (Settings.CV1_trigger[pedalIdx]))
+                            {
+                                tmp.payloadPedalAction_.Trigger_CV_1 = 1;
+                                update_flag = true;
                             }
                         }
-                        if (Settings.CV2_enable_flag[pedalIdx] == true)
+                     }
+                     if (Settings.CV2_enable_flag[pedalIdx] == true)
+                     {
+                        if (pluginManager.GetPropertyValue(Settings.CV2_bindings[pedalIdx]) != null)
                         {
-                            if (pluginManager.GetPropertyValue(Settings.CV2_bindings[pedalIdx]) != null)
-                            {
 
-                                CV2_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.CV2_bindings[pedalIdx]));
-                                if (CV2_value > (Settings.CV2_trigger[pedalIdx]))
-                                {
-                                    tmp.payloadPedalAction_.Trigger_CV_2 = 1;
-                                    update_flag = true;
-                                }
+                            //CV2_value = Convert.ToByte(pluginManager.GetPropertyValue(Settings.CV2_bindings[pedalIdx]));
+                            string temp_string = Ncalc_reading(Settings.CV2_bindings[pedalIdx]);
+                            if (temp_string != "Error")
+                            {
+                                CV2_value = Convert.ToByte(temp_string);
+                            }
+                            else
+                            {
+                                CV2_value = 0;
+                                SimHub.Logging.Current.Error("CV2 Reading error");
+                            }
+                            if (CV2_value > (Settings.CV2_trigger[pedalIdx]))
+                            {
+                                tmp.payloadPedalAction_.Trigger_CV_2 = 1;
+                                update_flag = true;
                             }
                         }
+                     }
 
 
 

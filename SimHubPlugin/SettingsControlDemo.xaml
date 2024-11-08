@@ -1166,7 +1166,7 @@
 
                                         </TabItem>
                                     </TabControl>
-                                    <TabControl Grid.Column="0" HorizontalAlignment="Left" Height="272" Grid.Row="5" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,3,0,0">
+                                    <TabControl Grid.Column="0" SelectionChanged="TabControl_SelectionChanged_1" HorizontalAlignment="Left" Height="272" Grid.Row="5" VerticalAlignment="Center" Width="540" Padding="0,0,0,0" BorderThickness="0,0,0,0" Background="#00252525" Foreground="Transparent" Margin="0,3,0,0">
                                         <TabControl.Resources>
                                             <Style TargetType="TabItem">
                                                 <Setter Property="Template">
@@ -1390,7 +1390,7 @@
 
                                                     </Canvas>
                                                     <StackPanel  Height="30" Width="540" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                        <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
+                                                        <Label Content="Effect Property" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
                                                         <TextBox x:Name="textBox_wheelslip_effect_string" Width="270" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
                                                         <styles:SHButtonPrimary x:Name="Bind_WSeffect" Click="effect_bind_click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                                         <styles:SHButtonPrimary x:Name="Clear_WSeffect" Click="effect_clear_click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
@@ -1432,7 +1432,7 @@
                                                         <Label Content="Road Impact effect" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                                     </StackPanel>
                                                     <StackPanel  Height="30" Width="540" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                        <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
+                                                        <Label Content="Effect Property" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
                                                         <TextBox x:Name="textBox_impact_effect_string" Width="270" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
                                                         <styles:SHButtonPrimary x:Name="Bind_Impacteffect" Click="Bind_Impacteffect_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                                         <styles:SHButtonPrimary x:Name="Clear_Impacteffect" Click="Clear_Impacteffect_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
@@ -1466,11 +1466,16 @@
                                                         <styles:SHToggleButton x:Name="checkbox_enable_CV1" Content="" Checked="checkbox_enable_CV_1_Checked" Unchecked="checkbox_enable_CV_1_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
                                                         <Label Content="Custom Effect 1" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel  Height="30" Width="540" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0"/>
-                                                        <TextBox x:Name="textBox_CV1_string" Width="270" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
-                                                        <styles:SHButtonPrimary x:Name="Bind_CV1" Click="Bind_CV1_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
-                                                        <styles:SHButtonPrimary x:Name="Clear_CV1" Click="Clear_CV1_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                    <StackPanel  Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Label Content="Effect NCalc &#10;Binding:" Height="40" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0" HorizontalContentAlignment="Center"/>
+                                                        <TextBox x:Name="textBox_CV1_string" TextChanged="textBox_CV1_string_TextChanged" Width="270" Height="38"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding NCALC here" BorderThickness="0,0,0,0" TextWrapping="Wrap"/>
+                                                        <StackPanel Height="40" Width="62" VerticalAlignment="Top">
+                                                            <Label x:Name="Label_NCALC_CUS1" Content="" Height="20" Width="62" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10"/>
+                                                            <StackPanel Orientation="Horizontal" Height="20" Width="62">
+                                                                <styles:SHButtonPrimary x:Name="Bind_CV1" Click="Bind_CV1_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                                <styles:SHButtonPrimary x:Name="Clear_CV1" Click="Clear_CV1_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                            </StackPanel>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40" Margin="70,0,0,0" HorizontalAlignment="Left">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
@@ -1505,11 +1510,16 @@
                                                         <styles:SHToggleButton x:Name="checkbox_enable_CV2" Content="" Checked="checkbox_enable_CV2_Checked" Unchecked="checkbox_enable_CV2_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="The effect trigger was save in local, no need send config to Pedal"/>
                                                         <Label Content="Custom Effect 2" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" Width="200" Height="15" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel  Height="30" Width="400" Orientation="Horizontal" VerticalAlignment="Center">
-                                                        <Label Content="Effect binding:" Height="20" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10"/>
-                                                        <TextBox x:Name="textBox_CV2_string" Width="270" Height="20"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding shakeit Plugin property here" BorderThickness="0,0,0,0"/>
-                                                        <styles:SHButtonPrimary x:Name="Bind_CV2" Click="Bind_CV2_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
-                                                        <styles:SHButtonPrimary x:Name="Clear_CV2" Click="Clear_CV2_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                    <StackPanel  Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Label Content="Effect NCalc &#10;Binding:" Height="40" Width="65" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="70,0,0,0" HorizontalContentAlignment="Center"/>
+                                                        <TextBox x:Name="textBox_CV2_string" TextChanged="textBox_CV2_string_TextChanged" Width="270" Height="38"  Margin="2,0,0,0" HorizontalAlignment="Left" MinHeight="20" FontSize="8" ToolTip="Binding NCALC here" BorderThickness="0,0,0,0" TextWrapping="Wrap"/>
+                                                        <StackPanel Height="40" Width="62" VerticalAlignment="Top">
+                                                            <Label x:Name="Label_NCALC_CUS2" Content="" Height="20" Width="62" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10"/>
+                                                            <StackPanel Orientation="Horizontal" Height="20" Width="62">
+                                                                <styles:SHButtonPrimary x:Name="Bind_CV2" Click="Bind_CV2_Click" Width="30" Content="Bind" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                                <styles:SHButtonPrimary x:Name="Clear_CV2" Click="Clear_CV2_Click" Width="30" Content="Clear" Height="20" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
+                                                            </StackPanel>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="300" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
