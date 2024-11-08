@@ -1004,7 +1004,7 @@ void pedalUpdateTask( void * pvParameters )
 
     // if pedal in min position, recalibrate position --> automatic step loss compensation
 
-    stepper->configSteplossRecovAndCrashDetection(dap_config_st.payLoadPedalConfig_.enableMiscFlags_u8);
+    stepper->configSteplossRecovAndCrashDetection(dap_config_st.payLoadPedalConfig_.stepLossFunctionFlags_u8);
     if (stepper->isAtMinPos() && OTA_status==false)
     {
       stepper->correctPos();

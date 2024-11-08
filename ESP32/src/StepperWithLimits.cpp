@@ -618,8 +618,8 @@ int32_t StepperWithLimits::getServosInternalPosition()
 
 void StepperWithLimits::configSteplossRecovAndCrashDetection(uint8_t flags_u8)
 {
-	disableSteplossRecov_b = (flags_u8 >> 1) & 1;
-	disableCrashDetection_b = (flags_u8 >> 2) & 1;
+	enableSteplossRecov_b = (flags_u8 >> 0) & 1;
+	enableCrashDetection_b = (flags_u8 >> 1) & 1;
 }
 
 int64_t timeSinceLastServoPosChange_l = 0;
@@ -818,7 +818,7 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 
 
 				
-				if (false == stepper_cl->disableCrashDetection_b)
+				if (true == stepper_cl->enableCrashDetection_b)
 				{
 					// When the servo turned off during driving, the servo loses its zero position and the correction might not be valid anymore. If still applied, the servo will somehow srive against the block
 					// resulting in excessive servo load --> current load. We'll detect whether min or max block was reached, depending on the position error sign
@@ -869,7 +869,7 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 				
 				
 
-				if (false == stepper_cl->disableSteplossRecov_b)
+				if (true == stepper_cl->enableSteplossRecov_b)
 				{
 					// calculate encoder offset
 					// movement to the back will reduce encoder value

@@ -46,8 +46,8 @@ private:
 	bool restartServo = false;
 	void setLifelineSignal();
 
-	bool disableSteplossRecov_b = true;
-	bool disableCrashDetection_b = true;
+	bool enableSteplossRecov_b = true;
+	bool enableCrashDetection_b = true;
 
 	bool logAllServoParams = false;
 

@@ -27,7 +27,7 @@ using static System.Net.Mime.MediaTypeNames;
 static class Constants
 {
     // payload revisiom
-    public const uint pedalConfigPayload_version = 141;
+    public const uint pedalConfigPayload_version = 142;
 
 
     // pyload types
@@ -223,7 +223,7 @@ public struct payloadPedalConfig
     //public byte OTA_flag;
 
     // Misc flags
-    public byte enableMiscFlags_u8;
+    public byte stepLossFunctionFlags_u8;
 
 }
 
@@ -2146,7 +2146,7 @@ namespace User.PluginSdkDemo
             dap_config_initial_st.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_initial_st.payloadPedalConfig_.pedal_type = 0;
             //dap_config_initial_st.payloadPedalConfig_.OTA_flag = 0;
-            dap_config_initial_st.payloadPedalConfig_.enableMiscFlags_u8 = 1;
+            dap_config_initial_st.payloadPedalConfig_.stepLossFunctionFlags_u8 = 0b11;
 
 
 

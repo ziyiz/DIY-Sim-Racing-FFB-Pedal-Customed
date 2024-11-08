@@ -518,7 +518,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             //dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
-            dap_config_st[pedalIdx].payloadPedalConfig_.enableMiscFlags_u8 = 0;
+            dap_config_st[pedalIdx].payloadPedalConfig_.stepLossFunctionFlags_u8 = 0b11;
         }
 
         public void DAP_config_set_default_rudder()
@@ -604,7 +604,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.spindlePitch_mmPerRev_u8 = 5;
             dap_config_st_rudder.payloadPedalConfig_.pedal_type = (byte)4;
             //dap_config_st[pedalIdx].payloadPedalConfig_.OTA_flag = 0;
-            dap_config_st_rudder.payloadPedalConfig_.enableMiscFlags_u8 = 0;
+            dap_config_st_rudder.payloadPedalConfig_.stepLossFunctionFlags_u8 = 0b11;
         }
         System.Windows.Controls.CheckBox[,] Effect_status_profile=new System.Windows.Controls.CheckBox[3,8];
         unsafe public SettingsControlDemo()
@@ -1709,7 +1709,7 @@ namespace User.PluginSdkDemo
                 checkbox_enable_wheelslip.IsChecked = false;
             }
 
-            if ( ((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 >> 1) & 1) == 1)
+            if ( ((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 >> 0) & 1) == 1)
             {
                 EnableStepLossRecov_check.IsChecked = true;
             }
@@ -1718,7 +1718,7 @@ namespace User.PluginSdkDemo
                 EnableStepLossRecov_check.IsChecked = false;
             }
 
-            if (((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 >> 2) & 1) == 1)
+            if (((dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 >> 1) & 1) == 1)
             {
                 EnableCrashDetection_check.IsChecked = true;
             }
@@ -5390,49 +5390,36 @@ namespace User.PluginSdkDemo
         }
         */
 
-        private void EnableReboot_check_Unchecked(object sender, RoutedEventArgs e)
-        {
-            byte tmp = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8;
-            tmp = (byte)(tmp & ~(1 << 0));
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 = tmp;
-
-            tmp = 5;
-        }
-        private void EnableReboot_check_Checked(object sender, RoutedEventArgs e)
-        {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 |= (1 << 0);
-
-            byte tmp = 5;
-        }
+    
 
 
 
         private void EnableStepLossRecov_check_Unchecked(object sender, RoutedEventArgs e)
         {
-            byte tmp = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8;
-            tmp = (byte)(tmp & ~(1 << 1));
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 = tmp;
+            byte tmp = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8;
+            tmp = (byte)(tmp & ~(1 << 0));
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 = tmp;
 
             tmp = 5;
         }
         private void EnableStepLossRecov_check_Checked(object sender, RoutedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 |= (1 << 1);
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 |= (1 << 0);
 
             byte tmp = 5;
         }
 
         private void EnableCrashDetection_check_Unchecked(object sender, RoutedEventArgs e)
         {
-            byte tmp = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8;
-            tmp = (byte)(tmp & ~(1 << 2));
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 = tmp;
+            byte tmp = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8;
+            tmp = (byte)(tmp & ~(1 << 1));
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 = tmp;
 
             tmp = 5;
         }
         private void EnableCrashDetection_check_Checked(object sender, RoutedEventArgs e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.enableMiscFlags_u8 |= (1 << 2);
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.stepLossFunctionFlags_u8 |= (1 << 1);
 
             byte tmp = 5;
         }
