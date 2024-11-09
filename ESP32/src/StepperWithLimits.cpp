@@ -629,6 +629,13 @@ int64_t timeNow_l = 0;
 
 
 uint32_t stackSizeIdx_u32 = 0;
+
+
+
+int64_t timeNow_isv57SerialCommunicationTask_l = 0;
+int64_t timePrevious_isv57SerialCommunicationTask_l = 0;
+#define REPETITION_INTERVAL_ISV57_SERIALCOMMUNICATION_TASK (int64_t)10
+
 void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 {
   
@@ -638,8 +645,13 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 	for(;;){
 
 	  
-		// induce a small pause to decrease CPU workload
-		delay(1);
+
+		// measure callback time and continue, when desired period is reached
+		timeNow_isv57SerialCommunicationTask_l = millis();
+		int64_t timeDiff_serialCommunicationTask_l = ( timePrevious_isv57SerialCommunicationTask_l + REPETITION_INTERVAL_ISV57_SERIALCOMMUNICATION_TASK) - timeNow_isv57SerialCommunicationTask_l;
+		uint32_t targetWaitTime_u32 = constrain(timeDiff_serialCommunicationTask_l, 0, REPETITION_INTERVAL_ISV57_SERIALCOMMUNICATION_TASK);
+		delay(targetWaitTime_u32);
+		timePrevious_isv57SerialCommunicationTask_l = millis();
 
 		
 
