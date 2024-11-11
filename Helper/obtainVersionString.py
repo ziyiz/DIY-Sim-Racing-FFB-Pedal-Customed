@@ -1,4 +1,5 @@
 import requests
+import re
 
 # URL to get releases from the GitHub repository
 repo_url = "https://api.github.com/repos/ChrGri/DIY-Sim-Racing-FFB-Pedal/releases"
