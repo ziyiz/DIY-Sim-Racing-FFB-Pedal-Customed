@@ -20,6 +20,11 @@ jobs:
       Version_date: ${{ steps.output_version_date.outputs.Version_date }}
       Upload_URL: ${{ steps.create-new-PreRelease.outputs.upload_url }}
     steps:
+
+      # Check out the repository to the GitHub Actions runner
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
       # get date
       - name: Dynamically set MY_DATE environment variable
         run: echo "MY_DATE=$(date +'%Y%m%d.%H%M%S')" >> "$GITHUB_ENV"
