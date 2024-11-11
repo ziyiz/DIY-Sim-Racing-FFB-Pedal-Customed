@@ -24,8 +24,20 @@ if response.status_code == 200:
         latest_release = sorted_releases[0]
         version_number = latest_release['tag_name'][17:]  # The tag name is usually the version number
 
+
+        # Use regex to extract the number after the last underscore
+        match = re.search(r'_v(\d+)$', tag_name)
+        if match:
+            version_number = float(match.group(1))  # Convert the extracted version to an integer
+            new_version_number = version_number + .1  # Increment the version number by 1
+            #output_message = f"xyz_v{new_version_number}"
+            output_message = str(version_number)
+        else:
+            output_message = "0"
+            
+
         #output_message = f"The version number of the latest non-prerelease release is: {version_number}"
-        output_message = str( float(version_number) + 0.1 ) # increment the version number
+        #output_message = str( float(version_number) + 0.1 ) # increment the version number
     else:
         output_message = "No non-prerelease releases found."
 else:
