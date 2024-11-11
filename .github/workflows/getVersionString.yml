@@ -47,6 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
+          pip install re
 
       # Run the Python script
       - name: Run Python Script
