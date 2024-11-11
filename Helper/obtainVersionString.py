@@ -32,7 +32,7 @@ if response.status_code == 200:
             version_number = float(match.group(1))  # Convert the extracted version to an integer
             new_version_number = version_number + .1  # Increment the version number by 1
             #output_message = f"xyz_v{new_version_number}"
-            output_message = str(version_number)
+            output_message = str(new_version_number)
         else:
             output_message = "0"
             
