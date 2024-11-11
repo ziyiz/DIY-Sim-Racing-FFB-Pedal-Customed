@@ -38,3 +38,5 @@ with open(file_path, "w") as file:
     file.write(output_message)
 
 print(f"Output written to {file_path}")
+
+print("Version is: " + output_message)
