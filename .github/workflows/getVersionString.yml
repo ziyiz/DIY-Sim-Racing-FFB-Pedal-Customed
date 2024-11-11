@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
-          pip install re
+          pip install regex
 
       # Run the Python script
       - name: Run Python Script
