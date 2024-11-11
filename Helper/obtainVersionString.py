@@ -27,7 +27,7 @@ if response.status_code == 200:
 
         tag_name = latest_release['tag_name']
         # Use regex to extract the number after the last underscore
-        match = re.search(r'_v(\d+)$', tag_name)
+        match = re.search(r'Release_Package_v(\d+)', tag_name)
         if match:
             version_number = float(match.group(1))  # Convert the extracted version to an integer
             new_version_number = version_number + .1  # Increment the version number by 1
