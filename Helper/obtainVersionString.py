@@ -25,7 +25,7 @@ if response.status_code == 200:
         latest_release = sorted_releases[0]
         version_number = latest_release['tag_name'][17:]  # The tag name is usually the version number
 
-
+        tag_name = latest_release['tag_name']
         # Use regex to extract the number after the last underscore
         match = re.search(r'_v(\d+)$', tag_name)
         if match:
