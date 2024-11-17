@@ -536,7 +536,7 @@ void ESPNOW_SyncTask( void * pvParameters )
         //timeout check
         if(now-Pairing_state_start>Pairing_timeout)
         {
-          Serial.println("[L]Bridge Timeout!");
+          Serial.println("[L]Bridge Pairing timeout!");
           ESPNow_pairing_action_b=false;
           LED_Status=0;
           if(UpdatePairingToEeprom)
@@ -556,8 +556,10 @@ void ESPNOW_SyncTask( void * pvParameters )
                 Serial.print(i);
                 Serial.print("Pair: ");
                 Serial.print(ESP_pairing_reg_local.Pair_status[i]);
-                Serial.printf(" Mac: %02X:%02X:%02X:%02X:%02X:%02X\n", ESP_pairing_reg_local.Pair_mac[i][0], ESP_pairing_reg_local.Pair_mac[i][1], ESP_pairing_reg_local.Pair_mac[i][2], ESP_pairing_reg_local.Pair_mac[i][3], ESP_pairing_reg_local.Pair_mac[i][4], ESP_pairing_reg_local.Pair_mac[i][5]);
+                Serial.printf(" Mac: %02X:%02X:%02X:%02X:%02X:%02X", ESP_pairing_reg_local.Pair_mac[i][0], ESP_pairing_reg_local.Pair_mac[i][1], ESP_pairing_reg_local.Pair_mac[i][2], ESP_pairing_reg_local.Pair_mac[i][3], ESP_pairing_reg_local.Pair_mac[i][4], ESP_pairing_reg_local.Pair_mac[i][5]);
+                Serial.println("");
               }
+              Serial.println("");
             }
             Serial.println("");
             //adding peer
