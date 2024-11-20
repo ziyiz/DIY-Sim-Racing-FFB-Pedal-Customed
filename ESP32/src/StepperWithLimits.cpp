@@ -34,20 +34,6 @@ static SemaphoreHandle_t semaphore_getSetCorrectedServoPos = xSemaphoreCreateMut
 
 
 
-FastAccelStepperEngine& stepperEngine() {
-  static FastAccelStepperEngine myEngine = FastAccelStepperEngine();   // this is a factory and manager for all stepper instances
-
-  static bool firstTime = true;
-  if (firstTime) {
-     myEngine.init();
-     firstTime = false;
-  }
-
-  return myEngine;
-}
-
-
-
 StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint8_t pinMin, uint8_t pinMax, bool invertMotorDir_b)
   : _pinMin(pinMin), _pinMax(pinMax)
   , _endstopLimitMin(0),    _endstopLimitMax(0)
@@ -55,30 +41,15 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 {
 
   
-  pinMode(pinMin, INPUT);
-  pinMode(pinMax, INPUT);
-  
-  
-  _stepper = stepperEngine().stepperConnectToPin(pinStep);
-
-  
-
-  // Stepper Parameters
-  if (_stepper) {
-    _stepper->setDirectionPin(pinDirection, invertMotorDir_b);
-    _stepper->setAutoEnable(true);
-    _stepper->setAbsoluteSpeedLimit( maxSpeedInTicks ); // ticks
-    _stepper->setSpeedInTicks( maxSpeedInTicks ); // ticks
-    _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);  // steps/s²
-	_stepper->setLinearAcceleration(0);
-    _stepper->setForwardPlanningTimeInMs(8);
-	//_stepper->setForwardPlanningTimeInMs(4);
+	pinMode(pinMin, INPUT);
+	pinMode(pinMax, INPUT);
 
 	
-	
-	
-	
-	
+	_stepper = new FastNonAccelStepper(pinStep, pinDirection, invertMotorDir_b); 
+
+
+	//FastNonAccelStepper _stepper(pinStep, pinDirection, invertMotorDir_b);
+	_stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED);
 	
 	
 	/************************************************************/
@@ -159,7 +130,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 	
 	
 	
-  }
+  
 }
 
 
@@ -177,21 +148,6 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 	if ( getLifelineSignal() )
 	{
-		
-		// reduce speed and acceleration
-		_stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED / 10);
-		_stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 10);
-
-		// enable servo
-		//restartServo = true;
-		//isv57.enableAxis();
-		//delay(50);
-
-		// move a tiny bit to enable axis
-		// _stepper->move(10, true);
-
-
-
 
 		/************************************************************/
 		/* 					servo reading check 					*/
@@ -251,9 +207,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		
 		
 		// run continously in one direction until endstop is hit
-		//_stepper->runForward();
-
-		_stepper->move(INT32_MIN, false);
+		_stepper->keepRunningForward(MAXIMUM_STEPPER_SPEED / 10);
 		
 		while( (!endPosDetected) && (getLifelineSignal()) ){
 			delay(2);
@@ -330,7 +284,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		endPosDetected = false; //abs( isv57.servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 		
 		// run continously in one direction until endstop is hit
-		_stepper->move(INT32_MAX, false);
+		_stepper->keepRunningBackward(MAXIMUM_STEPPER_SPEED / 10);
 		
 		// if endstop is reached, communication is lost or virtual endstop is hit
 		while( (!endPosDetected) && (getLifelineSignal()) ){
@@ -354,8 +308,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		
 		
 		// increase speed and accelerartion back to normal
-		_stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);
-		_stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED);
+		_stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED);
 	}	
 	
 
@@ -364,15 +317,17 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 void StepperWithLimits::moveSlowlyToPos(int32_t targetPos_ui32) {
   // reduce speed and accelerartion
-  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED / 4);
-  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION / 4);
+  _stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED / 4);
 
   // move to min
-  _stepper->moveTo(targetPos_ui32, true);
+  _stepper->moveTo(targetPos_ui32);
+  while(_stepper->isRunning())
+  {
+	delay(2);
+  }
 
   // increase speed and accelerartion
-  _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);
-  _stepper->setSpeedInHz(MAXIMUM_STEPPER_SPEED);
+  _stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED);
 }
 
 
@@ -385,7 +340,16 @@ void StepperWithLimits::updatePedalMinMaxPos(uint8_t pedalStartPosPct, uint8_t p
 }
 
 int8_t StepperWithLimits::moveTo(int32_t position, bool blocking) {
-  return _stepper->moveTo(position, blocking);
+  _stepper->moveTo(position);
+
+  if (blocking)
+  {
+	while(_stepper->isRunning())
+  	{
+		delay(2);
+  	}
+  }
+  return 1;
 }
 
 int32_t StepperWithLimits::getCurrentPositionFromMin() const {
@@ -413,25 +377,10 @@ int32_t StepperWithLimits::getTargetPositionSteps() const {
 }
 
 
-void StepperWithLimits::printStates()
-{
-  int32_t currentStepperPos = _stepper->getCurrentPosition();
-  int32_t currentStepperVel = _stepper->getCurrentSpeedInUs();
-  int32_t currentStepperVel2 = _stepper->getCurrentSpeedInMilliHz();
-
-
-  //Serial.println(currentStepperVel);
-  
-  int32_t currentStepperAccel = _stepper->getCurrentAcceleration();
-
-  static RTDebugOutput<int32_t, 4> rtDebugFilter({ "Pos", "Vel", "Vel2", "Accel"});
-  rtDebugFilter.offerData({ currentStepperPos, currentStepperVel, currentStepperVel2, currentStepperAccel});
-}
-
 
 void StepperWithLimits::setSpeed(uint32_t speedInStepsPerSecond) 
 {
-  _stepper->setSpeedInHz(speedInStepsPerSecond);            // steps/s 
+  _stepper->setMaxSpeed(speedInStepsPerSecond);            // steps/s 
 }
 
 bool StepperWithLimits::isAtMinPos()
