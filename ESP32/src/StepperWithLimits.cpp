@@ -44,7 +44,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, uint
 	pinMode(pinMin, INPUT);
 	pinMode(pinMax, INPUT);
 
-	
+	Serial.printf("InvertStepperDir: %d\n", invertMotorDir_b);
 	_stepper = new FastNonAccelStepper(pinStep, pinDirection, invertMotorDir_b); 
 
 
@@ -207,7 +207,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		
 		
 		// run continously in one direction until endstop is hit
-		_stepper->keepRunningForward(MAXIMUM_STEPPER_SPEED / 10);
+		_stepper->keepRunningBackward(MAXIMUM_STEPPER_SPEED / 10);
 		
 		while( (!endPosDetected) && (getLifelineSignal()) ){
 			delay(2);
@@ -254,11 +254,11 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			}
 		}
 
-		/*if(false == servoAxisResetSuccessfull_b)
+		if(false == servoAxisResetSuccessfull_b)
 		{
 			Serial.print("Servo axis not reset. Restarting ESP!");
 			ESP.restart();
-		}*/
+		}
 		
 
 		// Serial.print("Servo axis current position (before clearing): ");
@@ -290,11 +290,11 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		endPosDetected = false; //abs( isv57.servo_current_percent) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 		
 		// run continously in one direction until endstop is hit
-		_stepper->keepRunningBackward(MAXIMUM_STEPPER_SPEED / 10);
+		_stepper->keepRunningForward(MAXIMUM_STEPPER_SPEED / 10);
 		
 		// if endstop is reached, communication is lost or virtual endstop is hit
 		while( (!endPosDetected) && (getLifelineSignal()) ){
-			delay(2);
+			delay(1);
 			if (_stepper->getCurrentPosition() > MIN_POS_MAX_ENDSTOP)
     		{
 				endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
@@ -302,16 +302,16 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 
 			// virtual endstop
 			endPosDetected |= (_stepper->getCurrentPosition() > maxStepsToReachEndPos);
+
+			Serial.printf("Pos: %d\n", _stepper->getCurrentPosition());
 		}
 		_stepper->forceStop();
 		_endstopLimitMax = _stepper->getCurrentPosition();
 
-		Serial.println("Max endstop reached.");
+		Serial.printf("Max endstop reached: %d\n", _endstopLimitMax);
 		
 		// move slowly to min position
 		moveSlowlyToPos(_posMin);
-		
-		
 		
 		// increase speed and accelerartion back to normal
 		_stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED);
