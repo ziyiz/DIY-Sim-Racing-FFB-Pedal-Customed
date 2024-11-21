@@ -1937,10 +1937,10 @@
                                                 </Setter>
                                             </Style>
                                         </TabControl.Resources>
-                                        <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                        <TabItem Width="120" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                                             <TabItem.Header>
-                                                <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                                                    <Label Content="Profiles"  FontFamily="Arial Black" FontSize="18" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                <Border  Width="120" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="Profiles"  FontFamily="Arial Black" FontSize="10" Height="30" Width="120" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                                                 </Border>
                                             </TabItem.Header>
                                             <StackPanel HorizontalAlignment="Left" Height="218" VerticalAlignment="Top" Width="542" Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
@@ -2071,10 +2071,10 @@
                                             </StackPanel>
 
                                         </TabItem>
-                                        <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                        <TabItem Width="120" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                                             <TabItem.Header>
-                                                <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                                                    <Label Content="OTA Setting"  FontFamily="Arial Black" FontSize="18" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                <Border  Width="120" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="OTA Setting"  FontFamily="Arial Black" FontSize="10" Height="30" Width="120" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                                                 </Border>
                                             </TabItem.Header>
                                             <Border Background="#7F4E4E4E" Height="177" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
@@ -2099,10 +2099,10 @@
                                                 </StackPanel>
                                             </Border>
                                         </TabItem>
-                                        <TabItem Width="180" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
+                                        <TabItem Width="120" Height="30" Padding="0,0,0,0" ToolTip="General setting for Pedal, will save to pedal">
                                             <TabItem.Header>
-                                                <Border  Width="180" Height="30" Margin="0,0,0,0" >
-                                                    <Label Content="License"  FontFamily="Arial Black" FontSize="18" Height="30" Width="180" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                <Border  Width="120" Height="30" Margin="0,0,0,0" >
+                                                    <Label Content="License"  FontFamily="Arial Black" FontSize="10" Height="30" Width="120" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                                                 </Border>
                                             </TabItem.Header>
                                             <Border Background="#7F4E4E4E" Height="177" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" >
@@ -2138,7 +2138,7 @@
                                         <Border  HorizontalAlignment="Left" Height="281" VerticalAlignment="Top" Width="540" Background="#7F4E4E4E" CornerRadius="5,5,5,5">
                                             <StackPanel HorizontalAlignment="Left" Height="281" VerticalAlignment="Top" Width="540" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Row="6" Grid.Column="1">
                                                 <StackPanel HorizontalAlignment="Center" Height="25" VerticalAlignment="Top" Width="540" Orientation="Horizontal">
-                                                    <Label x:Name="text_serial_bridge" Content="Serial Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="100" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
+                                                    <Label x:Name="text_serial_bridge" Content="Bridge Log Monitor"  FontFamily="Arial Black" FontSize="12" Height="25" Width="130" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="5,0,0,0"  />
                                                     <styles:SHButtonPrimary x:Name="btn_serial_clear_bridge" Click="btn_serial_clear_bridge_Click" Width="30" Content="Clear" Height="20" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                                     <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0">
                                                         <styles:SHToggleButton x:Name="Checkbox_auto_remove_serial_line_bridge" Content="" Checked="Checkbox_auto_remove_serial_line_bridge_Checked" Unchecked="Checkbox_auto_remove_serial_line_bridge_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
