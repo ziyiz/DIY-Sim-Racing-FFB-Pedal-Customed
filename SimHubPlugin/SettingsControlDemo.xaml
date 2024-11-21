@@ -802,17 +802,17 @@
                                                         </Canvas>
 
                                                         <StackPanel Width="50" Height="230" Margin="10,-10,0,0">
-                                                            <Label x:Name="Label_max_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-5,0,0"/>
+                                                            <Label x:Name="Label_max_force" Width="50" Height="24" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-9,0,0"/>
                                                             <controls:RangeSlider x:Name="Rangeslider_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="180" LowerValueChanged="Rangeslider_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_force_range_UpperValueChanged" MinRange="0" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30" Width="20" Orientation="Vertical" Maximum="200" HorizontalAlignment="Left" LargeChange="10" TickFrequency="0.1"/>
-                                                            <Label x:Name="Label_min_force" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                                            <Label x:Name="Label_min_force" Width="50" Height="24" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                     </StackPanel>
 
 
                                                     <StackPanel Width="430" Height="40" Orientation="Horizontal" Margin="0,-10,0,0">
-                                                        <Label x:Name="Label_min_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                        <Label x:Name="Label_min_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                                                         <controls:RangeSlider x:Name="Rangeslider_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" UpperValue="30" Width="370" VerticalAlignment="Top" LowerValue="5" Minimum="5" Maximum="95"/>
-                                                        <Label x:Name="Label_max_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                        <Label x:Name="Label_max_pos" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Border>
@@ -994,7 +994,7 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_damping"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_damping"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_damping" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="250" ValueChanged="Slider_damping_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
                                                     </StackPanel>
@@ -1004,13 +1004,13 @@
                                                     <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
                                                         <StackPanel Width="200" Height="40" Margin="70,0,0,0">
                                                             <StackPanel Width="200" Height="20" Orientation="Horizontal">
-                                                                <Label x:Name="label_LC_rate"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Rate:" Height="10" Padding="0,0,0,0"/>
+                                                                <Label x:Name="label_LC_rate"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Rate:" Height="12" Padding="0,0,0,0"/>
                                                             </StackPanel>
                                                             <Slider x:Name="Slider_LC_rate" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="190" Height="10" Maximum="500" ValueChanged="Slider_LC_rate_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="10" TickFrequency="10" LargeChange="100"/>
                                                         </StackPanel>
                                                         <StackPanel Width="200" Height="40" Margin="0,0,0,0">
                                                             <StackPanel Width="200" Height="20" Orientation="Horizontal">
-                                                                <Label x:Name="label_maxgame_output"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Max Game Output:" Height="10" Padding="0,0,0,0"/>
+                                                                <Label x:Name="label_maxgame_output"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Max Game Output:" Height="12" Padding="0,0,0,0"/>
                                                             </StackPanel>
                                                             <Slider x:Name="Slider_maxgame_output" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="190" Height="10" Maximum="100" ValueChanged="Slider_maxgame_output_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="5" TickFrequency="5" LargeChange="10"/>
                                                         </StackPanel>
@@ -1060,10 +1060,10 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="50">
                                                         <StackPanel Width="400" Height="10" Orientation="Horizontal">
-                                                            <Label  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Denoising Factor (slow to fast)" Height="10" Padding="0,0,0,0"/>
+                                                            <Label  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Denoising Factor (slow to fast)" Height="10" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_KF"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="KF:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_KF"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="KF:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_KF" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="255" ValueChanged="Slider_KF_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
                                                     </StackPanel>
@@ -1110,26 +1110,26 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Pgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="P-Gain:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_Pgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="P-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_Pgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" ValueChanged="Slider_Pgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Igain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="I-Gain:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_Igain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="I-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_Igain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="500" ValueChanged="Slider_Igain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1" LargeChange="10"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Dgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="D-Gain:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_Dgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="D-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_Dgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.01" ValueChanged="Slider_Dgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.0001" LargeChange="0.001" TickFrequency="0.0001"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_VFgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Feed Forward Gain:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_VFgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Feed Forward Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_VFgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="20" ValueChanged="Slider_VFgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.1"/>
                                                     </StackPanel>
@@ -1157,7 +1157,7 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_0th_gain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_MPC_0th_gain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_MPC_0th_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1" ValueChanged="Slider_MPC_0th_gain_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
                                                     </StackPanel>
@@ -1248,14 +1248,14 @@
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_ABS_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="ABS/TC Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_ABS_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="ABS/TC Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_ABS_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" ValueChanged="Slider_ABS_AMP_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05" Minimum="0.05" SmallChange="0.05"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_ABS_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="ABS/TC Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_ABS_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="ABS/TC Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_ABS_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="50" SmallChange="1" ValueChanged="Slider_ABS_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1290,17 +1290,17 @@
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_RPM_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_RPM_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_RPM_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="50">
-                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_freq"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                        <StackPanel Width="400" Height="12" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_freq_min"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                                            <Label x:Name="label_RPM_freq_max"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
+                                                        <StackPanel Width="400" Height="12" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq_min"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="12" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                            <Label x:Name="label_RPM_freq_max"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="12" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
                                                         </StackPanel>
                                                         <controls:RangeSlider x:Name="Rangeslider_RPM_freq" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="10" LowerValueChanged="Rangeslider_RPM_freq_LowerValueChanged" UpperValueChanged="Rangeslider_RPM_freq_UpperValueChanged" MinRange="1" SmallChange="1" Maximum="50" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="30"/>
                                                     </StackPanel>
@@ -1327,14 +1327,14 @@
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_BP_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Bite Point Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_BP_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Bite Point Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_BP_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_BP_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_BP_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Bite Point Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_BP_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Bite Point Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_BP_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_BP_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1356,13 +1356,13 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_G_force_multi"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="G Force Multiplier:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_G_force_multi"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="G Force Multiplier:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_G_force_multi" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="100" SmallChange="1" ValueChanged="Slider_G_force_multi_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_G_force_window"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="G Force Smoothness:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_G_force_window"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="G Force Smoothness:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_G_force_smoothness" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="100" SmallChange="1" ValueChanged="Slider_G_force_smoothness_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1399,20 +1399,20 @@
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_WS_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_WS_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_WS_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_WS_trigger_ValueChanged" LargeChange="0" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_WS_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_WS_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_WS_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" SmallChange="0.05" ValueChanged="Slider_WS_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_WS_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_WS_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_WS_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_WS_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1440,13 +1440,13 @@
 
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_impact_multi"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Impact Multiplier:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_impact_multi"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Impact Multiplier:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_impact_multi" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="100" SmallChange="1" ValueChanged="Slider_impact_multi_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_impact_window"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Impact Smoothness:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_impact_window"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Impact Smoothness:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_impact_smoothness" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="100" SmallChange="1" ValueChanged="Slider_impact_smoothness_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1479,19 +1479,19 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40" Margin="70,0,0,0" HorizontalAlignment="Left">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_CV1_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV1_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV1_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_CV1_trigger_ValueChanged" LargeChange="0" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40" HorizontalAlignment="Left" Margin="70,0,0,0">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_CV1_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV1_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV1_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" SmallChange="0.05" ValueChanged="Slider_CV1_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_CV1_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV1_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV1_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_CV1_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1523,19 +1523,19 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="300" Height="20" Orientation="Horizontal" HorizontalAlignment="Left">
-                                                            <Label x:Name="label_CV2_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV2_trigger"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Trigger:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV2_trigger" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="100" SmallChange="1" ValueChanged="Slider_CV2_trigger_ValueChanged" LargeChange="0" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_CV2_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV2_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV2_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" SmallChange="0.05" ValueChanged="Slider_CV2_AMP_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_CV2_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_CV2_freq"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Notification Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_CV2_freq" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Minimum="10" Maximum="50" SmallChange="1" ValueChanged="Slider_CV2_freq_ValueChanged" LargeChange="10" IsSnapToTickEnabled="True"/>
                                                     </StackPanel>
@@ -1697,17 +1697,17 @@
                                                     </Canvas>
 
                                                     <StackPanel Width="50" Height="230" Margin="10,-10,0,0">
-                                                        <Label x:Name="Label_max_force_rudder" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-5,0,0"/>
+                                                        <Label x:Name="Label_max_force_rudder" Width="50" Height="24" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" Margin="0,-9,0,0"/>
                                                         <controls:RangeSlider x:Name="Rangeslider_rudder_force_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="180" LowerValueChanged="Rangeslider_rudder_force_range_LowerValueChanged" UpperValueChanged="Rangeslider_rudder_force_range_UpperValueChanged" MinRange="0" IsSnapToTickEnabled="True" UpperValue="10" Width="20" Orientation="Vertical" Maximum="30" HorizontalAlignment="Left" LargeChange="10"/>
-                                                        <Label x:Name="Label_min_force_rudder" Width="50" Height="20" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
+                                                        <Label x:Name="Label_min_force_rudder" Width="50" Height="24" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0"/>
                                                     </StackPanel>
                                                 </StackPanel>
 
 
                                                 <StackPanel Width="430" Height="40" Orientation="Horizontal" Margin="0,-10,0,0">
-                                                    <Label x:Name="Label_min_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                    <Label x:Name="Label_min_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                                                     <controls:RangeSlider x:Name="Rangeslider_rudder_travel_range" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="20" LowerValueChanged="Rangeslider_rudder_travel_range_LowerValueChanged" UpperValueChanged="Rangeslider_rudder_travel_range_UpperValueChanged" MinRange="1" SmallChange="1" IsSnapToTickEnabled="True" UpperValue="95" Width="370" VerticalAlignment="Top" LowerValue="5" Minimum="5" Maximum="95" Value="85"/>
-                                                    <Label x:Name="Label_max_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
+                                                    <Label x:Name="Label_max_pos_rudder" Width="30" Height="40" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min" Padding="0,0,0,0" HorizontalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -1761,13 +1761,13 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_damping_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_damping_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_damping_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="250" ValueChanged="Slider_damping_rudder_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_0th_gain_rudder"  Width="200" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_MPC_0th_gain_rudder"  Width="200" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_MPC_0th_gain_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1" ValueChanged="Slider_MPC_0th_gain_rudder_ValueChanged" IsSnapToTickEnabled="True" Value="0.5" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
                                                     </StackPanel>
@@ -1788,17 +1788,17 @@
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_AMP_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="10" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_RPM_AMP_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
                                                         <Slider x:Name="Slider_RPM_AMP_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_RPM_AMP_rudder_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="50">
-                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_freq_rudder"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="10" Padding="0,0,0,0"/>
+                                                        <StackPanel Width="400" Height="12" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq_rudder"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <StackPanel Width="400" Height="10" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_freq_min_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                                            <Label x:Name="label_RPM_freq_max_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="8" FontFamily="Arial Black" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="10" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
+                                                        <StackPanel Width="400" Height="12" Orientation="Horizontal">
+                                                            <Label x:Name="label_RPM_freq_min_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MIN:" Height="12" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                            <Label x:Name="label_RPM_freq_max_rudder"  Width="50" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="MAX:" Height="12" Padding="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="300,0,0,0"/>
                                                         </StackPanel>
                                                         <controls:RangeSlider x:Name="Rangeslider_RPM_freq_rudder" Style="{DynamicResource RangeSliderStyle}" MinRangeWidth="1" Grid.Column="2" Height="10" LowerValueChanged="Rangeslider_RPM_freq_rudder_LowerValueChanged" UpperValueChanged="Rangeslider_RPM_freq_rudder_UpperValueChanged" MinRange="1" SmallChange="1" Maximum="50" IsSnapToTickEnabled="True" LowerValue="10" UpperValue="45" Minimum="1"/>
                                                     </StackPanel>
