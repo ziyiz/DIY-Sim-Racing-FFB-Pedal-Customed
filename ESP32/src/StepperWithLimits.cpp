@@ -214,15 +214,21 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 		}
 		setPosition = - 5 * ENDSTOP_MOVEMENT_SENSORLESS;
+		delay(20);
 		_stepper->forceStopAndNewPosition(setPosition);
-		
-		// move slightly away from the block to prevent mechanical hits during normal operation
-		_stepper->moveTo(0);
-		_endstopLimitMin = 0;
-		delay(100);
-		
+
 		
 		Serial.println("Min endstop reached.");
+		Serial.printf("Current pos: %d\n", _stepper->getCurrentPosition() );
+		// move slightly away from the block to prevent mechanical hits during normal operation
+		_stepper->moveTo(0, true);
+		_endstopLimitMin = 0;
+		//delay(1000);
+
+		Serial.println("Moved to pos: 0");
+		Serial.printf("Current pos: %d\n", _stepper->getCurrentPosition() );
+		
+		
 		
 
 		/************************************************************/
@@ -248,11 +254,11 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 			}
 		}
 
-		if(false == servoAxisResetSuccessfull_b)
+		/*if(false == servoAxisResetSuccessfull_b)
 		{
 			Serial.print("Servo axis not reset. Restarting ESP!");
 			ESP.restart();
-		}
+		}*/
 		
 
 		// Serial.print("Servo axis current position (before clearing): ");
@@ -320,11 +326,8 @@ void StepperWithLimits::moveSlowlyToPos(int32_t targetPos_ui32) {
   _stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED / 4);
 
   // move to min
-  _stepper->moveTo(targetPos_ui32);
-  while(_stepper->isRunning())
-  {
-	delay(2);
-  }
+  _stepper->moveTo(targetPos_ui32, true);
+
 
   // increase speed and accelerartion
   _stepper->setMaxSpeed(MAXIMUM_STEPPER_SPEED);
@@ -340,15 +343,8 @@ void StepperWithLimits::updatePedalMinMaxPos(uint8_t pedalStartPosPct, uint8_t p
 }
 
 int8_t StepperWithLimits::moveTo(int32_t position, bool blocking) {
-  _stepper->moveTo(position);
+  _stepper->moveTo(position, blocking);
 
-  if (blocking)
-  {
-	while(_stepper->isRunning())
-  	{
-		delay(2);
-  	}
-  }
   return 1;
 }
 
