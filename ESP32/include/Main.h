@@ -25,7 +25,8 @@
 // target cycle time for pedal update task, to get constant cycle times, required for FIR filtering
 #define DAP_MICROSECONDS_PER_SECOND 1000000
 
-static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
+// static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
+static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 3200;
 
 // 15kHz
 //#define ADC_SAMPLE_RATE ADS1256_DRATE_15000SPS
