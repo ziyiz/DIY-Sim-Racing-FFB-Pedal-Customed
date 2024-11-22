@@ -336,6 +336,7 @@ static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
   #define USING_LED
   #define LED_GPIO 12
   #define OTA_update
+  #define USING_BUZZER
 #endif
 
 #if PCB_VERSION == 8
@@ -387,4 +388,5 @@ static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
   #define USING_LED
   #define LED_GPIO 12
   #define OTA_update
+  #define USING_BUZZER
 #endif

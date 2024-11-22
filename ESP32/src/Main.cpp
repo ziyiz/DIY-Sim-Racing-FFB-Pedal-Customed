@@ -265,6 +265,9 @@ char* APhost;
   */
 #endif
 
+#ifdef USING_BUZZER
+  #include "Buzzer.h"
+#endif
 
 /**********************************************************************************************/
 /*                                                                                            */
@@ -284,6 +287,10 @@ void setup()
     pixels.show(); 
   #endif
   
+  #ifdef USING_BUZZER
+    Buzzer.initialized(ShutdownPin,0);
+    Buzzer.single_beep_tone(770,100);
+  #endif
 
   #if PCB_VERSION == 6 || PCB_VERSION == 7
     Serial.setTxTimeoutMs(0);
@@ -661,6 +668,11 @@ void setup()
       pixels.setPixelColor(0,0x00,0xff,0x00);//Green
       pixels.show(); 
       //delay(3000);
+  #endif
+
+  #ifdef USING_BUZZER
+    //Buzzer.single_beep_ledc_fade(440,2000);
+    Buzzer.single_beep_tone(440,2000);
   #endif
 }
 
@@ -1316,7 +1328,10 @@ void serialCommunicationTask( void * pvParameters )
                   if (structChecker == true)
                   {
                     Serial.println("Updating pedal config");
-                    configUpdateAvailable = true;          
+                    configUpdateAvailable = true;  
+                    #ifdef USING_BUZZER
+                      Buzzer.single_beep_tone(700,100);
+                    #endif        
                   }
                   xSemaphoreGive(semaphore_updateConfig);
                 }
@@ -1651,6 +1666,9 @@ void OTATask( void * pvParameters )
         if(result==ESP_OK)
         {
           OTA_status=true;
+          #ifdef USING_BUZZER
+            Buzzer.single_beep_tone(700,100);
+          #endif 
           delay(1000);
           #ifdef OTA_update_ESP32
           ota_wifi_initialize(APhost);
@@ -1831,6 +1849,9 @@ void ESPNOW_SyncTask( void * pvParameters )
             Serial.print("Pedal: ");
             Serial.print(dap_config_st.payLoadPedalConfig_.pedal_type);
             Serial.println(" timeout.");
+            #ifdef USING_BUZZER
+              Buzzer.single_beep_tone(700,100);
+            #endif 
             if(UpdatePairingToEeprom)
             {
               EEPROM.put(EEPROM_offset,_ESP_pairing_reg);
@@ -1916,6 +1937,13 @@ void ESPNOW_SyncTask( void * pvParameters )
       {
         ESPNow.send_message(broadcast_mac,(uint8_t *) & dap_config_st,sizeof(dap_config_st));
         ESPNow_config_request=false;
+      }
+      if(Config_update_b)
+      {
+        Config_update_b=false;
+        #ifdef USING_BUZZER
+          Buzzer.single_beep_tone(700,100);
+        #endif 
       }
       if(ESPNow_OTA_enable)
       {
