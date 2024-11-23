@@ -1628,6 +1628,7 @@ uint16_t OTA_count=0;
 bool message_out_b=false;
 bool OTA_enable_start=false;
 uint32_t otaTask_stackSizeIdx_u32 = 0;
+int OTA_update_status=99;
 void OTATask( void * pvParameters )
 {
 
@@ -1658,14 +1659,28 @@ void OTATask( void * pvParameters )
           server.handleClient();
         #endif
         #ifdef OTA_update
-          #ifdef USING_LED
+          if(OTA_update_status==0)
+          {
+            #ifdef USING_BUZZER
+              Buzzer.play_melody_tone(melody_victory_theme, sizeof(melody_victory_theme)/sizeof(melody_victory_theme[0]),melody_durations_Victory_theme);
+              ESP.restart();
+            #endif
+          }
+          else
+          {
+            #ifdef USING_BUZZER
+              Buzzer.single_beep_tone(770,100);
+            #endif
+            #ifdef USING_LED
             pixels.setPixelColor(0,0xff,0x00,0x00);//red
             pixels.show(); 
             delay(500);
             pixels.setPixelColor(0,0x00,0x00,0x00);//no color
             pixels.show();
             delay(500);    
-          #endif
+            #endif 
+          }
+
         #endif
         
 
@@ -1705,14 +1720,16 @@ void OTATask( void * pvParameters )
             case 1:
               Serial.printf("Flashing to latest Main, checking %s to see if an update is available...\n", JSON_URL_main);
               ret = ota.OverrideBoard(Board)
-                       .CheckForOTAUpdate(JSON_URL_main, VERSION);
+                       .CheckForOTAUpdate(JSON_URL_main, VERSION, ESP32OTAPull::UPDATE_BUT_NO_BOOT);
               Serial.printf("CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
+              OTA_update_status=ret;
               break;
             case 2:
               Serial.printf("Flashing to latest Dev, checking %s to see if an update is available...\n", JSON_URL_dev);
               ret = ota.OverrideBoard(Board)
-                       .CheckForOTAUpdate(JSON_URL_dev, VERSION);
+                       .CheckForOTAUpdate(JSON_URL_dev, VERSION, ESP32OTAPull::UPDATE_BUT_NO_BOOT);
               Serial.printf("CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
+              OTA_update_status=ret;
               break;
             default:
             break;
