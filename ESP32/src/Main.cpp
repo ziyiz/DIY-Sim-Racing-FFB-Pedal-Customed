@@ -1662,9 +1662,9 @@ void OTATask( void * pvParameters )
           if(OTA_update_status==0)
           {
             #ifdef USING_BUZZER
-              Buzzer.play_melody_tone(melody_victory_theme, sizeof(melody_victory_theme)/sizeof(melody_victory_theme[0]),melody_durations_Victory_theme);
-              ESP.restart();
+              Buzzer.play_melody_tone(melody_victory_theme, sizeof(melody_victory_theme)/sizeof(melody_victory_theme[0]),melody_durations_Victory_theme);              
             #endif
+            ESP.restart();
           }
           else
           {
