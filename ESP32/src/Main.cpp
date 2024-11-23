@@ -288,7 +288,7 @@ void setup()
   #endif
   
   #ifdef USING_BUZZER
-    Buzzer.initialized(ShutdownPin,0);
+    Buzzer.initialized(ShutdownPin,1);
     Buzzer.single_beep_tone(770,100);
   #endif
 
@@ -659,7 +659,7 @@ void setup()
   #endif
   #ifdef CONTROLLER_SPECIFIC_VIDPID
     SetupController_USB(dap_config_st.payLoadPedalConfig_.pedal_type);
-    delay(3000);
+    delay(500);
   #endif
 
   Serial.println("Setup end");
@@ -671,8 +671,23 @@ void setup()
   #endif
 
   #ifdef USING_BUZZER
-    //Buzzer.single_beep_ledc_fade(440,2000);
-    Buzzer.single_beep_tone(440,2000);
+    if(dap_config_st.payLoadPedalConfig_.pedal_type==0)
+    {
+      delay(500);
+      Buzzer.single_beep_ledc_fade(NOTE_D4,3072,1);
+      //Buzzer.single_beep_ledc_fade(NOTE_A4,1536,0.5);
+    }
+    if(dap_config_st.payLoadPedalConfig_.pedal_type==1)
+    {
+      Buzzer.single_beep_ledc_fade(NOTE_A4,3072,1);
+    }    
+    if(dap_config_st.payLoadPedalConfig_.pedal_type==2)
+    {
+      delay(500);
+      //Buzzer.single_beep_ledc_fade(NOTE_A4,1536,0.5);
+      Buzzer.single_beep_ledc_fade(NOTE_D4,3072,1);
+    }    
+    //Buzzer.single_beep_tone(440,1500);
   #endif
 }
 

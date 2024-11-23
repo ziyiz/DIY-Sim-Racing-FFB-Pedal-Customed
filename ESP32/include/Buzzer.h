@@ -1,9 +1,25 @@
 #include "Pitches.h"
 #include <Arduino.h>
+#include <math.h>
 class Simple_Buzzer {
 private:
     int buzzer_pin;
     int channel;
+    void noTone_buzzer()
+    {
+        ledcDetachPin(buzzer_pin);
+        ledcWrite(channel, 0); 
+    }
+    void tone_buzzer(uint16_t frequency, uint16_t duration, uint8_t volume)// should add notone_buzzer after that
+    {
+        ledcSetup(channel, frequency, 12);
+        ledcAttachPin(buzzer_pin, channel);
+        ledcWrite(channel, volume);
+        if (duration) {
+            delay(duration);
+            //noTone_buzzer();
+        } 
+    }
 public:
     void single_beep_tone(int sound_Hz, int duration)
     {
@@ -34,20 +50,37 @@ public:
     {
         buzzer_pin=pin;
         channel = _channel;
-        //ledcSetup(channel, 6000, 8);
-        //ledcAttachPin(buzzer_pin, channel);
+        ledcSetup(channel, 6000, 8);
+        ledcAttachPin(buzzer_pin, channel);
     }
-    void single_beep_ledc_fade(int sound_Hz, int duration)
+
+
+
+    void single_beep_ledc_fade(int sound_Hz, int duration, double cycle)
     {
-        ledcWriteTone(channel, sound_Hz);
-        int steps = ((double)duration/100);
-        uint32_t dutyCycle=0;
-        for(int i=0;i<100;i++)
+        int step_quantity=80;
+        int duration_steps = (duration/step_quantity);
+        uint32_t volume=0;
+        int volume_step=255/step_quantity;
+        for(int i=0;i<step_quantity;i++)
         {
-            dutyCycle=steps*(i+1);
+            volume=(i+1)*volume_step*sin(PI*cycle*(double)((double)(i+1)/(double)step_quantity));
+            tone_buzzer(sound_Hz,duration_steps,volume);
+        }
+        noTone_buzzer();
+        
+        /*
+        ledcWriteTone(channel, sound_Hz);
+        int steps = (duration/100);
+        uint32_t dutyCycle=0;
+        int dutyCycle_step=2^8/2/100;
+        
+        {
+            dutyCycle=dutyCycle_step*(i+1);
             ledcWrite(channel, dutyCycle);
             delay(steps);
         }
+        */
 
     }
 
