@@ -762,6 +762,7 @@ int64_t timePrevious_pedalUpdateTask_l = 0;
 uint32_t pos_printCount = 0;
 
 uint32_t controlTask_stackSizeIdx_u32 = 0;
+float Position_Next_Prev = 0.0f;
 //void loop()
 void pedalUpdateTask( void * pvParameters )
 {
@@ -985,7 +986,9 @@ void pedalUpdateTask( void * pvParameters )
       Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
     }
 
-
+    float alphaPidOut = 0.9;
+    Position_Next = Position_Next*alphaPidOut + Position_Next_Prev * (1.0f - alphaPidOut);
+    Position_Next_Prev = Position_Next;
 
     // add dampening
     if (dap_calculationVariables_st.dampingPress  > 0.0001)

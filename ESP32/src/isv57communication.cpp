@@ -8,7 +8,7 @@ Modbus modbus(Serial1);
 isv57communication::isv57communication()
 {
   //Serial1.begin(38400, SERIAL_8N2, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
-  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
+  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, false); // Modbus serial
   modbus.init(MODE);
 }
 
@@ -293,6 +293,11 @@ void isv57communication::applyOfsetToZeroPos(int16_t givenPosOffset_i16)
 int16_t isv57communication::getZeroPos()
 {
   return zeroPos;
+}
+
+int16_t isv57communication::getPosFromMin()
+{
+  return servo_pos_given_p - zeroPos;
 }
 
 
