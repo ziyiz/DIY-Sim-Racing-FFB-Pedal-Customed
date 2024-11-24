@@ -70,8 +70,8 @@ public:
 	int32_t getCurrentPositionFromMin() const;
 	int32_t getMinPosition() const;
 	int32_t getCurrentPosition() const;
-	double getCurrentPositionFraction() const;
-	double getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const;
+	float getCurrentPositionFraction() const;
+	float getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const;
 	int32_t getTargetPositionSteps() const;
 
 	int32_t getLimitMin() const { return _endstopLimitMin; }

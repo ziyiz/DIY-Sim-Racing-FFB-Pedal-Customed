@@ -363,12 +363,12 @@ int32_t StepperWithLimits::getCurrentPosition() const {
   return _stepper->getCurrentPosition();
 }
 
-double StepperWithLimits::getCurrentPositionFraction() const {
-  return double(getCurrentPositionFromMin()) / getTravelSteps();
+float StepperWithLimits::getCurrentPositionFraction() const {
+  return float(getCurrentPositionFromMin()) / getTravelSteps();
 }
 
-double StepperWithLimits::getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const {
-  return (double(extPos_i32) - _posMin)/ getTravelSteps();
+float StepperWithLimits::getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const {
+  return ( (float)(extPos_i32 - _posMin))/ getTravelSteps();
 }
 
 int32_t StepperWithLimits::getTargetPositionSteps() const {

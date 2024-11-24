@@ -27,6 +27,7 @@
 
 // static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
 static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 3200;
+static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOLUTION;
 
 // 15kHz
 //#define ADC_SAMPLE_RATE ADS1256_DRATE_15000SPS
@@ -155,7 +156,7 @@ static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 3200;
   #define PEDAL_ASSIGNMENT
   #define CFG1 15
   #define CFG2 12
-  #define Using_analog_output
+  //#define Using_analog_output
   //#define Using_I2C_Sync
   #define ESPNOW_Enable
   #define ESPNow_ESP32
