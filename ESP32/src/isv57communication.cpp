@@ -295,6 +295,11 @@ int16_t isv57communication::getZeroPos()
   return zeroPos;
 }
 
+int16_t isv57communication::getPosFromMin()
+{
+  return servo_pos_given_p - zeroPos;
+}
+
 
 // read servo states
 void isv57communication::readServoStates() {
