@@ -1,6 +1,7 @@
 #include "PedalGeometry.h"
 
 #include "StepperWithLimits.h"
+//#include "FastTrig.h"
 
 KALMAN<3,1> K_pedal_geometry;
 unsigned long _timeLastObservation;
@@ -57,6 +58,7 @@ float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st * config_st) {
   // add incline due to AB incline --> result is incline realtive to horizontal 
   if (abs(c_hor)>0.01) {
     alpha += atan2f(c_ver, c_hor); // y, x
+    //alpha += atan2Fast(c_ver, c_hor); // y, x
   }
 
 
@@ -158,6 +160,7 @@ float convertToPedalForceGain(float sledPositionMM, DAP_config_st * config_st) {
 
   float alpha = acos( (b*b + c*c - a*a) / (2*b*c) );
   float alphaPlus = atan2f(c_ver, c_hor); // y, x
+  //float alphaPlus = atan2Fast(c_ver, c_hor); // y, x
 
   float sinAlpha = sin(alpha);
   float cosAlpha = cos(alpha);

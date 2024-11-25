@@ -930,8 +930,8 @@ void pedalUpdateTask( void * pvParameters )
 
     
     // Do the loadcell signal filtering
-    float filteredReading = 0;
-    float changeVelocity = 0;
+    float filteredReading = 0.0f;
+    float changeVelocity = 0.0f;
     float alpha_exp_filter = 1.0f - ( (float)dap_config_pedalUpdateTask_st.payLoadPedalConfig_.kf_modelNoise) / 5000.0f;
     // const velocity model denoising filter
     switch (dap_config_pedalUpdateTask_st.payLoadPedalConfig_.kf_modelOrder) {
