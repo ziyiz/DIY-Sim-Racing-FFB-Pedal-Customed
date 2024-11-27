@@ -1412,8 +1412,13 @@ void serialCommunicationTask( void * pvParameters )
               //4 Enable pairing
               if (dap_actions_st.payloadPedalAction_.system_action_u8==4)
               {
-                Serial.println("Get Pairing command");
-                software_pairing_action_b=true;
+                #ifdef ESPNow_Pairing_function
+                  Serial.println("Get Pairing command");
+                  software_pairing_action_b=true;
+                #endif
+                #ifndef ESPNow_Pairing_function
+                  Serial.println("no supporting command");
+                #endif
               }
 
               // trigger ABS effect

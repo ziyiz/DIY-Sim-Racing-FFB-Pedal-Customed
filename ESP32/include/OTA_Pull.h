@@ -24,6 +24,12 @@
 #if PCB_VERSION==8
 	#define Board "Gilphilbert_PCBAv2"
 #endif
+#if PCB_VERSION==9
+	#define Board "V3_ESP32"
+#endif
+#if PCB_VERSION==10
+	#define Board "V4_ESP32S3"
+#endif
 bool OTA_enable_b =false;
 bool OTA_status =false;
 struct Basic_WIfi_info

@@ -286,9 +286,11 @@ void setup()
   semaphore_updatePedalStates = xSemaphoreCreateMutex();
   */
   delay(10);
+  #ifdef ESPNow_Pairing_function
   //button read setup
   pinMode(Pairing_GPIO, INPUT_PULLUP);
   EEPROM.begin(256);
+  #endif
 /*
   if(semaphore_updateJoystick==NULL)
   {
@@ -490,9 +492,6 @@ bool building_dap_esppairing_lcl =false;
 void loop() 
 {
   taskYIELD();
-  //fanatecUpdate();
-
-  //delay(2); 
 }
 
 void ESPNOW_SyncTask( void * pvParameters )
@@ -824,8 +823,13 @@ void Serial_Task( void * pvParameters)
           {
             if(dap_bridge_state_lcl.payloadBridgeState_.Bridge_action==1)
             {
-              Serial.println("[L]Bridge Pairing...");
-              software_pairing_action_b=true;
+              #ifdef ESPNow_Pairing_function
+                Serial.println("[L]Bridge Pairing...");
+                software_pairing_action_b=true;
+              #endif
+              #ifndef ESPNow_Pairing_function
+                Serial.println("[L]Pairing command didn't supported");
+              #endif
             }
             //action=2, restart
             if(dap_bridge_state_lcl.payloadBridgeState_.Bridge_action==2)
