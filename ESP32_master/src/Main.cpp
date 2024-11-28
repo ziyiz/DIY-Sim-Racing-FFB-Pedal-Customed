@@ -26,6 +26,7 @@
 #include "soc/rtc_cntl_reg.h"
 #include "FanatecInterface.h"
 #include "OTA_Pull.h"
+#include "Version_Board.h"
 
 
 //#define ALLOW_SYSTEM_IDENTIFICATION
@@ -273,9 +274,9 @@ void setup()
   Serial.println("[L]Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
   #ifdef OTA_Update
     Serial.print("[L]Board:");
-    Serial.println(Board);
+    Serial.println(BRIDGE_BOARD);
     Serial.print("[L]Version:");
-    Serial.println(VERSION);
+    Serial.println(BRIDGE_FIRMWARE_VERSION);
   #endif
 
   // setup multi tasking
@@ -1173,20 +1174,25 @@ void OTATask( void * pvParameters )
             wifi_initialized(SSID,PASS);
             delay(2000);
             ESP32OTAPull ota;
+            char* Version_tag;
             int ret;
             ota.SetCallback(OTAcallback);
+            ota.OverrideBoard(BRIDGE_BOARD);
+            Version_tag=BRIDGE_FIRMWARE_VERSION;
+            if(_basic_wifi_info.wifi_action==1)
+            {
+              Version_tag="0.0.0";
+            }
             switch (_basic_wifi_info.mode_select)
             {
               case 1:
                 Serial.printf("[L]Flashing to latest Main, checking %s to see if an update is available...\n", JSON_URL_main);
-                ret = ota.OverrideBoard(Board) 
-                        .CheckForOTAUpdate(JSON_URL_main, VERSION);
+                ret = ota.CheckForOTAUpdate(JSON_URL_main, Version_tag);
                 Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
                 break;
               case 2:
                 Serial.printf("[L]Flashing to latest Dev, checking %s to see if an update is available...\n", JSON_URL_dev);
-                ret = ota.OverrideBoard(Board)                       
-                        .CheckForOTAUpdate(JSON_URL_dev, VERSION);
+                ret = ota.CheckForOTAUpdate(JSON_URL_dev, Version_tag);
                 Serial.printf("[L]CheckForOTAUpdate returned %d (%s)\n\n", ret, errtext(ret));
                 break;
               default:
