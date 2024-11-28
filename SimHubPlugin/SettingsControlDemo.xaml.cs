@@ -7197,6 +7197,10 @@ namespace User.PluginSdkDemo
             string PASS = textbox_PASS.Password;
             string MSG_tmp="";
             bool SSID_PASS_check = true;
+            if (Checkbox_Force_flash.IsChecked == true)
+            {
+                tmp_2.wifi_action = 1;
+            }
             if (OTAChannel_Sel_1.IsChecked == true)
             {
                 tmp_2.mode_select = 1;
@@ -8055,6 +8059,10 @@ namespace User.PluginSdkDemo
             string SSID = textbox_SSID.Text;
             string PASS = textbox_PASS.Password;
             bool SSID_PASS_check = true;
+            if (Checkbox_Force_flash.IsChecked == true)
+            {
+                tmp_2.wifi_action = 1;
+            }
             if (OTAChannel_Sel_1.IsChecked == true)
             {
                 tmp_2.mode_select = 1;

@@ -2095,6 +2095,10 @@
                                                         <RadioButton x:Name="OTAChannel_Sel_2" Content="DevBuild-Latest" GroupName="OTAChannel_options"  Width="130" Height="20" Margin="5,0,0,0" BorderThickness="0,0,0,0" FontSize="10"/>
 
                                                     </StackPanel>
+                                                    <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,0,0,0">
+                                                        <styles:SHToggleButton x:Name="Checkbox_Force_flash" Content="" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial" ToolTip="Dump pedal realtime status to file" RenderTransformOrigin="0.5,0.5" Margin="-10,0,0,0" />
+                                                        <Label Content="Force Flash Firmware" Height="20" Width="130" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" HorizontalAlignment="Left" FontSize="10" Margin="4,0,0,0"/>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </Border>
                                         </TabItem>
