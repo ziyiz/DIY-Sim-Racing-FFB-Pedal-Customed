@@ -8192,6 +8192,71 @@ namespace User.PluginSdkDemo
             var1 = Plugin.Ncalc_reading(textBox_CV2_string.Text.ToString());
             Label_NCALC_CUS2.Content = var1;
         }
+
+        private void btn_plus_maxforce_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.advanced_b)
+                {
+                    Rangeslider_force_range.UpperValue = Rangeslider_force_range.UpperValue + 0.1;
+                }
+                else
+                {
+                    Rangeslider_force_range.UpperValue = Rangeslider_force_range.UpperValue + 1;
+                }
+                
+            }
+
+        }
+
+        private void btn_minus_maxforce_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.advanced_b)
+                {
+                    Rangeslider_force_range.UpperValue = Rangeslider_force_range.UpperValue - 0.1;
+                }
+                else
+                {
+                    Rangeslider_force_range.UpperValue = Rangeslider_force_range.UpperValue - 1;
+                }
+
+            }
+        }
+
+        private void btn_plus_preload_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.advanced_b)
+                {
+                    Rangeslider_force_range.LowerValue = Rangeslider_force_range.LowerValue + 0.1;
+                }
+                else
+                {
+                    Rangeslider_force_range.LowerValue = Rangeslider_force_range.LowerValue + 1;
+                }
+
+            }
+        }
+
+        private void btn_minus_preload_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plugin != null)
+            {
+                if (Plugin.Settings.advanced_b)
+                {
+                    Rangeslider_force_range.LowerValue = Rangeslider_force_range.LowerValue - 0.1;
+                }
+                else
+                {
+                    Rangeslider_force_range.LowerValue = Rangeslider_force_range.LowerValue - 1;
+                }
+
+            }
+        }
     }
     
 }
