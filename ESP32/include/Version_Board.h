@@ -1,4 +1,4 @@
-#define DAP_FIRMWARE_VERSION "0.87.4"
+#define DAP_FIRMWARE_VERSION "0.87.99"
 #if PCB_VERSION==3
 	#define CONTROL_BOARD "V3_ESP32"
 #endif
