@@ -590,7 +590,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st_rudder.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 0.5f;
+            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 0.2f;
 
             dap_config_st_rudder.payloadPedalConfig_.control_strategy_b = 2;
 
@@ -7650,6 +7650,7 @@ namespace User.PluginSdkDemo
                         dap_config_st_rudder.payloadPedalConfig_.invertLoadcellReading_u8 = dap_config_st[i].payloadPedalConfig_.invertLoadcellReading_u8;
                         dap_config_st_rudder.payloadPedalConfig_.invertMotorDirection_u8 = dap_config_st[i].payloadPedalConfig_.invertMotorDirection_u8;
                         dap_config_st_rudder.payloadPedalConfig_.loadcell_rating = dap_config_st[i].payloadPedalConfig_.loadcell_rating;
+                        dap_config_st_rudder.payloadPedalConfig_.stepLossFunctionFlags_u8 = dap_config_st[i].payloadPedalConfig_.stepLossFunctionFlags_u8;
                         //dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_trigger = 0;
                         dap_config_st_rudder.payloadPedalConfig_.Simulate_ABS_value = dap_config_st[i].payloadPedalConfig_.Simulate_ABS_value;
                         Sendconfig_Rudder(i);
@@ -7726,10 +7727,12 @@ namespace User.PluginSdkDemo
                     }
                     else
                     {
-                        if (Plugin.MSFS_Plugin_Status == false)
+                        
+
+                        if (Plugin.MSFS_Plugin_Status == false && Plugin.Version_Check_Simhub_MSFS==false)
                         {
                             String MSG_tmp;
-                            MSG_tmp = "No MSFS simconnect plugin detected, please install the plugin and try again.";
+                            MSG_tmp = "No MSFS simconnect plugin detected, please install the plugin or update simhub verison above 9.6.0 then try again.";
                             System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
 

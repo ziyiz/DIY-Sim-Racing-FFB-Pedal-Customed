@@ -147,7 +147,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     if(data_len==sizeof(myData))
     {
       memcpy(&myData, data, sizeof(myData));
-      pedal_status=myData.pedal_status;
+      
       //#ifdef ACTIVATE_JOYSTICK_OUTPUT
       // normalize controller output
       int32_t joystickNormalizedToInt32 = NormalizeControllerOutputValue(myData.controllerValue_i32, 0, 10000, 100); 
@@ -162,6 +162,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
       {
         pedal_brake_value=joystickNormalizedToInt32;
         Joystick_value[1]=myData.controllerValue_i32;
+        pedal_status=myData.pedal_status;//control pedal status only by brake
         //joystick_update=true;
       }
       if(mac_addr[5]==Gas_mac[5])
