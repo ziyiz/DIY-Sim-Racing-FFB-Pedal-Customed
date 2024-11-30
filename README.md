@@ -8,7 +8,8 @@ This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareA
 The reason for that license selection is that at some point in time, individuals have done the following without contributing anything to this project.
 - Taken the sources and binaries and sold them on the internet
 - Started mass production of FFB Pedals from these designs in their living rooms to make money, by taking parts from this project and Simucube's design files
-- The DIY FFB Pedal project is not affiliated with the video (https://www.youtube.com/watch?v=9ibAyHcSjO0) or its channel (https://www.youtube.com/@xiaoximu). We do not provide support or after-sales service for the content of this video or the associated website.
+- The DIY FFB Pedal project is not affiliated with the video (https://www.youtube.com/watch?v=9ibAyHcSjO0) or its channel (https://www.youtube.com/@xiaoximu). We do not provide support or after-sales service for the content of this video or the associated website.<br>
+
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
