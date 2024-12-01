@@ -150,7 +150,7 @@ public:
       float RPMTimeSeconds = _RPMTimeMillis / 1000.0f;
 
       //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
-      RPMForceOffset = RPM_amp+RPM_amp * sin( 2.0f*PI* RPM_freq* RPMTimeSeconds);
+      RPMForceOffset = RPM_amp * sin( 2.0f*PI* RPM_freq* RPMTimeSeconds);
     }
 
     _lastCallTimeMillis = timeNowMillis;
