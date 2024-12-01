@@ -53,7 +53,7 @@ class isv57communication {
 	public:
     isv57communication();
     void setupServoStateReading();
-    void sendTunedServoParameters();
+    void sendTunedServoParameters(bool commandRotationDirection, uint32_t stepsPerMotorRev_u32);
     void readAllServoParameters();
     void readServoStates();
     bool checkCommunication();
@@ -61,12 +61,18 @@ class isv57communication {
     bool clearServoAlarms();
     bool readAlarmHistory();
     bool readCurrentAlarm();
-    
+    void resetToFactoryParams();
+	
+	void clearServoUnitPosition();
+    void disableAxis();
+	void enableAxis();
+    //void resetAxisCounter(); 
 
 
     void setZeroPos();
     void applyOfsetToZeroPos(int16_t givenPosOffset_i16);
     int16_t getZeroPos();
+    int16_t getPosFromMin();
     int16_t regArray[4];
 
     int16_t slaveId = 63; 
