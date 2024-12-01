@@ -126,11 +126,13 @@ public:
     //float RPM_max =10;
     float RPM_amp_base = calcVars_st->RPM_AMP;
     float RPM_amp=0;
+    RPM_amp=RPM_amp_base*(1.0f+0.3*RPM_value/100.0f);
     if(RPM_value==0)
     {
       RPM_min_freq=0;
+      RPM_amp=0;
     }
-    RPM_amp=RPM_amp_base*(1.0f+0.3*RPM_value/100.0f);
+    
 
 
     float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100.0f, RPM_min_freq, RPM_max_freq);

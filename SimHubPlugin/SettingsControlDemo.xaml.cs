@@ -590,7 +590,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st_rudder.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 0.2f;
+            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 0.7f;
 
             dap_config_st_rudder.payloadPedalConfig_.control_strategy_b = 2;
 
