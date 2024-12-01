@@ -50,7 +50,7 @@ This project has been divided into multiple repositories, each with differt purp
 # See the pedals in action
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/i2e1ukc1ylA/0.jpg)](https://www.youtube.com/watch?v=i2e1ukc1ylA)
 
-More pedal action examples can be found on the [Wiki](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/Hardware-designs) and the [Discord server](https://discord.gg/j8QhD5hCv7)
+More pedal action examples can be found on the [Wiki](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/Hardware-designs) and the [Discord server](https://discord.gg/zTfQaxpAUz)
 
 # Contributions
 A lot of awesome devs have helped this project grow. Just to name a few:
