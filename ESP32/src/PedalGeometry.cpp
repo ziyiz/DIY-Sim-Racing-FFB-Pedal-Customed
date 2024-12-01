@@ -16,11 +16,13 @@ static const float KF_MODEL_NOISE_FORCE_ACCELERATION = ( 10000000000. );
         
 
 
-float sledPositionInMM(StepperWithLimits* stepper, DAP_config_st * config_st) {
+float sledPositionInMM(StepperWithLimits* stepper, DAP_config_st * config_st, float motorRevolutionsPerStep_fl32) {
   float currentPos = stepper->getCurrentPositionFromMin();
-  //return (currentPos / STEPS_PER_MOTOR_REVOLUTION) * TRAVEL_PER_ROTATION_IN_MM;
-  return currentPos * STEPS_PER_MOTOR_REVOLUTION_INV * config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;
-  
+  return currentPos * motorRevolutionsPerStep_fl32 * config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;
+}
+
+float sledPositionInMM_withPositionAsArgument(float currentPos_fl32, DAP_config_st * config_st, float motorRevolutionsPerStep_fl32) {
+  return currentPos_fl32 * motorRevolutionsPerStep_fl32 * config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;
 }
 
 float pedalInclineAngleDeg(float sledPositionMM, DAP_config_st * config_st) {

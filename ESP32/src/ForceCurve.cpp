@@ -35,7 +35,7 @@ float ForceCurve_Interpolated::EvalForceCubicSpline(const DAP_config_st* config_
   //double dx = 1.0f;
   float t = (splineSegment_fl32 - (float)splineSegment_u8);// / dx;
   float y = (1 - t) * yOrig[splineSegment_u8] + t * yOrig[splineSegment_u8 + 1] + t * (1 - t) * (a * (1 - t) + b * t);
-
+  
   if (calc_st->Force_Range> 0)
   {
       y = calc_st->Force_Min + y / 100.0f * calc_st->Force_Range;

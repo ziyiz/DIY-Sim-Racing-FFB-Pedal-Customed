@@ -15,6 +15,7 @@
 #define DEBUG_INFO_0_LOG_ALL_SERVO_PARAMS 128
 
 
+#define SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V 400
 
 
 
@@ -178,6 +179,7 @@ static SemaphoreHandle_t semaphore_updatePedalStates=NULL;
 /**********************************************************************************************/
 
 #include "PedalGeometry.h"
+float motorRevolutionsPerSteps_fl32 = 1.0f / 3200.0f;
 
 
 /**********************************************************************************************/
@@ -269,6 +271,8 @@ char* APhost;
   #include "Buzzer.h"
 #endif
 
+
+
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         setup function                                                     */
@@ -276,6 +280,15 @@ char* APhost;
 /**********************************************************************************************/
 void setup()
 {
+
+// setup brake resistor pin
+#ifdef BRAKE_RESISTOR_PIN
+  pinMode(BRAKE_RESISTOR_PIN, OUTPUT);  // Set GPIO13 as an output
+  digitalWrite(BRAKE_RESISTOR_PIN, LOW);  // Turn the LED on
+#endif
+
+
+
   //Serial.begin(115200);
   //Serial.begin(921600);
   //Serial.begin(512000);
@@ -410,7 +423,11 @@ void setup()
 
 
   bool invMotorDir = dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 > 0;
-  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin, invMotorDir);
+  stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, invMotorDir, dap_calculationVariables_st.stepsPerMotorRevolution); 
+
+  motorRevolutionsPerSteps_fl32 = 1.0f / ( (float)dap_calculationVariables_st.stepsPerMotorRevolution );
+  Serial.printf("Steps per motor revolution: %d\n", dap_calculationVariables_st.stepsPerMotorRevolution);
+
   loadcell = new LoadCell_ADS1256();
 
   loadcell->setLoadcellRating(dap_config_st.payLoadPedalConfig_.loadcell_rating);
@@ -489,7 +506,7 @@ void setup()
   xTaskCreatePinnedToCore(
                     pedalUpdateTask,   /* Task function. */
                     "pedalUpdateTask",     /* name of task. */
-                    5000,       /* Stack size of task */
+                    7000,       /* Stack size of task */
                     //STACK_SIZE_FOR_TASK_1,
                     NULL,        /* parameter of the task */
                     1,           /* priority of the task */
@@ -918,10 +935,14 @@ void pedalUpdateTask( void * pvParameters )
 
 
     // Convert loadcell reading to pedal force
-    float sledPosition = sledPositionInMM(stepper, &dap_config_pedalUpdateTask_st);
+    float sledPosition = sledPositionInMM(stepper, &dap_config_pedalUpdateTask_st, motorRevolutionsPerSteps_fl32);
     float pedalInclineAngleInDeg_fl32 = pedalInclineAngleDeg(sledPosition, &dap_config_pedalUpdateTask_st);
     float pedalForce_fl32 = convertToPedalForce(loadcellReading, sledPosition, &dap_config_pedalUpdateTask_st);
     float d_phi_d_x = convertToPedalForceGain(sledPosition, &dap_config_pedalUpdateTask_st);
+
+    // Serial.printf("SledPos:%f,    PedalAngle: %f\n", sledPosition, pedalInclineAngleInDeg_fl32);
+
+    // delay(10);
 
     // compute gain for horizontal foot model
     float b = dap_config_pedalUpdateTask_st.payLoadPedalConfig_.lengthPedal_b;
@@ -972,8 +993,6 @@ void pedalUpdateTask( void * pvParameters )
     float effect_force = absForceOffset + _BitePointOscillation.BitePoint_Force_offset + _WSOscillation.WS_Force_offset + CV1.CV_Force_offset + CV2.CV_Force_offset;
     float stepperPosFraction = stepper->getCurrentPositionFraction();
     int32_t Position_Next = 0;
-
-
     
     // select control loop algo
     switch (dap_config_pedalUpdateTask_st.payLoadPedalConfig_.control_strategy_b) {
@@ -981,6 +1000,8 @@ void pedalUpdateTask( void * pvParameters )
         Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity);
         break;
       case 1:
+      // int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float d_phi_d_x, float d_x_hor_d_phi) {
+
         Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
         break;
       default:
@@ -989,9 +1010,9 @@ void pedalUpdateTask( void * pvParameters )
     }
 
 
-    float alphaPidOut = 0.9;
-    Position_Next = Position_Next*alphaPidOut + Position_Next_Prev * (1.0f - alphaPidOut);
-    Position_Next_Prev = Position_Next;
+    // float alphaPidOut = 0.9;
+    // Position_Next = Position_Next*alphaPidOut + Position_Next_Prev * (1.0f - alphaPidOut);
+    // Position_Next_Prev = Position_Next;
 
     // add dampening
     if (dap_calculationVariables_st.dampingPress  > 0.0001)
@@ -1006,9 +1027,9 @@ void pedalUpdateTask( void * pvParameters )
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMin, dap_calculationVariables_st.stepperPosMax);
     
   
-    //Adding effects
+    // //Adding effects
     int32_t Position_effect= effect_force/dap_calculationVariables_st.Force_Range*dap_calculationVariables_st.stepperPosRange;
-    Position_Next +=_RPMOscillation.RPM_position_offset;
+    // Position_Next +=_RPMOscillation.RPM_position_offset;
     Position_Next -= absPosOffset;
     Position_Next -= Position_effect;
     Position_Next = (int32_t)constrain(Position_Next, dap_calculationVariables_st.stepperPosMinEndstop, dap_calculationVariables_st.stepperPosMaxEndstop);
@@ -1073,21 +1094,40 @@ void pedalUpdateTask( void * pvParameters )
     // Serial.print("Position next: ");
     // Serial.println(Position_Next);
 
-
-
-    // Move to new position
-    if(OTA_status==false)
+    // fiorce stop servo when certain voltage level is exceeded
+#ifdef BRAKE_RESISTOR_PIN
+    if ( stepper->getServosVoltage() > SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V)
     {
-      if (!moveSlowlyToPosition_b)
-      {
-        stepper->moveTo(Position_Next, false);
-      }
-      else
-      {
-        moveSlowlyToPosition_b = false;
-        stepper->moveSlowlyToPos(Position_Next);
-      }
+      //stepper->forceStop();
+      
+      //stepper->moveTo(dap_calculationVariables_st.stepperPosMaxEndstop, false);
+      //Serial.println("Resistor high!");
+      digitalWrite(BRAKE_RESISTOR_PIN, HIGH);
     }
+    else
+    {
+      digitalWrite(BRAKE_RESISTOR_PIN, LOW);
+    }
+  #endif
+
+
+
+  // Move to new position
+  if(OTA_status==false)
+  {
+    if (!moveSlowlyToPosition_b)
+    {
+      stepper->moveTo(Position_Next, false);
+    }
+    else
+    {
+      moveSlowlyToPosition_b = false;
+      stepper->moveSlowlyToPos(Position_Next);
+    }
+  }
+
+
+    
      
     
 

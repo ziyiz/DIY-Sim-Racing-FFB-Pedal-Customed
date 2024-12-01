@@ -25,10 +25,6 @@
 // target cycle time for pedal update task, to get constant cycle times, required for FIR filtering
 #define DAP_MICROSECONDS_PER_SECOND 1000000
 
-// static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 6400;
-static const uint32_t STEPS_PER_MOTOR_REVOLUTION = 3200;
-static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOLUTION;
-
 // 15kHz
 //#define ADC_SAMPLE_RATE ADS1256_DRATE_15000SPS
 //#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 15000
@@ -63,8 +59,9 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
 /*                      Motor defines                            */
 /********************************************************************/
 //#define MOTOR_INVERT_MOTOR_DIR false
-
-
+static const uint32_t MAXIMUM_STEPPER_RPM = 4000;     
+static const uint32_t SECONDS_PER_MINUTE = 60;
+#define MAXIMUM_STEPPER_SPEED (uint32_t)250000//  max steps per second, see https://github.com/gin66/FastAccelStepper
 
 
 /********************************************************************/
@@ -84,9 +81,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   #define dirPinStepper    0
   #define stepPinStepper   4
 
-  // endstop pins
-  #define minPin 34
-  #define maxPin 35
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
@@ -111,9 +105,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   #define dirPinStepper    8
   #define stepPinStepper   9
 
-  // endstop pins
-  #define minPin 11
-  #define maxPin 10
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
@@ -143,10 +134,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //I2Cpins
   #define I2C_SDA 32
   #define I2C_SCL 33
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -168,6 +155,7 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //#define Pairing_GPIO 13
   //#define ESPNow_debug_rudder
   #define OTA_update_ESP32
+  #define BRAKE_RESISTOR_PIN 13
   
 #endif
 
@@ -186,10 +174,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   // stepper pins
   #define dirPinStepper    32
   #define stepPinStepper   33
-  
-  // endstop pins
-  #define minPin 35
-  #define maxPin 34
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -221,10 +205,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   // stepper pins
   #define dirPinStepper    22
   #define stepPinStepper   23
-  
-  // endstop pins
-  #define minPin 35
-  #define maxPin 34
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -265,10 +245,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //MCP4725 SDA SCL
   #define MCP_SDA 48
   #define MCP_SCL 47
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -308,10 +284,7 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //MCP4725 SDA SCL
   #define MCP_SDA 5
   #define MCP_SCL 4
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
+
   // Pedal assignment pin
   #define PEDAL_ASSIGNMENT
   #define CFG1 1
@@ -359,10 +332,7 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //MCP4725 SDA SCL
   #define MCP_SDA 5
   #define MCP_SCL 4
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
+
   // Pedal assignment pin
   #define PEDAL_ASSIGNMENT
   #define CFG1 1
@@ -411,10 +381,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //I2Cpins
   #define I2C_SDA 32
   #define I2C_SCL 33
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -459,10 +425,6 @@ static const float STEPS_PER_MOTOR_REVOLUTION_INV = 1.0f / STEPS_PER_MOTOR_REVOL
   //MCP4725 SDA SCL
   #define MCP_SDA 48
   #define MCP_SCL 47
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
