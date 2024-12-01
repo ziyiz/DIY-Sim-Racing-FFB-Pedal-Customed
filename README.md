@@ -65,7 +65,7 @@ A lot of awesome devs have helped this project grow. Just to name a few:
 Detailed descriptions of all aspects of the build can be found on the dedicated [Wiki page](https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki), which includes instructions on how to select parts, build the pedals and integrate them into your games
 
 ## Join the Discord server
-Our [Discord server](https://discord.gg/j8QhD5hCv7) has thousands of users just like you and contains additional designs, insight and provides a place to find answers to all of your questions.
+Our [Discord server](https://discord.gg/zTfQaxpAUz) has thousands of users just like you and contains additional designs, insight and provides a place to find answers to all of your questions.
 
 # Architecture
 A Doxygen report of the sources can be found [here](https://chrgri.github.io/DIY-Sim-Racing-FFB-Pedal/Arduino/html/index.html).
