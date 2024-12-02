@@ -604,6 +604,7 @@ void setup()
   #ifdef PEDAL_ASSIGNMENT
     pinMode(CFG1, INPUT_PULLUP);
     pinMode(CFG2, INPUT_PULLUP);
+    delay(50); // give the pin time to settle
     if(dap_config_st.payLoadPedalConfig_.pedal_type==4)
     {
       Serial.println("Pedal type:4, Pedal not assignment, reading from CFG pins....");

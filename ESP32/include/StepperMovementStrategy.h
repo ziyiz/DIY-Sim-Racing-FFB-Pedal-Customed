@@ -296,10 +296,12 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // m1 = d_f_d_x dForce / dx
     //float m1 = d_f_d_phi * (-d_phi_d_x);
 
+    float forceError_fl32 = loadCellReadingKg_corrected - loadCellTargetKg;
 
     // Translational foot model
     // given in kg/step
     float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x) * mmPerStep;
+
     // float m1 = d_f_d_phi * mmPerStep;
 
     // smoothen gradient with force curve gradient since it had better results w/ clutch pedal characteristic
@@ -313,7 +315,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float denom = m1 - m2;
     if ( fabs(denom) > 0 )
     {
-      float stepUpdate = ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
+      float stepUpdate = forceError_fl32 / ( denom );
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
