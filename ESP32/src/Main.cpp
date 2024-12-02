@@ -446,27 +446,20 @@ void setup()
   Serial.print("Max Position is "); Serial.println(stepper->getLimitMax());
 
 
-  // setup Kalman filter
+  // setup Kalman filters
   Serial.print("Given loadcell variance: ");
   Serial.println(loadcell->getVarianceEstimate());
   kalman = new KalmanFilter(loadcell->getVarianceEstimate());
+  kalman_2nd_order = new KalmanFilter_2nd_order(loadcell->getVarianceEstimate());
 
-  kalman_2nd_order = new KalmanFilter_2nd_order(1);
+
+  // LED signal 
   #ifdef USING_LED
       //pixels.setBrightness(20);
       pixels.setPixelColor(0, 0x80, 0x00, 0x80);//purple
       pixels.show(); 
       //delay(3000);
   #endif
-
-
-
-
-
-
-
-
-  
 
   
 
