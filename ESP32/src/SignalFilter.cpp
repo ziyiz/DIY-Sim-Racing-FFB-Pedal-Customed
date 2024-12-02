@@ -45,23 +45,8 @@ float S;                   // Residual covariance
 KalmanFilter::KalmanFilter(float varianceEstimate)
   : _timeLastObservation(micros())
 {
-  // // evolution matrix. Size is <Nstate,Nstate>
-  // _K.F = {(double)1.0, 0.0,
-  //         0.0, (double)1.0};
-
-  // // command matrix.  Size is <Nstate,Ncom>
-  // _K.B = {1.0, 
-  //         0.0};
-        
-  // // measurement matrix. Size is <Nobs,Nstate>
-  // _K.H = {1.0, 0.0};
-
-  // // model covariance matrix. Size is <Nstate,Nstate>
-  // _K.Q = {1.0, 0.0,
-  //         0.0, 1.0};
-
-  // // measurement covariance matrix. Size is <Nobs,Nobs>
-  // _K.R = { varianceEstimate };
+  // initialize measurement error matrix
+  R = varianceEstimate;
 }
 
 float KalmanFilter::filteredValue(float observation, float command, uint8_t modelNoiseScaling_u8) {
