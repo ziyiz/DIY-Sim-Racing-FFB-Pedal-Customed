@@ -777,6 +777,8 @@ float Position_Next_Prev = 0.0f;
 //IRAM_ATTR DAP_config_st dap_config_pedalUpdateTask_st;
 DAP_config_st dap_config_pedalUpdateTask_st;
 //void loop()
+
+bool brakeResistorState = false;
 void pedalUpdateTask( void * pvParameters )
 {
 
@@ -1087,14 +1089,10 @@ void pedalUpdateTask( void * pvParameters )
     // Serial.print("Position next: ");
     // Serial.println(Position_Next);
 
-    // fiorce stop servo when certain voltage level is exceeded
+    // Activate brake resistor once a certain voltage level is exceeded
 #ifdef BRAKE_RESISTOR_PIN
     if ( stepper->getServosVoltage() > SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V)
     {
-      //stepper->forceStop();
-      
-      //stepper->moveTo(dap_calculationVariables_st.stepperPosMaxEndstop, false);
-      //Serial.println("Resistor high!");
       digitalWrite(BRAKE_RESISTOR_PIN, HIGH);
     }
     else
