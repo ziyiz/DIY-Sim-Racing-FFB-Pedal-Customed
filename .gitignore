@@ -19,3 +19,15 @@ SimHubPlugin/obj/Debug/User.PluginSdkDemo.Properties.Resources.resources
 SimHubPlugin/obj/Release/DiyActivePedal.dll
 SimHubPlugin/obj/Release/DiyActivePedal.pdb
 SimHubPlugin/SettingsControlDemo.xaml.cs
+
+/*
+!/ESP32/
+
+# 允许git跟踪自己的配置文件（可选）
+!.gitignore
+!.gitmodules
+# 保留所有 Markdown 文件（可选）
+!*.md
+# 保留许可证文件（可选）
+!LICENSE
+!Doxyfile
